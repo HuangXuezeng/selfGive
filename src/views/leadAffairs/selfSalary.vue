@@ -1,0 +1,97 @@
+<template>
+    <div>
+      <div class="box">
+        <div class="box_left" v-if="flag">
+          <!-- 左导航栏 -->
+          <van-sidebar v-model="activeKey" class="van-sidebar">
+              <van-sidebar-item title="花名册" to="roster"/>
+              <van-sidebar-item title="绩效考核"  />
+              <van-sidebar-item title="关键信息" />
+              <van-sidebar-item title="培训记录" />
+              <van-sidebar-item title="个人发展" />
+              <van-sidebar-item title="团队培训" />
+              <van-sidebar-item title="薪资库" />
+              <van-sidebar-item title="干部档案" />
+              <van-sidebar-item title="胜任力模型" />
+              <van-sidebar-item title="价值观思想" />
+          </van-sidebar>
+        </div>
+        <div class="box_right" ref="right">
+          <!-- <button @click="hiddle">haha</button> -->
+          <span @click="hiddle" class="arrow" v-if="hideleArr">
+            <van-icon name="arrow-left" color="orange" />
+          </span>
+          <span @click="show" class="arrow" v-if="showArr">
+            <van-icon name="arrow" color="orange" />
+          </span>
+          <router-view />
+        </div>
+      </div>
+    </div>
+</template>
+<script>
+import { Sidebar, SidebarItem,Icon } from 'vant'
+export default {
+  data () {
+    return {
+      activeKey: 0,
+      flag: true,
+      hideleArr: true,
+      showArr: false,
+    };
+  },
+  created(){
+    
+  },
+  methods:{
+    //隐藏导航栏
+    hiddle(){
+      this.flag = false
+      this.showArr = true
+      this.hideleArr = false
+      // document.getElementsByClassName('box_right')[0].style.width = 100+'%'
+      this.$refs.right.style.width = 100+'%'
+    },
+    show(){
+      this.flag = true
+      this.hideleArr = true
+      this.showArr = false
+      this.$refs.right.style.width = ''
+    }
+  }
+}
+</script>
+<style lang="stylus" scoped>
+  .box{
+    width 100%
+    height 100%
+    .box_left{
+      float left
+      height 100%
+      width 23%
+      background-color #f7f8fa
+      .van-sidebar{
+        position fixed
+        top 0
+        bottom  0
+        overflow-y auto
+        overflow-x hidden
+        background-color #f7f8fa
+        width 23%
+      }
+    }
+    .box_right{
+      position relative
+      float right
+      height 100vh
+      overflow auto
+      width 77%
+      .arrow{
+        position absolute
+        z-index: 99
+        left 0
+        top 46vh
+      }
+    }
+  }
+</style>
