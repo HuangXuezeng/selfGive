@@ -4,6 +4,9 @@ const mutations = {
   },
   save_type (state,type) {
     state.type = type
+  },
+  save_jobNum (state,jobNumber) {
+    state.jobNumber = jobNumber
   }
 }
 

@@ -253,9 +253,10 @@ export default {
             text-align right
         }
         .bottom{
-            padding-top 15%
+            // padding-top 15%
+            // padding-bottom 20%
             width 70%
-            margin 0 auto
+            margin 8% auto
         }
     }
     .send{

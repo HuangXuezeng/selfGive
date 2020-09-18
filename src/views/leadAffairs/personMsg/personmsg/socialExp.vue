@@ -44,7 +44,7 @@ export default {
   methods:{
     getSocial(){
         let queryData = {
-            jobnumber:localStorage.getItem('jobNum')
+            jobnumber:this.$store.state.jobNumber
         }
         querySocial(queryData).then(res=>{
             this.socialList = res.obj

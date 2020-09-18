@@ -32,7 +32,7 @@ export default {
   methods:{
     getFamily(){
         let queryData = {
-            jobnumber:localStorage.getItem('jobNum')
+            jobnumber:this.$store.state.jobNumber
         }
         queryFamily(queryData).then(res=>{
             this.familyList = res.obj

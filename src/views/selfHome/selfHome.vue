@@ -48,7 +48,7 @@
               </div>
             </div>
         
-            <!-- <div class="other">
+            <div class="other">
               <div>
                 <span class="border"></span>
                 <span style="font-weight:900">我的团队</span>
@@ -59,7 +59,7 @@
                   <span>{{item.title}}</span>
                 </div>
               </div>
-            </div> -->
+            </div>
             <div class="other">
               <div>
                 <span class="border"></span>
@@ -69,6 +69,22 @@
                 <div class="_item" @click="leadClick">
                   <img src="../../assets/rongyu.png" alt="">
                   <span>荣誉堂</span>
+                </div>
+                <div class="_item" @click="leadClick1">
+                  <img src="../../assets/rencailogo.png" alt="">
+                  <span>人才池</span>
+                </div>
+                <div class="_item" @click="leadClick2">
+                  <img src="../../assets/gujiaren.png" alt="">
+                  <span>顾家人</span>
+                </div>
+                <div class="_item" @click="leadClick3">
+                  <img src="../../assets/tousu.jpg" alt="">
+                  <span>投诉直通车</span>
+                </div>
+                <div class="_item" @click="leadClick4">
+                  <img src="../../assets/xue.png" alt="">
+                  <span>顾家学堂</span>
                 </div>
               </div>
             </div>
@@ -191,9 +207,11 @@ export default {
     };
   },
   created(){
+    // localStorage.setItem('jobNum',9124730)
+    localStorage.setItem('jobNum',9050104)
+    // localStorage.setItem('jobNum',9102171)
+    // localStorage.setItem('jobNum',9078825)
     // localStorage.setItem('jobNum',9107021)
-    // localStorage.setItem('jobNum',9050104)
-    // localStorage.setItem('jobNum',2000065)
     if(localStorage.getItem('jobNum') == '' || localStorage.getItem('jobNum') == null || localStorage.getItem('jobNum') == undefined){
       this.getUser()
     }else{
@@ -358,9 +376,20 @@ export default {
           break;
       }
     },
-    leadClick(item){
-      console.log(item)
+    leadClick(){
       window.open('http://www.rc.kukahome.com:8880/mrt/')
+    },
+    leadClick1(){
+      window.open('http://www.rc.kukahome.com:8880/hms/')
+    },
+    leadClick2(){
+      window.open('http://family.kukahome.com:5080/kukacms/dist/')
+    },
+    leadClick3(){
+      window.open('http://family.kukahome.com:5080/kukacms/tousu/')
+    },
+    leadClick4(){
+      window.open('https://res.exexm.com/dingtalk/common-no-cache/dingtalkindex.html?tenantId=kukahome&dd_full_screen=true')
     },
     ...mapMutations({
       save_type:'save_type'
@@ -503,7 +532,7 @@ i{
 }
   .myContents{
     background-color #f6f6f8
-    height 100vh
+    // height 100vh
     .infomes{
       display flex
       background-color #fff
@@ -518,7 +547,7 @@ i{
       font-size 14px
     }
     .contents{
-      margin 85px 10px 0 10px
+      margin 108px 10px 0 10px
       border-radius 6px
       padding 10px
       background-color #fff
@@ -630,6 +659,7 @@ i{
     }
     .headTop{
       width 95%
+      height 198px
       display flex
       position absolute
       top:20px

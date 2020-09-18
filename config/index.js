@@ -9,15 +9,15 @@ module.exports = {
 
     // Paths
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/kukacmsIndex/',
-    // assetsPublicPath: '/',
+    // assetsPublicPath: '/kukacmsIndex/',
+    assetsPublicPath: '/',
     proxyTable: {
 			'/kukacms': {
-        // target: 'http://172.16.28.116:7080/kukacms',
+        target: 'http://172.16.28.89:7080/kukacms',
         // target: 'http://192.168.249.18:8080/kukacms', //测试库
         // target: 'http://family.kukahome.com:5080/kukacms/',
         // target: 'http://kukacms.kukahome.com:8084/kukacms', //事业伙伴
-        target: 'http://kukacms.kukahome.com:8082/kukacms', //正式库
+        // target: 'http://kukacms.kukahome.com:8082/kukacms', //正式库
         //target: 'http://172.16.26.125:9090'
         changeOrigin: true,
         pathRewrite: {
@@ -27,8 +27,8 @@ module.exports = {
     },
 
     // Various Dev Server settings
-    // host: 'localhost', // can be overwritten by process.env.HOST
-    host: '172.16.28.98',
+    host: 'localhost', // can be overwritten by process.env.HOST
+    // host: '172.16.28.118',
     // host: 'localhost',
     port: 8082, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,

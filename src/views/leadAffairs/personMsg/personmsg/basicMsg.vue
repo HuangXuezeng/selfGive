@@ -45,6 +45,7 @@
 // import '../../components/comstyle/style.css'
 import { Button,Uploader,ImagePreview,Notify } from 'vant'
 import { queryPerson,querySome } from '../../../personAffairs/api'
+// import { mapState,mapMutations } from 'vuex'
 export default {
   data () {
     return {
@@ -60,7 +61,7 @@ export default {
     //获取个人基本信息
     getPerson(){
         let queryData = {
-            jobnumber:localStorage.getItem('jobNum')
+            jobnumber:this.$store.state.jobNumber
         }
         queryPerson(queryData).then(res=>{
             this.personList = res.obj
@@ -69,7 +70,7 @@ export default {
     //获取头部用户基本信息
     getSome(){
       let queryData = {
-        jobnumber:localStorage.getItem('jobNum')
+        jobnumber:this.$store.state.jobNumber
       }
       querySome(queryData).then(res=>{
         // console.log(res.obj.photo)

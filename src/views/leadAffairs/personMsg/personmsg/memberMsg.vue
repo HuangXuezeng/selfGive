@@ -34,7 +34,7 @@ export default {
   methods:{
     getMembers(){
         let queryData = {
-            jobnumber:localStorage.getItem('jobNum')
+            jobnumber:this.$store.state.jobNumber
         }
         queryMembers(queryData).then(res=>{
             this.membersList = res.obj

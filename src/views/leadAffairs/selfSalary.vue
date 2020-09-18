@@ -57,6 +57,7 @@ export default {
       this.hideleArr = true
       this.showArr = false
       this.$refs.right.style.width = ''
+      this.$refs.right.children[0].style.left = ''
     }
   }
 }
@@ -81,16 +82,16 @@ export default {
       }
     }
     .box_right{
-      position relative
+      // position relative
       float right
-      height 100vh
+      height 100%
       overflow auto
       width 77%
       .arrow{
-        position absolute
+        position fixed
         z-index: 99
-        left 0
-        top 46vh
+        left 22%
+        bottom 50%
       }
     }
   }

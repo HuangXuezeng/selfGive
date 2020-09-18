@@ -78,7 +78,7 @@ export default {
     //获取绩效
     getPerformance(){
         let queryData = {
-            jobnumber:localStorage.getItem('jobNum')
+            jobnumber:this.$store.state.jobNumber
         }
         queryPerformance(queryData).then(res=>{
             this.performanceList = res.obj

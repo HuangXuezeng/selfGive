@@ -34,7 +34,7 @@ export default {
     //获取工作信息
     getJob(){
         let queryData = {
-            jobnumber: localStorage.getItem('jobNum')
+            jobnumber: this.$store.state.jobNumber
         }
         queryLx(queryData).then(res=>{
             this.jobData = res.obj

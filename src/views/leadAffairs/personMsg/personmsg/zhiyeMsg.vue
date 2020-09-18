@@ -45,7 +45,7 @@ export default {
     //查询职业资格信息
     getZige(){
         let queryData = {
-            jobnumber:localStorage.getItem('jobNum')
+            jobnumber:this.$store.state.jobNumber
         }
         queryZige(queryData).then(res=>{
             this.zigeList = res.obj

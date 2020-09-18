@@ -12,33 +12,23 @@
             <div class="de_a"><span style="font-weight:700">本月工资扣款项目：</span><span>{{salaryList.bygzkkxm}}</span></div>
             <div class="de_a" @click="htztClick"><span style="font-weight:700">合同主体：</span><span>{{salaryList.htzt}}</span></div>
             <div class="de_a"><span style="font-weight:700">明细</span></div>
-            <div class="de_b">收入合计：<span>{{salaryList.srhj}}</span></div>
+            <div class="de_b">收入合计：{{salaryList.srhj}}</div>
             <!-- <p @click="detailInfo($event)">固薪合计<span>{{salaryList.fixedSalary}}</span></p> -->
             <!-- <van-collapse v-model="activeNames" accordion>
                 <van-collapse-item size="large">
                   <template #title> -->
-                    <div class="de_b" style="padding-left:16px">固薪合计：{{salaryList.gxhj}}</div>
+                    <div class="de_b" style="padding-left:16px">固薪合计：<span>{{salaryList.gxhj}}</span><span @click="gxqtClick" style="float:right;color:blue"><van-icon name="more-o" /></span></div>
                   <!-- </template> -->
-                    <p v-if="salaryList.cqgz !== 0">出勤工资：<span>{{salaryList.cqgz}}</span></p>
-                    <p v-if="salaryList.jbgz !== 0">加班工资：<span>{{salaryList.jbgz}}</span></p>
-                    <p v-if="salaryList.kqkk !== 0">考勤扣款：<span>{{salaryList.kqkk}}</span></p>
-                    <p v-if="salaryList.kgkk !== 0">旷工扣款：<span>{{salaryList.kgkk}}</span></p>
-                    <p v-if="salaryList.qjgz !== 0">请假工资：<span>{{salaryList.qjgz}}</span></p>
-                    <p v-if="salaryList.jjgz !== 0">计件工资：<span>{{salaryList.jjgz}}</span></p>
-                    <p v-if="salaryList.gxqt !== 0">
-                      固薪其他：<span>{{salaryList.gxqt}}</span>
-                      <span style="float:right;color:blue" @click="gxqtClick"><van-icon name="more-o" /></span>
-                    </p>
                 <!-- </van-collapse-item>
             </van-collapse> -->
             <div class="de_b" style="padding-left:16px">浮薪合计：<span>{{salaryList.fxhj}}</span></div>
             <div class="de_b" style="padding-left:16px">补贴合计：<span>{{salaryList.bthj}}</span><span @click="bthjClick" style="float:right;color:blue"><van-icon name="more-o" /></span></div>
             <div class="de_b" style="padding-left:16px">奖罚合计：<span>{{salaryList.jfhj}}</span><span @click="jfhjClick" style="float:right;color:blue"><van-icon name="more-o" /></span></div>
-            <div class="de_b">扣款合计：<span>{{salaryList.kkhj}}</span></div>
+            <div class="de_b">扣款合计：{{salaryList.kkhj}}</div>
             <!-- <van-collapse v-model="activeNames1" >
                 <van-collapse-item size="large">
                   <template #title> -->
-                    <div class="de_b" style="padding-left:16px">扣社保公积金：{{salaryList.sqkk}}<span @click="sbkkClick" style="float:right;color:blue"><van-icon name="more-o" /></span></div>
+                    <div class="de_b" style="padding-left:16px">扣社保公积金：<span>{{salaryList.sqkk}}</span><span @click="sbkkClick" style="float:right;color:blue"><van-icon name="more-o" /></span></div>
                   <!-- </template> -->
                   <!-- <p v-if="salaryList.sbkk !== 0">社保扣款：
                     <span>{{salaryList.sbkk}}</span>
@@ -52,8 +42,8 @@
             </van-collapse> -->
             <p class="de_b" style="padding-left:16px" >扣个税：<span>{{salaryList.kgs}}</span><span @click="gskkClick" style="float:right;color:blue"><van-icon name="more-o" /></span></p>
             <p class="de_b" style="padding-left:16px" >税后扣款：<span>{{salaryList.shkk}}</span><span @click="shkkClick" style="float:right;color:blue"><van-icon name="more-o" /></span></p>
-            <p class="de_b">补扣上月：<span>{{salaryList.bksy}}</span><span @click="bksyClick" style="float:right;color:blue"><van-icon name="more-o" /></span></p>
-            <p class="de_b">本月应扣未扣：<span>{{salaryList.byykwk}}</span></p>
+            <p class="de_b">补扣上月：{{salaryList.bksy}}<span @click="bksyClick" style="float:right;color:blue"><van-icon name="more-o" /></span></p>
+            <p class="de_b">本月应扣未扣：{{salaryList.byykwk}}</p>
           </div>
         </div>
         <van-popup 
@@ -73,11 +63,17 @@
         </van-popup> 
         <!-- 固薪其他弹窗 -->
         <van-dialog v-model="showGxqt" get-container="body" title="固薪其他">
-          <div v-for="(item,index) in salaryList.gxqtList" :key="item.recordid" class="gxstyle">
-            <p>序号：{{index+1}}</p>
-            <p>金额：{{item.money}}</p>
-            <p>操作人：{{item.operator}}</p>
-            <p>备注：{{item.remarks}}</p>
+          <div class="gxstyle">
+            <p v-if="salaryList.cqgz !== 0">出勤工资：<span>{{salaryList.cqgz}}</span></p>
+            <p v-if="salaryList.jbgz !== 0">加班工资：<span>{{salaryList.jbgz}}</span></p>
+            <p v-if="salaryList.kqkk !== 0">考勤扣款：<span>{{salaryList.kqkk}}</span></p>
+            <p v-if="salaryList.kgkk !== 0">旷工扣款：<span>{{salaryList.kgkk}}</span></p>
+            <p v-if="salaryList.qjgz !== 0">请假工资：<span>{{salaryList.qjgz}}</span></p>
+            <p v-if="salaryList.jjgz !== 0">计件工资：<span>{{salaryList.jjgz}}</span></p>
+            <p v-if="salaryList.gxqt !== 0">固薪其他：
+              <span>{{salaryList.gxqt}}</span>
+            </p>
+            <p v-if="salaryList.gxqtRemarks !== ''" style="padding-left:0"><span style="font-weight:700;color:red">【固薪其他】说明：</span>{{salaryList.gxqtRemarks}}</p>
           </div>
         </van-dialog>
         <!-- 补贴合计弹窗 -->
@@ -94,11 +90,13 @@
         </van-dialog>
         <!-- 奖罚合计弹窗 -->
         <van-dialog v-model="showJfhj" get-container="body" title="奖罚合计">
-          <div v-for="(item,index) in salaryList.jfhjList" :key="item.recordid" class="gxstyle">
-            <p>序号：{{index+1}}</p>
-            <p>文件名称：{{item.filename}}</p>
-            <p>奖罚金额：{{item.money}}</p>
-            <p>申请人：{{item.applicant}}</p>
+          <div class="gxstyle">
+            <div v-for="(item,index) in salaryList.jfhjList" :key="item.recordid">
+              <p>序号：{{index+1}}</p>
+              <p>文件名称：{{item.filename}}</p>
+              <p>奖罚金额：{{item.money}}</p>
+              <p>申请人：{{item.applicant}}</p>
+            </div>
           </div>
         </van-dialog>
         <!-- 社保扣款弹窗 -->
@@ -143,11 +141,13 @@
         </van-dialog>
         <!-- 税后扣款弹窗 -->
         <van-dialog v-model="showShkk" get-container="body" title="税后扣款">
-          <div v-for="(item,index) in salaryList.shkkList" :key="item.recordid" class="gxstyle">
-            <p>序号：{{index+1}}</p>
-            <p>扣款金额：{{item.money}}</p>
-            <p>申请人：{{item.applicant}}</p>
-            <p>备注：{{item.remarks}}</p>
+          <div class="gxstyle">
+            <div v-for="(item,index) in salaryList.shkkList" :key="item.recordid">
+              <p>序号：{{index+1}}</p>
+              <p>扣款金额：{{item.money}}</p>
+              <p>申请人：{{item.applicant}}</p>
+              <p>备注：{{item.remarks}}</p>
+            </div>
           </div>
         </van-dialog>
         <!-- 补扣上月 -->
