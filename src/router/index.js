@@ -231,6 +231,12 @@ export default new Router({
           name: 'checkwork',
           component: () => import('@/views/personAffairs/checkwork'),
         },
+        //考勤
+        {
+          path: '/teamFoster',
+          name: 'teamFoster',
+          component: () => import('@/views/personAffairs/teamFoster'),
+        },
       ]
     },
     //我的团队----------------------------------------------------------------------
@@ -319,7 +325,14 @@ export default new Router({
           name: 'jixiaoMsg',
           component: () => import('@/views/leadAffairs/personMsg/personmsg/jixiaoMsg'),
         },
+
       ],
+    },
+    //干部档案
+    {
+      path: '/cadreArchives',
+      name: 'cadreArchives',
+      component: () => import('@/views/leadAffairs/cadreArchives/cadreArchives'),
     },
   ]
 })

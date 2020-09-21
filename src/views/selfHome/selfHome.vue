@@ -9,7 +9,7 @@
                     <span @click="uploadImg"><img class="img" :src="personObj.photo" alt=""></span>
                     <div style="padding-top:10px">
                       <span style="font-weight:700;font-size:16px">{{personObj.a0101}}</span>
-                      
+
                     </div>
                     <div><span class="resuName">{{personObj.a0190}}</span></div>
                     <!-- <div><span class="resuName">{{personObj.post}}</span></div> -->
@@ -47,7 +47,7 @@
                 </div>
               </div>
             </div>
-        
+
             <div class="other">
               <div>
                 <span class="border"></span>
@@ -90,14 +90,14 @@
             </div>
         </div>
         <!-- 编辑菜单顺序弹窗 -->
-        <van-popup 
+        <van-popup
         v-model="show"
-        position="top" 
-        :style="{ height: '80%' }" 
+        position="top"
+        :style="{ height: '80%' }"
         >
         <!-- 有过渡效果的 -->
-          <transition-group 
-          type="transition" 
+          <transition-group
+          type="transition"
           class="infoitems"
           :name="!drag ? 'flip-list' : null">
               <div
@@ -136,7 +136,7 @@
         position="bottom"
         :style="{ height: '50%' }"
         >
-            
+
             <div class="uploadimg">
                 <!-- <van-uploader v-model="fileList" :after-read="afterRead"  :max-count="1" /> -->
                 <cube-upload
@@ -279,7 +279,7 @@ export default {
         //   that.src = reader.result;
         // for (var i in that.achlist){
             // 将img的src属性等于数据
-            
+
           that.zanPhoto = reader.result
         // }
           console.log(reader.result);
@@ -507,6 +507,9 @@ export default {
         case '花名册':
         this.$router.push({name:'roster'})
         break;
+         case '干部档案':
+        this.$router.push({name:'cadreArchives'})
+        break;
       }
     }
   },
@@ -518,7 +521,7 @@ export default {
         // console.log(value.otherData)
       })
       this.$dragging.$on('dragend', () => {
-  
+
       })
 　　},
   components: {
@@ -552,7 +555,7 @@ i{
       padding 10px
       background-color #fff
       ._items{
-        padding 20px 10px 10px 0 
+        padding 20px 10px 10px 0
         display flex
         flex-direction: row
         flex-wrap wrap
@@ -572,18 +575,18 @@ i{
           }
         }
         .edit{
-          height 100px  
+          height 100px
           line-height 60px
           text-align center
           width 25%
           color #ccc
-          border-radius 50%  
+          border-radius 50%
           img{
             width 30px
             height 30px
             line-height 30px
             padding-top 4px
-          }    
+          }
         }
       }
       .grid{
@@ -604,7 +607,7 @@ i{
       padding 10px 0 0 10px
       background-color #fff
       ._items{
-        padding 20px 10px 10px 0 
+        padding 20px 10px 10px 0
         display flex
         flex-direction: row
         flex-wrap wrap
@@ -624,18 +627,18 @@ i{
           }
         }
         .edit{
-          height 100px  
+          height 100px
           line-height 60px
           text-align center
           width 25%
           color #ccc
-          border-radius 50%  
+          border-radius 50%
           img{
             width 30px
             height 30px
             line-height 30px
             padding-top 4px
-          }    
+          }
         }
       }
       .grid{
@@ -689,7 +692,7 @@ i{
     }
   }
    .infoitems{
-      padding 10px 10px 10px 0 
+      padding 10px 10px 10px 0
       display flex
       flex-direction: row
       flex-wrap wrap
