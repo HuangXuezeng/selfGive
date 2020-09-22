@@ -1,6 +1,20 @@
 <template>
     <div>
       <div class="box clearfix">
+        <div>
+          <div class="sidebox">
+              <div class="contain">
+                  <div>
+                      <div><span style="font-weight:700">{{personObj.a0101}}</span><span style="float:right"><img class="img" :src="personObj.photo" alt=""></span></div>
+                      <span> 工号：{{personObj.a0190}}</span>
+                  </div>
+                  <div>
+                      <span> 岗位：</span><span>{{personObj.post}}</span><br>
+                      <span> 部门：</span>{{personObj.dept}}<span></span>
+                  </div>
+              </div>
+          </div> 
+        </div>
         <div class="box_left" v-if="flag">
           <!-- 左导航栏 -->
           <van-sidebar 
@@ -56,6 +70,7 @@
 import { Sidebar,SidebarItem,Icon } from 'vant'
 import '../../../components/comstyle/style.css'
 import { mapState,mapMutations } from 'vuex'
+import { querySome } from '../../personAffairs/api'
 export default {
   data () {
     return {
@@ -63,10 +78,13 @@ export default {
       flag: true,
       hideleArr: true,
       showArr: false,
+      personObj: {}
     };
   },
   computed: {},
-  created(){},
+  created(){
+    this.getSome()
+  },
   methods:{
     //隐藏导航栏
     hiddle(){
@@ -88,7 +106,22 @@ export default {
     },
     handChange(){
 
-    }
+    },
+    //获取头部用户基本信息
+    getSome(){
+      let queryData = {
+        jobnumber:this.$store.state.jobNumber
+      }
+      querySome(queryData).then(res=>{
+        // console.log(res.obj.photo)
+        if(res.obj.photo == null || res.obj.photo == undefined || res.obj.photo == ''){
+          res.obj.photo = require('@/assets/timg.jpg')
+          this.personObj = res.obj
+        }else{
+          this.personObj = res.obj
+        }
+      })
+    },
   },
   mounted() {},
 }
@@ -133,17 +166,13 @@ export default {
     }
     .box_left{
       float left
-      height 100%
-      width 23%
+      margin-top 18px
       background-color #f7f8fa
       .van-sidebar{
-        position fixed
-        top 0
-        bottom  0
         overflow-y auto
         overflow-x hidden
         background-color #f7f8fa
-        width 23%
+        width 100%
         .van-sidebar-item--select, .van-sidebar-item--select:active {
             color #ee0a24
             font-weight 700
@@ -163,5 +192,22 @@ export default {
         bottom 50%
       }
     }
+    .sidebox{
+          margin  10px
+          border-radius 6px
+          box-shadow 0px 10px 10px #eee
+      }
+      .contain{
+          padding 10px
+          line-height 35px
+          .iconfont{
+              color #ee0a24
+          }
+      }
   }
+  .img{
+      width 60px
+      height 60px
+      border-radius 50%
+    }
 </style>

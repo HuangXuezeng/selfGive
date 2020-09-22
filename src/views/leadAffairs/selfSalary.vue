@@ -5,7 +5,7 @@
           <!-- 左导航栏 -->
           <van-sidebar v-model="activeKey" class="van-sidebar">
               <van-sidebar-item title="花名册" to="roster"/>
-              <van-sidebar-item title="绩效考核"  />
+              <van-sidebar-item title="流失率" to="retention"/>
               <van-sidebar-item title="关键信息" />
               <van-sidebar-item title="培训记录" />
               <van-sidebar-item title="个人发展" />
@@ -31,14 +31,28 @@
 </template>
 <script>
 import { Sidebar, SidebarItem,Icon } from 'vant'
+import { mapState,mapMutations } from 'vuex'
 export default {
   data () {
     return {
-      activeKey: 0,
+      // activeKey: 0,
       flag: true,
       hideleArr: true,
       showArr: false,
     };
+  },
+  computed: {
+    activeKey:{
+      //getter  获取activeKey默认值
+      get: function(){
+        return this.$store.state.type
+      },
+      //setter  修改activeKey的默认值
+      set: function(newVal){
+        this.$store.state.type = newVal
+      }
+    }
+    
   },
   created(){
     
@@ -51,6 +65,7 @@ export default {
       this.hideleArr = false
       // document.getElementsByClassName('box_right')[0].style.width = 100+'%'
       this.$refs.right.style.width = 100+'%'
+      this.$refs.right.children[0].style.left = 0
     },
     show(){
       this.flag = true
@@ -58,7 +73,10 @@ export default {
       this.showArr = false
       this.$refs.right.style.width = ''
       this.$refs.right.children[0].style.left = ''
-    }
+    },
+    ...mapMutations({
+      save_type:'save_type'
+    })
   }
 }
 </script>

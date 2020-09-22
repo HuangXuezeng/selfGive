@@ -175,13 +175,13 @@ export default {
       gerenLists: [], //弹窗获取全部
       newList: [], //排序后的顺序
       leadList: [
-        {title:'花名册',img:'http://192.168.249.18:7020/menuImage/huaming.png'},
-        {title:'人员结构',img:'http://192.168.249.18:7020/menuImage/jiegou.png'},
-        {title:'人效分析',img:'http://192.168.249.18:7020/menuImage/renxiao.png'},
-        {title:'编制分析',img:'http://192.168.249.18:7020/menuImage/bianzhi.png'},
-        {title:'流失率',img:'http://192.168.249.18:7020/menuImage/liushi.png'},
-        {title:'人员异动',img:'http://192.168.249.18:7020/menuImage/yidong.png'},
-        {title:'干部档案',img:'http://192.168.249.18:7020/menuImage/ganbu.png'},
+        {sortNum:0,title:'花名册',img:'http://192.168.249.18:7020/menuImage/huaming.png'},
+        {sortNum:1,title:'流失率',img:'http://192.168.249.18:7020/menuImage/liushi.png'},
+        {sortNum:2,title:'人员结构',img:'http://192.168.249.18:7020/menuImage/jiegou.png'},
+        {sortNum:3,title:'人效分析',img:'http://192.168.249.18:7020/menuImage/renxiao.png'},
+        {sortNum:4,title:'编制分析',img:'http://192.168.249.18:7020/menuImage/bianzhi.png'},
+        {sortNum:5,title:'人员异动',img:'http://192.168.249.18:7020/menuImage/yidong.png'},
+        {sortNum:6,title:'干部档案',img:'http://192.168.249.18:7020/menuImage/ganbu.png'},
       ],
       colors: [{
             text: "Aquamarine"
@@ -374,6 +374,16 @@ export default {
           this.save_type(sortNum)
           this.$router.push({name:urlPath})
           break;
+        case '项目经历':
+          // console.log(urlPath)
+          this.save_type(sortNum)
+          this.$router.push({name:urlPath})
+          break;
+        case '团队培育':
+          // console.log(urlPath)
+          this.save_type(sortNum)
+          this.$router.push({name:urlPath})
+          break;
       }
     },
     leadClick(){
@@ -503,9 +513,15 @@ export default {
     },
     handlerTeam(item){
       let teamName = item.title
+      let sortNum = item.sortNum
       switch(teamName){
         case '花名册':
+        this.save_type(sortNum)
         this.$router.push({name:'roster'})
+        break;
+        case '流失率':
+        this.save_type(sortNum)
+        this.$router.push({name:'retention'})
         break;
       }
     }

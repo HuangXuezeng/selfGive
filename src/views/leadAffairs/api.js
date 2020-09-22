@@ -20,7 +20,7 @@ export function getSelectVal (queryData) {
 //组织架构
 export function getOrz (queryData) {
   return fetch({
-    url: `/kukacms/self/roster/selectDefaultRoster`,
+    url: `/kukacms/self/roster/selectDefaultOrgan`,
     method: 'post',
     data: qs.stringify(queryData)
   })
@@ -39,5 +39,31 @@ export function queryPerson (queryData) {
     url: `/kukacms/self/roster/selectDefaultEmployee`,
     method: 'post',
     data: qs.stringify(queryData)
+  })
+}
+//根据职类查询职级
+export function queryRank (queryData) {
+  return fetch({
+    url: `/kukacms/self/roster/listRank`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//获取传给后台的部门名称和部门id
+export function queryDeptIdName (queryData) {
+  return fetch({
+    url: `/kukacms/self/roster/selectDefaultRoster`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//查询条件
+export function querySome (queryData) {
+  return fetch({
+    url: `/kukacms/self/roster/selectEmployeeCondition`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
   })
 }

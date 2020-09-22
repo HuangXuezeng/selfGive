@@ -209,6 +209,30 @@ export function updateFam (queryData) {
     data: qs.stringify(queryData)
   })
 }
+//提交修改的顾家履历信息
+export function updateGj (queryData) {
+  return fetch({
+    url: `/kukacms/self/kukawork/updateKukaworkByJobnumber`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//已经修改的顾家履历信息
+export function backGj (queryData) {
+  return fetch({
+    url: `/kukacms/self/kukawork/deleteKukaworkById`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//已经提交的顾家履历信息
+export function getAlreadyGj (queryData) {
+  return fetch({
+    url: `/kukacms/self/kukawork/listKukaworkTempByJobnumber `,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
 //提交修改的亲属关系信息
 export function updateRel (queryData) {
   return fetch({

@@ -80,7 +80,7 @@ export default {
       this.hideleArr = false
       // document.getElementsByClassName('box_right')[0].style.width = 100+'%'
       this.$refs.right.style.width = 100+'%'
-      console.log(this.$refs)
+      // console.log(this.$refs)
       this.$refs.right.children[0].style.left = 0
     },
     show(){

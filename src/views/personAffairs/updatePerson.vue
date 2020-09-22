@@ -38,6 +38,13 @@
             label="是否为退伍军人：" 
             readonly 
             placeholder="必填"/>
+            <van-field 
+            v-model="a01003"
+            label-width="7.4em" 
+            @click="showEnglish = true" 
+            label="英语是否可做工作语言：" 
+            readonly 
+            placeholder="必填"/>
             <p style="padding-left:16px;color:#323233">
                 请上传身份证（双面）/体检报告/银行卡：
                 <span><van-button type="primary" color="#ccc" size="mini" @click="dialogOpen" style="font-size:12px;padding:2px">上传</van-button></span>
@@ -88,6 +95,16 @@
                 @cancel="showSure = false"
                 value-key="text"
                 @confirm="confirm1"
+            />
+        </van-popup>
+        <!-- 是否英语弹窗 -->
+        <van-popup v-model="showEnglish" round position="bottom" get-container="body">
+            <van-picker
+                show-toolbar
+                :columns="columns11"
+                @cancel="showEnglish = false"
+                value-key="text"
+                @confirm="confirm11"
             />
         </van-popup>
         <!-- 选择民族弹窗 -->
@@ -284,7 +301,9 @@ export default {
         a01113: '',
         a01102: '',
         a01185: '', //退伍军人显示的值
+        a01003: '', //是否英语显示的值
         sure: '', //退伍军人发送的值
+        english: '', //是否英语发送的值
         a0177: '',
         yxsfzjlx: '',
         a0107: '',
@@ -303,6 +322,7 @@ export default {
         currentDate: new Date(),
         showTime: false,
         showSure: false, //是否退伍军人弹窗
+        showEnglish: false, //是否英语弹窗
         showGuo: false, //选择国籍弹窗
         showMing: false, //选择民族弹窗
         showHu: false, //选择民族弹窗
@@ -310,9 +330,13 @@ export default {
         showBank: false, //选择银行名称弹窗
         showHun: false, //选择婚姻状况弹窗
         columns1: [
-	      {'keyId':1,'text':"是"},
-	      {'keyId':2,'text':"否"},
-      ],
+            {'keyId':1,'text':"是"},
+            {'keyId':2,'text':"否"},
+        ],
+        columns11: [
+            {'keyId':1,'text':"是"},
+            {'keyId':2,'text':"否"},
+        ],
         columns2: [],
         columns3: [],
         columns4: [
@@ -374,6 +398,9 @@ export default {
             if(this.sure == ''){
                 this.sure = this.a01185
             }
+            if(this.english == ''){
+                this.english = this.a01003
+            }
             let sendData = {
                 a01121:this.a01121,
                 POLICE:this.police,
@@ -389,6 +416,7 @@ export default {
                 a01102: this.a01102,
                 A0141: this.A0141,
                 a01185: this.sure,
+                a01003: this.english,
                 a0190: localStorage.getItem('jobNum'),
                 idcardFile1: this.idcardPath1, //身份证正面
                 idcardFile2: this.idcardPath2, //身份证反面
@@ -408,7 +436,8 @@ export default {
                 this.a01191 == '' || this.a01191 == null ||
                 this.a01113 == '' || this.a01113 == null ||
                 this.a01102 == '' || this.a01102 == null ||
-                this.a01185 == '' || this.a01185 == null
+                this.a01185 == '' || this.a01185 == null ||
+                this.a01003 == '' || this.a01003 == null
                 ){
                     Notify({ type: 'danger', message: '您有必填写未填写，请填写后提交！' })
                 }else{
@@ -434,10 +463,16 @@ export default {
     //选择是否退伍军人
     confirm1(picker) {
         console.log(picker)
-    //   this.value = value;
         this.sure = picker.keyId
         this.a01185 = picker.text
         this.showSure = false;
+    },
+    //选择是否英语
+    confirm11(picker) {
+        console.log(picker)
+        this.english = picker.keyId
+        this.a01003 = picker.text
+        this.showEnglish = false;
     },
     //选择国籍
     confirm2(picker) {
@@ -510,11 +545,12 @@ export default {
         this.a01113 = jbData.a01113
         this.a01102 = jbData.a01102
         this.a01185 = jbData.a01185
+        this.a01003 = jbData.a01003
         this.A0141 = jbData.A0141
         this.idcardPath1 = jbData.idcardFile1
         this.idcardPath2 = jbData.idcardFile2
-        this.reportPath = jbData.bankFile
-        this.bankPath = jbData.reportFile
+        this.reportPath = jbData.reportFile
+        this.bankPath = jbData.bankFile
         this.idcardFileName1 = jbData.idcardFileName1
         this.idcardFileName2 = jbData.idcardFileName2
         this.bankFileName = jbData.bankFileName

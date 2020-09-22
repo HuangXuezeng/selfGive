@@ -1,6 +1,6 @@
 <template>
     <div class="content">
-        <div class="sidebox">
+        <!-- <div class="sidebox">
             <div class="contain">
                 <div>
                     <div><span style="font-weight:700">{{personObj.a0101}}</span><span style="float:right"><img :src="personObj.photo" alt=""></span></div>
@@ -11,7 +11,7 @@
                     <span> 部门：</span>{{personObj.dept}}<span></span>
                 </div>
             </div>
-        </div> 
+        </div>  -->
         <div class="message">
             <p><span>证件号码：</span><span>{{personList.a0177}}</span></p>
             <p><span>有效证件类型：</span><span>{{personList.yxsfzjlx}}</span></p>

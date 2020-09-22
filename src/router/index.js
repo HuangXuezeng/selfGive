@@ -87,6 +87,24 @@ export default new Router({
           name: 'proExperience',
           component: () => import('@/views/personAffairs/proExperience'),
         },
+        //添加项目经历
+        {
+          path: '/addPro',
+          name: 'addPro',
+          component: () => import('@/views/personAffairs/addPro'),
+        },
+        //修改项目经历
+        {
+          path: '/updatePro',
+          name: 'updatePro',
+          component: () => import('@/views/personAffairs/updatePro'),
+        },
+        //审核中项目经历
+        {
+          path: '/alreadyPro',
+          name: 'alreadyPro',
+          component: () => import('@/views/personAffairs/alreadyPro'),
+        },
         //工作信息
         {
           path: '/workInformation',
@@ -134,6 +152,18 @@ export default new Router({
           path: '/familyExperience',
           name: 'familyExperience',
           component: () => import('@/views/personAffairs/familyExperience'),
+        },
+        //修改顾家工作履历
+        {
+          path: '/updateFam',
+          name: 'updateFam',
+          component: () => import('@/views/personAffairs/updateFam'),
+        },
+        //已经修改顾家工作履历
+        {
+          path: '/alreadyFam',
+          name: 'alreadyFam',
+          component: () => import('@/views/personAffairs/alreadyFam'),
         },
         //学历信息
         {
@@ -250,6 +280,12 @@ export default new Router({
           path: '/roster',
           name: 'roster',
           component: () => import('@/views/leadAffairs/roster'),
+        },
+        //流失率
+        {
+          path: '/retention',
+          name: 'retention',
+          component: () => import('@/views/leadAffairs/retention'),
         },
       ],
     },

@@ -40,6 +40,7 @@
             <p><span>公积金客户号：</span><span>{{personList.a01602}}</span></p>
             <p><span>驻外医疗：</span><span>{{personList.a01600}}</span></p>
             <p><span>是否为退伍军人：</span><span>{{personList.a01185}}</span></p>
+            <p><span>英语是否可做工作语言：</span><span>{{personList.a01003}}</span></p>
             <p><span>身份证正面：</span><span @click="seePdf" style="border-bottom:1px solid #ccc;padding:2px">{{personList.idcardFileName1}}</span></p>
             <p><span>身份证反面：</span><span @click="seePdf1" style="border-bottom:1px solid #ccc;padding:2px">{{personList.idcardFileName2}}</span></p>
             <p><span>银行卡：</span><span @click="seePdf2" style="border-bottom:1px solid #ccc;padding:2px">{{personList.bankFileName}}</span></p>
