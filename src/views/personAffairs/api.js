@@ -409,3 +409,43 @@ export function deleteFile (queryData) {
     data: qs.stringify(queryData)
   })
 }
+//获取项目经历列表
+export function getProList (queryData) {
+  return fetch({
+    url: `/kukacms/self/project/listProjectByJobnumber`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//获取下拉选择的项目性质
+export function getProType (queryData) {
+  return fetch({
+    url: `/kukacms/self/project/selectProjectProp`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//获取下拉选择的项目性质
+export function updatePro (queryData) {
+  return fetch({
+    url: `/kukacms/self/project/updateProjectByJobnumber`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//获取项目经历审核列表
+export function getCheckPro (queryData) {
+  return fetch({
+    url: `/kukacms/self/project/listProjectTempByJobnumber`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//撤回项目经历审核
+export function backCheckPro (queryData) {
+  return fetch({
+    url: `/kukacms/self/project/deleteProjectById`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}

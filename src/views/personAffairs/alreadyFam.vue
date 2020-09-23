@@ -58,8 +58,17 @@ export default {
         })
         .then(() => {
             // on confirm
-            let queryData = {
-                recordid: item.recordid
+            let queryData = {}
+            if(item.state == 1){
+                queryData = {
+                    recordid: item.recordid,
+                    flag:1
+                }
+            }else{
+                queryData = {
+                    recordid: item.id,
+                    flag:2
+                }
             }
             backGj(queryData).then(res=>{
                 if(res.code == 1000){

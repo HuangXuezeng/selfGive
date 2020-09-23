@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="header">
-            <van-field v-model="form.department" @click="pickDept" label="部门" placeholder="请选择部门" />
+            <van-field v-model="form.department" @click="pickDept" readonly label="部门" placeholder="请选择部门" />
             <van-field v-model="form.jobnumber" label="工号" placeholder="请输入工号" />
             <van-field v-model="form.name" label="姓名" placeholder="请输入姓名" />
             <div class="btn">

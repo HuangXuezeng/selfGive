@@ -2,58 +2,45 @@
     <div>
         <!-- 添加的信息 -->
         <div class="headerTag" v-for="(item,index) in listAdd" :key="item.id">
-            <van-tag mark type="warning">已添加的职业资格{{index+1}}</van-tag>
-            <p><span>职业类型：</span><span>{{item.titleType}}</span></p>
-            <p><span>职业名称：</span><span>{{item.titleName}}</span></p>
-            <p><span>证书等级：</span><span>{{item.certificateLevel}}</span></p>
-            <p><span>证书号码：</span><span>{{item.certificateNumber}}</span></p>
-            <p><span>颁发单位：</span><span>{{item.issuingUnit}}</span></p>
-            <p><span>有效期起：</span><span>{{item.startTime}}</span></p>
-            <p><span>有效期止：</span><span>{{item.endTime}}</span></p>
-            <p><span>备注：</span><span>{{item.remarks}}</span></p>
-            <!-- <p><span>职业资格证书：<a :href="item.filePath">职业资格证书</a></span></p> -->
-            <p><span @click="seePdf(item)">职业资格证书：<span style="border-bottom:1px solid #ccc;padding:2px">{{item.pathName}}</span></span></p>
+            <van-tag mark type="warning">已添加的项目经历{{index+1}}</van-tag>
+            <p><span>项目名称：</span><span>{{item.projectName}}</span></p>
+            <p><span>进入项目时间：</span><span>{{item.startTime}}</span></p>
+            <p><span>退出项目时间：</span><span>{{item.endTime}}</span></p>
+            <p><span>投入精力占比：</span><span>{{item.trjlzb}}</span></p>
+            <p><span>任职类型：</span><span>{{item.jobType}}</span></p>
+            <p><span>项目角色：</span><span>{{item.projectRole}}</span></p>
+            <p><span>项目性质：</span><span>{{item.projectProp}}</span></p>
+            <p><span>项目成果：</span><span>{{item.projectResult}}</span></p>
+            <p><span>审核人：</span><span>{{shr}}</span></p>
             <div class="btn">
                 <van-button type="primary" size="small" color="#fc5f10" @click="back(item)" style="font-size:16px">撤回</van-button>
             </div>
         </div>
-        <!-- 添加的信息 -->
+        <!-- 修改的信息 -->
         <div class="headerTag" v-for="(item,index) in listUpdate" :key="item.id">
             <van-tag mark type="warning">已修改的职业资格{{index+1}}</van-tag>
-            <p><span>职业类型：</span><span>{{item.titleType}}</span></p>
-            <p><span>职业名称：</span><span>{{item.titleName}}</span></p>
-            <p><span>证书等级：</span><span>{{item.certificateLevel}}</span></p>
-            <p><span>证书号码：</span><span>{{item.certificateNumber}}</span></p>
-            <p><span>颁发单位：</span><span>{{item.issuingUnit}}</span></p>
-            <p><span>有效期起：</span><span>{{item.startTime}}</span></p>
-            <p><span>有效期止：</span><span>{{item.endTime}}</span></p>
-            <p><span>备注：</span><span>{{item.remarks}}</span></p>
+            <p><span>项目名称：</span><span>{{item.projectName}}</span></p>
+            <p><span>进入项目时间：</span><span>{{item.startTime}}</span></p>
+            <p><span>退出项目时间：</span><span>{{item.endTime}}</span></p>
+            <p><span>投入精力占比：</span><span>{{item.trjlzb}}</span></p>
+            <p><span>任职类型：</span><span>{{item.jobType}}</span></p>
+            <p><span>项目角色：</span><span>{{item.projectRole}}</span></p>
+            <p><span>项目性质：</span><span>{{item.projectProp}}</span></p>
+            <p><span>项目成果：</span><span>{{item.projectResult}}</span></p>
             <p><span>审核人：</span><span>{{shr}}</span></p>
             <div class="btn">
                 <van-button type="primary" size="small" color="#fc5f10" @click="back(item)" style="font-size:16px">撤回</van-button>
             </div>
         </div>
         <van-button type="primary" size="small" color="#fc5f10" @click="backHome" style="width:100%;font-size:16px">返回列表</van-button>
-        <!-- 查看pdf -->
-        <van-popup v-model="showPopup" get-container="body" position="top" :style="{ height: '90%' }">
-            <iframe :src="pdf" width="100%" height="100%"></iframe>
-        </van-popup>
-        <!-- 查看图片 -->
-        <van-image-preview v-model="showPhoto" get-container="body" :images="images" :closeable='true' @close="onClose">
-            
-        </van-image-preview>
     </div>
 </template>
 <script>
-import { Tag,Button,Notify,Dialog,ImagePreview } from 'vant'
-import { backPro,getPro,getShr } from './api'
+import { Tag,Button,Notify,Dialog } from 'vant'
+import { getCheckPro,getShr,backCheckPro } from './api'
 export default {
   data () {
     return {
-        showPhoto: false, //图片
-        images: [],
-        showPopup: false, //pdf和图片
-        pdf: '',
         listAdd:[],
         listUpdate:[],
         shr: ''
@@ -69,7 +56,7 @@ export default {
         let queryData = {
             jobnumber:localStorage.getItem('jobNum')
         }
-        getPro(queryData).then(res=>{
+        getCheckPro(queryData).then(res=>{
             this.listAdd = res.obj.add
             this.listUpdate = res.obj.update
         })
@@ -104,11 +91,11 @@ export default {
                     flag:2
                 }
             }
-            backPro(queryData).then(res=>{
+            backCheckPro(queryData).then(res=>{
                 if(res.code == 1000){
                     Notify({ type: 'success', message: '撤回成功' })
                     // this._getPro()
-                    this.$router.push({name:'perQualification'})
+                    this.$router.push({name:'proExperience'})
                 }else{
                     Notify({ type: 'danger', message: '撤回失败' })
                 }
@@ -122,22 +109,6 @@ export default {
     //取消
     backHome(){
         this.$router.push({name:'proExperience'})
-    },
-    seePdf(item){
-        if(item.filePath == null || item.filePath == ''){
-            Notify({ type: 'danger', message: '没有附件可查看哦~' })
-        }else if(item.filePath.indexOf('pdf') == -1){
-            this.showPhoto = true
-            this.images.push(item.filePath)
-        }else{
-            // this.pdf = item.filePath
-            // this.showPopup =true
-            window.open(item.filePath)
-        }
-    },
-    //关闭事件
-    onClose() {
-        this.images = []
     },
   }
 }

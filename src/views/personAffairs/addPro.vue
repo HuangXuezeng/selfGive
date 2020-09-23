@@ -1,17 +1,16 @@
 <template>
     <div>
         <div>
-            <van-field v-model="startTime" label="开始时间：" @click="startTimeClick"  readonly placeholder="必填"/>
-            <van-field v-model="endTime" label="结束时间：" @click="endTimeClick"  readonly placeholder="必填"/>
-            <van-field v-model="workUnit" label="工作单位：" placeholder="必填"/>
-            <van-field v-model="department" label="任职部门：" placeholder="必填"/>
-            <van-field v-model="station" label="任职岗位：" placeholder="必填"/>
-            <van-field v-model="witness" label="证明人及电话：" placeholder="必填"/>
-            <van-field v-model="description" label="工作内容描述：" rows="1" autosize type="textarea" placeholder="必填"/>
-            <van-field v-model="remarks" label="备注：" placeholder="选填"/>
+            <van-field v-model="projectName" label="项目名称：" placeholder="必填"/>
+            <van-field v-model="startTime" label="进入项目时间：" @click="startTimeClick" readonly placeholder="必填"/>
+            <van-field v-model="endTime" label="退出项目时间：" @click="endTimeClick" readonly placeholder="选填"/>
+            <van-field v-model="trjlzb" label="投入精力占比：" placeholder="必填"/>
+            <van-field v-model="jobType" label="任职类型：" placeholder="必填"/>
+            <van-field v-model="projectRole" label="项目角色：" placeholder="必填"/>
+            <van-field v-model="projectProp" label="项目性质：" placeholder="必填" @click="typeClick" readonly/>
+            <van-field v-model="projectResult" label="项目成果：" placeholder="选填"/>
             <div class="btn">
                 <van-button type="primary" size="small" color="#fc5f10" @click="update" style="font-size:16px">确认添加</van-button>
-                <!-- <van-button type="primary" size="small" color="#fc5f10" @click="back" style="font-size:16px">撤回修改</van-button> -->
                 <van-button type="primary" size="small" color="#fc5f10" @click="backHome" style="font-size:16px">取消</van-button>
             </div>
         </div>
@@ -32,56 +31,67 @@
             @cancel="cancel"
             />
         </van-popup>
+        <!-- 选择任职类型 -->
+        <van-popup v-model="showType" round position="bottom" get-container="body">
+            <van-picker
+                show-toolbar
+                :columns="columns1"
+                @cancel="showType = false"
+                value-key="content"
+                @confirm="confirm1"
+            />
+        </van-popup>
     </div>
 </template>
 <script>
 import { Field,Button,DatetimePicker,Popup,Notify,Dialog } from 'vant'
-import { updateSh,backWork,deleteFile } from './api'
+import { getProType,updatePro } from './api'
 export default {
   data () {
     return {
-        path: '',
-        saveId: '',
+        projectName: '', //项目名称
         startTime: '',
         endTime: '',
-        workUnit: '',
-        department: '',
-        station: '',
-        witness: '',
-        description: '',
-        remarks: '',
+        trjlzb: '', //投入精力占比
+        jobType: '', //任职类型
+        projectRole: '', //项目角色
+        projectProp: '', //项目性质
+        propCode: '', //传给后台项目性质值
+        projectResult: '', //项目成果
         minDate: new Date(2010, 0, 1),
         maxDate: new Date(2025, 10, 1),
         currentDate: new Date(),
         showTime: false,
-        timeFlag: '' //选择时间的标识
+        timeFlag: '', //选择时间的标识
+        showType: false,
+        columns1: [],
     };
   },
   created(){
-    //   this.initData()
+    //获取任职类型
+    getProType().then(res=>{
+        this.columns1 = res.obj
+    })
   },
   methods:{
     //提交确认修改
     update(){
         Dialog.confirm({
             title: '提示',
-            message: '确认提交？'
+            message: '确认提交修改？'
             }).then(() => {
             // on confirm
             let sendData = {
-                workUnit: this.workUnit,
-                department: this.department,
-                station: this.station,
-                witness: this.witness,
-                description: this.description,
-                startTime: this.startTime,
-                endTime: this.endTime,
-                remarks: this.remarks,
-                // recordid: this.$route.params.sData.recordid,
+                projectName:this.projectName,
+                startTime:this.startTime,
+                endTime:this.endTime,
+                trjlzb:this.trjlzb,
+                jobType:this.jobType,
+                projectRole:this.projectRole,
+                projectProp:this.propCode,
+                projectResult:this.projectResult,
                 jobnumber: localStorage.getItem('jobNum'),
                 flag: 2,
-                id: this.saveId,
-                filePath: this.path,
             }
             let strStart = this.startTime.split('-').join('')
             let strEnd = this.endTime.split('-').join('')
@@ -89,25 +99,23 @@ export default {
                 Notify({ type: 'warning', message: '开始时间不得大于结束时间！' })
                 return
             }
-            // console.log(sendData)
-            if( this.workUnit == '' ||
-                this.department == '' ||
-                this.station == '' ||
-                this.witness == '' ||
-                this.description == '' ||
-                this.startTime == '' ||
-                this.endTime == '' ){
-                    Notify({ type: 'danger', message: '您有必填写未填写，请填写后提交！' })
-                }else{
-                    updateSh(sendData).then(res=>{
+            if(this.projectName == null || this.projectName == '' ||
+               this.trjlzb == null || this.trjlzb == '' ||
+               this.jobType == null || this.jobType == '' ||
+               this.projectRole == null || this.projectRole == '' ||
+               this.projectProp == null || this.projectProp == '' ||
+               this.startTime == null || this.startTime == '' ){
+                   Notify({ type: 'danger', message: '您有必填写未填写，请填写后提交！' })
+               }else{
+                   updatePro(sendData).then(res=>{
                         if(res.code == 1000){
-                            Notify({ type: 'success', message: '已提交添加，进入待审核状态' })
-                            this.$router.push({name:'socialExperience'})
+                            Notify({ type: 'success', message: '已提交修改，进入待审核状态' })
+                            this.$router.push({name:'proExperience'})
                         }else{
-                            Notify({ type: 'danger', message: '修改失败' })
+                            Notify({ type: 'danger', message: res.msg })
                         }
                     })
-                }
+               }
             }).catch(() => {
             // on cancel
             Notify({ type: 'danger', message: '已取消修改' })
@@ -116,6 +124,16 @@ export default {
     //取消
     backHome(){
         this.$router.push({name:'proExperience'})
+    },
+    //打开任职类型
+    typeClick(){
+        this.showType = true
+    },
+    //确认选择
+    confirm1(picker){
+        this.propCode = picker.code
+        this.projectProp = picker.content
+        this.showType = false
     },
     //打开时间选择器
     startTimeClick(){
@@ -128,17 +146,14 @@ export default {
     },
     //确认选中时间
     confirm(val){
-        // console.log(val)
-        let strStart = this.startTime.split('-').join('')
-        let strEnd = this.endTime.split('-').join('')
-        // console.log('时间：'+strStart)
-        // console.log('时间：'+this.endTime)
-        if(strStart>strEnd){
-            Notify({ type: 'warning', message: '开始时间不得大于结束时间！' })
-            this.endTime = ''
-        }
         if(this.timeFlag == 1){
             this.endTime = this.formatDate(val)
+            let strStart = this.startTime.split('-').join('')
+            let strEnd = this.endTime.split('-').join('')
+            if(strStart>strEnd){
+                Notify({ type: 'warning', message: '开始时间不得大于结束时间！' })
+            // this.endTime = ''
+            }
         }else{
             this.startTime = this.formatDate(val)
         }
@@ -155,17 +170,13 @@ export default {
         var d = date.getDate();    d = d < 10 ? ('0' + d) : d;       
         return y + '-' + m + '-' + d 
     },
-    //关闭事件
-    onClose() {
-        this.images = []
-    },
   }
 }
 </script>
 <style lang="stylus" scoped>
     .btn{
         padding 10px
-        text-align center
+        text-align center 
     }
     .uploadbtn{
         padding 60px 10px 0 10px
