@@ -449,23 +449,4 @@ export function backCheckPro (queryData) {
     data: qs.stringify(queryData)
   })
 }
-/**
- * 团队培育模块Api
- * @param {*} queryData 请求参数，默认{}
- */
-//获取详情
-export function findTeamBuildingInfo (queryData) {
-  return fetch({
-    url: `/kukacms/self/findTeamBuildingInfo`,
-    method: 'post',
-    data: qs.stringify(queryData)
-  })
-}
-//添加或修改接口flag(1代表修改2代表新增)
-export function updateTeamBuildingInfo (queryData) {
-  return fetch({
-    url: `/kukacms/self/updateTeamBuildingInfo`,
-    method: 'post',
-    data: qs.stringify(queryData)
-  })
-}
+

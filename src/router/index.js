@@ -265,12 +265,22 @@ export default new Router({
         {
           path: '/teamFoster',
           name: 'teamFoster',
-          component: () => import('@/views/personAffairs/teamFoster'),
+          component: () => import('@/views/personAffairs/teamFoster/teamFoster'),
         },
         {
           path: '/addTeamFoster',
           name: 'addTeamFoster',
-          component: () => import('@/views/personAffairs/addTeamFoster'),
+          component: () => import('@/views/personAffairs/teamFoster/addTeamFoster'),
+        },
+        {
+          path: '/alreadyTeamFoster',
+          name: 'alreadyTeamFoster',
+          component: () => import('@/views/personAffairs/teamFoster/alreadyTeamFoster'),
+        },
+        {
+          path: '/editTeamFoster',
+          name: 'editTeamFoster',
+          component: () => import('@/views/personAffairs/teamFoster/editTeamFoster'),
         },
       ]
     },

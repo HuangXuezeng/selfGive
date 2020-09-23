@@ -55,12 +55,13 @@
             type="primary"
             size="small"
             color="#ccc"
+            @click="update(item)"
             style="width:100%;font-size:16px"
           >修改</van-button>
         </div>
       </div>
     </van-collapse>
-    
+
     <div class="btn">
       <van-button
         type="primary"
@@ -74,6 +75,7 @@
         size="small"
         color="#fc5f10"
         style="width:100%;font-size:16px;margin-top:10px"
+         @click="jumplistalready"
       >审核列表</van-button>
     </div>
   </div>
@@ -88,7 +90,7 @@ import {
   ImagePreview,
   Notify
 } from "vant";
-import { findTeamBuildingInfo } from "./api";
+import { findTeamBuildingInfo } from "./teamFosterApi";
 export default {
   data() {
     return {
@@ -102,7 +104,7 @@ export default {
   methods: {
     //查询团队明细
     findTeam() {
-      localStorage.setItem('jobNum','9037513')
+      localStorage.setItem('jobNum','9050104')
       let queryData = { jobnumber: localStorage.getItem("jobNum") };
       findTeamBuildingInfo(queryData).then(res => {
         if (res.code == "1000") {
@@ -114,6 +116,13 @@ export default {
     },
     addTeam(){
        this.$router.push({name:'addTeamFoster'})
+    },
+    jumplistalready(){
+      this.$router.push({name:'alreadyTeamFoster'})
+    },
+    update(item){
+      debugger
+       this.$router.push({name:'editTeamFoster',params:{sData:item}})
     }
 
   }
