@@ -40,6 +40,7 @@ export default {
                   // that.save_userId(res.userId)
                   localStorage.setItem('jobNum',res.jobNumber)
                   localStorage.setItem('telNum',res.mobile) //手机号
+                   localStorage.setItem('userinfo',JSON.stringify(res)) //个人信息
                 })
               },
               onFail: function(err) {
@@ -65,6 +66,7 @@ export default {
                 // that.save_userId(res.userId)
                 localStorage.setItem('jobNum',res.jobNumber)
                 localStorage.setItem('telNum',res.mobile) //手机号
+                localStorage.setItem('userinfo',JSON.stringify(res)) //个人信息
               })
             },
             onFail : function(err) {

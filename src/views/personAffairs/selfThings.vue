@@ -3,14 +3,14 @@
       <div class="box clearfix">
         <div class="box_left" v-if="flag">
           <!-- 左导航栏 -->
-          <van-sidebar 
-          v-model="activeKey" 
+          <van-sidebar
+          v-model="activeKey"
           class="van-sidebar"
           @change="handChange">
-              <van-sidebar-item 
+              <van-sidebar-item
               v-for="item in gerenList"
-              :key="item.recordid" 
-              :title="item.menu" 
+              :key="item.recordid"
+              :title="item.menu"
               :to="item.url"/>
           </van-sidebar>
         </div>
@@ -57,7 +57,7 @@ export default {
         this.$store.state.type = newVal
       }
     }
-    
+
   },
   created(){
     this._getMenu()
@@ -71,6 +71,19 @@ export default {
       }
       getMenu(queryData).then(res=>{
         this.gerenList = res.obj
+        if(localStorage.getItem('userinfo')){
+          let userinfo = JSON.parse(localStorage.getItem('userinfo'))
+           if(userinfo.isLeader != 'Y'){
+             for(let i = 0; i<=this.gerenList.length;i++){
+               if(this.gerenList[i].url == "teamFoster"){
+                 this.gerenList.splice(i, 1);
+               }
+             }
+          }
+        }
+        // let userinfo = JSON.parse(localStorage.getItem('userinfo'))
+
+
       })
     },
     //隐藏导航栏
