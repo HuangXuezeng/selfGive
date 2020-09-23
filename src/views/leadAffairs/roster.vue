@@ -527,7 +527,10 @@ export default {
         this.form.idStr = this.form.department
         let queryData = this.form
         querySome(queryData).then(res=>{
-            this.tableData = res.obj
+            this.tableData =  res.obj
+            this.form.department = this.deptVal = ''
+            this.form.jobnumber = ''
+            this.form.name = ''
         })
         // console.log(this.form)
     },
@@ -763,20 +766,34 @@ export default {
             //接受数据
             this.tableData = res.obj
             //清空搜索框
-            this.form.currentState = ''
-            this.form.education = ''
-            this.form.schoolProp = ''
-            this.form.bzlx = ''
-            this.form.category = ''
-            this.form.rank = ''
-            this.form.postOne = ''
-            this.form.postTwo = ''
-            this.form.zyxbq = ''
-            this.form.isVeteran = ''
-            this.form.isPerson = ''
-            this.form.isTrain = ''
-            this.form.isCompete = ''
-            this.form.personType = ''
+            this.form.currentState = this.stateVal = ''
+            this.form.sex = this.sex = ''
+            this.form.education = this.xueliVal = ''
+            this.form.schoolProp = this.schoolVal = ''
+            this.form.bzlx = this.bianzhi = ''
+            this.form.category = this.zhileiVal = ''
+            this.form.rank = this.zhijiVal = ''
+            this.form.postOne = this.fenlei1Val = ''
+            this.form.postTwo = this.fenlei2Val = ''
+            this.form.zyxbq = this.zhuanyeVal = ''
+            this.form.isVeteran = this.junrenVal = ''
+            this.form.isPerson = this.qinshuVal = ''
+            this.form.isTrain = this.peixunVal = ''
+            this.form.isCompete = this.jingyeVal = ''
+            this.form.personType = this.leibieVal = ''
+            this.form.age  = ''
+            this.form.schoolName  = ''
+            this.form.walk  = ''
+            this.form.post  = ''
+            this.form.entryStartTime  = ''
+            this.form.entryEndTime  = ''
+            this.form.entryAge  = ''
+            this.form.syjsEndTime  = ''
+            this.form.syjsStartTime  = ''
+            this.form.sjzzStartTime  = ''
+            this.form.sjzzEndTime  = ''
+            this.form.company  = ''
+            this.form.zcName  = ''
         })
         this.showPick = false
     },

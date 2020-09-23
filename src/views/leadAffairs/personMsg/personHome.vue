@@ -15,7 +15,7 @@
               </div>
           </div> 
         </div>
-        <div class="box_left" v-if="flag">
+        <div class="box_left" v-if="flag" ref="left">
           <!-- 左导航栏 -->
           <van-sidebar 
           v-model="activeKey" 
@@ -123,7 +123,10 @@ export default {
       })
     },
   },
-  mounted() {},
+  mounted() {
+    // console.log(this.$refs.left.style)
+    // this.$refs.left.style.height =  981+'px'
+  },
 }
 </script>
 <style lang="stylus" scoped>
@@ -166,7 +169,6 @@ export default {
     }
     .box_left{
       float left
-      margin-top 18px
       background-color #f7f8fa
       .van-sidebar{
         overflow-y auto

@@ -208,7 +208,7 @@ export default {
   },
   created(){
     // localStorage.setItem('jobNum',9124730)
-    // localStorage.setItem('jobNum',9050104)
+    localStorage.setItem('jobNum',9050104)
     // localStorage.setItem('jobNum',9102171)
     // localStorage.setItem('jobNum',9078825)
     // localStorage.setItem('jobNum',9107021)
@@ -447,7 +447,6 @@ export default {
                     // that.save_userId(res.userId)
                     localStorage.setItem('jobNum',res.jobNumber)
                     localStorage.setItem('telNum',res.mobile) //手机号
-                    localStorage.setItem('userinfo',JSON.stringify(res)) //个人信息
                     that.getPerson()
                     that._getMenu() //获取首页显示的菜单
                     that._getMenus() //获取弹窗要排序显示的菜单
@@ -476,7 +475,6 @@ export default {
                   // that.save_userId(res.userId)
                   localStorage.setItem('jobNum',res.jobNumber)
                   localStorage.setItem('telNum',res.mobile) //手机号
-                  localStorage.setItem('userinfo',JSON.stringify(res)) //个人信息
                   console.log('首页获取的工号'+localStorage.getItem('jobNum'))
                   that.getPerson()
                   that._getMenu() //获取首页显示的菜单
