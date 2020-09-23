@@ -149,7 +149,7 @@ import { findAdd, deleteTeamBuildingInfo } from "./teamFosterApi";
 export default {
   data() {
     return {
-      activeNames: [0],
+      activeNames: [],
       activeEditNames:[],
       addteamlist: [],
       updateteamlist: []
@@ -161,14 +161,17 @@ export default {
   methods: {
     //查询团队明细
     findTeam() {
-      localStorage.setItem("jobNum", "9050104");
+      // localStorage.setItem("jobNum", "9050104");
       let queryData = { jobnumber: localStorage.getItem("jobNum") };
       findAdd(queryData).then(res => {
         if (res.code == "1000") {
           this.addteamlist = res.obj.add;
           this.updateteamlist = res.obj.update;
-          if(this.addteamlist.length == 0){
-            this.activeEditNames=[0]
+          for(let i=0;i<=this.addteamlist.length;i++ ){
+            this.activeNames.push(i)
+          }
+          for(let k=0;k<=this.updateteamlist.length;k++ ){
+            this.activeEditNames.push(k)
           }
         } else {
           Toast.fail(res.msg);

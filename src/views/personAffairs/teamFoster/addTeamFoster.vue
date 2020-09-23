@@ -3,7 +3,7 @@
     <van-form @submit="addTeam" label-width="100">
       <van-field name="stepper" label="团队规模">
         <template #input>
-          <van-stepper v-model="value" theme="round" button-size="22" disable-input />
+          <van-stepper v-model="addForm.a8TDPYXX014" integer />
         </template>
       </van-field>
       <van-field
@@ -105,7 +105,7 @@ export default {
         a8TDPYXX013Name: "", //团队所属机构：
         a8TDPYXX013: "",
         //测试用
-        a0190: "9050104"
+        a0190: localStorage.getItem('jobNum')
       },
       selecttype: "",
       selectNametype: ""
@@ -151,7 +151,7 @@ export default {
         } else {
           Toast.fail(res.msg);
         }
-        this.$router.push({ name: "alreadyTeamFoster" });
+        this.$router.push({ name: "teamFoster" });
       });
     },
     //工具

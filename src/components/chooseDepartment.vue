@@ -31,7 +31,7 @@
 
 <script>
 import { getOrz } from "@/views/leadAffairs/api.js";
-import { Toast } from "vant";
+import { Notify, Toast} from "vant";
 export default {
   name: "chooseDepartment",
   props: {
@@ -41,7 +41,11 @@ export default {
     },
     opennode:{
       type: Number,
+    },
+    selectName:{
+      type: String,
     }
+
   },
   data() {
     return {
@@ -68,6 +72,7 @@ export default {
       this.reqireRule = [{ required: true, message: "请选择部门" }];
       this.deptPlacehoder = '必填'
     }
+    this.selectedDepartment = this.selectName
   },
   mounted(){
 
@@ -107,6 +112,8 @@ export default {
         this.selectOrg.orgsid.push(data.deptId);
         this.selectedDepartment = data.content;
         this.transferData(data);
+        this.showPickDept = false;
+        Notify('选择成功');
       } else if (
         indexs >= 0 &&
         this.selectOrg.orgsid.length === 1 &&
@@ -116,6 +123,8 @@ export default {
         this.transferData(data);
         this.selectedDepartment = data.content;
         this.selectOrg.orgsid = [];
+        this.showPickDept = false;
+        Notify('选择成功');
       }
     },
     transferData(data) {

@@ -3,7 +3,7 @@
     <van-form @submit="addTeam" label-width="100">
       <van-field name="stepper" label="团队规模">
         <template #input>
-          <van-stepper v-model="addForm.a8TDPYXX014" theme="round" button-size="22" disable-input />
+          <van-stepper v-model="addForm.a8TDPYXX014" integer />
         </template>
       </van-field>
       <van-field
@@ -51,7 +51,7 @@
           @cancel="showPicker = false"
         />
       </van-popup>
-      <choosedepartment @transferFa="selctdept" :Farequired="true" :opennode='addForm.a8TDPYXX013'></choosedepartment>
+      <choosedepartment @transferFa="selctdept" :Farequired="true" :opennode='addForm.a8TDPYXX013' :selectName='addForm.a8TDPYXX013Name'></choosedepartment>
       <van-row type="flex" justify="center">
         <van-col span="8">
           <van-button
@@ -60,7 +60,7 @@
             color="#fc5f10"
             style="font-size:16px"
             native-type="submit"
-          >确认添加</van-button>
+          >确认修改</van-button>
         </van-col>
         <van-col span="6">
           <van-button
@@ -104,8 +104,6 @@ export default {
         a8TDPYXX020name: "",
         a8TDPYXX013Name: "", //团队所属机构：
         a8TDPYXX013: "",
-        //测试用
-        a0190: "9050104"
       },
       selecttype: "",
       selectNametype: ""
@@ -114,6 +112,8 @@ export default {
   created(){
     let sDatas = this.$route.params.sData
     this.addForm = sDatas
+    //测试用
+    this.addForm.a0190 =  localStorage.getItem('jobNum')
   },
   methods: {
     onConfirm(value) {
@@ -148,14 +148,15 @@ export default {
     },
     //添加团队
     addTeam() {
-      this.addForm.flag = 2;
+      this.addForm.flag = 1;
       updateTeamBuildingInfo(this.addForm).then(res => {
         if (res.code == "1000") {
-          Notify({ type: "success", message: "添加成功" });
+          Notify({ type: "success", message: "修改成功" });
+
         } else {
           Toast.fail(res.msg);
         }
-        this.$router.push({ name: "editTeamFoster" });
+         this.$router.push({ name: "teamFoster" });
       });
     },
     //工具

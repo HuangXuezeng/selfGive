@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- <loadingspin></loadingspin> -->
     <van-collapse v-model="activeNames">
       <div v-for="(item,index) in teamlist" :key="item.recordid">
         <van-collapse-item :name="index">
@@ -91,10 +92,14 @@ import {
   Notify
 } from "vant";
 import { findTeamBuildingInfo } from "./teamFosterApi";
+import  loadingSpin  from "@/components/loadingSpin.vue";
 export default {
+  components: {
+    loadingspin: loadingSpin
+  },
   data() {
     return {
-      activeNames: [0],
+      activeNames: [],
       teamlist: []
     };
   },
@@ -104,11 +109,14 @@ export default {
   methods: {
     //查询团队明细
     findTeam() {
-      localStorage.setItem('jobNum','9050104')
+      // localStorage.setItem('jobNum','9050104')
       let queryData = { jobnumber: localStorage.getItem("jobNum") };
       findTeamBuildingInfo(queryData).then(res => {
         if (res.code == "1000") {
           this.teamlist = res.obj;
+          for(let i=0;i<=this.teamlist.length;i++ ){
+            this.activeNames.push(i)
+          }
         } else {
           Toast.fail(res.msg);
         }
@@ -121,7 +129,9 @@ export default {
       this.$router.push({name:'alreadyTeamFoster'})
     },
     update(item){
-      debugger
+      if(item.sign == 1){
+        return
+      }
        this.$router.push({name:'editTeamFoster',params:{sData:item}})
     }
 
