@@ -5,7 +5,11 @@
             <p style="padding-left:16px">机构单位：<span>{{organ}}</span></p>
             <p style="padding-left:16px">任职岗位：<span>{{station}}</span></p>
             <p style="padding-left:16px">证明人：<span>{{witness}}</span></p>
-            <van-field v-model="mainWork" label="主要工作职责：" placeholder="必填"/>
+            <van-field v-model="mainWork" label="主要工作职责：" placeholder="必填">
+                <template #button>
+                    <i size="small" type="primary" @click="showAlert8"><van-icon name="question-o" color="red"/></i>
+                </template>
+            </van-field>
             <div class="btn">
                 <van-button type="primary" size="small" color="#fc5f10" @click="update" style="font-size:16px">确认修改</van-button>
                 <van-button type="primary" size="small" color="#fc5f10" @click="backHome" style="font-size:16px">取消</van-button>
@@ -76,6 +80,15 @@ export default {
         this.organ = famData.organ
         this.station = famData.station
         this.witness = famData.witness
+    },
+    //提示信息
+    showAlert8() {
+      this.$createDialog({
+        type: 'alert',
+        title: '提示',
+        content: '负责/协助XXXX工作，在此期间取得XXX成果',
+        icon: 'cubeic-alert'
+      }).show()
     },
   }
 }

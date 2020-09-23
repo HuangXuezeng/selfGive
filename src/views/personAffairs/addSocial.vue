@@ -7,7 +7,11 @@
             <van-field v-model="department" label="任职部门：" placeholder="必填"/>
             <van-field v-model="station" label="任职岗位：" placeholder="必填"/>
             <van-field v-model="witness" label="证明人及电话：" placeholder="必填"/>
-            <van-field v-model="description" label="工作内容描述：" rows="1" autosize type="textarea" placeholder="必填"/>
+            <van-field v-model="description" label="工作内容描述：" rows="1" autosize type="textarea" placeholder="必填">
+                <template #button>
+                    <i size="small" type="primary" @click="showAlert8"><van-icon name="question-o" color="red"/></i>
+                </template>
+            </van-field>
             <van-field v-model="remarks" label="备注：" placeholder="选填"/>
             <p style="padding:10px 10px 10px 16px;color:#323233;border-bottom:1px solid #eee;font-size:14px">
                 <span style="padding-right:5px">请上传离职证明：</span><span><van-button type="primary" color="#ccc" size="mini" @click="dialogOpen" style="font-size:12px;padding:2px">上传</van-button></span>
@@ -255,6 +259,14 @@ export default {
     //关闭事件
     onClose() {
         this.images = []
+    },
+    showAlert8() {
+      this.$createDialog({
+        type: 'alert',
+        title: '提示',
+        content: '负责/协助XXXX工作，在此期间取得XXX成果',
+        icon: 'cubeic-alert'
+      }).show()
     },
   }
 }

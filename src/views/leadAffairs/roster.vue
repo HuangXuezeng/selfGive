@@ -116,6 +116,7 @@
         </van-popup>
         <!-- 选择部门弹出框 -->
         <van-popup v-model="showPickDept" position="top" :style="{ height: '70%' }" get-container="body" closeable>
+            <van-checkbox v-model="checked" @change="changeDept">是否包含下级部门</van-checkbox>
             <el-tree 
             :data="deptData" 
             ref="tree"
@@ -238,6 +239,7 @@ import draggable from 'vuedraggable'
 export default {
   data () {
     return {
+        checked: true, //是否包含下级部门
         loading: false,
         finished: false,
         form:{
@@ -447,8 +449,6 @@ export default {
   },
   created(){
     this.getState()
-    this._getOrz()
-    this._queryPerson() //获取人员
     this._queryDeptIdName() //获取部门名字和部门id
   },
   methods:{
@@ -466,22 +466,31 @@ export default {
     },
     //获取部门和部门id
     _queryDeptIdName(){
-        let queryData = {
-            jobnumber: 6006212
+        let isAll = 'Y'
+        if(isAll == 'Y'){
+            this._getOrz() //获取部门
+            this._queryPerson() //获取人员
+        }else{
+            let queryData = {
+                jobnumber: 6006212
+            }
+            queryDeptIdName(queryData).then(res=>{
+                this.currentDept = res.obj.currentDepartment
+                this.deptIds = res.obj.deptIds
+                this.deptData.push(res.obj.departments)
+                this.tableData = res.obj.employees
+            })
         }
-        queryDeptIdName(queryData).then(res=>{
-            this.currentDept = res.obj.currentDepartment
-            this.deptIds = res.obj.deptIds
-        })
     },
     //获取组织下的部门
     _getOrz(){
         let queryData = {
             jobnumber: 6006212
-            // jobnumber: 9107021
         }
         getOrz(queryData).then(res=>{
             this.deptData.push(res.obj.departments)
+            this.currentDept = res.obj.currentDepartment
+            this.deptIds = res.obj.deptIds
         })
     },
     _queryPerson(){
@@ -518,9 +527,9 @@ export default {
         this.form.idStr = this.form.department
         let queryData = this.form
         querySome(queryData).then(res=>{
-
+            this.tableData = res.obj
         })
-        console.log(this.form)
+        // console.log(this.form)
     },
     //全选
     checkAll() {
@@ -751,6 +760,9 @@ export default {
         this.form.idStr = this.form.department
         let queryData = this.form
         querySome(queryData).then(res=>{
+            //接受数据
+            this.tableData = res.obj
+            //清空搜索框
             this.form.currentState = ''
             this.form.education = ''
             this.form.schoolProp = ''
@@ -1360,6 +1372,10 @@ export default {
         queryPerson(queryData).then(res=>{
             this.tableData.push(res.obj)
         })
+    },
+    //是否包含下级部门
+    changeDept(checked){
+        console.log(checked)
     },
     ...mapMutations({
         save_jobNum:'save_jobNum'

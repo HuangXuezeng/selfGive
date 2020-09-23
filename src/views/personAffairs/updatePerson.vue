@@ -41,10 +41,14 @@
             <van-field 
             v-model="a01003"
             label-width="7.4em" 
-            @click="showEnglish = true" 
+            @click-input="showEnglish = true" 
             label="英语是否可做工作语言：" 
             readonly 
-            placeholder="必填"/>
+            placeholder="必填">
+            <template #button>
+                    <i size="small" type="primary" @click="showAlert8"><van-icon name="question-o" color="red"/></i>
+                </template>
+            </van-field>
             <p style="padding-left:16px;color:#323233">
                 请上传身份证（双面）/体检报告/银行卡：
                 <span><van-button type="primary" color="#ccc" size="mini" @click="dialogOpen" style="font-size:12px;padding:2px">上传</van-button></span>
@@ -633,6 +637,14 @@ export default {
         type: 'alert',
         title: '提示',
         content: '请按照正确格式填写，如2020.08.26-2040.08.25',
+        icon: 'cubeic-alert'
+      }).show()
+    },
+    showAlert8() {
+      this.$createDialog({
+        type: 'alert',
+        title: '提示',
+        content: '是否能在全英语环境下正常开展工作',
         icon: 'cubeic-alert'
       }).show()
     },

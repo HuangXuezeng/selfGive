@@ -4,11 +4,23 @@
             <van-field v-model="projectName" label="项目名称：" placeholder="必填"/>
             <van-field v-model="startTime" label="进入项目时间：" @click="startTimeClick" readonly placeholder="必填"/>
             <van-field v-model="endTime" label="退出项目时间：" @click="endTimeClick" readonly placeholder="选填"/>
-            <van-field v-model="trjlzb" label="投入精力占比：" placeholder="必填"/>
-            <van-field v-model="jobType" label="任职类型：" placeholder="必填"/>
+            <van-field v-model="trjlzb" label="投入精力占比：" placeholder="必填">
+                <template #button>
+                    <i size="small" type="primary" @click="showAlert7"><van-icon name="question-o" color="red"/></i>
+                </template>
+            </van-field>
+            <van-field v-model="jobType" label="任职类型：" placeholder="必填">
+                <template #button>
+                    <i size="small" type="primary" @click="showAlert8"><van-icon name="question-o" color="red"/></i>
+                </template>
+            </van-field>
             <van-field v-model="projectRole" label="项目角色：" placeholder="必填"/>
             <van-field v-model="projectProp" label="项目性质：" placeholder="必填" @click="typeClick" readonly/>
-            <van-field v-model="projectResult" label="项目成果：" placeholder="选填"/>
+            <van-field v-model="projectResult" label="项目成果：" placeholder="选填">
+                <template #button>
+                    <i size="small" type="primary" @click="showAlert9"><van-icon name="question-o" color="red"/></i>
+                </template>
+            </van-field>
             <div class="btn">
                 <van-button type="primary" size="small" color="#fc5f10" @click="update" style="font-size:16px">确认修改</van-button>
                 <van-button type="primary" size="small" color="#fc5f10" @click="backHome" style="font-size:16px">取消</van-button>
@@ -184,6 +196,30 @@ export default {
         var m = date.getMonth() + 1;    m = m < 10 ? '0' + m : m;    
         var d = date.getDate();    d = d < 10 ? ('0' + d) : d;       
         return y + '-' + m + '-' + d 
+    },
+    showAlert7() {
+      this.$createDialog({
+        type: 'alert',
+        title: '提示',
+        content: '如60%，根据自身精力投入情况选择百分数',
+        icon: 'cubeic-alert'
+      }).show()
+    },
+    showAlert8() {
+      this.$createDialog({
+        type: 'alert',
+        title: '提示',
+        content: '选兼职或全职，二选一',
+        icon: 'cubeic-alert'
+      }).show()
+    },
+    showAlert9() {
+      this.$createDialog({
+        type: 'alert',
+        title: '提示',
+        content: '填写定量化的项目目标达成情况',
+        icon: 'cubeic-alert'
+      }).show()
     },
   }
 }
