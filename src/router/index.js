@@ -261,6 +261,17 @@ export default new Router({
           name: 'checkwork',
           component: () => import('@/views/personAffairs/checkwork'),
         },
+        //团队培育
+        {
+          path: '/teamFoster',
+          name: 'teamFoster',
+          component: () => import('@/views/personAffairs/teamFoster'),
+        },
+        {
+          path: '/addTeamFoster',
+          name: 'addTeamFoster',
+          component: () => import('@/views/personAffairs/addTeamFoster'),
+        },
       ]
     },
     //我的团队----------------------------------------------------------------------
