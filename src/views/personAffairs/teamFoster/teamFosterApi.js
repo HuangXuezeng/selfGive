@@ -32,7 +32,15 @@ export function findAdd (queryData) {
 //（修改flag为1xinz flag为2）
 export function deleteTeamBuildingInfo (queryData) {
   return fetch({
-    url: `kukacms/self/deleteTeamBuildingInfo`,
+    url: `/kukacms/self/deleteTeamBuildingInfo`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//（修改flag为1xinz flag为2）
+export function findTeamBuildingJGLJInfo (queryData) {
+  return fetch({
+    url: `/kukacms/self/findTeamBuildingJGLJInfo`,
     method: 'post',
     data: qs.stringify(queryData)
   })

@@ -6,6 +6,7 @@
       label="部门"
       :placeholder="deptPlacehoder"
       :rules="reqireRule"
+      type="textarea"
       readonly
     />
     <van-popup
@@ -23,7 +24,7 @@
         :props="props"
         show-checkbox
         :check-strictly="true"
-        :default-expanded-keys='openlist'
+        :default-expanded-keys="openlist"
       ></el-tree>
     </van-popup>
   </div>
@@ -31,7 +32,8 @@
 
 <script>
 import { getOrz } from "@/views/leadAffairs/api.js";
-import { Notify, Toast} from "vant";
+import { findTeamBuildingJGLJInfo } from "@/views/personAffairs/teamFoster/teamFosterApi.js";
+import { Notify, Toast } from "vant";
 export default {
   name: "chooseDepartment",
   props: {
@@ -39,13 +41,12 @@ export default {
       type: Boolean,
       default: false
     },
-    opennode:{
-      type: Number,
+    opennode: {
+      type: Number
     },
-    selectName:{
-      type: String,
+    selectName: {
+      type: String
     }
-
   },
   data() {
     return {
@@ -62,21 +63,22 @@ export default {
         orgsid: []
       },
       reqireRule: [],
-      deptPlacehoder:'请选择部门',
-      openlist:[]
+      deptPlacehoder: "请选择部门",
+      openlist: [],
+      onSelected:'',
+      firstIn:1
     };
   },
   created() {
     this._getOrz();
     if (this.Farequired) {
       this.reqireRule = [{ required: true, message: "请选择部门" }];
-      this.deptPlacehoder = '必填'
+      this.deptPlacehoder = "必填";
     }
-    this.selectedDepartment = this.selectName
-  },
-  mounted(){
 
+    this.selectedDepartment = this.selectName;
   },
+  mounted() {},
   methods: {
     //获取组织下的部门
     _getOrz() {
@@ -90,45 +92,75 @@ export default {
     //选择部门
     pickDept() {
       this.showPickDept = true;
-      this.$nextTick(() =>{
-      this.$refs.tree.setChecked({deptId:this.opennode}, true);
-      this.openlist = [this.opennode]
-    })
+      this.$nextTick(() => {
+        this.$refs.tree.setChecked({ deptId: this.opennode }, true);
+        this.openlist = [this.opennode];
+        // this.selectOrg.orgsid.push({deptId: this.opennode,content:this.selectName});
+      });
     },
     //选择时触发
     handleCheckChange(data, checked, indeterminate) {
-      // 获取当前选择的id在数组中的索引
-      const indexs = this.selectOrg.orgsid.indexOf(data.deptId);
       // 如果不存在数组中，并且数组中已经有一个id并且checked为true的时候，代表不能再次选择。
-      if (indexs < 0 && this.selectOrg.orgsid.length === 1 && checked) {
-        debugger
-        Toast.fail("只能选择一个部门");
+      if(data.deptId  ==  this.onSelected){
+        this.onSelected = ''
+        return
+      }
+      if (this.selectOrg.orgsid.length === 1 && checked) {
+        // Toast.fail("只能选择一个部门");
         // 设置已选择的节点为false 很重要
-        this.$refs.tree.setChecked(data, false);
+          this.$refs.tree.setChecked(this.selectOrg.orgsid[0], false);
+          this.onSelected = this.selectOrg.orgsid[0].deptId
+          this.selectOrg.orgsid = [];
+          this.selectOrg.orgsid.push(data);
+          let assignData = Object.assign({}, data);
+          this.mechanismPath(assignData);
+          this.showPickDept = false;
+          Notify("选择成功");
+
       } else if (this.selectOrg.orgsid.length === 0 && checked) {
         // 发现数组为空 并且是已选择
         // 防止数组有值，首先清空，再push
         this.selectOrg.orgsid = [];
-        this.selectOrg.orgsid.push(data.deptId);
-        this.selectedDepartment = data.content;
-        this.transferData(data);
-        this.showPickDept = false;
-        Notify('选择成功');
+        this.selectOrg.orgsid.push(data);
+        // this.selectedDepartment = data.content;
+        let assignData = Object.assign({}, data);
+        this.mechanismPath(assignData);
+        if(this.firstIn == 1&&this.selectName){
+          this.firstIn++
+        }else{
+          this.showPickDept = false;
+          this.onSelected=''
+          Notify("选择成功");
+        }
+
       } else if (
-        indexs >= 0 &&
         this.selectOrg.orgsid.length === 1 &&
         !checked
       ) {
         // 再次直接进行赋值为空操作
-        this.transferData(data);
-        this.selectedDepartment = data.content;
+        let assignData = { content: "", deptId: "" };
+        this.transferData(assignData);
+        this.selectedDepartment = "";
         this.selectOrg.orgsid = [];
-        this.showPickDept = false;
-        Notify('选择成功');
+        this.onSelected=''
+
       }
     },
     transferData(data) {
       this.$emit("transferFa", data);
+    },
+    //查询机构路径
+    mechanismPath(data) {
+      let queryDta = { deptId: data.deptId };
+      findTeamBuildingJGLJInfo(queryDta).then(res => {
+        if (res.code == 1000) {
+          data.content = res.obj;
+          this.selectedDepartment = data.content;
+          this.transferData(data);
+        } else {
+          Notify(res.msg);
+        }
+      });
     }
   }
 };

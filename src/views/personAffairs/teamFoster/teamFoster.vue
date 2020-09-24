@@ -19,7 +19,7 @@
           </p>
           <p>
             <span>继任者1成熟度：</span>
-            <span>{{item.a8TDPYXX016? item.a8TDPYXX016 :'无'}}</span>
+            <span>{{item.a8TDPYXX016? item.a8TDPYXX016name :'无'}}</span>
           </p>
           <p>
             <span>继任者2：</span>
@@ -27,7 +27,7 @@
           </p>
           <p>
             <span>继任者2成熟度：</span>
-            <span>{{item.a8TDPYXX018? item.a8TDPYXX018 :'无'}}</span>
+            <span>{{item.a8TDPYXX018? item.a8TDPYXX018name :'无'}}</span>
           </p>
           <p>
             <span>继任者3：</span>
@@ -35,7 +35,7 @@
           </p>
           <p>
             <span>继任者3成熟度：</span>
-            <span>{{item.a8TDPYXX020? item.a8TDPYXX020 :'无'}}</span>
+            <span>{{item.a8TDPYXX020? item.a8TDPYXX020name :'无'}}</span>
           </p>
           <p>
             <span>团队所属机构：</span>
@@ -142,4 +142,8 @@ export default {
   .btn{
         padding 10px
       }
+  p{
+      padding 5px 0 5px 5px
+      border-bottom  1px solid #eee
+  }
 </style>

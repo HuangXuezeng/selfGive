@@ -6,6 +6,7 @@
           <van-stepper v-model="addForm.a8TDPYXX014" integer />
         </template>
       </van-field>
+      <choosedepartment @transferFa="selctdept" :Farequired="true" :opennode='addForm.a8TDPYXX013' :selectName='addForm.a8TDPYXX013Name'></choosedepartment>
       <van-field
         v-model.trim="addForm.a8TDPYXX015"
         name="继任者1"
@@ -33,7 +34,7 @@
         placeholder="选填"
         @click="selectProficiency('a8TDPYXX018name')"
       />
-      <van-field v-model.trim="addForm.a8TDPYXX019" name="继任者3" label="继任者3" placeholder="必填" />
+      <van-field v-model.trim="addForm.a8TDPYXX019" name="继任者3" label="继任者3" placeholder="选填" />
       <van-field
         readonly
         clickable
@@ -43,15 +44,16 @@
         placeholder="选填"
         @click="selectProficiency('a8TDPYXX020name')"
       />
-      <van-popup v-model="showPicker" position="bottom">
+      <van-popup v-model="showPicker" position="bottom"  get-container="body">
         <van-picker
           show-toolbar
           :columns="columns"
           @confirm="onConfirm"
           @cancel="showPicker = false"
+
         />
       </van-popup>
-      <choosedepartment @transferFa="selctdept" :Farequired="true" :opennode='addForm.a8TDPYXX013' :selectName='addForm.a8TDPYXX013Name'></choosedepartment>
+
       <van-row type="flex" justify="center">
         <van-col span="8">
           <van-button
@@ -152,7 +154,6 @@ export default {
       updateTeamBuildingInfo(this.addForm).then(res => {
         if (res.code == "1000") {
           Notify({ type: "success", message: "修改成功" });
-
         } else {
           Toast.fail(res.msg);
         }
