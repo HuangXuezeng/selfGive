@@ -105,11 +105,13 @@ export default {
                 jobnumber: localStorage.getItem('jobNum'),
                 flag: 2,
             }
-            let strStart = this.startTime.split('-').join('')
-            let strEnd = this.endTime.split('-').join('')
-            if(strStart>strEnd){
-                Notify({ type: 'warning', message: '开始时间不得大于结束时间！' })
-                return
+            if(this.endTime !== ''){
+                let strStart = this.startTime.split('-').join('')
+                let strEnd = this.endTime.split('-').join('')
+                if(strStart>strEnd){
+                    Notify({ type: 'warning', message: '开始时间不得大于结束时间！' })
+                    return
+                }
             }
             if(this.projectName == null || this.projectName == '' ||
                this.trjlzb == null || this.trjlzb == '' ||

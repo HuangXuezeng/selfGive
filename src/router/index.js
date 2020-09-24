@@ -308,6 +308,12 @@ export default new Router({
           name: 'retention',
           component: () => import('@/views/leadAffairs/retention'),
         },
+        //人员结构
+        {
+          path: '/perStructure',
+          name: 'perStructure',
+          component: () => import('@/views/leadAffairs/perStructure'),
+        },
       ],
     },
     //查询员工信息

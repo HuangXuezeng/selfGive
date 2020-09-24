@@ -516,13 +516,17 @@ export default {
       let sortNum = item.sortNum
       switch(teamName){
         case '花名册':
-        this.save_type(sortNum)
-        this.$router.push({name:'roster'})
-        break;
+          this.save_type(sortNum)
+          this.$router.push({name:'roster'})
+          break;
         case '流失率':
-        this.save_type(sortNum)
-        this.$router.push({name:'retention'})
-        break;
+          this.save_type(sortNum)
+          this.$router.push({name:'retention'})
+          break;
+        case '人员结构':
+          this.save_type(sortNum)
+          this.$router.push({name:'perStructure'})
+          break;
       }
     }
   },

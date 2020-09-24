@@ -67,3 +67,14 @@ export function querySome (queryData) {
     data: JSON.stringify(queryData)
   })
 }
+
+//人员结构部分----------------------------------------------------------
+
+//获取选择的时间
+export function querySelectTime (queryData) {
+  return fetch({
+    url: `/kukacms/self/findDateList`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}

@@ -121,6 +121,7 @@
             :data="deptData" 
             ref="tree"
             @check-change="handleCheckChange"
+            node-key="deptId"
             :props="props" 
             show-checkbox></el-tree>
         </van-popup>
@@ -137,7 +138,7 @@
             />
         </van-popup>
         <!-- 弹出时下拉选择是否 -->
-        <van-popup v-model="showSelect" position="bottom" :style="{ height: '50%' }" >
+        <van-popup v-model="showSelect" position="bottom" :style="{ height: '50%' }" get-container="body">
             <van-picker
             title="标题"
             show-toolbar
@@ -147,7 +148,7 @@
             />
         </van-popup>
         <!-- 弹出时下拉选择男女 -->
-        <van-popup v-model="showSex" position="bottom" :style="{ height: '50%' }" >
+        <van-popup v-model="showSex" position="bottom" :style="{ height: '50%' }" get-container="body">
             <van-picker
             title="标题"
             show-toolbar
@@ -157,7 +158,7 @@
             />
         </van-popup>
         <!-- 弹出时下拉选择编制类型 -->
-        <van-popup v-model="showBianzhi" position="bottom" :style="{ height: '50%' }" >
+        <van-popup v-model="showBianzhi" position="bottom" :style="{ height: '50%' }" get-container="body">
             <van-picker
             title="标题"
             show-toolbar
@@ -167,63 +168,63 @@
             />
         </van-popup>
         <!-- 弹出时下拉选择院校性质 -->
-        <van-popup v-model="showSchool" position="bottom" :style="{ height: '50%' }" >
+        <van-popup v-model="showSchool" position="bottom" :style="{ height: '50%' }" get-container="body">
             <van-checkbox-group v-model="result3" ref="checkboxGroup">
                 <van-checkbox v-for="item in column4" :key="item.code" :name="item">{{item.content}}</van-checkbox>
             </van-checkbox-group>
             <van-button type="info" size="mini" @click="onConfirm4">确定</van-button>
         </van-popup>
         <!-- 弹出时下拉选择学历 -->
-        <van-popup v-model="showXueli" position="bottom" :style="{ height: '50%' }" >
+        <van-popup v-model="showXueli" position="bottom" :style="{ height: '50%' }" get-container="body">
             <van-checkbox-group v-model="result4" ref="checkboxGroup">
                 <van-checkbox v-for="item in column8" :key="item.code" :name="item">{{item.content}}</van-checkbox>
             </van-checkbox-group>
             <van-button type="info" size="mini" @click="onConfirm8">确定</van-button>
         </van-popup>
         <!-- 弹出时下拉选择专业线标签 -->
-        <van-popup v-model="showZhuanye" position="bottom" :style="{ height: '50%' }" >
+        <van-popup v-model="showZhuanye" position="bottom" :style="{ height: '50%' }" get-container="body">
             <van-checkbox-group v-model="result5" ref="checkboxGroup">
                 <van-checkbox v-for="item in column5" :key="item.code" :name="item">{{item.content}}</van-checkbox>
             </van-checkbox-group>
             <van-button type="info" size="mini" @click="onConfirm5">确定</van-button>
         </van-popup>
         <!-- 弹出时下拉选择当前状态 -->
-        <van-popup v-model="showState" position="bottom" :style="{ height: '50%' }" >
+        <van-popup v-model="showState" position="bottom" :style="{ height: '50%' }" get-container="body">
             <van-checkbox-group v-model="result6" ref="checkboxGroup">
                 <van-checkbox v-for="item in column6" :key="item.code" :name="item">{{item.content}}</van-checkbox>
             </van-checkbox-group>
             <van-button type="info" size="mini" @click="onConfirm6">确定</van-button>
         </van-popup>
         <!-- 弹出时下拉选择人员类别 -->
-        <van-popup v-model="showLeibie" position="bottom" :style="{ height: '50%' }" >
+        <van-popup v-model="showLeibie" position="bottom" :style="{ height: '50%' }" get-container="body">
             <van-checkbox-group v-model="result7" ref="checkboxGroup">
                 <van-checkbox v-for="item in column7" :key="item.code" :name="item">{{item.content}}</van-checkbox>
             </van-checkbox-group>
             <van-button type="info" size="mini" @click="onConfirm7">确定</van-button>
         </van-popup>
         <!-- 弹出时下拉选择岗位分类1 -->
-        <van-popup v-model="showFenlei1" position="bottom" :style="{ height: '50%' }" >
+        <van-popup v-model="showFenlei1" position="bottom" :style="{ height: '50%' }" get-container="body">
             <van-checkbox-group v-model="result2" ref="checkboxGroup">
                 <van-checkbox v-for="item in column9" :key="item.code" :name="item">{{item.content}}</van-checkbox>
             </van-checkbox-group>
             <van-button type="info" size="mini" @click="onConfirm9">确定</van-button>
         </van-popup>
         <!-- 弹出时下拉选择岗位分类2 -->
-        <van-popup v-model="showFenlei2" position="bottom" :style="{ height: '50%' }" >
+        <van-popup v-model="showFenlei2" position="bottom" :style="{ height: '50%' }" get-container="body">
             <van-checkbox-group v-model="result1" ref="checkboxGroup">
                 <van-checkbox v-model="checkFl1" v-for="item in column10" :key="item.code" :name="item">{{item.content}}</van-checkbox>
             </van-checkbox-group>
             <van-button type="info" size="mini" @click="confirmFl2">确定</van-button>
         </van-popup>
         <!-- 职类 -->
-        <van-popup v-model="showZl" position="bottom" :style="{ height: '50%' }" >
+        <van-popup v-model="showZl" position="bottom" :style="{ height: '50%' }" get-container="body">
             <van-checkbox-group v-model="result8" ref="checkboxGroup">
                 <van-checkbox v-for="item in column11" :key="item.code" :name="item">{{item.content}}</van-checkbox>
             </van-checkbox-group>
             <van-button type="info" size="mini" @click="onConfirm10">确定</van-button>
         </van-popup>
         <!-- 职级 -->
-        <van-popup v-model="showZj" position="bottom" :style="{ height: '50%' }" >
+        <van-popup v-model="showZj" position="bottom" :style="{ height: '50%' }" get-container="body">
             <van-checkbox-group v-model="result9" ref="checkboxGroup">
                 <van-checkbox v-for="item in column12" :key="item.code" :name="item">{{item.content}}</van-checkbox>
             </van-checkbox-group>
@@ -240,6 +241,7 @@ export default {
   data () {
     return {
         checked: true, //是否包含下级部门
+        dataList: [],
         loading: false,
         finished: false,
         form:{
@@ -325,7 +327,7 @@ export default {
                     titleAlign: 'center',
                     columnAlign: 'center',
                     formatter: function(rowData, rowIndex, pagingIndex, field) {
-                        return `<span style="color:#4078c0;">${rowData[field]}</span>`;
+                        return `<span>${rowData[field]}</span>`;
                     },
                     isResize: true,
                     // isFrozen: true,
@@ -363,21 +365,13 @@ export default {
                     isResize: true
                 },
                 {
-                    field: 'entryStartTime',
-                    title: '入司开始日期',
+                    field: 'rsrq',
+                    title: '入司日期',
                     width: 150,
                     titleAlign: 'center',
                     columnAlign: 'center',
                     isResize: true
-                },					
-                {
-                    field: 'entryEndTime',
-                    title: '入司结束日期',
-                    width: 150,
-                    titleAlign: 'center',
-                    columnAlign: 'center',
-                    isResize: true
-                },					
+                },									
         ],
         props: {
           label: 'content',
@@ -445,6 +439,7 @@ export default {
         drag: false,
         currentDept: [], //页面进来时获取的部门名
         deptIds: [], //页面进来时获取的部门id
+        defaultCheckedKeys: []
     };
   },
   created(){
@@ -595,7 +590,10 @@ export default {
         }
         if(this.form.sex !== ''){
             let obj2 = {
-                field: 'sex',title: '性别',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+                field: 'sex',title: '性别',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true,
+                formatter: function(rowData, rowIndex, pagingIndex, field) {
+                    return `<span>${rowData[field] == 1 ? '男' : '女' }</span>`;
+                },
             }
             this.columns.push(obj2)
         }
@@ -665,18 +663,6 @@ export default {
             }
             this.columns.push(obj13)
         }
-        if(this.form.entryStartTime !== ''){
-            let obj14 = {
-                field: 'entryStartTime',title: '入司开始日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
-            }
-            this.columns.push(obj14)
-        }
-        if(this.form.entryEndTime !== ''){
-            let obj14 = {
-                field: 'entryEndTime',title: '入司结束日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
-            }
-            this.columns.push(obj14)
-        }
         if(this.form.entryAge !== ''){
             let obj15 = {
                 field: 'entryAge',title: '司龄',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
@@ -685,25 +671,25 @@ export default {
         }
         if(this.form.syjsStartTime !== ''){
             let obj16 = {
-                field: 'syjsStartTime',title: '试用开始日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+                field: 'syjsrq',title: '试用结束日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
             }
             this.columns.push(obj16)
         }
         if(this.form.syjsEndTime !== ''){
             let obj16 = {
-                field: 'syjsEndTime',title: '试用结束日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+                field: 'syjsrq',title: '试用结束日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
             }
             this.columns.push(obj16)
         }
         if(this.form.sjzzStartTime !== ''){
             let obj17 = {
-                field: 'sjzzStartTime',title: '实际转正开始日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+                field: 'sjzzrq',title: '实际转正日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
             }
             this.columns.push(obj17)
         }
         if(this.form.sjzzEndTime !== ''){
             let obj17 = {
-                field: 'sjzzEndTime',title: '实际转正结束日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+                field: 'sjzzrq',title: '实际转正日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
             }
             this.columns.push(obj17)
         }
@@ -715,25 +701,37 @@ export default {
         }
         if(this.form.isVeteran !== ''){
             let obj19 = {
-                field: 'isVeteran',title: '是否为退伍军人',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+                field: 'isVeteran',title: '是否为退伍军人',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true,
+                formatter: function(rowData, rowIndex, pagingIndex, field) {
+                    return `<span>${rowData[field] == 1 ? '是' : '否' }</span>`;
+                },
             }
             this.columns.push(obj19)
         }
         if(this.form.isPerson !== ''){
             let obj20 = {
-                field: 'isPerson',title: '是否在本公司有亲属关系',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+                field: 'isPerson',title: '是否在本公司有亲属关系',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true,
+                formatter: function(rowData, rowIndex, pagingIndex, field) {
+                    return `<span>${rowData[field] == 1 ? '是' : '否' }</span>`;
+                },
             }
             this.columns.push(obj20)
         }
         if(this.form.isTrain !== ''){
             let obj21 = {
-                field: 'isTrain',title: '是否签订培训协议',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+                field: 'isTrain',title: '是否签订培训协议',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true,
+                formatter: function(rowData, rowIndex, pagingIndex, field) {
+                    return `<span>${rowData[field] == 1 ? '是' : '否' }</span>`;
+                },
             }
             this.columns.push(obj21)
         }
         if(this.form.isCompete !== ''){
             let obj22 = {
-                field: 'isCompete',title: '是否签订竞业协议',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+                field: 'isCompete',title: '是否签订竞业协议',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true,
+                formatter: function(rowData, rowIndex, pagingIndex, field) {
+                    return `<span>${rowData[field] == 1 ? '是' : '否' }</span>`;
+                },
             }
             this.columns.push(obj22)
         }
@@ -795,6 +793,8 @@ export default {
             this.form.company  = ''
             this.form.zcName  = ''
         })
+        //数组去重
+        this.columns = this.unique(this.columns)
         this.showPick = false
     },
     //确定
@@ -1019,6 +1019,9 @@ export default {
     //选择时触发
     handleCheckChange(data) {
         let res = this.$refs.tree.getCheckedNodes()
+        this.defaultCheckedKeys = res
+        // this.$refs.tree.setCheckedKeys(this.defaultCheckedKeys)
+        // this.$refs.tree.getCheckedKeys().concat(this.$refs.tree.getHalfCheckedKeys())
         let str = ''
         let val = ''
         for(let i in res){
@@ -1029,8 +1032,8 @@ export default {
             str = str.substr(0,str.length - 1)
             val = val.substr(0,str.length - 1)
         }
-        console.log(str)
-        console.log(val)
+        // console.log(res)
+        // console.log(val)
         this.form.department = str
         this.deptVal = val
     },
@@ -1392,7 +1395,44 @@ export default {
     },
     //是否包含下级部门
     changeDept(checked){
-        console.log(checked)
+        // debugger
+        // console.log(this.defaultCheckedKeys)
+        if(!checked){
+            this.dataList = []
+
+            for(let k in this.defaultCheckedKeys){
+                if(this.defaultCheckedKeys[k].depts){
+                    this.dataList.push(this.defaultCheckedKeys[k]) 
+                    for(let i in this.defaultCheckedKeys[k].depts){
+                        this.$refs.tree.setChecked(this.defaultCheckedKeys[k].depts[i],false)
+                        this.$refs.tree.setChecked(this.defaultCheckedKeys[k],true)
+
+                    }
+                }
+            }
+           
+        }else{
+             for(let m in this.dataList){
+                 for(let n in  this.dataList[m].depts){
+                     this.$refs.tree.setChecked(this.dataList[m].depts[n],true)
+                 }
+                
+            }
+        }
+        // this.$refs.tree.setChecked(this.deptData, false)
+        // console.log(checked)
+    },
+    //数组去重
+    unique(arr){
+        var newArr= [];
+        var arrId = [];
+        for(var item of arr){
+            if(arrId.indexOf(item['title']) == -1){
+                arrId.push(item['title']);
+                newArr.push(item);
+            }
+        }
+        return newArr
     },
     ...mapMutations({
         save_jobNum:'save_jobNum'
