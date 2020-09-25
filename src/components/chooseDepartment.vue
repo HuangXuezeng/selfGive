@@ -3,7 +3,7 @@
     <van-field
       v-model="selectedDepartment"
       @click="pickDept"
-      label="部门"
+      label="团队所属机构："
       :placeholder="deptPlacehoder"
       :rules="reqireRule"
       type="textarea"
@@ -82,12 +82,14 @@ export default {
   methods: {
     //获取组织下的部门
     _getOrz() {
-      let queryData = {
-        jobnumber: 6006212
-      };
-      getOrz(queryData).then(res => {
-        this.deptData.push(res.obj.departments);
-      });
+      // let queryData = {
+      //   jobnumber: 6006212
+      // };
+      // getOrz(queryData).then(res => {
+      // });
+      const departRes =  JSON.parse(localStorage.getItem('departRes'))
+      this.deptData.push(departRes.obj.departments);
+
     },
     //选择部门
     pickDept() {

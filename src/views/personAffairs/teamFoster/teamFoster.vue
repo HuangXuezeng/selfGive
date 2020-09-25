@@ -14,6 +14,10 @@
             <span>{{item.a8TDPYXX014 ? item.a8TDPYXX014 :'无'}}</span>
           </p>
           <p>
+            <span>团队所属机构：</span>
+            <span>{{item.a8TDPYXX013Name? item.a8TDPYXX013Name :'无'}}</span>
+          </p>
+          <p>
             <span>继任者1：</span>
             <span>{{item.a8TDPYXX015? item.a8TDPYXX015 :'无'}}</span>
           </p>
@@ -37,11 +41,7 @@
             <span>继任者3成熟度：</span>
             <span>{{item.a8TDPYXX020? item.a8TDPYXX020name :'无'}}</span>
           </p>
-          <p>
-            <span>团队所属机构：</span>
-            <span>{{item.a8TDPYXX013Name? item.a8TDPYXX013Name :'无'}}</span>
-          </p>
-        </van-collapse-item >
+        </van-collapse-item>
         <div class="btn" v-if="activeNames.indexOf(index) != -1">
           <van-button
             v-if="item.sign == 0"
@@ -76,7 +76,7 @@
         size="small"
         color="#fc5f10"
         style="width:100%;font-size:16px;margin-top:10px"
-         @click="jumplistalready"
+        @click="jumplistalready"
       >审核列表</van-button>
     </div>
   </div>
@@ -92,7 +92,7 @@ import {
   Notify
 } from "vant";
 import { findTeamBuildingInfo } from "./teamFosterApi";
-import  loadingSpin  from "@/components/loadingSpin.vue";
+import loadingSpin from "@/components/loadingSpin.vue";
 export default {
   components: {
     loadingspin: loadingSpin
@@ -114,36 +114,36 @@ export default {
       findTeamBuildingInfo(queryData).then(res => {
         if (res.code == "1000") {
           this.teamlist = res.obj;
-          for(let i=0;i<=this.teamlist.length;i++ ){
-            this.activeNames.push(i)
+          for (let i = 0; i <= this.teamlist.length; i++) {
+            this.activeNames.push(i);
           }
         } else {
           Toast.fail(res.msg);
         }
       });
     },
-    addTeam(){
-       this.$router.push({name:'addTeamFoster'})
+    addTeam() {
+      this.$router.push({ name: "addTeamFoster" });
     },
-    jumplistalready(){
-      this.$router.push({name:'alreadyTeamFoster'})
+    jumplistalready() {
+      this.$router.push({ name: "alreadyTeamFoster" });
     },
-    update(item){
-      if(item.sign == 1){
-        return
+    update(item) {
+      if (item.sign == 1) {
+        return;
       }
-       this.$router.push({name:'editTeamFoster',params:{sData:item}})
+      this.$router.push({ name: "editTeamFoster", params: { sData: item } });
     }
-
   }
 };
 </script>
 <style lang="stylus" scoped>
-  .btn{
-        padding 10px
-      }
-  p{
-      padding 5px 0 5px 5px
-      border-bottom  1px solid #eee
-  }
+.btn {
+  padding: 10px;
+}
+
+p {
+  padding: 5px 0 5px 5px;
+  border-bottom: 1px solid #eee;
+}
 </style>

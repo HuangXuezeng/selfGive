@@ -160,6 +160,7 @@ import { setDDConfig } from '@/api/dd'
 import fetch from '@/api/fetch'
 import { queryPerson,getMenu,setMenu } from './api'
 import draggable from 'vuedraggable'
+import { getOrz } from "@/views/leadAffairs/api.js";
 export default {
   data () {
     return {
@@ -212,6 +213,7 @@ export default {
     // localStorage.setItem('jobNum',9102171)
     // localStorage.setItem('jobNum',9078825)
     // localStorage.setItem('jobNum',9107021)
+    this._getOrz()
     if(localStorage.getItem('jobNum') == '' || localStorage.getItem('jobNum') == null || localStorage.getItem('jobNum') == undefined){
       this.getUser()
     }else{
@@ -221,6 +223,17 @@ export default {
     }
   },
   methods:{
+     //获取组织下的部门
+    _getOrz() {
+      let queryData = {
+        jobnumber: 6006212
+      };
+      getOrz(queryData).then(res => {
+        // this.deptData.push(res.obj.departments);
+        localStorage.setItem('departRes',JSON.stringify(res))
+        // localStorage.setItem()
+      });
+    },
     //获取用户基本信息
     getPerson(){
       let queryData = {
@@ -516,17 +529,21 @@ export default {
       let sortNum = item.sortNum
       switch(teamName){
         case '花名册':
-          this.save_type(sortNum)
-          this.$router.push({name:'roster'})
-          break;
+        this.save_type(sortNum)
+        this.$router.push({name:'roster'})
+        break;
         case '流失率':
-          this.save_type(sortNum)
-          this.$router.push({name:'retention'})
-          break;
+        this.save_type(sortNum)
+        this.$router.push({name:'retention'})
+        break;
         case '人员结构':
-          this.save_type(sortNum)
-          this.$router.push({name:'perStructure'})
-          break;
+        this.save_type(sortNum)
+        this.$router.push({name:'perStructure'})
+        break;
+        // case '干部档案':
+        // this.save_type(sortNum)
+        // this.$router.push({name:'cadreArchives'})
+        // break;
       }
     }
   },

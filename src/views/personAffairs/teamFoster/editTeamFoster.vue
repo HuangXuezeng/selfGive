@@ -1,7 +1,7 @@
 <template>
   <div>
     <van-form @submit="addTeam" label-width="100">
-      <van-field name="stepper" label="团队规模">
+      <van-field name="stepper" label="团队规模:">
         <template #input>
           <van-stepper v-model="addForm.a8TDPYXX014" integer />
         </template>
@@ -10,7 +10,7 @@
       <van-field
         v-model.trim="addForm.a8TDPYXX015"
         name="继任者1"
-        label="继任者1"
+        label="继任者1:"
         placeholder="必填"
         :rules="[{ required: true, message: '请填写继任者1' }]"
       />
@@ -19,28 +19,28 @@
         clickable
         name="picker"
         :value="addForm.a8TDPYXX016name"
-        label="继任者1成熟度"
+        label="继任者1成熟度:"
         placeholder="必填"
         @click="selectProficiency('a8TDPYXX016name')"
         :rules="[{ required: true, message: '请选择继任者1成熟度' }]"
       />
-      <van-field v-model.trim="addForm.a8TDPYXX017" name="继任者2" label="继任者2" placeholder="选填" />
+      <van-field v-model.trim="addForm.a8TDPYXX017" name="继任者2" label="继任者2:" placeholder="选填" />
       <van-field
         readonly
         clickable
         name="picker"
         :value="addForm.a8TDPYXX018name"
-        label="继任者2成熟度"
+        label="继任者2成熟度:"
         placeholder="选填"
         @click="selectProficiency('a8TDPYXX018name')"
       />
-      <van-field v-model.trim="addForm.a8TDPYXX019" name="继任者3" label="继任者3" placeholder="选填" />
+      <van-field v-model.trim="addForm.a8TDPYXX019" name="继任者3" label="继任者3:" placeholder="选填" />
       <van-field
         readonly
         clickable
         name="picker"
         :value="addForm.a8TDPYXX020name"
-        label="继任者3成熟度"
+        label="继任者3成熟度:"
         placeholder="选填"
         @click="selectProficiency('a8TDPYXX020name')"
       />

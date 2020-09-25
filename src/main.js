@@ -3,7 +3,8 @@ import Cube from 'cube-ui'
 import App from './App'
 import router from './router'
 import store from '@/store/index'
-
+//解决vant样式无法覆盖的问题
+import '../static/restVant.css'
 Vue.use(Cube)
 
 // 兼容 ES6

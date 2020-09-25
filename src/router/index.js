@@ -316,6 +316,12 @@ export default new Router({
         },
       ],
     },
+    //干部档案
+    {
+      path: '/cadreArchives',
+      name: 'cadreArchives',
+      component: () => import('@/views/leadAffairs/cadreArchives/cadreArchives.vue'),
+    },
     //查询员工信息
     {
       path: '/personHome',
