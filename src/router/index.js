@@ -291,11 +291,11 @@ export default new Router({
       component: () => import('@/views/leadAffairs/selfSalary'),
       children:[
         //花名册
-        // {
-        //   path: '/selfPersonCost',
-        //   name: 'selfPersonCost',
-        //   component: () => import('@/views/leadAffairs/selfPersonCost'),
-        // },
+        {
+          path: '/selfPersonCost',
+          name: 'selfPersonCost',
+          component: () => import('@/views/leadAffairs/selfPersonCost'),
+        },
         //花名册
         {
           path: '/roster',

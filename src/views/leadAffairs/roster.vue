@@ -12,20 +12,20 @@
             </div>
         </div>
         <!-- 下拉加载 -->
-            <div class="table">
-                <v-table 
-                ref="table" 
-                title-bg-color="#ccc"
-                :columns="columns"
-                :table-data="tableData" 
-                row-hover-color="#eee" 
-                row-click-color="#edf7ff" 
-                :cell-edit-done="cellEditDone"
-                :row-click="rowClick"
-                @sort-change="sortChange"
-                :paging-index="(pageIndex-1)*pageSize"   	
-                ></v-table>	
-            </div>
+        <div class="table">
+            <v-table 
+            ref="table" 
+            title-bg-color="#ccc"
+            :columns="columns"
+            :table-data="tableData" 
+            row-hover-color="#eee" 
+            row-click-color="#edf7ff" 
+            :cell-edit-done="cellEditDone"
+            :row-click="rowClick"
+            @sort-change="sortChange"
+            :paging-index="(pageIndex-1)*pageSize"   	
+            ></v-table>	
+        </div>
         <!-- <div class="mt20 mb20 bold" style="margin-top:10px;">
             <v-pagination @page-change="pageChange" @page-size-change="pageSizeChange" :total="total" size='small' :page-size="pageSize" :layout="['prev', 'pager', 'next']"></v-pagination>
         </div>    -->
@@ -1470,7 +1470,6 @@ export default {
     .table{
         width 100%
         overflow-x auto
-        // padding-bottom 20px
     }
     .pick{
         padding 10px
