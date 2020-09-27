@@ -6,7 +6,12 @@
           <van-stepper v-model="addForm.a8TDPYXX014" integer />
         </template>
       </van-field>
-      <choosedepartment @transferFa="selctdept" :Farequired="true" :opennode='addForm.a8TDPYXX013' :selectName='addForm.a8TDPYXX013Name'></choosedepartment>
+      <choosedepartment
+        @transferFa="selctdept"
+        :Farequired="true"
+        :opennode="addForm.a8TDPYXX013"
+        :selectName="addForm.a8TDPYXX013Name"
+      ></choosedepartment>
       <van-field
         v-model.trim="addForm.a8TDPYXX015"
         name="继任者1"
@@ -24,7 +29,12 @@
         @click="selectProficiency('a8TDPYXX016name')"
         :rules="[{ required: true, message: '请选择继任者1成熟度' }]"
       />
-      <van-field v-model.trim="addForm.a8TDPYXX017" name="继任者2" label="继任者2:" placeholder="选填" />
+      <van-field
+        v-model.trim="addForm.a8TDPYXX017"
+        name="继任者2"
+        label="继任者2:"
+        placeholder="选填"
+      />
       <van-field
         readonly
         clickable
@@ -34,7 +44,12 @@
         placeholder="选填"
         @click="selectProficiency('a8TDPYXX018name')"
       />
-      <van-field v-model.trim="addForm.a8TDPYXX019" name="继任者3" label="继任者3:" placeholder="选填" />
+      <van-field
+        v-model.trim="addForm.a8TDPYXX019"
+        name="继任者3"
+        label="继任者3:"
+        placeholder="选填"
+      />
       <van-field
         readonly
         clickable
@@ -44,36 +59,38 @@
         placeholder="选填"
         @click="selectProficiency('a8TDPYXX020name')"
       />
-      <van-popup v-model="showPicker" position="bottom"  get-container="body">
+      <van-popup v-model="showPicker" position="bottom" get-container="body">
         <van-picker
           show-toolbar
           :columns="columns"
           @confirm="onConfirm"
           @cancel="showPicker = false"
-
         />
       </van-popup>
-
-      <van-row type="flex" justify="center">
-        <van-col span="8">
-          <van-button
-            type="primary"
-            size="small"
-            color="#fc5f10"
-            style="font-size:16px"
-            native-type="submit"
-          >确认修改</van-button>
-        </van-col>
-        <van-col span="6">
-          <van-button
-            type="primary"
-            size="small"
-            color="#fc5f10"
-            style="font-size:16px"
-            @click="backHome"
-          >取消</van-button>
-        </van-col>
-      </van-row>
+      <div style="margin-top:10px">
+        <van-row type="flex" justify="center">
+          <van-col span="7">
+            <van-button
+              type="primary"
+              size="small"
+              color="#fc5f10"
+              style="font-size:16px"
+              native-type="submit"
+              >确认修改</van-button
+            >
+          </van-col>
+          <van-col span="4">
+            <van-button
+              type="primary"
+              size="small"
+              color="#fc5f10"
+              style="font-size:16px"
+              @click="backHome"
+              >取消</van-button
+            >
+          </van-col>
+        </van-row>
+      </div>
     </van-form>
   </div>
 </template>
@@ -105,17 +122,17 @@ export default {
         a8TDPYXX020: "", //继任者3成熟度：
         a8TDPYXX020name: "",
         a8TDPYXX013Name: "", //团队所属机构：
-        a8TDPYXX013: "",
+        a8TDPYXX013: ""
       },
       selecttype: "",
       selectNametype: ""
     };
   },
-  created(){
-    let sDatas = this.$route.params.sData
-    this.addForm = sDatas
+  created() {
+    let sDatas = this.$route.params.sData;
+    this.addForm = sDatas;
     //测试用
-    this.addForm.a0190 =  localStorage.getItem('jobNum')
+    this.addForm.a0190 = localStorage.getItem("jobNum");
   },
   methods: {
     onConfirm(value) {
@@ -157,7 +174,7 @@ export default {
         } else {
           Toast.fail(res.msg);
         }
-         this.$router.push({ name: "teamFoster" });
+        this.$router.push({ name: "teamFoster" });
       });
     },
     //工具
