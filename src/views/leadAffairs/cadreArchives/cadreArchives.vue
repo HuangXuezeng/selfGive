@@ -2,22 +2,24 @@
   <div>
     <div class="header">
       <van-sticky>
-        <div class="headbgc">
+        <!-- <div class="headbgc"> -->
           <van-row type="flex" justify="center" class="resetVant">
-            <van-col span="22">
+            <van-col span="24">
               <van-search
-                v-model="value"
+                v-model="searchValue"
                 shape="round"
-                background="transparent"
+                background="linear-gradient(#ff3334, #fd9d9d)"
                 placeholder="请输入搜索关键词"
+                @search="onSearch"
               />
             </van-col>
           </van-row>
-        </div>
+        <!-- </div> -->
       </van-sticky>
     </div>
     <div class="main">
       <van-list
+        v-if="loadFlag"
         v-model="loading"
         :finished="finished"
         :immediate-check="false"
@@ -27,41 +29,33 @@
         error-text="请求失败，点击重新加载"
         @load="onLoad"
       >
-        <div class="bgccolor">
-          <div class="marginsides" v-for="items in achlist" :key="items.a0190">
-            <div class="myContents">
-              <div class="messageInfoos">
-                <!-- <span><img class="img" src="../../assets/timg.jpg" alt=""></span> -->
-                <span>
-                  <img class="img" :src="items.photo ? items.photo : defaultAvatar " alt />
-                </span>
-                <span class="resuName">{{items.a0101}}</span>
-                <br />
-                <span class="resuNamess">
-                  岗位：
-                  <i style="color:black">{{items.gwName}}</i>
-                </span>
-                <span class="resuNamesss">
-                  职级：
-                  <i style="color:#ccc">{{items.a01516}}</i>
-                </span>
-                <br />
-              </div>
-            </div>
-          </div>
-        </div>
+      <manageInfoCompon :Fachlist='achlist'></manageInfoCompon>
       </van-list>
+      <div v-if="!loadFlag" style="padding-bottom:10vw">
+        <manageInfoCompon :Fachlist='searchList'></manageInfoCompon>
+      </div>
     </div>
-    <div class="footer"></div>
+    <div class="footer">
+      <cadArcTanbber></cadArcTanbber>
+    </div>
+    <loadingSpin ref="loadingSpin"></loadingSpin>
   </div>
 </template>
 
 <script>
-import { findCadreRosterInfo } from "@/views/leadAffairs/cadreArchives/cadreArchivesApi.js";
-import { Card } from "vant";
+import {
+  findCadreRosterInfo,
+  findCadreRosterInfoByCondition
+} from "@/views/leadAffairs/cadreArchives/cadreArchivesApi.js";
+import cadArcTanbber from "@/components/cadArcComponents/cadArcTanbber.vue";
+import { Card, Toast } from "vant";
+import loadingSpin from "@/components/loadingSpin.vue";
+import manageInfoCompon from'@/components/cadArcComponents/manageInfoCompon.vue'
 export default {
   components: {
-    // easyTable: easyTable
+    cadArcTanbber,
+    loadingSpin,
+    manageInfoCompon
   },
   data() {
     return {
@@ -71,32 +65,61 @@ export default {
       achlist: [],
       error: false,
       defaultAvatar: "src/assets/timg.jpg",
-      nextpage: 1
+      nextpage: 1,
+      searchValue: "",
+      loadFlag: true,
+      searchList: []
     };
   },
   created() {
-    this.queryDepartmentPersonnel()
+    this.queryDepartmentPersonnel();
   },
   methods: {
     //请求数据
     queryDepartmentPersonnel() {
-      findCadreRosterInfo({ jobnumber: 6006234, pageNum: this.nextpage }).then(res => {
-        if(res.code == '1000'){
-          if(res.obj.length != 0){
-           this.achlist =  this.achlist.concat(res.obj) ;
-           this.loading = false
-          }else{
-            this.finished = true
+      findCadreRosterInfo({ jobnumber: 6003305, pageNum: this.nextpage }).then(
+        res => {
+          if (res.code == "1000") {
+            if (res.obj.length != 0) {
+              this.achlist = this.achlist.concat(res.obj);
+              this.loading = false;
+              this.$refs.loadingSpin.shutdown();
+            } else {
+              this.finished = true;
+            }
+          } else {
+            this.error = true;
           }
-        }else{
-          this.error = true
         }
-      });
+      );
     },
     async onLoad() {
-      this.nextpage++
-      await  this.queryDepartmentPersonnel()
+      this.nextpage++;
+      await this.queryDepartmentPersonnel();
+    },
+    async onSearch() {
+      this.$refs.loadingSpin.showUp();
+      let queryData = {
+        jobnumber: this.searchValue,
+        jobnumber1: "6006234"
+      };
+      await this.searchQuery(queryData);
 
+      this.loadFlag = false;
+    },
+    searchQuery(data) {
+      findCadreRosterInfoByCondition(data).then(res => {
+        if (res.code == "1000") {
+          this.searchList = res.obj;
+          this.showFooter = true;
+        } else {
+          Toast.fail(res.msg);
+        }
+      });
+      this.$refs.loadingSpin.shutdown();
+    },
+    manageInfoMethod(item){
+      this.$router.push({name:'cadreArchivesInfo',params:{managerInfo:item}})
     }
   }
 };
@@ -104,7 +127,7 @@ export default {
 
 <style lang="stylus">
 .headbgc {
-  height: 15vh;
+  height: 30%;
   background-image: linear-gradient(#ff3334, #fd9d9d);
 }
 
@@ -170,6 +193,5 @@ export default {
   color: black;
   font-size: 14px;
   padding-left: 5px;
-  padding-left: 5vw;
 }
 </style>

@@ -1,9 +1,8 @@
 <template>
-  <van-overlay :show="show" @click="show = false">
-    <!-- <div class="wrapper" @click.stop> -->
+  <van-overlay :show="show" @click="shutdown">
+    <div class="wrapper" @click.stop>
       <van-loading type="spinner" color="#1989fa" />
-      <!-- <div class="block" /> -->
-    <!-- </div> -->
+    </div>
   </van-overlay>
 </template>
 
@@ -18,7 +17,16 @@ export default {
     return {
        show: true
     };
+  },
+  methods:{
+    shutdown(){
+      this.show = false
+    },
+    showUp(){
+      this.show = true
+    }
   }
+
 };
 </script>
 

@@ -13,7 +13,9 @@ export default new Router({
       path: '/selfHome',
       name: 'selfHome',
       component: () => import('@/views/selfHome/selfHome'),
-      meta: { keepAlive: true }
+      meta: {
+        keepAlive: true
+      }
     },
     //员工事务管理
     {
@@ -320,7 +322,24 @@ export default new Router({
     {
       path: '/cadreArchives',
       name: 'cadreArchives',
-      component: () => import('@/views/leadAffairs/cadreArchives/cadreArchives.vue'),
+      component: () => import('@/views/leadAffairs/cadreArchives/cadreArchives'),
+    },
+    //机构展示
+    {
+      path: '/institutions',
+      name: 'institutions',
+      component: () => import('@/views/leadAffairs/cadreArchives/institutions'),
+    },
+    {
+      path: '/institutionsMore',
+      name: 'institutionsMore',
+      component: () => import('@/views/leadAffairs/cadreArchives/institutionsMore'),
+      meta: { keepAlive: true }
+    },
+    {
+      path: '/cadreArchivesInfo',
+      name: 'cadreArchivesInfo',
+      component: () => import('@/views/leadAffairs/cadreArchives/cadreArchivesInfo'),
     },
     //查询员工信息
     {

@@ -1,3 +1,7 @@
-.resetVant .van-col--22{
-  margin-top: 5%;
+.resetVant .van-search{
+  padding: 35px 12px;
+  /* margin-top: 5%; */
+}
+.resetVant .van-cell__value{
+  text-align: center;
 }

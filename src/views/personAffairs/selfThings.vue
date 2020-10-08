@@ -73,7 +73,7 @@ export default {
         this.gerenList = res.obj
         if(localStorage.getItem('userinfo')){
           let userinfo = JSON.parse(localStorage.getItem('userinfo'))
-           if(userinfo.isLeader != 'Y'){
+           if(userinfo.isCadre != 'Y'){
              for(let i = 0; i<=this.gerenList.length;i++){
                if(this.gerenList[i].url == "teamFoster"){
                  this.gerenList.splice(i, 1);
