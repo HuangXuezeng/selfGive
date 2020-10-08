@@ -1,20 +1,22 @@
 <template>
     <div>
       <div class="box clearfix">
-        <div>
-          <div class="sidebox">
-              <div class="contain">
-                  <div>
-                      <div><span style="font-weight:700">{{personObj.a0101}}</span><span style="float:right"><img class="img" :src="personObj.photo" alt=""></span></div>
-                      <span> 工号：{{personObj.a0190}}</span>
-                  </div>
-                  <div>
-                      <span> 岗位：</span><span>{{personObj.post}}</span><br>
-                      <span> 部门：</span>{{personObj.dept}}<span></span>
-                  </div>
-              </div>
-          </div> 
-        </div>
+        <van-sticky>
+          <div style="background-color:#fff">
+            <div class="sidebox">
+                <div class="contain">
+                    <div>
+                        <div><span style="font-weight:700">{{personObj.a0101}}</span><span style="float:right"><img class="img" :src="personObj.photo" alt=""></span></div>
+                        <span> 工号：{{personObj.a0190}}</span>
+                    </div>
+                    <div>
+                        <span> 岗位：</span><span>{{personObj.post}}</span><br>
+                        <span> 部门：</span>{{personObj.dept}}<span></span>
+                    </div>
+                </div>
+            </div> 
+          </div>
+        </van-sticky>
         <div class="box_left" v-if="flag" ref="left">
           <!-- 左导航栏 -->
           <van-sidebar 
@@ -67,7 +69,7 @@
     </div>
 </template>
 <script>
-import { Sidebar,SidebarItem,Icon } from 'vant'
+import { Sidebar,SidebarItem,Icon,Sticky } from 'vant'
 import '../../../components/comstyle/style.css'
 import { mapState,mapMutations } from 'vuex'
 import { querySome } from '../../personAffairs/api'
@@ -154,6 +156,7 @@ export default {
           }
       }
       .contain{
+          
           padding 10px 15px
           line-height 28px
           .iconfont{
@@ -168,7 +171,8 @@ export default {
       }
     }
     .box_left{
-      float left
+      position fixed
+      height 100vh
       background-color #f7f8fa
       .van-sidebar{
         overflow-y auto
@@ -195,13 +199,14 @@ export default {
       }
     }
     .sidebox{
-          margin  10px
-          border-radius 6px
-          box-shadow 0px 10px 10px #eee
+        margin-bottom  10px
+        // border-radius 6px
+        box-shadow 0px 5px 5px #eee
       }
       .contain{
           padding 10px
           line-height 35px
+          // box-shadow 0px 10px 10px #eee
           .iconfont{
               color #ee0a24
           }

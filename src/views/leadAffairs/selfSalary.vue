@@ -77,6 +77,9 @@ export default {
     ...mapMutations({
       save_type:'save_type'
     })
+  },
+  mounted(){
+    
   }
 }
 </script>

@@ -13,8 +13,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
 			'/kukacms': {
-        // target: 'http://172.16.28.77:7080/kukacms',
-        target: 'http://192.168.249.18:8080/kukacms', //测试库
+        target: 'http://172.16.28.77:7080/kukacms',
+        // target: 'http://192.168.249.18:8080/kukacms', //测试库
         // target: 'http://family.kukahome.com:5080/kukacms/',
         // target: 'http://kukacms.kukahome.com:8084/kukacms', //事业伙伴
         // target: 'http://kukacms.kukahome.com:8082/kukacms', //正式库

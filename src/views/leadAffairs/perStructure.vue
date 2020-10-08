@@ -5,7 +5,7 @@
             <van-field v-model="selectDept" label="选择单位：" placeholder="请选择" @click="deptClick" readonly/>
         </div>
         <div class="total">
-            <p>13951人</p>
+            <p>{{gwObj.allCount}}人</p>
             <p>总人数</p>
         </div>
         <!-- 按岗位分类 -->
@@ -58,9 +58,9 @@
                 <div class="pie" ref="chart3"></div>
             </div>
         </div>
-        <!-- 按来源 -->
+        <!-- 按司龄 -->
         <div class="post">
-            <p class="titlea"><span class="borleft"></span> 按来源</p>
+            <p class="titlea"><span class="borleft"></span> 按司龄</p>
             <div class="postrank">
                 <div class="pie" ref="chart4"></div>
             </div>
@@ -86,14 +86,14 @@
             <van-picker
                 show-toolbar
                 :columns="columns1"
-                @cancel="selectTime = false"
+                @cancel="showTime = false"
                 @confirm="confirmTime"
             />
         </van-popup>
     </div>
 </template>
 <script>
-import { querySelectTime,queryGwfl,queryGwcj } from './api'
+import { querySelectTime,queryGwfl,queryGwcj,queryXlTeam,queryAgeTeam,querySexTeam,queryJobAgeTeam,queryDeptDetailTeam } from './api'
 export default {
   data () {
     return {
@@ -103,26 +103,16 @@ export default {
         showTime: false, //选择时间弹窗
         columns1: [],
         gwObj: {}, //岗位分类
-        gwcjObj: {
-            gwcjhexinCount: '',
-            gwcjjicengCount: '',
-            gwcjjishuCount: '',
-            gwcjyuangongCount: '',
-            gwcjzhijieCount: '',
-            gwcjzhongcengCount: '',
-        }, //岗位层级
+        gwcjObj: {}, //岗位层级
+        xlTeam: {}, //按学历
+        ageTeam: {}, //按年龄
+        sexTeam: {}, //按性别
+        jobAgeTeam: {}, //按性别
         // columns: [], //表格列
         // tableData: [], //表格数据
-        tableData: [
-                    {"name":"顾家家居股份有限公司","gender":"男","birthday":'2003-12-7',"height":"166","email":"li@gmail.com","tel":"182*****1538","hobby":"钢琴、书法、唱歌","address":"上海市奉贤区南桥镇立新路12号2楼"},
-                    {"name":"变革管理与组织发展中心","gender":"女","birthday":'1993-12-7',"height":"186","email":"sun@gmail.com","tel":"161*****0097","hobby":"钢琴、书法、唱歌","address":"上海市崇明县城桥镇八一路739号"},
-                    {"name":"人力资源管理中心","gender":"女","birthday":'1993-12-7',"height":"188","email":"zhou@gmail.com","tel":"197*****1123","hobby":"钢琴、书法、唱歌","address":"上海市青浦区青浦镇章浜路24号"},
-                   ],
-        columns:[
-                    {field: 'name', title:'一级单位', width: 300, titleAlign: 'center',columnAlign:'center', isFrozen: false},
-                    {field: 'gender', title:'二级单位', width: 300, titleAlign: 'center',columnAlign:'center', isFrozen: false},
-                    {field: 'tel', title: '在编人数', width: 180, titleAlign: 'center',columnAlign:'center', isFrozen: false},
-                ]
+        tableData: [],
+        deptName: '',
+        columns:[]
     };
   },
   created(){
@@ -132,15 +122,58 @@ export default {
     //确认时间
     confirmTime(picker){
         this.selectTime = picker
-        let arr1 = []
-        let newArr = []
-        for( let i in this.columns1){
-            arr1.push(this.columns1[i].replace("年",""))
+        //选择好的时间去掉年月传给后台
+        let str = this.selectTime.replace("年","")
+        let newStr = str.replace("月","")
+        console.log(newStr)
+        //选择条件发送请求
+        //获取岗位分类
+        let queryData = {
+            jobnumber:localStorage.getItem('jobNum'),
+            flag:2,
+            content:this.gwObj.content,
+            deptId:this.gwObj.deptId,
+            grade:this.gwObj.grade,
+            time:newStr,
         }
-        for( let i in arr1){
-            newArr.push(arr1[i].replace("月",""))
-        }
-        console.log(newArr)
+        queryGwfl(queryData).then(res=>{
+            this.gwObj = res.obj
+        })
+        //查询岗位层级
+        queryGwcj(queryData).then(res=>{
+            this.gwcjObj = res.obj
+            this.initCharts()
+        })
+        //查询按学历
+        queryXlTeam(queryData).then(res=>{
+            this.xlTeam = res.obj
+            this.initCharts1()
+        })
+        //查询按年龄
+        queryAgeTeam(queryData).then(res=>{
+            this.ageTeam = res.obj
+            this.initCharts2()
+        })
+        //查询按性别
+        querySexTeam(queryData).then(res=>{
+            this.sexTeam = res.obj
+            this.initCharts3()
+        })
+        //查询按性别
+        queryJobAgeTeam(queryData).then(res=>{
+            this.jobAgeTeam = res.obj
+            this.initCharts4()
+        })
+        //查询部门详细
+        queryDeptDetailTeam(queryData).then(res=>{
+            this.deptName = res.obj
+            this.tableData = res.obj.details
+            this.columns = [
+                {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false},
+                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false},
+                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false},
+            ]
+        })
         this.showTime = false
     },
     //页面初始化数据
@@ -161,10 +194,36 @@ export default {
         queryGwcj(queryData).then(res=>{
             this.gwcjObj = res.obj
             this.initCharts()
+        })
+        //查询按学历
+        queryXlTeam(queryData).then(res=>{
+            this.xlTeam = res.obj
             this.initCharts1()
+        })
+        //查询按年龄
+        queryAgeTeam(queryData).then(res=>{
+            this.ageTeam = res.obj
             this.initCharts2()
+        })
+        //查询按性别
+        querySexTeam(queryData).then(res=>{
+            this.sexTeam = res.obj
             this.initCharts3()
+        })
+        //查询按性别
+        queryJobAgeTeam(queryData).then(res=>{
+            this.jobAgeTeam = res.obj
             this.initCharts4()
+        })
+        //查询部门详细
+        queryDeptDetailTeam(queryData).then(res=>{
+            this.deptName = res.obj
+            this.tableData = res.obj.details
+            this.columns = [
+                {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false},
+                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false},
+                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false},
+            ]
         })
     },
     //按岗位层级
@@ -181,7 +240,6 @@ export default {
               padding: 20
             },
         　　xAxis: {
-        // 　　data: ["衬衫","羊毛衫","雪纺衫","裤子","高跟鞋","袜子"],
               show:false,//不显示坐标轴线、坐标轴刻度线和坐标轴上的文字
         　　},
         　　yAxis: {
@@ -227,12 +285,23 @@ export default {
         window.onresize = myChart.resize
         //点击事件
         myChart.on('click', function (params) {
-            // window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
             switch (params.name) {
-              case '衬衫':
+              case '直接类（O类）':
                 console.log(params.name)
                 break;
-              case '羊毛衫':
+              case '员工（P1/S1-P4/S4）':
+                console.log(params.name)
+                break;
+              case '技术干部（P4/S4（主任）及以上）':
+                console.log(params.name)
+                break;
+              case '基层干部（M1-M3）':
+                console.log(params.name)
+                break;
+              case '中层干部（M4-M5）':
+                console.log(params.name)
+                break;
+              case '核心干部（M及以上）':
                 console.log(params.name)
                 break;
             
@@ -244,6 +313,24 @@ export default {
     //按学历
     initCharts1 () {
     　　let myChart = this.$echarts.init(this.$refs.chart1);
+        let data1 = [
+            {name:'博士',value:this.xlTeam.xlboShiCount},
+            {name:'MBA',value:this.xlTeam.xlmbacount},
+            {name:'硕士及以上',value:this.xlTeam.xlshuoShiCount},
+            {name:'小学',value:this.xlTeam.xlxiaoXueCount},
+            {name:'大专',value:this.xlTeam.xldaZhuanCount},
+            {name:'本科',value:this.xlTeam.xlbenKeCount},
+            {name:'高中中专',value:this.xlTeam.xlgaoZhongCount},
+            {name:'初中',value:this.xlTeam.xlchuZhongCount},
+        ];
+        let seriesLabel = {
+            normal: {
+                show: true,
+                // textBorderColor: '#333',
+                offset: [10, 0],
+                textBorderWidth: 2
+            }
+        }
     　　// 绘制图表
     　　myChart.setOption({
             title: {
@@ -254,7 +341,7 @@ export default {
                 trigger: 'axis',
                 axisPointer: {
                     type: 'shadow'
-                }
+                },
             },
             legend: {
                 // data: ['2011年', '2012年']
@@ -271,28 +358,20 @@ export default {
             },
             yAxis: {
                 type: 'category',
-                data: ['其他','硕士及以上', '小学', '大专', '本科', '高中中专', '初中']
+                data: ['博士','MBA','硕士及以上', '小学', '大专', '本科', '高中中专', '初中']
             },
             series: [
                 {
-                    // label: seriesLabel,
+                    label: seriesLabel,
                     // name: '2011年',
                     type: 'bar',
-                    data: [
-                        {value:8000},
-                        {value:6000},
-                        {value:5000},
-                        {value:4000},
-                        {value:3000},
-                        {value:2000},
-                        {value:1000},
-                    ],
+                    data: data1,
                     itemStyle: {
                         normal: {
                         color: function(params) {
                                 //自定义颜色
                                 var colorList = [
-                                '#f2902a', '#f2902a', '#f2902a','#f2902a','##f2902a','#f2902a','#f2902a'
+                                    '#f2902a', '#f2902a', '#f2902a','#f2902a','#f2902a','#f2902a','#f2902a','#f2902a'
                                 ];
                                 return colorList[params.dataIndex]
                             }
@@ -303,13 +382,68 @@ export default {
     　　});
         window.onresize = myChart.resize
         //点击事件
+        myChart.getZr().off('click');
+        myChart.getZr().on('click',function (params) {
+          var pointInPixel= [params.offsetX, params.offsetY];
+          if (myChart.containPixel('grid',pointInPixel)) {
+            /*单击图标X轴数据，打开详情*/
+              var xIndex = myChart.convertFromPixel({seriesIndex:0},pointInPixel)[1];
+              // console.log(data1[xIndex])
+            switch (data1[xIndex].name) {
+              case '初中':
+                console.log(data1[xIndex].name)
+                break;
+              case '高中中专':
+                console.log(data1[xIndex].name)
+                break;
+              case '本科':
+                console.log(data1[xIndex].name)
+                break;
+              case '大专':
+                console.log(data1[xIndex].name)
+                break;
+              case '小学':
+                console.log(data1[xIndex].name)
+                break;
+              case '硕士及以上':
+                console.log(data1[xIndex].name)
+                break;
+              case 'MBA':
+                console.log(data1[xIndex].name)
+                break;
+              case '博士':
+                console.log(data1[xIndex].name)
+                break;
+            
+              default:
+                break;
+            }
+          }
+        });
         myChart.on('click', function (params) {
-            // window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
             switch (params.name) {
-              case '衬衫':
+              case '初中':
                 console.log(params.name)
                 break;
-              case '羊毛衫':
+              case '高中中专':
+                console.log(params.name)
+                break;
+              case '本科':
+                console.log(params.name)
+                break;
+              case '大专':
+                console.log(params.name)
+                break;
+              case '小学':
+                console.log(params.name)
+                break;
+              case '硕士及以上':
+                console.log(params.name)
+                break;
+              case 'MBA':
+                console.log(params.name)
+                break;
+              case '博士':
                 console.log(params.name)
                 break;
             
@@ -321,17 +455,31 @@ export default {
     //按年龄
     initCharts2 () {
     　　let myChart = this.$echarts.init(this.$refs.chart2);
+        let seriesLabel = {
+            normal: {
+                show: true,
+                // textBorderColor: '#333',
+                textBorderWidth: 2
+            }
+        }
     　　// 绘制图表
     　　myChart.setOption({
             xAxis: {
                 type: 'category',
-                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri']
+                data: ['25岁以下', '25-35岁', '35-45岁', '45-50岁', '50岁以上']
             },
             yAxis: {
                 type: 'value'
             },
             series: [{
-                data: [120, 200, 150, 80, 70],
+                label: seriesLabel,
+                data: [
+                        {name:'25岁以下',value:this.ageTeam.age25Count},
+                        {name:'25-35岁',value:this.ageTeam.age25to35Count},
+                        {name:'35-45岁',value:this.ageTeam.age35to45Count},
+                        {name:'45-50岁',value:this.ageTeam.age45to50Count},
+                        {name:'50岁以上',value:this.ageTeam.age50Count},
+                    ],
                 type: 'bar',
                 itemStyle: {
                     normal: {
@@ -351,10 +499,19 @@ export default {
         myChart.on('click', function (params) {
             // window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
             switch (params.name) {
-              case '衬衫':
+              case '25岁以下':
                 console.log(params.name)
                 break;
-              case '羊毛衫':
+              case '25-35岁':
+                console.log(params.name)
+                break;
+              case '35-45岁':
+                console.log(params.name)
+                break;
+              case '45-50岁':
+                console.log(params.name)
+                break;
+              case '50岁以上':
                 console.log(params.name)
                 break;
             
@@ -398,8 +555,8 @@ export default {
                         show: false
                     },
                     data: [
-                        {value: 335, name: '男'},
-                        {value: 310, name: '女'},
+                        {value: this.sexTeam.manCount, name: '男'},
+                        {value: this.sexTeam.womanCount, name: '女'},
                     ],
                     itemStyle: {
                         normal: {
@@ -420,10 +577,10 @@ export default {
         myChart.on('click', function (params) {
             // window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
             switch (params.name) {
-              case '衬衫':
+              case '男':
                 console.log(params.name)
                 break;
-              case '羊毛衫':
+              case '女':
                 console.log(params.name)
                 break;
             
@@ -432,66 +589,74 @@ export default {
             }
         })
 　　},
-    //按来源
+    //按司龄
     initCharts4 () {
     　　let myChart = this.$echarts.init(this.$refs.chart4);
     　　// 绘制图表
     　　myChart.setOption({
-            title: {
-                // text: '标题',
-                // subtext: '数据来自网络'
+        // 　　title: { text: '分析报表' },
+        　　tooltip: {},
+            legend:{
+              // textStyle:{color:'#f00'},
+              orient: 'vertical',
+              left: 'left',
+              padding: 20
             },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                }
+        　　xAxis: {
+              show:false,//不显示坐标轴线、坐标轴刻度线和坐标轴上的文字
+        　　},
+        　　yAxis: {
+              show:false,
             },
-            legend: {
-                // data: ['2011年', '2012年']
-            },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            xAxis: {
-                type: 'value',
-                boundaryGap: [0, 0.01]
-            },
-            yAxis: {
-                type: 'category',
-                data: ['编外人员','中介招聘','派遣公司', '其他', '校园招聘', '内部推荐', '外包公司', '自主招聘']
-            },
-            series: [
-                {
-                    // name: '2011年',
-                    type: 'bar',
-                    data: [300,800,1003, 1289, 1534, 1970, 2004, 3000],
-                    itemStyle: {
-                        normal: {
-                        color: function(params) {
-                                //自定义颜色
-                                var colorList = [
-                                    '#ee7b77','#ee7b77','#ee7b77','#ee7b77','#ee7b77','#ee7b77','#ee7b77','#ee7b77',
-                                ];
-                                return colorList[params.dataIndex]
-                            }
-                        }
-                    }
+        　　series: [{
+        　　name: '人数',
+        　　type: 'pie',
+            radius: '60%',
+            center: ['50%', '70%'],
+            label: {
+                normal:{
+                    show: true,
+                    // position: 'inside',
+                    formatter: '{c}%',
+                    formatter:function(params){ //标签内容
+                    //   return  params.name+':'+params.value
+                      return params.value
+                    },
+                  }
                 },
-            ]
+        　　data: [
+                {name:'6个月及以下',value:this.jobAgeTeam.jobAge6mCount},
+                {name:'6个月至1年（含）',value:this.jobAgeTeam.jobAge6mTo1yCount},
+                {name:'1年至3年（含）',value:this.jobAgeTeam.jobAge1yTo3yCount},
+                {name:'3年以上',value:this.jobAgeTeam.jobAge3yCount},
+              ],
+              itemStyle: {
+                  normal: {
+                  color: function(params) {
+                          //自定义颜色
+                          var colorList = [
+                          'skyblue', 'lightgreen', 'orange','pink','#f66bbf','#e02c28'
+                          ];
+                          return colorList[params.dataIndex]
+                      }
+                  }
+              }
+        　　}]
     　　});
         window.onresize = myChart.resize
         //点击事件
         myChart.on('click', function (params) {
-            // window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
             switch (params.name) {
-              case '衬衫':
+              case '6个月及以下':
                 console.log(params.name)
                 break;
-              case '羊毛衫':
+              case '6个月至1年（含）':
+                console.log(params.name)
+                break;
+              case '1年至3年（含）':
+                console.log(params.name)
+                break;
+              case '3年以上':
                 console.log(params.name)
                 break;
             
@@ -505,42 +670,33 @@ export default {
         console.log(rowData)
     },
     cellMerge(rowIndex,rowData,field){
-        if (field === 'name' && rowData[field] === '顾家家居股份有限公司') {
+        if (field === 'highDeptName') {
             return {
                 colSpan: 1,
-                rowSpan: 2,
-                content: '<span style="color:red">顾家家居股份有限公司</span>',
-                componentName: ''
-
-            }
-        } else if (rowIndex === 1 && field === 'gender') {
-
-            return {
-                colSpan: 1,
-                rowSpan: 4,
-                content: '<span style="color:red">变革管理与组织发展中心</span>',
+                rowSpan: this.tableData.length,
+                content: `<span>${this.deptName.highDeptName}</span>`,
                 componentName: ''
             }
 
-        }else if (rowIndex === 1 && field === 'tel') {
-
-                return {
-                    colSpan: 1,
-                    rowSpan: 3,
-                    content:'',
-                    componentName:'table-cell-merge',
-                }
         }
     },
-    deptClick(){
-        
-    }
+    //选择部门
+    selctdept(data) {
+    //   this.addForm.a8TDPYXX013Name = data.content;
+    //   this.addForm.a8TDPYXX013 = data.deptId;
+    console.log(data)
+    },
   },
   mounted(){
-　　
+      
 　}
 }
 </script>
+<style>
+    td{
+        vertical-align: bottom
+    }
+</style>
 <style lang="stylus" scoped>
     .header{
         padding 10px
