@@ -60,6 +60,7 @@ export default {
   methods:{
     //隐藏导航栏
     hiddle(){
+      this.arr_flag(1) //vuex中赋值标识
       this.flag = false
       this.showArr = true
       this.hideleArr = false
@@ -68,6 +69,7 @@ export default {
       this.$refs.right.children[0].style.left = 0
     },
     show(){
+      this.arr_flag(2)
       this.flag = true
       this.hideleArr = true
       this.showArr = false
@@ -75,7 +77,8 @@ export default {
       this.$refs.right.children[0].style.left = ''
     },
     ...mapMutations({
-      save_type:'save_type'
+      save_type:'save_type',
+      arr_flag:'arr_flag'
     })
   },
   mounted(){

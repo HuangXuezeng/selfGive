@@ -479,14 +479,10 @@ export default {
     },
     //获取组织下的部门
     _getOrz(){
-        let queryData = {
-            jobnumber: 6006212
-        }
-        getOrz(queryData).then(res=>{
-            this.deptData.push(res.obj.departments)
-            this.currentDept = res.obj.currentDepartment
-            this.deptIds = res.obj.deptIds
-        })
+        const departRes =  JSON.parse(localStorage.getItem('departRes'))
+        this.deptData.push(departRes.obj.departments)
+        this.currentDept = departRes.obj.currentDepartment
+        this.deptIds = departRes.obj.deptIds
     },
     _queryPerson(){
         let queryData = {

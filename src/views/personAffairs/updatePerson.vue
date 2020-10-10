@@ -597,7 +597,7 @@ export default {
         var y = date.getFullYear();    
         var m = date.getMonth() + 1;    m = m < 10 ? '0' + m : m;    
         var d = date.getDate();    d = d < 10 ? ('0' + d) : d;       
-        return y + '年' + m + '月' + d + '日'
+        return y + '-' + m + '-' + d
     },
     //填写时的介绍弹窗
     showAlert() {

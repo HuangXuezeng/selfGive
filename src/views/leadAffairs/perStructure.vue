@@ -2,7 +2,7 @@
     <div>
         <div class="header">
             <van-field v-model="selectTime" label="选择时间：" placeholder="请选择" @click="timeClick=showTime=true" readonly/>
-            <van-field v-model="selectDept" label="选择单位：" placeholder="请选择" @click="deptClick" readonly/>
+            <choosedepartment @transferFa="selctdept" :Farequired="true"></choosedepartment>
         </div>
         <div class="total">
             <p>{{gwObj.allCount}}人</p>
@@ -12,19 +12,19 @@
         <div class="post">
             <p class="titlea"><span class="borleft"></span> 按岗位分类</p>
             <div class="postfenlei">
-                <div class="post_itema">
+                <div class="post_itema" @click="znClick">
                     <p>{{gwObj.gwzhinengCount}}人</p>
                     <p>职能类</p>
                 </div>
-                <div class="post_itemb">
+                <div class="post_itemb" @click="jsClick">
                     <p>{{gwObj.gwjiShuCount}}人</p>
                     <p>技术类</p>
                 </div>
-                <div class="post_itemc">
+                <div class="post_itemc" @click="yxClick">
                     <p>{{gwObj.gwyingXiaoCount}}人</p>
                     <p>营销类</p>
                 </div>
-                <div class="post_itemd">
+                <div class="post_itemd" @click="zjClick">
                     <p>{{gwObj.gwzhiJieCount}}人</p>
                     <p>直接类</p>
                 </div>
@@ -94,12 +94,18 @@
 </template>
 <script>
 import { querySelectTime,queryGwfl,queryGwcj,queryXlTeam,queryAgeTeam,querySexTeam,queryJobAgeTeam,queryDeptDetailTeam } from './api'
+import chooseDepartment from "@/components/pickerDeptOne.vue";
 export default {
+components: {
+    choosedepartment: chooseDepartment
+},
   data () {
     return {
         selectTime: '',
         selectChangeTime: '', //传给后台的时间值
-        selectDept: '',
+        selectDeptContent: '', //传给后台的部门值
+        selectDeptId: '', //传给后台的部门id
+        selectDeptGrade: '', //传给后台的部门层级
         showTime: false, //选择时间弹窗
         columns1: [],
         gwObj: {}, //岗位分类
@@ -125,15 +131,16 @@ export default {
         //选择好的时间去掉年月传给后台
         let str = this.selectTime.replace("年","")
         let newStr = str.replace("月","")
-        console.log(newStr)
+        // console.log(newStr)
+        this.selectChangeTime = newStr
         //选择条件发送请求
         //获取岗位分类
         let queryData = {
             jobnumber:localStorage.getItem('jobNum'),
             flag:2,
-            content:this.gwObj.content,
-            deptId:this.gwObj.deptId,
-            grade:this.gwObj.grade,
+            content:this.selectDeptContent,
+            deptId:this.selectDeptId,
+            grade:this.selectDeptGrade,
             time:newStr,
         }
         queryGwfl(queryData).then(res=>{
@@ -189,6 +196,14 @@ export default {
         }
         queryGwfl(queryData).then(res=>{
             this.gwObj = res.obj
+            this.selectDeptContent = res.obj.content
+            this.selectDeptId = res.obj.deptId
+            this.selectDeptGrade = res.obj.grade
+            //获取的时间去掉年月传给后台
+            let str = res.obj.time.replace("年","")
+            let newStr = str.replace("月","")
+            // console.log(newStr)
+            this.selectChangeTime = newStr //获取转换好的时间格式传给后台（默认时间）
         })
         //查询岗位层级
         queryGwcj(queryData).then(res=>{
@@ -681,10 +696,73 @@ export default {
         }
     },
     //选择部门
+    // deptClick() {
+    //     console.log('选择部门')
+    // },
     selctdept(data) {
-    //   this.addForm.a8TDPYXX013Name = data.content;
-    //   this.addForm.a8TDPYXX013 = data.deptId;
-    console.log(data)
+        console.log(data)
+        this.selectDeptContent = data.content
+        this.selectDeptId = data.deptId
+        this.selectDeptGrade = data.grade
+        let queryData = {
+            jobnumber:localStorage.getItem('jobNum'),
+            flag:2,
+            content:data.content,
+            deptId:data.deptId,
+            grade:data.grade,
+            time:this.selectChangeTime,
+        }
+        queryGwfl(queryData).then(res=>{
+            this.gwObj = res.obj
+        })
+        //查询岗位层级
+        queryGwcj(queryData).then(res=>{
+            this.gwcjObj = res.obj
+            this.initCharts()
+        })
+        //查询按学历
+        queryXlTeam(queryData).then(res=>{
+            this.xlTeam = res.obj
+            this.initCharts1()
+        })
+        //查询按年龄
+        queryAgeTeam(queryData).then(res=>{
+            this.ageTeam = res.obj
+            this.initCharts2()
+        })
+        //查询按性别
+        querySexTeam(queryData).then(res=>{
+            this.sexTeam = res.obj
+            this.initCharts3()
+        })
+        //查询按性别
+        queryJobAgeTeam(queryData).then(res=>{
+            this.jobAgeTeam = res.obj
+            this.initCharts4()
+        })
+        //查询部门详细
+        queryDeptDetailTeam(queryData).then(res=>{
+            this.deptName = res.obj
+            this.tableData = res.obj.details
+            this.columns = [
+                {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false},
+                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false},
+                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false},
+            ]
+        })
+    },
+    // 岗位分类查看详情
+    znClick(){
+        console.log(this.gwObj.gwzhinengJobnumber)
+    },
+    jsClick(){
+        console.log(this.gwObj.gwjiShuJobnumber)
+    },
+    yxClick(){
+        console.log(this.gwObj.gwyingXiaoJobnumber)
+    },
+    zjClick(){
+        console.log(this.gwObj.gwzhiJieJobnumber)
     },
   },
   mounted(){

@@ -7,6 +7,9 @@ const mutations = {
   },
   save_jobNum (state,jobNumber) {
     state.jobNumber = jobNumber
+  },
+  arr_flag (state,arrflag) {
+    state.arrflag = arrflag
   }
 }
 

@@ -134,3 +134,13 @@ export function queryDeptDetailTeam (queryData) {
     data: qs.stringify(queryData)
   })
 }
+//流失率部分--------------------------------------------------------
+export function queryRunoff (queryData) {
+  return fetch({
+    url: `/kukacms/self/runoff/list`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}
