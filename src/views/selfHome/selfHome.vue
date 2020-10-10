@@ -208,11 +208,11 @@ export default {
     };
   },
   created(){
-    localStorage.setItem('jobNum',6006212)
+    // localStorage.setItem('jobNum',6006212)
     // localStorage.setItem('jobNum',9050104)
     // localStorage.setItem('jobNum',9102171)
     // localStorage.setItem('jobNum',9078825)
-    // localStorage.setItem('jobNum',9107021)
+    localStorage.setItem('jobNum',9025434)
     this._getOrz()
     if(localStorage.getItem('jobNum') == '' || localStorage.getItem('jobNum') == null || localStorage.getItem('jobNum') == undefined){
       this.getUser()
@@ -256,7 +256,15 @@ export default {
         type:'out'
       }
       getMenu(queryData).then(res=>{
-        this.gerenList = res.obj
+        let userinfo = JSON.parse(localStorage.getItem('userinfo'))
+           if( userinfo != null  && userinfo.isCadre != 'Y'){
+             for(let i in res.obj){
+               if(res.obj[i].menu == '团队培育'){
+                 res.obj.splice(i,1)
+               }
+             }
+           }
+          this.gerenList = res.obj
       })
     },
     //弹窗排序需获取全部
@@ -266,6 +274,14 @@ export default {
         type:'in'
       }
       getMenu(queryData).then(res=>{
+        let userinfo = JSON.parse(localStorage.getItem('userinfo'))
+           if( userinfo != null  && userinfo.isCadre != 'Y'){
+             for(let i in res.obj){
+               if(res.obj[i].menu == '团队培育'){
+                 res.obj.splice(i,1)
+               }
+             }
+           }
         this.gerenLists = res.obj
       })
     },
@@ -400,6 +416,10 @@ export default {
       }
     },
     leadClick(){
+      // var url='dingtalk://dingtalkclient/action/openapp?corpid=ding4f82ce64859fa82335c2f4657eb6378f&container_type=work_platform&app_id=798823910&redirect_type=jump&redirect_url=http://www.rc.kukahome.com:8880/mrt/'
+      // const a = document.createElement('a'); // 创建a标签
+      // a.setAttribute('href', url);// href链接
+      // a.click();// 自执行点击事
       window.open('http://www.rc.kukahome.com:8880/mrt/')
     },
     leadClick1(){

@@ -65,4 +65,20 @@ export function listProjectByJobnumber (queryData) {
     data: qs.stringify(queryData)
   })
 }
+//获取个人信息
+export function listKukaWorkByJobnumber (queryData) {
+  return fetch({
+    url: `/kukacms/self/kukawork/listKukaWorkByJobnumber`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//获取个人信息
+export function findCadreAbility (queryData) {
+  return fetch({
+    url: `/kukacms/self/findCadreAbility`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
 

@@ -318,7 +318,9 @@ export default new Router({
         },
       ],
     },
-    //干部档案
+    /***
+     * 干部档案
+     */
     {
       path: '/cadreArchives',
       name: 'cadreArchives',
@@ -341,6 +343,20 @@ export default new Router({
       name: 'cadreArchivesInfo',
       component: () => import('@/views/leadAffairs/cadreArchives/cadreArchivesInfo'),
     },
+    /**
+     * 干部档案结束
+     */
+    /**
+     * 薪酬开始
+     */
+    {
+      path: '/ProgressRewards',
+      name: 'ProgressRewards',
+      component: () => import('@/views/PayLibrary/ProgressRewards'),
+    },
+    /**
+     * 薪酬结束
+     */
     //查询员工信息
     {
       path: '/personHome',
