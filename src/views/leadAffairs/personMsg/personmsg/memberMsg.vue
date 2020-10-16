@@ -16,6 +16,7 @@
                 </van-collapse-item>
             </van-collapse>
         </div>
+        <van-empty v-if="membersList == ''" description="无数据" />
     </div>
 </template>
 <script>

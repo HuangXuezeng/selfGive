@@ -19,6 +19,7 @@
                 </van-collapse-item>
             </van-collapse>
         </div>
+        <van-empty v-if="socialList == ''" description="无数据" />
         <!-- 查看图片 -->
         <van-image-preview v-model="showPhoto" get-container="body" :images="images" :closeable='true' @close="onClose">
             

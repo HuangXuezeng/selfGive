@@ -4,6 +4,9 @@
         <van-sticky>
           <div style="background-color:#fff">
             <div class="sidebox">
+              <div class="back" @click="back">
+                返回
+              </div>
                 <div class="contain">
                     <div>
                         <div><span style="font-weight:700">{{personObj.a0101}}</span><span style="float:right"><img class="img" :src="personObj.photo" alt=""></span></div>
@@ -124,6 +127,14 @@ export default {
         }
       })
     },
+    //返回花名册
+    back(){
+      this.$router.push({name:'roster',params:{scrollTop:this.$store.state.scrollTop}})
+      this.scroll_top(0)
+    },
+    ...mapMutations({
+      scroll_top:'scroll_top'
+    })
   },
   mounted() {
     // console.log(this.$refs.left.style)
@@ -202,6 +213,12 @@ export default {
         margin-bottom  10px
         // border-radius 6px
         box-shadow 0px 5px 5px #eee
+        .back{
+          height 30px
+          line-height 30px
+          padding-left 10px
+          color #ee0a24
+        }
       }
       .contain{
           padding 10px

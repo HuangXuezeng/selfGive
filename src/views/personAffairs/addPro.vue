@@ -3,7 +3,11 @@
         <div>
             <van-field v-model="projectName" label="项目名称：" placeholder="必填"/>
             <van-field v-model="startTime" label="进入项目时间：" @click="startTimeClick" readonly placeholder="必填"/>
-            <van-field v-model="endTime" label="退出项目时间：" @click="endTimeClick" readonly placeholder="选填"/>
+            <van-field v-model="endTime" label="退出项目时间：" @click-input="endTimeClick" readonly placeholder="选填">
+                <template #button>
+                    <i size="small" type="primary" @click="reset"><van-icon name="close" color="#ccc"/></i>
+                </template>
+            </van-field>
             <van-field v-model="trjlzb" label="投入精力占比：" placeholder="必填">
                 <template #button>
                     <i size="small" type="primary" @click="showAlert7"><van-icon name="question-o" color="red"/></i>
@@ -16,7 +20,7 @@
             </van-field>
             <van-field v-model="projectRole" label="项目角色：" placeholder="必填"/>
             <van-field v-model="projectProp" label="项目性质：" placeholder="必填" @click="typeClick" readonly/>
-            <van-field v-model="projectResult" label="项目成果：" placeholder="选填">
+            <van-field v-model="projectResult" label="项目成果：" placeholder="只能输入500个字符、250个字（选填）" type="textarea" autosize>
                 <template #button>
                     <i size="small" type="primary" @click="showAlert9"><van-icon name="question-o" color="red"/></i>
                 </template>
@@ -61,6 +65,7 @@ import { getProType,updatePro } from './api'
 export default {
   data () {
     return {
+        lengthFlag: true,
         projectName: '', //项目名称
         startTime: '',
         endTime: '',
@@ -112,6 +117,11 @@ export default {
                     Notify({ type: 'warning', message: '开始时间不得大于结束时间！' })
                     return
                 }
+            }
+            //判断项目成果字符长度
+            this.getStr(this.projectResult)
+            if(this.lengthFlag == false){
+                return
             }
             if(this.projectName == null || this.projectName == '' ||
                this.trjlzb == null || this.trjlzb == '' ||
@@ -208,6 +218,23 @@ export default {
         icon: 'cubeic-alert'
       }).show()
     },
+    //清空退出项目时间
+    reset(){
+        this.endTime = ''
+    },
+    //字符串长度检测
+    getStr(str){
+        if (str == null) return 0;
+        if (typeof str != "string"){
+            str += "";
+        }
+        if(str.replace(/[^\x00-\xff]/g,"01").length > 500){
+            Notify({ type: 'warning', message: '项目成果不得大于500个字符！' })
+            return this.lengthFlag = false
+        }else{
+            return this.lengthFlag = true
+        }
+    }
   }
 }
 </script>

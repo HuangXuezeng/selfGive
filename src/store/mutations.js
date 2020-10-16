@@ -10,7 +10,10 @@ const mutations = {
   },
   arr_flag (state,arrflag) {
     state.arrflag = arrflag
-  }
+  },
+  scroll_top (state,scrollTop) {
+    state.scrollTop = scrollTop
+  },
 }
 
 export default mutations

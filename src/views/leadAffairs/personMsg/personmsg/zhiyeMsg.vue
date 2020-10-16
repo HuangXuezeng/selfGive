@@ -18,6 +18,7 @@
                     <p><span @click="seePdf(item)">职业资格证书：<span style="border-bottom:1px solid #ccc;padding:2px">{{item.pathName}}</span></span></p>
                 </van-collapse-item>
             </van-collapse>
+            <van-empty v-if="zigeList == ''" description="无数据" />
         </div>
         <!-- 查看图片 -->
         <van-image-preview v-model="showPhoto" get-container="body" :images="images" :closeable='true' @close="onClose">

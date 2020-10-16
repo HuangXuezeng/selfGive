@@ -11,6 +11,7 @@
             <p><span>机构路径：{{jobData.jglj}} </span></p>
             <p><span>直接上级：{{jobData.zjxj}}</span></p>
         </div>
+        <van-empty v-if="jobData == ''" description="无数据" />
     </div>
 </template>
 <script>

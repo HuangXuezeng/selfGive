@@ -17,6 +17,7 @@
                 </van-collapse-item>
             </van-collapse>
         </div>
+        <van-empty v-if="relativesList == ''" description="无数据" />
     </div>
 </template>
 <script>

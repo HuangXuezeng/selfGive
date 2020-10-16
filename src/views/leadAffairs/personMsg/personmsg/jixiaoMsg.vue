@@ -25,6 +25,7 @@
                     </van-collapse-item>
                 </van-collapse>
             </div>
+            <van-empty v-if="performanceList == ''" description="无数据" />
             <van-popup
             v-model="show" 
             get-container="body"

@@ -303,6 +303,9 @@ export default new Router({
           path: '/roster',
           name: 'roster',
           component: () => import('@/views/leadAffairs/roster'),
+          meta: {
+            keepAlive: true
+          }
         },
         //流失率
         {
@@ -315,6 +318,12 @@ export default new Router({
           path: '/perStructure',
           name: 'perStructure',
           component: () => import('@/views/leadAffairs/perStructure'),
+        },
+        //人效分析
+        {
+          path: '/humanEffect',
+          name: 'humanEffect',
+          component: () => import('@/views/leadAffairs/humanEffect'),
         },
       ],
     },

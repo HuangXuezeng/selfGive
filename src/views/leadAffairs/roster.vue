@@ -7,15 +7,18 @@
             <div class="btn">
                 <van-button type="primary" color="#fc5f10" size="small" @click="search">查询</van-button>
                 <van-button type="primary" color="#fc5f10" size="small" @click="reset">重置</van-button>
-                <van-button type="primary" color="#fc5f10" size="small" @click="moreSearch">更多</van-button>
+                <van-button type="primary" color="#fc5f10" size="small" @click="moreSearch">更多查询条件</van-button>
                 <van-button type="primary" color="#fc5f10" size="small" @click="setMenu">排序</van-button>
+                <!-- <van-button type="primary" color="#fc5f10" size="small" @click="ceshi">测试</van-button> -->
             </div>
         </div>
-        <!-- 下拉加载 -->
+        <!-- 人数表格 -->
         <div class="table">
             <v-table 
             ref="table" 
-            title-bg-color="#ccc"
+            columns-width-drag
+            :height="500"
+            title-bg-color="#e5ecf0"
             :columns="columns"
             :table-data="tableData" 
             row-hover-color="#eee" 
@@ -26,8 +29,12 @@
             :paging-index="(pageIndex-1)*pageSize"   	
             ></v-table>	
         </div>
+        <div class="more">
+            <van-tag type="warning">总条数：{{total}}</van-tag>
+            <span style="float:right" @click="loadMore"><van-tag type="warning">下一页</van-tag></span>
+        </div>
         <!-- <div class="mt20 mb20 bold" style="margin-top:10px;">
-            <v-pagination @page-change="pageChange" @page-size-change="pageSizeChange" :total="total" size='small' :page-size="pageSize" :layout="['prev', 'pager', 'next']"></v-pagination>
+            <v-pagination @page-change="pageChange" @page-size-change="pageSizeChange" :total="total" size='small' :page-size="pageSize" :layout="['total', 'prev', 'pager', 'next']" :showPagingCount="2"></v-pagination>
         </div>    -->
         <!-- 更多查询条件弹出框 -->
         <van-popup v-model="showPick" position="top" :style="{ height: '70%' }" get-container="body" closeable>
@@ -233,13 +240,14 @@
     </div>
 </template>
 <script>
-import { Popup,Checkbox,CheckboxGroup,List } from 'vant'
-import { queryDept,getSelectVal,getOrz,queryFen2,queryPerson,queryRank,queryDeptIdName,querySome } from './api'
+import { Popup,Checkbox,CheckboxGroup,List,Notify } from 'vant'
+import { queryDept,getSelectVal,getOrz,queryFen2,queryPerson,queryRank,queryDeptIdName,querySome,queryRoster } from './api'
 import { mapMutations } from 'vuex'
 import draggable from 'vuedraggable'
 export default {
   data () {
     return {
+        intertimer: null, //定时器
         checked: true, //是否包含下级部门
         dataList: [],
         loading: false,
@@ -313,9 +321,11 @@ export default {
         pageIndex:1,
         pageSize:10,
         tableData: [],
+        fenyeData: [],
+        dataIndex: 0, //假分页默认显示
         columns: [
                 {
-                    field: 'custome', width: 50, titleAlign: 'center', columnAlign: 'center',title: '序号',
+                    field: 'custome', width: 100, titleAlign: 'center', columnAlign: 'center',title: '序号',
                     formatter: function (rowData, index) {
                         return index + 1
                     }, isResize:true,
@@ -323,7 +333,7 @@ export default {
                 {
                     field: 'jobnumber',
                     title: '工号',
-                    width: 100,
+                    width: 150,
                     titleAlign: 'center',
                     columnAlign: 'center',
                     formatter: function(rowData, rowIndex, pagingIndex, field) {
@@ -343,7 +353,7 @@ export default {
                 {
                     field: 'department',
                     title: '部门',
-                    width: 150,
+                    width: 200,
                     titleAlign: 'center',
                     columnAlign: 'center',
                     isResize: true
@@ -351,7 +361,7 @@ export default {
                 {
                     field: 'post',
                     title: '岗位',
-                    width: 150,
+                    width: 200,
                     titleAlign: 'center',
                     columnAlign: 'center',
                     isResize: true
@@ -367,6 +377,14 @@ export default {
                 {
                     field: 'rsrq',
                     title: '入司日期',
+                    width: 150,
+                    titleAlign: 'center',
+                    columnAlign: 'center',
+                    isResize: true
+                },									
+                {
+                    field: 'currentState',
+                    title: '当前状态',
                     width: 150,
                     titleAlign: 'center',
                     columnAlign: 'center',
@@ -445,8 +463,34 @@ export default {
   created(){
     this.getState()
     this._queryDeptIdName() //获取部门名字和部门id
+    // console.log(this.$store.state.to_Roster)
   },
   methods:{
+    //处理表格的分页方法
+    pagePev(){
+        this.total = this.tableData.length
+        let result = []
+        let chunk = 100 //100个一组
+        for(var i = 0, j = this.tableData.length; i < j; i += chunk){
+            result.push(this.tableData.slice(i,i + chunk))
+        }
+        // console.log(result)
+        this.tableData = result[0] //默认显示100条
+        this.fenyeData = result
+        // for(var k = 0;k < result.length;k++){
+        //     console.log(result[k])
+        // }
+    },
+    //加载更多数据
+    loadMore(){
+        // debugger
+        this.dataIndex++ //点击+1
+        if(this.dataIndex >= this.fenyeData.length){
+            Notify({ type: "warning", message: "没有更多数据了哦~" });
+        }else{
+            this.tableData = this.tableData.concat(this.fenyeData[this.dataIndex])
+        }
+    },
     //获取当前状态的值 
     getState(){
         getSelectVal().then(res=>{
@@ -474,6 +518,7 @@ export default {
                 this.deptIds = res.obj.deptIds
                 this.deptData.push(res.obj.departments)
                 this.tableData = res.obj.employees
+                this.pagePev() //获取的表格数据分组
             })
         }
     },
@@ -491,6 +536,7 @@ export default {
         }
         queryPerson(queryData).then(res=>{
             this.tableData = res.obj
+            this.pagePev() //获取的表格数据分组
         })
     },
     //重置
@@ -519,6 +565,7 @@ export default {
         let queryData = this.form
         querySome(queryData).then(res=>{
             this.tableData =  res.obj
+            this.pagePev() //获取的表格数据分组
             this.form.department = this.deptVal = ''
             this.form.jobnumber = ''
             this.form.name = ''
@@ -578,12 +625,12 @@ export default {
         this.form.isCompete = this.jingyeVal
         this.form.personType = this.leibieVal
         // console.log(this.form)
-        if(this.form.currentState !== ''){
-            let obj1 = {
-                field: 'currentState',title: '当前状态',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
-            }
-            this.columns.push(obj1)
-        }
+        // if(this.form.currentState !== ''){
+        //     let obj1 = {
+        //         field: 'currentState',title: '当前状态',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+        //     }
+        //     this.columns.push(obj1)
+        // }
         if(this.form.sex !== ''){
             let obj2 = {
                 field: 'sex',title: '性别',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true,
@@ -759,6 +806,7 @@ export default {
         querySome(queryData).then(res=>{
             //接受数据
             this.tableData = res.obj
+            this.pagePev() //获取的表格数据分组
             //清空搜索框
             this.form.currentState = this.stateVal = ''
             this.form.sex = this.sex = ''
@@ -802,13 +850,13 @@ export default {
             //     this.formList.push(obj1)
             // }
             switch(this.results[i]){
-                case 'zt':
-                    let obj1 = {
-                        field: 'currentState',title: '当前状态',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
-                    }
-                    this.columns.push(obj1)
-                    this.false1 = true
-                break;
+                // case 'zt':
+                //     let obj1 = {
+                //         field: 'currentState',title: '当前状态',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+                //     }
+                //     this.columns.push(obj1)
+                //     this.false1 = true
+                // break;
                 case 'xb':
                     let obj2 = {
                         field: 'sex',title: '性别',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
@@ -987,6 +1035,7 @@ export default {
         // console.log(rowData)
         // console.log(this.save_jobNum)
         this.save_jobNum(rowData.jobnumber)
+        this.scroll_top(document.getElementsByClassName("v-table-body")[0].scrollTop)
         this.$router.push({name:'basicMsg'})
     },
     //表格编辑
@@ -999,11 +1048,7 @@ export default {
     },
     //切换页码
     pageChange(){
-
-    },
-    //切换页码
-    pageChange(){
-
+        
     },
     pageSizeChange(){
 
@@ -1395,24 +1440,21 @@ export default {
         // console.log(this.defaultCheckedKeys)
         if(!checked){
             this.dataList = []
-
             for(let k in this.defaultCheckedKeys){
                 if(this.defaultCheckedKeys[k].depts){
                     this.dataList.push(this.defaultCheckedKeys[k]) 
                     for(let i in this.defaultCheckedKeys[k].depts){
                         this.$refs.tree.setChecked(this.defaultCheckedKeys[k].depts[i],false)
-                        this.$refs.tree.setChecked(this.defaultCheckedKeys[k],true)
-
+                        this.$refs.tree.setChecked(this.defaultCheckedKeys[0],true)
                     }
                 }
             }
-           
         }else{
-             for(let m in this.dataList){
-                 for(let n in  this.dataList[m].depts){
-                     this.$refs.tree.setChecked(this.dataList[m].depts[n],true)
-                 }
-                
+            // alert('111')
+            for(let m in this.dataList){
+                for(let n in this.dataList[m].depts){
+                    this.$refs.tree.setChecked(this.dataList[m].depts[n],true)
+                }
             }
         }
         // this.$refs.tree.setChecked(this.deptData, false)
@@ -1431,20 +1473,41 @@ export default {
         return newArr
     },
     ...mapMutations({
-        save_jobNum:'save_jobNum'
+        save_jobNum:'save_jobNum',
+        scroll_top:'scroll_top'
     }),
+    //设置定时器
+    // setTime(){
+    //     this.intertimer = setInterval(() => {
+            
+    //     }, 3000);
+    // }
   },
   mounted() {
-　　  this.$dragging.$on('dragged', ({ value }) => {
-        // console.log(value.item)
-        console.log(value.list)
-        this.newList = value.list
-        // console.log(value.otherData)
-      })
-      this.$dragging.$on('dragend', () => {
-  
-      })
+    　　 this.$dragging.$on('dragged', ({ value }) => {
+            // console.log(value.item)
+            console.log(value.list)
+            this.newList = value.list
+            // console.log(value.otherData)
+        })
+        this.$dragging.$on('dragend', () => {
+    
+        })
+        // console.log(this.$refs.table)
 　　},
+watch:{
+    //赋值离开页面时的表格滑动的高度
+    '$store.state.scrollTop': function (newVal,oldVal) {
+        // console.log('值来了哦')
+        // console.log(this.$route.params.scrollTop)
+        if(this.$route.params.scrollTop == undefined){
+            return
+        }else{
+            document.getElementsByClassName("v-table-body")[0].scrollTop = this.$route.params.scrollTop
+        }
+        // document.getElementsByClassName("v-table-body")[0].scrollTop = this.$route.params.scrollTop
+    }
+},
   components: {
       draggable
   },
@@ -1461,11 +1524,16 @@ export default {
         box-shadow 0 0  10px #eee
         .btn{
             padding 5px
+            line-height 35px
         }
     }
     .table{
         width 100%
         overflow-x auto
+    }
+    .more{
+        font-size 14px
+        padding 10px
     }
     .pick{
         padding 10px
@@ -1486,10 +1554,9 @@ export default {
         line-height 35px
         margin 5px
         border-radius 6px
-        background-color orange
         padding 5px
-        color #fff
         font-weight 700
+        border 1px solid #eee
         img{
           display block
           width 50px
@@ -1500,5 +1567,8 @@ export default {
           font-size 14px
         }
       }
+    }
+    .van-tag--warning{
+        line-height 19px
     }
 </style>

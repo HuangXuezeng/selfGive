@@ -7,7 +7,7 @@
               <van-sidebar-item title="花名册" to="roster"/>
               <van-sidebar-item title="流失率" to="retention"/>
               <van-sidebar-item title="人员结构" to="perStructure"/>
-              <van-sidebar-item title="培训记录" />
+              <van-sidebar-item title="人效分析" to="humanEffect"/>
               <van-sidebar-item title="个人发展" />
               <van-sidebar-item title="团队培训" />
               <van-sidebar-item title="薪资库" />

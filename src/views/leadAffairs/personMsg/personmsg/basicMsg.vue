@@ -39,6 +39,7 @@
             <p><span>银行卡：</span><span @click="seePdf2" style="border-bottom:1px solid #ccc;padding:2px">{{personList.bankFileName}}</span></p>
             <p><span>体检报告：</span><span @click="seePdf3" style="border-bottom:1px solid #ccc;padding:2px">{{personList.reportFileName}}</span></p> -->
         </div>
+        <van-empty v-if="personList == ''" description="无数据" />
     </div>
 </template>
 <script>

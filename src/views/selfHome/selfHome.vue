@@ -183,6 +183,12 @@ export default {
         {sortNum:4,title:'编制分析',img:'http://192.168.249.18:7020/menuImage/bianzhi.png'},
         {sortNum:5,title:'人员异动',img:'http://192.168.249.18:7020/menuImage/yidong.png'},
         {sortNum:6,title:'干部档案',img:'http://192.168.249.18:7020/menuImage/ganbu.png'},
+        {sortNum:7,title:'薪资库',img:'http://192.168.249.18:7020/menuImage/xck.png'},
+        {sortNum:8,title:'年薪分位值',img:'http://192.168.249.18:7020/menuImage/nxfw.png'},
+        {sortNum:9,title:'人均年薪',img:'http://192.168.249.18:7020/menuImage/xck.png'},
+        {sortNum:10,title:'人均工资',img:'http://192.168.249.18:7020/menuImage/xck.png'},
+        {sortNum:11,title:'人工费用',img:'http://192.168.249.18:7020/menuImage/rgfy.png'},
+        {sortNum:12,title:'奖励进度',img:'http://192.168.249.18:7020/menuImage/jljd.png'},
       ],
       colors: [{
             text: "Aquamarine"
@@ -208,11 +214,12 @@ export default {
     };
   },
   created(){
-    // localStorage.setItem('jobNum',6006212)
+    localStorage.setItem('jobNum',6006212)
     // localStorage.setItem('jobNum',9050104)
     // localStorage.setItem('jobNum',9102171)
     // localStorage.setItem('jobNum',9078825)
-    localStorage.setItem('jobNum',9025434)
+    // localStorage.setItem('jobNum',6003239)
+    // localStorage.setItem('jobNum',9107021)
     this._getOrz()
     if(localStorage.getItem('jobNum') == '' || localStorage.getItem('jobNum') == null || localStorage.getItem('jobNum') == undefined){
       this.getUser()
@@ -435,7 +442,8 @@ export default {
       window.open('https://res.exexm.com/dingtalk/common-no-cache/dingtalkindex.html?tenantId=kukahome&dd_full_screen=true')
     },
     ...mapMutations({
-      save_type:'save_type'
+      save_type:'save_type',
+      to_Roster:'to_Roster'
     }),
     //编辑排序
     edit(){
@@ -550,6 +558,7 @@ export default {
       switch(teamName){
         case '花名册':
         this.save_type(sortNum)
+        this.to_Roster(0)
         this.$router.push({name:'roster'})
         break;
         case '流失率':
@@ -559,6 +568,10 @@ export default {
         case '人员结构':
         this.save_type(sortNum)
         this.$router.push({name:'perStructure'})
+        break;
+        case '人效分析':
+        this.save_type(sortNum)
+        this.$router.push({name:'humanEffect'})
         break;
         // case '干部档案':
         // this.save_type(sortNum)

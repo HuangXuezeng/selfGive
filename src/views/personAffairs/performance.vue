@@ -48,9 +48,6 @@
                 :default-index="50"
               />
             </van-popup> 
-            <!-- <span>
-                <van-button type="primary" size="mini">修改</van-button>
-            </span> -->
         </div>
     </div>
 </template>

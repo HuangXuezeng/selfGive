@@ -67,6 +67,16 @@ export function querySome (queryData) {
     data: JSON.stringify(queryData)
   })
 }
+//从其他页面进入花名册查看
+export function queryRoster (queryData) {
+  return fetch({
+    url: `/kukacms/self/roster/selectEmployeeByJobnumber`,
+    method: 'post',
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    data: JSON.stringify(queryData)
+  })
+}
 
 //人员结构部分----------------------------------------------------------
 

@@ -16,6 +16,7 @@
             <p><span>车牌号：{{jobData.a01196}} </span></p>
             <p><span>车位使用开始日期：{{jobData.A01513}}</span></p>
         </div>
+        <van-empty v-if="jobData == ''" description="无数据" />
     </div>
 </template>
 <script>

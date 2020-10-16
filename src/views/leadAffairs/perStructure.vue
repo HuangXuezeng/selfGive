@@ -34,35 +34,35 @@
         <div class="post">
             <p class="titlea"><span class="borleft"></span> 按岗位层级</p>
             <div class="postrank">
-                <div class="pie" ref="chart"></div>
+                <div class="pie" ref="chart" id="chart"></div>
             </div>
         </div>
         <!-- 按学历 -->
         <div class="post">
             <p class="titlea"><span class="borleft"></span> 按学历</p>
             <div class="postrank">
-                <div class="pie" ref="chart1"></div>
+                <div class="pie" ref="chart1" id="chart1"></div>
             </div>
         </div>
         <!-- 按年龄 -->
         <div class="post">
             <p class="titlea"><span class="borleft"></span> 按年龄</p>
             <div class="postrank">
-                <div class="pie" ref="chart2"></div>
+                <div class="pie" ref="chart2" id="chart2"></div>
             </div>
         </div>
         <!-- 按性别 -->
         <div class="post">
             <p class="titlea"><span class="borleft"></span> 按性别</p>
             <div class="postrank">
-                <div class="pie" ref="chart3"></div>
+                <div class="pie" ref="chart3" id="chart3"></div>
             </div>
         </div>
         <!-- 按司龄 -->
         <div class="post">
             <p class="titlea"><span class="borleft"></span> 按司龄</p>
             <div class="postrank">
-                <div class="pie" ref="chart4"></div>
+                <div class="pie" ref="chart4" id="chart4"></div>
             </div>
         </div>
         <!-- 查看详细 -->
@@ -71,7 +71,10 @@
             <div class="table">
                 <v-table 
                 ref="table" 
-                title-bg-color="#ccc"
+                is-horizontal-resize
+                style="width:100%"
+                columns-width-drag
+                title-bg-color="#e5ecf0"
                 :columns="columns"
                 :table-data="tableData" 
                 row-hover-color="#eee" 
@@ -90,17 +93,47 @@
                 @confirm="confirmTime"
             />
         </van-popup>
+        <!-- 表格弹窗 -->
+        <van-popup
+        v-model="showTable" 
+        closeable
+        close-icon-position="bottom-right"
+        get-container="body"
+        position="top" 
+        :style="{ height: '70%' }">
+          <div class="table">
+              <v-table 
+              ref="table" 
+              is-horizontal-resize
+              style="width:100%"
+              columns-width-drag
+              :height="500"
+              title-bg-color="#ccc"
+              :columns="popupColumns"
+              :table-data="popupTableData" 
+              row-hover-color="#eee" 
+              row-click-color="#edf7ff" 
+              :row-click="rowClick3"	
+              ></v-table>	
+          </div>
+          <div class="more">
+              <van-tag type="warning">总条数：{{total}}</van-tag>
+              <span style="float:right" @click="loadMore"><van-tag type="warning">下一页</van-tag></span>
+          </div>
+        </van-popup> 
     </div>
 </template>
 <script>
-import { querySelectTime,queryGwfl,queryGwcj,queryXlTeam,queryAgeTeam,querySexTeam,queryJobAgeTeam,queryDeptDetailTeam } from './api'
+import { querySelectTime,queryGwfl,queryGwcj,queryXlTeam,queryAgeTeam,querySexTeam,queryJobAgeTeam,queryDeptDetailTeam,queryRoster } from './api'
 import chooseDepartment from "@/components/pickerDeptOne.vue";
+import { mapMutations } from 'vuex'
 export default {
 components: {
     choosedepartment: chooseDepartment
 },
   data () {
     return {
+        showTable: false, //表格弹窗
         selectTime: '',
         selectChangeTime: '', //传给后台的时间值
         selectDeptContent: '', //传给后台的部门值
@@ -118,7 +151,32 @@ components: {
         // tableData: [], //表格数据
         tableData: [],
         deptName: '',
-        columns:[]
+        columns:[],
+        popupColumns:[
+            {
+                field: 'custome', width: 50, titleAlign: 'center', columnAlign: 'center',title: '序号',
+                formatter: function (rowData, index) {
+                    return index + 1
+                }, isResize:true,
+            },
+            {
+                field: 'jobnumber',title: '工号',width: 100,titleAlign: 'center',columnAlign: 'center',
+                formatter: function(rowData, rowIndex, pagingIndex, field) {
+                    return `<span>${rowData[field]}</span>`;
+                },isResize: true,
+            },
+            {field: 'name',title: '姓名',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},
+            {field: 'department',title: '部门',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},
+            {field: 'post',title: '岗位',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},
+            {field: 'rank',title: '职级',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},
+            {field: 'rsrq',title: '入司日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},									
+            {field: 'currentState',title: '当前状态',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},	
+        ],
+        popupTableData:[], //弹窗表格
+        fenyeData:[], //处理好的分页数据
+        total: 0, //总条数
+        dataIndex: 0, //假分页默认显示
+
     };
   },
   created(){
@@ -166,7 +224,7 @@ components: {
             this.sexTeam = res.obj
             this.initCharts3()
         })
-        //查询按性别
+        //查询按司龄
         queryJobAgeTeam(queryData).then(res=>{
             this.jobAgeTeam = res.obj
             this.initCharts4()
@@ -176,12 +234,38 @@ components: {
             this.deptName = res.obj
             this.tableData = res.obj.details
             this.columns = [
-                {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false},
-                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false},
-                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false},
+                {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
             ]
         })
         this.showTime = false
+    },
+    //弹窗表格中的行点击
+    rowClick3(rowIndex, rowData, column){
+        console.log(rowData)
+    },
+    //加载更多数据
+    loadMore(){
+        // debugger
+        this.dataIndex++ //点击+1
+        if(this.dataIndex >= this.fenyeData.length){
+            Notify({ type: "warning", message: "没有更多数据了哦~" });
+        }else{
+            this.popupTableData = this.popupTableData.concat(this.fenyeData[this.dataIndex])
+        }
+    },
+    //处理表格的分页方法
+    pagePev(){
+        this.total = this.popupTableData.length
+        let result = []
+        let chunk = 100 //100个一组
+        for(var i = 0, j = this.popupTableData.length; i < j; i += chunk){
+            result.push(this.popupTableData.slice(i,i + chunk))
+        }
+        // console.log(result)
+        this.popupTableData = result[0] //默认显示100条
+        this.fenyeData = result
     },
     //页面初始化数据
     initData(){
@@ -225,7 +309,7 @@ components: {
             this.sexTeam = res.obj
             this.initCharts3()
         })
-        //查询按性别
+        //查询按司龄
         queryJobAgeTeam(queryData).then(res=>{
             this.jobAgeTeam = res.obj
             this.initCharts4()
@@ -235,9 +319,9 @@ components: {
             this.deptName = res.obj
             this.tableData = res.obj.details
             this.columns = [
-                {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false},
-                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false},
-                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false},
+                {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
             ]
         })
     },
@@ -247,7 +331,7 @@ components: {
     　　// 绘制图表
     　　myChart.setOption({
         // 　　title: { text: '分析报表' },
-        　　tooltip: {},
+        // 　　tooltip: {},
             legend:{
               // textStyle:{color:'#f00'},
               orient: 'vertical',
@@ -268,12 +352,10 @@ components: {
             label: {
                 normal:{
                     show: true,
-                    // position: 'inside',
-                    formatter: '{c}%',
-                    formatter:function(params){ //标签内容
-                    //   return  params.name+':'+params.value
-                      return params.value
-                    },
+                    position:'outer',
+                    alignTo:'edge',
+                    margin:10,
+                    formatter: '{c}人/n {d}%'
                   }
                 },
         　　data: [
@@ -299,25 +381,62 @@ components: {
     　　});
         window.onresize = myChart.resize
         //点击事件
+        let that = this //改变this指向
         myChart.on('click', function (params) {
             switch (params.name) {
               case '直接类（O类）':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.gwcjObj.gwcjzhijieJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '员工（P1/S1-P4/S4）':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.gwcjObj.gwcjyuangongJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '技术干部（P4/S4（主任）及以上）':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.gwcjObj.gwcjjishuJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '基层干部（M1-M3）':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.gwcjObj.gwcjjicengJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '中层干部（M4-M5）':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.gwcjObj.gwcjzhongcengJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '核心干部（M及以上）':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.gwcjObj.gwcjhexinJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
             
               default:
@@ -329,35 +448,43 @@ components: {
     initCharts1 () {
     　　let myChart = this.$echarts.init(this.$refs.chart1);
         let data1 = [
-            {name:'博士',value:this.xlTeam.xlboShiCount},
-            {name:'MBA',value:this.xlTeam.xlmbacount},
-            {name:'硕士及以上',value:this.xlTeam.xlshuoShiCount},
-            {name:'小学',value:this.xlTeam.xlxiaoXueCount},
-            {name:'大专',value:this.xlTeam.xldaZhuanCount},
-            {name:'本科',value:this.xlTeam.xlbenKeCount},
-            {name:'高中中专',value:this.xlTeam.xlgaoZhongCount},
-            {name:'初中',value:this.xlTeam.xlchuZhongCount},
+            {name:this.xlTeam.xlxiaoXuePct,value:this.xlTeam.xlxiaoXueCount},
+            {name:this.xlTeam.xlchuZhongPct,value:this.xlTeam.xlchuZhongCount},
+            {name:this.xlTeam.xlgaoZhongPct,value:this.xlTeam.xlgaoZhongCount},
+            {name:this.xlTeam.xldaZhuanPct,value:this.xlTeam.xldaZhuanCount},
+            {name:this.xlTeam.xlbenKePct,value:this.xlTeam.xlbenKeCount},
+            {name:this.xlTeam.xlshuoShiPct,value:this.xlTeam.xlshuoShiCount},
+            {name:this.xlTeam.xlmbapct,value:this.xlTeam.xlmbacount},
+            {name:this.xlTeam.xlboShiPct,value:this.xlTeam.xlboShiCount},
+        ];
+        let data2 = [
+            {name:'小学'},
+            {name:'小初中学'},
+            {name:'高中中专'},
+            {name:'大专'},
+            {name:'本科'},
+            {name:'硕士及以上'},
+            {name:'MBA'},
+            {name:'博士'},
         ];
         let seriesLabel = {
             normal: {
                 show: true,
-                // textBorderColor: '#333',
+                // textBorderColor: 'red',
+                position: 'insideLeft',
                 offset: [10, 0],
-                textBorderWidth: 2
+                textBorderWidth: 2,
+                formatter: '{c}人 {b}'
             }
         }
     　　// 绘制图表
     　　myChart.setOption({
-            title: {
-                // text: '标题',
-                // subtext: '数据来自网络'
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                },
-            },
+            // tooltip: {
+            //     trigger: 'axis',
+            //     axisPointer: {
+            //         type: 'shadow'
+            //     },
+            // },
             legend: {
                 // data: ['2011年', '2012年']
             },
@@ -373,7 +500,8 @@ components: {
             },
             yAxis: {
                 type: 'category',
-                data: ['博士','MBA','硕士及以上', '小学', '大专', '本科', '高中中专', '初中']
+                data: ['小学','初中','高中中专','大专','本科','硕士及以上','MBA','博士']
+                // data: ['博士', 'MBA', '硕士及以上', '本科', '大专','高中中专','初中','小学']
             },
             series: [
                 {
@@ -386,7 +514,7 @@ components: {
                         color: function(params) {
                                 //自定义颜色
                                 var colorList = [
-                                    '#f2902a', '#f2902a', '#f2902a','#f2902a','#f2902a','#f2902a','#f2902a','#f2902a'
+                                    '#f2902a', '#f2902b', '#f2902c','#f2902d','#f2902e','#f2902f','#f29022','#f29023'
                                 ];
                                 return colorList[params.dataIndex]
                             }
@@ -398,36 +526,93 @@ components: {
         window.onresize = myChart.resize
         //点击事件
         myChart.getZr().off('click');
+        let that = this
         myChart.getZr().on('click',function (params) {
           var pointInPixel= [params.offsetX, params.offsetY];
           if (myChart.containPixel('grid',pointInPixel)) {
             /*单击图标X轴数据，打开详情*/
               var xIndex = myChart.convertFromPixel({seriesIndex:0},pointInPixel)[1];
               // console.log(data1[xIndex])
-            switch (data1[xIndex].name) {
+            switch (data2[xIndex].name) {
               case '初中':
-                console.log(data1[xIndex].name)
+                console.log(data2[xIndex].name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.xlTeam.xlchuZhongJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '高中中专':
-                console.log(data1[xIndex].name)
+                  console.log(data2[xIndex].name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.xlTeam.xlgaoZhongJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '本科':
-                console.log(data1[xIndex].name)
+                  console.log(data2[xIndex].name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.xlTeam.xlbenKeJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '大专':
-                console.log(data1[xIndex].name)
+                  console.log(data2[xIndex].name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.xlTeam.xldaZhuanJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '小学':
-                console.log(data1[xIndex].name)
+                  console.log(data2[xIndex].name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.xlTeam.xlxiaoxueJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '硕士及以上':
-                console.log(data1[xIndex].name)
+                  console.log(data2[xIndex].name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.xlTeam.xlshuoShiJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case 'MBA':
-                console.log(data1[xIndex].name)
+                  console.log(data2[xIndex].name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.xlTeam.xlmbajobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '博士':
-                console.log(data1[xIndex].name)
+                console.log(data2[xIndex].name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.xlTeam.xlboShiJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
             
               default:
@@ -435,37 +620,6 @@ components: {
             }
           }
         });
-        myChart.on('click', function (params) {
-            switch (params.name) {
-              case '初中':
-                console.log(params.name)
-                break;
-              case '高中中专':
-                console.log(params.name)
-                break;
-              case '本科':
-                console.log(params.name)
-                break;
-              case '大专':
-                console.log(params.name)
-                break;
-              case '小学':
-                console.log(params.name)
-                break;
-              case '硕士及以上':
-                console.log(params.name)
-                break;
-              case 'MBA':
-                console.log(params.name)
-                break;
-              case '博士':
-                console.log(params.name)
-                break;
-            
-              default:
-                break;
-            }
-        })
 　　},
     //按年龄
     initCharts2 () {
@@ -473,8 +627,12 @@ components: {
         let seriesLabel = {
             normal: {
                 show: true,
-                // textBorderColor: '#333',
-                textBorderWidth: 2
+                textBorderWidth: 2,
+                position:'insideBottom',
+                // formatter: `{c}人 {b}%`
+                formatter:function(param){
+                     return param.name+'\n'+'\n'+param.value
+                }
             }
         }
     　　// 绘制图表
@@ -489,11 +647,11 @@ components: {
             series: [{
                 label: seriesLabel,
                 data: [
-                        {name:'25岁以下',value:this.ageTeam.age25Count},
-                        {name:'25-35岁',value:this.ageTeam.age25to35Count},
-                        {name:'35-45岁',value:this.ageTeam.age35to45Count},
-                        {name:'45-50岁',value:this.ageTeam.age45to50Count},
-                        {name:'50岁以上',value:this.ageTeam.age50Count},
+                        {name:this.ageTeam.age25Pct,value:this.ageTeam.age25Count,title:'25岁以下'},
+                        {name:this.ageTeam.age25to35Pct,value:this.ageTeam.age25to35Count,title:'25-35岁'},
+                        {name:this.ageTeam.age35to45Pct,value:this.ageTeam.age35to45Count,title:'35-45岁'},
+                        {name:this.ageTeam.age45to50Pct,value:this.ageTeam.age45to50Count,title:'45-50岁'},
+                        {name:this.ageTeam.age50Pct,value:this.ageTeam.age50Count,title:'50岁以上'},
                     ],
                 type: 'bar',
                 itemStyle: {
@@ -510,24 +668,59 @@ components: {
             }]
     　　});
         window.onresize = myChart.resize
+        let that = this //改变this指向
         //点击事件
         myChart.on('click', function (params) {
-            // window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
-            switch (params.name) {
+            console.log(params)
+            switch (params.data.title) {
               case '25岁以下':
-                console.log(params.name)
+                //   console.log(params.data.title)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.ageTeam.age25Jobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '25-35岁':
-                console.log(params.name)
+                //   console.log(params.data.title)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.ageTeam.age25to35Jobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '35-45岁':
-                console.log(params.name)
+                //   console.log(params.data.title)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.ageTeam.age35to45Jobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '45-50岁':
-                console.log(params.name)
+                //   console.log(params.data.title)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.ageTeam.age45to50Jobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '50岁以上':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.ageTeam.age50Jobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
             
               default:
@@ -540,10 +733,10 @@ components: {
     　　let myChart = this.$echarts.init(this.$refs.chart3);
     　　// 绘制图表
     　　myChart.setOption({
-            tooltip: {
-                trigger: 'item',
-                formatter: '{a} <br/>{b}: {c} ({d}%)'
-            },
+            // tooltip: {
+            //     trigger: 'item',
+            //     formatter: '{a} <br/>{b}: {c} ({d}%)'
+            // },
             legend: {
                 orient: 'vertical',
                 left: 10,
@@ -553,11 +746,18 @@ components: {
                 {
                     name: '访问来源',
                     type: 'pie',
-                    radius: ['50%', '70%'],
+                    radius: ['50%', '60%'],
                     avoidLabelOverlap: false,
                     label: {
-                        show: false,
-                        position: 'center'
+                        show: true,
+                        position: 'inside',
+                        formatter: '{b}：{d}%'
+                        // formatter:function(param){
+                        //     return param.name+'\n'+'\n'+param.value+'%'
+                        // }
+                    },
+                    labelLine: {
+                        show: true
                     },
                     emphasis: {
                         label: {
@@ -565,9 +765,6 @@ components: {
                             fontSize: '30',
                             fontWeight: 'bold'
                         }
-                    },
-                    labelLine: {
-                        show: false
                     },
                     data: [
                         {value: this.sexTeam.manCount, name: '男'},
@@ -588,15 +785,28 @@ components: {
             ]
     　　});
         window.onresize = myChart.resize
+        let that = this //改变this指向
         //点击事件
         myChart.on('click', function (params) {
             // window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
             switch (params.name) {
               case '男':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.sexTeam.manJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '女':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.sexTeam.womanJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
             
               default:
@@ -610,7 +820,7 @@ components: {
     　　// 绘制图表
     　　myChart.setOption({
         // 　　title: { text: '分析报表' },
-        　　tooltip: {},
+        // 　　tooltip: {},
             legend:{
               // textStyle:{color:'#f00'},
               orient: 'vertical',
@@ -631,13 +841,17 @@ components: {
             label: {
                 normal:{
                     show: true,
-                    // position: 'inside',
-                    formatter: '{c}%',
-                    formatter:function(params){ //标签内容
-                    //   return  params.name+':'+params.value
-                      return params.value
-                    },
+                    position:'outer',
+                    alignTo:'edge',
+                    margin:10,
+                    formatter: '{c}人 {d}%',
                   }
+                },
+                labelLine: {   //引导线设置
+                    normal: {
+                        show:true,       //引导线不显示
+                        length:5 
+                    }
                 },
         　　data: [
                 {name:'6个月及以下',value:this.jobAgeTeam.jobAge6mCount},
@@ -659,20 +873,45 @@ components: {
         　　}]
     　　});
         window.onresize = myChart.resize
+        let that = this //改变this指向
         //点击事件
         myChart.on('click', function (params) {
             switch (params.name) {
               case '6个月及以下':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.jobAgeTeam.jobAge6mJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '6个月至1年（含）':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.jobAgeTeam.jobAge6mTo1yJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '1年至3年（含）':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.jobAgeTeam.jobAge1yTo3yJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
               case '3年以上':
-                console.log(params.name)
+                var queryData = {}
+                that.showTable = true
+                queryData.jobnumbers = that.jobAgeTeam.jobAge3yJobnumber
+                queryRoster(queryData).then(res=>{
+                    that.popupTableData = res.obj
+                    that.pagePev() //获取的表格数据分组
+                })
                 break;
             
               default:
@@ -682,7 +921,14 @@ components: {
 　　},
     //表格行点击事件
     rowClick(rowIndex, rowData, column){
-        console.log(rowData)
+        // console.log(rowData)
+        this.showTable = true
+        let queryData = {}
+        queryData.jobnumbers = rowData.jobnumbers
+        queryRoster(queryData).then(res=>{
+            this.popupTableData = res.obj
+            this.pagePev() //获取的表格数据分组
+        })
     },
     cellMerge(rowIndex,rowData,field){
         if (field === 'highDeptName') {
@@ -700,14 +946,18 @@ components: {
     //     console.log('选择部门')
     // },
     selctdept(data) {
-        console.log(data)
-        this.selectDeptContent = data.content
+        // console.log(data)
+        //截取部门
+        let result = data.content.split( "-" )
+        let result1 = result[1]
+        // console.log(result1)
+        this.selectDeptContent = result1
         this.selectDeptId = data.deptId
         this.selectDeptGrade = data.grade
         let queryData = {
             jobnumber:localStorage.getItem('jobNum'),
             flag:2,
-            content:data.content,
+            content:result1,
             deptId:data.deptId,
             grade:data.grade,
             time:this.selectChangeTime,
@@ -735,7 +985,7 @@ components: {
             this.sexTeam = res.obj
             this.initCharts3()
         })
-        //查询按性别
+        //查询按司龄
         queryJobAgeTeam(queryData).then(res=>{
             this.jobAgeTeam = res.obj
             this.initCharts4()
@@ -745,29 +995,100 @@ components: {
             this.deptName = res.obj
             this.tableData = res.obj.details
             this.columns = [
-                {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false},
-                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false},
-                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false},
+                {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
             ]
         })
     },
     // 岗位分类查看详情
     znClick(){
-        console.log(this.gwObj.gwzhinengJobnumber)
+        this.showTable = true
+        let queryData = {}
+        queryData.jobnumbers = this.gwObj.gwzhinengJobnumber
+        queryRoster(queryData).then(res=>{
+            this.popupTableData = res.obj
+            this.pagePev() //获取的表格数据分组
+        })
     },
     jsClick(){
-        console.log(this.gwObj.gwjiShuJobnumber)
+        this.showTable = true
+        let queryData = {}
+        queryData.jobnumbers = this.gwObj.gwjiShuJobnumber
+        queryRoster(queryData).then(res=>{
+            this.popupTableData = res.obj
+            this.pagePev() //获取的表格数据分组
+        })
     },
     yxClick(){
-        console.log(this.gwObj.gwyingXiaoJobnumber)
+        this.showTable = true
+        let queryData = {}
+        queryData.jobnumbers = this.gwObj.gwyingXiaoJobnumber
+        queryRoster(queryData).then(res=>{
+            this.popupTableData = res.obj
+            this.pagePev() //获取的表格数据分组
+        })
     },
     zjClick(){
-        console.log(this.gwObj.gwzhiJieJobnumber)
+        this.showTable = true
+        let queryData = {}
+        queryData.jobnumbers = this.gwObj.gwzhiJieJobnumber
+        queryRoster(queryData).then(res=>{
+            this.popupTableData = res.obj
+            this.pagePev() //获取的表格数据分组
+        })
     },
+    //vuex
+    ...mapMutations({
+        arr_flag:'arr_flag'
+    }),
   },
   mounted(){
       
-　}
+　},
+watch:{
+    '$store.state.arrflag': function (newVal,oldVal) {
+    // console.log(this.$store.state.arrflag)
+        if(this.$store.state.arrflag == 1 || this.$store.state.arrflag == 2){
+            const myChart = this.$echarts.init(document.getElementById('chart'))
+            const myChart1 = this.$echarts.init(document.getElementById('chart1'))
+            const myChart2 = this.$echarts.init(document.getElementById('chart2'))
+            const myChart3 = this.$echarts.init(document.getElementById('chart3'))
+            const myChart4 = this.$echarts.init(document.getElementById('chart4'))
+            myChart.resize()
+            myChart1.resize()
+            myChart2.resize()
+            myChart3.resize()
+            myChart4.resize()
+            //查询部门详细
+            this.columns = [
+                {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+            ],
+            this.popupColumns = [
+                {
+                    field: 'custome', width: 50, titleAlign: 'center', columnAlign: 'center',title: '序号',
+                    formatter: function (rowData, index) {
+                        return index + 1
+                    }, isResize:true,
+                },
+                {
+                    field: 'jobnumber',title: '工号',width: 100,titleAlign: 'center',columnAlign: 'center',
+                    formatter: function(rowData, rowIndex, pagingIndex, field) {
+                        return `<span>${rowData[field]}</span>`;
+                    },isResize: true,
+                },
+                {field: 'name',title: '姓名',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},
+                {field: 'department',title: '部门',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},
+                {field: 'post',title: '岗位',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},
+                {field: 'rank',title: '职级',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},
+                {field: 'rsrq',title: '入司日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},									
+                {field: 'currentState',title: '当前状态',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},	
+            ]
+        }
+    },
+  }
 }
 </script>
 <style>
@@ -832,8 +1153,8 @@ components: {
             
         }
         .postrank{
-            height 400px
-            background-color #dfe6e7
+            height 500px
+            background-color #f6f6f8
             .pie{
                 width 100%
                 height 100%
@@ -843,5 +1164,13 @@ components: {
             width 100%
             overflow-x auto
         }
+    }
+    .table{
+        width 100%
+        overflow-x auto
+    }
+    .more{
+        font-size 14px
+        padding 10px
     }
 </style>

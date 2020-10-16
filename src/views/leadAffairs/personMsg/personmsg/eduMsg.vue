@@ -26,6 +26,7 @@
                     </p> -->
                 </van-collapse-item>
             </van-collapse>
+            <van-empty v-if="educationList == ''" description="无数据" />
         </div>
         <!-- 查看图片 -->
         <van-image-preview v-model="showPhoto" get-container="body" :images="images" :closeable='true' @close="onClose">

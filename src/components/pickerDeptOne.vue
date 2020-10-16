@@ -2,11 +2,10 @@
   <div>
     <van-field
       v-model="selectedDepartment"
-      @click="pickDept"
+      @click-input="pickDept"
       label="选择单位："
       :placeholder="deptPlacehoder"
       :rules="reqireRule"
-      type="textarea"
       readonly
     />
     <van-popup
@@ -116,6 +115,7 @@ export default {
           this.selectOrg.orgsid.push(data);
           let assignData = Object.assign({}, data);
           this.mechanismPath(assignData);
+          this.selectedDepartment = data.content
           this.showPickDept = false;
           Notify("选择成功");
 
@@ -127,6 +127,7 @@ export default {
         // this.selectedDepartment = data.content;
         let assignData = Object.assign({}, data);
         this.mechanismPath(assignData);
+        this.selectedDepartment = data.content
         if(this.firstIn == 1&&this.selectName){
           this.firstIn++
         }else{
@@ -157,12 +158,16 @@ export default {
       findTeamBuildingJGLJInfo(queryDta).then(res => {
         if (res.code == 1000) {
           data.content = res.obj;
-          this.selectedDepartment = data.content;
+          // this.selectedDepartment = data.content;
           this.transferData(data);
         } else {
           Notify(res.msg);
         }
       });
+    },
+    //清空输入框
+    showAlert1(){
+      this.selectedDepartment = ''
     }
   }
 };
