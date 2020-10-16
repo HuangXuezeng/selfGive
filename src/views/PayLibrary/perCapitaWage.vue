@@ -1,0 +1,720 @@
+<template>
+  <div style="padding-bottom: 25%;" class="my-container">
+    <van-row type="flex" justify="left" style="margin-bottom:10px">
+      <van-col>
+        <div style="font-size: 18px;font-weight: 700;;margin-top:20px">
+          <span class="honghe"></span>
+          人均工资
+        </div></van-col
+      >
+    </van-row>
+    <van-row type="flex">
+      <van-col span="24">
+        <van-field
+          readonly
+          clickable
+          label="年/月"
+          v-model="selectedyear"
+          placeholder="请选择年月"
+          @click="vanDateShow = true"
+        />
+        <van-action-sheet v-model="vanDateShow">
+          <van-datetime-picker
+            v-model="currentDate"
+            type="year-month"
+            title="选择年月"
+            :min-date="minDate"
+            :max-date="maxDate"
+            :formatter="formatter"
+            @confirm="confirmYear"
+          />
+        </van-action-sheet>
+      </van-col>
+    </van-row>
+    <div class="resetVant">
+      <v-table
+        is-horizontal-resize
+        style="width:100%"
+        :columns="columns"
+        :table-data="tableData"
+        row-hover-color="#eee"
+        row-click-color="#edf7ff"
+        :cell-merge="cellMerge"
+        :is-loading="lodingFlag"
+        :column-cell-class-name="columnCellClass"
+      ></v-table>
+    </div>
+    <div>
+      <van-row type="flex" justify="left" style="margin-bottom:10px">
+        <van-col>
+          <div style="font-size: 18px;font-weight: 700;;margin-top:20px">
+            <span class="honghe"></span>
+            各职级平均工资
+          </div></van-col
+        >
+      </van-row>
+      <van-row type="flex">
+        <van-col span="24">
+          <van-field
+            readonly
+            clickable
+            label="职级"
+            v-model="selectzjName"
+            placeholder="请选择职级"
+            @click="rightPopShow"
+          />
+          <van-popup
+            v-model="rightPop"
+            position="right"
+            style="width: 40%; height: 100%; z-index: 2048;"
+            :get-container="getContainer"
+          >
+            <div style="height: 90%;overflow: auto;">
+              <div v-for="item in checkboxlist" :key="item.zl">
+                <van-cell clickable @click="toggleZL(item)">
+                  <template #title>
+                    <div style="font-size: 15px;font-weight: 700;">
+                      <span class="honghe"></span>
+                      {{ item.zl }}
+                    </div>
+                  </template>
+                  <template #right-icon>
+                    <van-checkbox
+                      :name="item.zlNum"
+                      v-model="item.zlchecked"
+                      ref="checkboxesZL"
+                      shape="square"
+                    />
+                  </template>
+                </van-cell>
+                <van-checkbox-group v-model="result">
+                  <van-cell-group>
+                    <van-cell
+                      v-for="items in item.zjList"
+                      clickable
+                      :key="items.number"
+                      :title="`${items.zj}`"
+                      @click="toggle(items)"
+                    >
+                      <template #right-icon>
+                        <van-checkbox
+                          :name="items.indexNumber"
+                          ref="checkboxes"
+                        />
+                      </template>
+                    </van-cell>
+                  </van-cell-group>
+                </van-checkbox-group>
+              </div>
+            </div>
+            <van-row type="flex" justify="space-around">
+              <van-col span="10">
+                <van-button type="info" size="normal" @click="restSelectZj"
+                  >重置</van-button
+                >
+              </van-col>
+              <van-col span="10">
+                <van-button
+                  :loading="selctzjqueryLoading"
+                  loading-type="spinner"
+                  type="primary"
+                  size="normal"
+                  @click="selctzjquery"
+                  >确认</van-button
+                >
+              </van-col>
+            </van-row>
+          </van-popup>
+        </van-col>
+      </van-row>
+      <div style="width:100%">
+        <div ref="payEch" :style="{ width: '100%', height: '500px' }"></div>
+      </div>
+    </div>
+    <payTab></payTab>
+  </div>
+</template>
+
+<script>
+import {
+  Picker,
+  Toast,
+  DropdownMenu,
+  DropdownItem,
+  Col,
+  Row,
+  DatetimePicker,
+  Popup,
+  Checkbox,
+  CheckboxGroup
+} from "vant";
+import payTab from "@/components/PayLibrary/pay-tab.vue";
+import {
+  findPerGetInfo,
+  findPerGetDetailsInfo
+} from "@/views/PayLibrary/PayLibrary.js";
+export default {
+  components: {
+    payTab
+  },
+  data() {
+    return {
+      tableData: [],
+      columns: [
+        {
+          field: "zl",
+          title: "职类",
+          width: 80,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "zj",
+          title: "职级",
+          width: 80,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "month",
+          title: "本月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "lastMonth",
+          title: "上月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "hb",
+          title: "环比",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "tb",
+          title: "同比",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "tq",
+          title: "同期",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        }
+      ],
+      mlength: 1,
+      plength: 1,
+      slength: 1,
+      olength: 1,
+      lodingFlag: true,
+      selectedyear: "",
+      currentDate: "",
+      minDate: new Date(2020, 0, 1),
+      maxDate: null,
+      currentDate: new Date(),
+      vanDateShow: false,
+      rightPop: false,
+      result: [],
+      checkboxlist: [],
+      selectZj: null,
+      selectzjName: "M3",
+      selectZjNameMap: null,
+      selctzjqueryLoading: false,
+      firstInflag:0
+    };
+  },
+  created() {
+    let nowData = new Date();
+    let y = nowData.getFullYear();
+    let m = nowData.getMonth() - 1;
+    this.maxDate = new Date(y, m, 1);
+    this.queryfindPerGetInfo();
+    this.queryfindPerGetDetailsInfo();
+    this.selectZj = new Set();
+    this.selectZjNameMap = new Map();
+  },
+  mounted() {
+    // this.$refs.checkboxes[0].toggle(true);
+  },
+  methods: {
+    getContainer() {
+      return document.querySelector(".my-container");
+    },
+    rightPopShow() {
+      debugger
+      this.rightPop = true;
+      if (!this.firstInflag) {
+        this.firstInflag++
+        this.$nextTick(() => {
+          this.$refs.checkboxes[0].toggle(true);
+        });
+      }
+    },
+    toggleZL(item) {
+      if (item.zlchecked) {
+        item.zlchecked = false;
+        for (let i in item.zjList) {
+          this.$refs.checkboxes[item.zjList[i].indexNumber].toggle(false);
+          this.selectZj.delete(item.zjList[i].number);
+        }
+      } else {
+        item.zlchecked = true;
+        for (let i in item.zjList) {
+          this.$refs.checkboxes[item.zjList[i].indexNumber].toggle(true);
+          this.selectZj.add(item.zjList[i].number);
+        }
+      }
+    },
+    toggle(item) {
+      if (this.selectZj.has(item.number)) {
+        this.selectZj.delete(item.number);
+      } else {
+        this.selectZj.add(item.number);
+      }
+    },
+    cellMerge(rowIndex, rowData, field) {
+      if (field === "zl" && rowData[field] === "M类") {
+        return {
+          colSpan: 1,
+          rowSpan: this.mlength,
+          content: '<span style="color:red">M类</span>',
+          componentName: ""
+        };
+      }
+      if (field === "zl" && rowData[field] === "P类") {
+        return {
+          colSpan: 1,
+          rowSpan: this.plength,
+          content: '<span style="color:red">P类</span>',
+          componentName: ""
+        };
+      }
+      if (field === "zl" && rowData[field] === "S类") {
+        return {
+          colSpan: 1,
+          rowSpan: this.slength,
+          content: '<span style="color:red">S类</span>',
+          componentName: ""
+        };
+      }
+      if (field === "zl" && rowData[field] === "O类") {
+        return {
+          colSpan: 1,
+          rowSpan: this.olength,
+          content: '<span style="color:red">O类</span>',
+          componentName: ""
+        };
+      }
+      if (field === "zl" && rowData[field] === "合计") {
+        return {
+          colSpan: 2,
+          rowSpan: 1,
+          content: '<span style="color:red">合计</span>',
+          componentName: ""
+        };
+      }
+    },
+    columnCellClass(rowIndex, columnName, rowData) {
+      if (rowIndex < this.mlength) {
+        return "mClass";
+      }
+      if (this.mlength <= rowIndex && rowData.zl == "P类") {
+        return "pClass";
+      }
+      if (this.plength < rowIndex && rowData.zl == "S类") {
+        return "sClass";
+      }
+      if (this.slength < rowIndex && rowData.zl == "O类") {
+        return "oClass";
+      }
+      if (
+        this.slength + this.plength + this.mlength+this.olength < rowIndex &&
+        rowData.zl == "合计"
+      ) {
+        return "heClass";
+      }
+    },
+    queryfindPerGetInfo(queryObj) {
+      let queryData = {};
+      if (queryObj) {
+        queryData = queryObj;
+      } else {
+        queryData = { jobnumber: 6006212 };
+      }
+      findPerGetInfo(queryData).then(res => {
+        if (res.code == 1000) {
+          //先初始化
+          this.tableData = [];
+          for (let key in res.obj) {
+            if (key == "m" && res.obj[key]) {
+              this.mlength = res.obj[key].length;
+              for (let m in res.obj[key]) {
+                res.obj[key][m].zl = "M类";
+                this.tableData.push(res.obj[key][m]);
+              }
+            } else if (key == "p" && res.obj[key]) {
+              this.plength = res.obj[key].length;
+              for (let p in res.obj[key]) {
+                res.obj[key][p].zl = "P类";
+                this.tableData.push(res.obj[key][p]);
+              }
+            } else if (key == "s" && res.obj[key]) {
+              this.slength = res.obj[key].length;
+              for (let s in res.obj[key]) {
+                res.obj[key][s].zl = "S类";
+                this.tableData.push(res.obj[key][s]);
+              }
+            } else if (key == "o" && res.obj[key]) {
+              this.olength = res.obj[key].length;
+              for (let o in res.obj[key]) {
+                res.obj[key][o].zl = "O类";
+                this.tableData.push(res.obj[key][o]);
+              }
+            }
+          }
+          let totalObj = {
+            zl: "合计",
+            zj: "",
+            hb: res.obj.hbTotal,
+            lastMonth: res.obj.lastMonthTotal,
+            month: res.obj.monthTotal,
+            tb: res.obj.tbTotal,
+            tq: res.obj.tqTotal
+          };
+          this.tableData.push(totalObj);
+          if (res.obj.year != null) {
+            let resTime = res.obj.year.replace(/^(\d{4})(\d{2})$/, "$1-$2");
+            let newTime = new Date(resTime);
+            let y = newTime.getFullYear();
+            let m = newTime.getMonth();
+            this.maxDate = new Date(y, m, 1);
+            m = (newTime.getMonth() + 1).toString().padStart(2, "0");
+            this.selectedyear = y + "年" + m + "月";
+          }
+        } else {
+          Toast.fail(res.msg);
+        }
+        this.lodingFlag = false;
+      });
+    },
+    formatter(type, val) {
+      if (type === "year") {
+        return `${val}年`;
+      } else if (type === "month") {
+        return `${val}月`;
+      }
+      return val;
+    },
+    confirmYear(value) {
+      let valueTime = new Date(value);
+      let y = valueTime.getFullYear();
+      let m = (valueTime.getMonth() + 1).toString().padStart(2, "0");
+      let lastm = valueTime
+        .getMonth()
+        .toString()
+        .padStart(2, "0");
+      let lasty = y;
+      this.selectedyear = y + "年" + m + "月";
+      if (m == "01") {
+        lasty = y - 1;
+        lastm = "12";
+      }
+      let queryObj = {
+        jobnumber: 6006212,
+        year: y + m,
+        lastYear: lasty + lastm
+      };
+      this.queryfindPerGetInfo(queryObj);
+      this.lodingFlag = true;
+      this.vanDateShow = false;
+    },
+    selctzjquery() {
+      if(!this.selectZj.size){
+        Toast.fail('请至少选择一项');
+        return
+      }
+      this.selctzjqueryLoading = true;
+      let zjListArry = Array.from(this.selectZj);
+      this.selectzjName = "";
+      zjListArry.forEach(item => {
+        if (this.selectZjNameMap.has(item)) {
+          this.selectzjName =
+            this.selectzjName + "+" + this.selectZjNameMap.get(item);
+        }
+      });
+      this.selectzjName = this.selectzjName.slice(1);
+      findPerGetDetailsInfo({
+        jobnumber: "6006212",
+        flag: "2",
+        zjList: zjListArry
+      }).then(res => {
+        if (res.code == 1000) {
+          this.payEachrts(res);
+          this.selctzjqueryLoading = false;
+          this.rightPop = false;
+        } else {
+          Toast.fail(res.msg);
+        }
+      });
+    },
+    queryfindPerGetDetailsInfo() {
+      findPerGetDetailsInfo({
+        jobnumber: "6006212",
+        flag: "1",
+        zjList: []
+      }).then(res => {
+        if (res.code == 1000) {
+          this.checkboxlist = res.obj.zlList;
+          let zlList = res.obj.zlList;
+          let indexNum = 0;
+          for (let i in zlList) {
+            zlList[i].zlchecked = false;
+            zlList[i].zlNum = i;
+            if (zlList[i].zjList != null) {
+              for (let k in zlList[i].zjList) {
+                zlList[i].zjList[k].indexNumber = indexNum;
+                if (zlList[i].zjList[k].zj == "M3") {
+                  this.selectZj.add(zlList[i].zjList[k].number);
+                }
+                indexNum++;
+                this.selectZjNameMap.set(
+                  zlList[i].zjList[k].number,
+                  zlList[i].zjList[k].zj
+                );
+              }
+            }
+          }
+          this.payEachrts(res);
+        } else {
+          Toast.fail(res.msg);
+        }
+      });
+    },
+    payEachrts(res) {
+      var myCharts = this.$echarts.init(this.$refs.payEch);
+      let echartData = res.obj;
+      let lastYear = echartData.lastYear[0].mon.substring(0, 4);
+      let nowYear = echartData.year[0].mon.substring(0, 4);
+      let lastYearList = [];
+      let lastavgNumberList = [];
+      let YearList = [];
+      let avgNumbeList = [];
+      for (let i in echartData.lastYear) {
+        let splityear = echartData.lastYear[i].mon.replace(
+          /^(\d{4})(\d{2})$/,
+          "$1-$2"
+        );
+        lastYearList.push(splityear);
+        lastavgNumberList.push(echartData.lastYear[i].avgNumber);
+      }
+
+      for (let k in echartData.year) {
+        let splityear = echartData.year[k].mon.replace(
+          /^(\d{4})(\d{2})$/,
+          "$1-$2"
+        );
+        YearList.push(splityear);
+        avgNumbeList.push(echartData.year[k].avgNumber);
+      }
+      let nowLast = YearList[YearList.length - 1].split("-")[1];
+      if (nowLast != "12") {
+        let NumnowLast = Number(nowLast);
+        for (let p = NumnowLast + 1; p <= 12; p++) {
+          YearList.push(nowYear + "-" + p.toString().padStart(2, "0"));
+          avgNumbeList.push("");
+        }
+      }
+      lastYearList.push("阶段累计");
+      YearList.push("阶段累计");
+      avgNumbeList.push(echartData.jdlj);
+      lastavgNumberList.push(echartData.lastJdlj);
+      var colors = ["#5793f3", "#d14a61", "#675bba"];
+      function isInteger(obj) {
+        return obj % 1 === 0;
+      }
+      myCharts.setOption({
+        color: colors,
+
+        tooltip: {
+          trigger: "none",
+          axisPointer: {
+            type: "cross"
+          }
+        },
+        legend: {
+          data: [lastYear + " 职级工资", nowYear + " 职级工资"]
+        },
+        grid: {
+          top: 70,
+          bottom: 50,
+          left: 50
+        },
+        xAxis: [
+          {
+            type: "category",
+            axisTick: {
+              alignWithLabel: true
+            },
+            axisLine: {
+              onZero: false,
+              lineStyle: {
+                color: colors[1]
+              }
+            },
+            axisPointer: {
+              label: {
+                formatter: function(params) {
+                  return (
+                    "职级工资  " +
+                    params.value +
+                    (params.seriesData.length
+                      ? "：" + params.seriesData[0].data
+                      : "")
+                  );
+                }
+              }
+            },
+            data: YearList
+          },
+          {
+            type: "category",
+            axisTick: {
+              alignWithLabel: true
+            },
+            axisLine: {
+              onZero: false,
+              lineStyle: {
+                color: colors[0]
+              }
+            },
+            axisPointer: {
+              label: {
+                formatter: function(params) {
+                  return (
+                    "职级工资  " +
+                    params.value +
+                    (params.seriesData.length
+                      ? "：" + params.seriesData[0].data
+                      : "")
+                  );
+                }
+              }
+            },
+            data: lastYearList
+          }
+        ],
+        yAxis: [
+          {
+            type: "value",
+            axisLabel: {
+              show: true,
+              formatter: function(value, index) {
+                let text = "";
+                if (Math.abs(value) >= 10000) {
+                  let divisionNum = value / 10000;
+                  if (!isInteger(divisionNum)) {
+                    return (text = divisionNum.toFixed(2) + "万");
+                  } else {
+                    return (text = divisionNum + "万");
+                  }
+                } else if (Math.abs(value) >= 1000) {
+                  let divisionNum = value / 1000;
+                  if (!isInteger(divisionNum)) {
+                    return (text = divisionNum.toFixed(2) + "千");
+                  } else {
+                    return (text = divisionNum + "千");
+                  }
+                } else {
+                  return value;
+                }
+              }
+            }
+          }
+        ],
+        series: [
+          {
+            name: lastYear + " 职级工资",
+            type: "line",
+            xAxisIndex: 1,
+            smooth: true,
+            data: lastavgNumberList
+          },
+          {
+            name: nowYear + " 职级工资",
+            type: "line",
+            smooth: true,
+            data: avgNumbeList
+          }
+        ]
+      });
+    },
+    restSelectZj() {
+      this.checkboxlist;
+      for (let k in this.checkboxlist) {
+        this.checkboxlist[k].zlchecked = false;
+      }
+      for (let i = 0; i <= this.selectZjNameMap.size - 1; i++) {
+        this.$refs.checkboxes[i].toggle(false);
+      }
+      this.selectZj.clear()
+    }
+  }
+};
+</script >
+
+<style lang="stylus" >
+.honghe {
+  width: 10px;
+  height: 15px;
+  display: inline-block;
+  background-color: red;
+}
+
+.titleclass {
+  background-color: #dc7272;
+  color: #ffffff;
+}
+
+.mClass {
+  background-color: #FFEBCD;
+}
+
+.pClass {
+  background-color: #FFDEAD;
+}
+
+.sClass {
+  background-color: #FFEBCD;
+}
+
+.oClass {
+  background-color: #FFDEAD;
+}
+
+.heClass {
+  background-color: #FFEBCD;
+}
+</style>

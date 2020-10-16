@@ -363,6 +363,11 @@ export default new Router({
       name: 'ProgressRewards',
       component: () => import('@/views/PayLibrary/ProgressRewards'),
     },
+    {
+      path: '/perCapitaWage',
+      name: 'perCapitaWage',
+      component: () => import('@/views/PayLibrary/perCapitaWage'),
+    },
     /**
      * 薪酬结束
      */

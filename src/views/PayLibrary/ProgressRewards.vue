@@ -1,43 +1,110 @@
 <template>
-  <div>
-    <!-- <van-row type="flex" justify="center">
-      <van-col >
-        <h2>奖励发放进度</h2>
-      </van-col>
-     </van-row> -->
-    <van-dropdown-menu>
-      <van-dropdown-item v-model="years" :options="yearList" />
-      <!-- <van-dropdown-item v-model="value2" :options="option2" /> -->
-    </van-dropdown-menu>
-    <van-row type="flex">
-      <van-col span="24">
-        <van-field
-          readonly
-          clickable
-          label="部门/组织"
-          :value="selectedOrg"
-          placeholder="请选择部门/组织"
-          @click="showPicker = true"/>
-        <van-popup v-model="showPicker" round position="bottom">
-          <van-picker
-            show-toolbar
-            :columns="columns"
-            @cancel="showPicker = false"
-            @confirm="onConfirm"
-          /> </van-popup
-      ></van-col>
-    </van-row>
-    <div style="width:100%;height:400px">
-      <div ref="ppt" :style="{ width: '100%', height: '400px' }"></div>
+  <div style="padding-bottom: 20%;">
+    <div>
+      <van-row type="flex" justify="left" style="margin-bottom:10px">
+        <van-col>
+          <div style="font-size: 18px;font-weight: 700;;margin-top:20px">
+            <span class="honghe"></span>
+            整体进度
+          </div></van-col
+        >
+      </van-row>
+      <van-dropdown-menu>
+        <van-dropdown-item v-model="years" :options="yearList" />
+      </van-dropdown-menu>
+      <van-row type="flex">
+        <van-col span="24">
+          <van-field
+            readonly
+            clickable
+            label="部门/组织"
+            v-model="selectedOrg"
+            placeholder="请选择部门/组织"
+            @click="showPicker1 = true"/>
+          <van-popup v-model="showPicker1" round position="bottom">
+            <van-picker
+              show-toolbar
+              :columns="columns"
+              @cancel="showPicker1 = false"
+              @confirm="
+                (value, index) => {
+                  onConfirm(value, index, '1');
+                }
+              "
+            /> </van-popup
+        ></van-col>
+      </van-row>
+      <div style="width:100%;height:600px">
+        <div ref="ppt" :style="{ width: '100%', height: '600px' }"></div>
+      </div>
+    </div>
+    <div>
+      <van-row type="flex" justify="left" style="margin-bottom:10px">
+        <van-col>
+          <div style="font-size: 18px;font-weight: 700;;margin-top:20px">
+            <span class="honghe"></span>
+            项目奖励进度
+          </div></van-col
+        >
+      </van-row>
+      <van-dropdown-menu>
+        <van-dropdown-item v-model="years" :options="yearList" />
+      </van-dropdown-menu>
+      <van-row type="flex">
+        <van-col span="24">
+          <van-field
+            readonly
+            clickable
+            label="部门/组织"
+            v-model="selectRewardName"
+            placeholder="请选择部门/组织"
+            @click="showPicker2 = true"/>
+          <van-popup v-model="showPicker2" round position="bottom">
+            <van-picker
+              show-toolbar
+              :columns="columns"
+              @cancel="showPicker = false"
+              @confirm="
+                (value, index) => {
+                  onConfirm(value, index, '2');
+                }
+              "
+            /> </van-popup
+        ></van-col>
+      </van-row>
+      <van-row type="flex">
+        <van-col span="24">
+          <van-field
+            readonly
+            clickable
+            label="奖励类型"
+            v-model="RewardTypeName"
+            placeholder="请选择奖励类型"
+            @click="showPicker = true"/>
+          <van-popup v-model="showPicker" round position="bottom">
+            <van-picker
+              show-toolbar
+              :columns="DetailsList"
+              @cancel="showPicker = false"
+              @confirm="RewardTypeConfirm"
+            /> </van-popup
+        ></van-col>
+      </van-row>
+      <div style="width:100%">
+        <div ref="pptv" :style="{ width: '100%', height: calcHight }"></div>
+      </div>
     </div>
     <payTab></payTab>
   </div>
 </template>
 
 <script>
-import { Picker, Toast, DropdownMenu, DropdownItem } from "vant";
+import { Picker, Toast, DropdownMenu, DropdownItem, Col, Row } from "vant";
 import payTab from "@/components/PayLibrary/pay-tab.vue";
-import { findRewardInfo } from "@/views/PayLibrary/PayLibrary.js";
+import {
+  findRewardInfo,
+  findRewardDetailsInfo
+} from "@/views/PayLibrary/PayLibrary.js";
 export default {
   components: {
     payTab
@@ -45,38 +112,177 @@ export default {
   data() {
     return {
       selectedOrg: "",
-      showPicker: false,
       columns: [],
       yearList: [],
-      years: ""
+      years: "",
+      showPicker1: false,
+      showPicker2: false,
+      //第二张表
+      showPicker: false,
+      RewardTypeName: "",
+      DetailsRes: {},
+      DetailsList: [],
+      selectRewardName: "",
+      calcHight: "400px"
     };
   },
   created() {
     this.queryfindRewardInfo();
   },
-  mounted() {},
+  mounted() {
+    // this.RewardsInfo();
+  },
   methods: {
-    onConfirm(value) {
+    onConfirm(value, index, type) {
+      let queryobj = {};
       if (value[0]) {
-        this.selectedOrg = value;
-        this.showPicker = false;
+        this.showPicker1 = false;
+        this.showPicker2 = false;
+        if (value[2]) {
+          queryobj.downDeptName = value[2];
+        } else if (value[1]) {
+          queryobj.downDeptName = value[1];
+        } else if (value[0]) {
+          queryobj.downDeptName = value[0];
+        }
+        //更新第一张表
+        queryobj.time = "2020";
+        queryobj.flag = "2";
+        if (type == 1) {
+          this.updateRewardInfo(queryobj);
+          this.selectedOrg = queryobj.downDeptName;
+        } else {
+          //更新第二张表
+          this.selectRewardName = queryobj.downDeptName;
+          if (this.selectRewardName == "股份整体") {
+            Toast.fail("暂无数据");
+            return;
+          }
+          this.updateFindRewardDetailsInfo(
+            this.findDetail(queryobj.downDeptName)
+          );
+          this.RewardTypeName = "";
+        }
       } else {
-        this.selectedOrg = value.text;
-        this.showPicker = false;
+        this.showPicker1 = false;
+        this.showPicker2 = false;
+        //更新第一张表
+        queryobj.time = "2020";
+        queryobj.flag = "2";
+        queryobj.downDeptName = value.deptName;
+        if (type == 1) {
+          this.updateRewardInfo(queryobj);
+          this.selectedOrg = value.deptName;
+        } else {
+          this.selectRewardName = value.deptName;
+          //更新第二张表
+          this.updateFindRewardDetailsInfo(
+            this.findDetail(queryobj.downDeptName)
+          );
+          this.RewardTypeName = "";
+        }
       }
     },
-    queryfindRewardInfo() {
-      // return
-      findRewardInfo({ jobnumber: "6006212", flag: "1" }).then(res => {
+    RewardTypeConfirm(value) {
+      if (!value) {
+        Toast.fail("暂无数据");
+        this.showPicker = false;
+        return;
+      }
+      let queryData = {
+        time: "2020",
+        flag: "2",
+        downDeptName: this.selectRewardName
+      };
+      queryData.detailsName = [value];
+      this.updateFindRewardDetailsInfo(queryData);
+      this.RewardTypeName = value;
+      this.showPicker = false;
+    },
+    updateRewardInfo(queryobj) {
+      findRewardInfo(queryobj).then(res => {
         if (res.code == 1000) {
-          this.setcolumns(res);
-          this.setyearlist(res.obj.year);
-          this.selectedOrg = res.obj.title;
+          if (res.obj.title != null) {
+            this.selectedOrg = res.obj.title;
+          }
           this.echatsMethod(res);
         } else {
           Toast.fail(res.msg);
         }
       });
+    },
+    updateFindRewardDetailsInfo(queryobj) {
+      findRewardDetailsInfo(queryobj).then(res => {
+        if (res.code == 1000) {
+          if (res.obj.title != "股份整体") {
+            this.RewardsInfo(res);
+          } else {
+          }
+        } else {
+          Toast.fail(res.msg);
+        }
+      });
+    },
+    //查找选择的部门
+    findDetail(deptname) {
+      var queryData = {};
+      let deptsList = this.DetailsRes.obj.depts;
+      for (let i in deptsList) {
+        if (
+          deptsList[i].downDept != null &&
+          deptsList[i].downDept.length != 0
+        ) {
+          for (let k in deptsList[i].downDept) {
+            if (deptsList[i].downDept[k].downDeptName == deptname) {
+              queryData.detailsName = deptsList[i].downDept[k].detais;
+              this.DetailsList = deptsList[i].downDept[k].detais;
+              break;
+            }
+          }
+        } else {
+          if (deptsList[i].deptName == deptname) {
+            queryData.detailsName = deptsList[i].detais;
+            this.DetailsList = deptsList[i].detais;
+            break;
+          }
+        }
+      }
+      queryData.downDeptName = deptname;
+      queryData.flag = "2";
+      queryData.time = "2020";
+      return queryData;
+    },
+    queryfindRewardDetailsInfo(queryobj) {
+      findRewardDetailsInfo({ jobnumber: "6006212", flag: "1" }).then(res => {
+        if (res.code == 1000) {
+          if (res.obj.title != "股份整体") {
+            this.RewardsInfo(res);
+          } else {
+          }
+          this.DetailsRes = res;
+          this.selectRewardName = res.obj.title;
+          this.findDetail(res.obj.title);
+        } else {
+          Toast.fail(res.msg);
+        }
+      });
+    },
+    queryfindRewardInfo(queryobj) {
+      let queryData = {};
+      queryData = { jobnumber: "6006212", flag: "1" };
+      findRewardInfo(queryData).then(res => {
+        if (res.code == 1000) {
+          this.setcolumns(res);
+          this.setyearlist(res.obj.year);
+          if (res.obj.title != null) {
+            this.selectedOrg = res.obj.title;
+          }
+          this.echatsMethod(res);
+        } else {
+          Toast.fail(res.msg);
+        }
+      });
+      this.queryfindRewardDetailsInfo(queryData);
     },
     setyearlist(arr) {
       for (let p in arr) {
@@ -114,179 +320,292 @@ export default {
           }
           depts[i].children = depts[i].downDept;
         } else {
-          if (num == 1) {
-            depts[i].children = [{ text: "" }];
-          }
+          // if (num == 1) {
+          depts[i].children = [{ text: "" }];
+          // }
         }
       }
     },
     echatsMethod(res) {
       var myChart = this.$echarts.init(this.$refs.ppt);
       let data = res.obj.send;
-      // "one": 667691.53,
-      //       "two": 1724617.86,
-      //       "three": 891015.99,
-      //       "four": 2376718.24,
-      //       "five": 415108.37,
-      //       "six": 2078741.99,
-      //       "seven": 589721.68,
-      //       "eight": null,
-      //       "nine": null,
-      //       "ten": null,
-      //       "eleven": null,
-      //       "twelve": null,
-      let mouth = [
-        data.one,
-        data.two,
-        data.two,
-        data.three,
-        data.four,
-        data.five,
-        data.six,
-        data.seven,
-        data.eight,
-        data.nine,
-        data.ten,
-        data.eleven,
-        data.twelve
-      ];
-      let mouthTotal = [
-        data.oneTotal,
-        data.twoTotal,
-        data.threeTotal,
-        data.fourTotal,
-        data.fiveTotal,
-        data.sixTotal,
-        data.sevenTotal,
-        data.eigthTotal,
-        data.nineTotal,
-        data.tenTotal,
-        data.elevenTotal,
-        data.twelveTotal
-      ];
-      myChart.setOption(
-        //   {
-        //   xAxis: {
-        //     type: "category",
-        //     data: [
-        //       "一月",
-        //       "二月",
-        //       "三月",
-        //       "四月",
-        //       "五月",
-        //       "六月",
-        //       "七月",
-        //       "八月",
-        //       "九月",
-        //       "十月",
-        //       "十一月",
-        //       "十二月",
-        //     ]
-        //   },
-        //   yAxis: {
-        //     type: "value"
-        //   },
-        //   series: [
-        //     {
-        //       data: mouth,
-        //       type: "bar",
-        //       showBackground: false,
-        //       backgroundStyle: {
-        //         color: "rgba(220, 220, 220, 0.8)"
-        //       }
-        //     },
-        //     {
-        //       data: mouthTotal,
-        //       type: "bar",
-        //       showBackground: false,
-        //       backgroundStyle: {
-        //         color: "rgba(220, 220, 220, 0.8)"
-        //       }
-        //     }
-        //   ]
-        // }
-        {
-          title: {
-            text: "某地区蒸发量和降水量",
-            subtext: "纯属虚构"
-          },
-          tooltip: {
-            trigger: "axis"
-          },
-          legend: {
-            data: ["蒸发量", "降水量"]
-          },
-          toolbox: {
-            show: true,
-            feature: {
-              dataView: { show: true, readOnly: false },
-              magicType: { show: true, type: ["line", "bar"] },
-              restore: { show: true },
-              saveAsImage: { show: true }
-            }
-          },
-          calculable: true,
-          xAxis: [
-            {
-              type: "category",
-              data: [
-                "1月",
-                "2月",
-                "3月",
-                "4月",
-                "5月",
-                "6月",
-                "7月",
-                "8月",
-                "9月",
-                "10月",
-                "11月",
-                "12月"
-              ]
-            }
-          ],
-          yAxis: [
-            {
-              type: "value",
-              data:[500000,1000000,1500000,2000000,2500000]
-            }
-          ],
-          series: [
-            {
-              name: "使用量",
-              type: "bar",
-              data: mouth,
-              markPoint: {
-                data: [
-                  { type: "max", name: "最大值" },
-                  { type: "min", name: "最小值" }
-                ]
-              },
-              // markLine: {
-              //   data: [{ type: "average", name: "平均值" }]
-              // }
-            },
-            {
-              name: "奖励总量",
-              type: "bar",
-              data: mouthTotal,
-              // markPoint: {
-              //   data: [
-              //     { name: "年最高", value: 182.2, xAxis: 7, yAxis: 183 },
-              //     { name: "年最低", value: 2.3, xAxis: 11, yAxis: 3 }
-              //   ]
-              // },
-              // markLine: {
-              //   data: [{ type: "average", name: "平均值" }]
-              // }
-            }
-          ]
+      let mouth = [];
+      let mouthTotal = [];
+      if (res.obj.send == null) {
+        for (let p = 0; p <= 12; p++) {
+          mouth.push(0);
         }
-      );
+        for (let p = 0; p <= 12; p++) {
+          mouthTotal.push(0);
+        }
+      } else {
+        mouth = [
+          -data.one,
+          -data.two,
+          -data.three,
+          -data.four,
+          -data.five,
+          -data.six,
+          -data.seven,
+          -data.eight,
+          -data.nine,
+          -data.ten,
+          -data.eleven,
+          -data.twelve
+        ];
+        mouthTotal = [
+          data.oneTotal,
+          data.twoTotal,
+          data.threeTotal,
+          data.fourTotal,
+          data.fiveTotal,
+          data.sixTotal,
+          data.sevenTotal,
+          data.eigthTotal,
+          data.nineTotal,
+          data.tenTotal,
+          data.elevenTotal,
+          data.twelveTotal
+        ];
+      }
+      let budgetList = [];
+      for (let p = 0; p <= 12; p++) {
+        budgetList.push(res.obj.budget);
+      }
+      function isInteger(obj) {
+        return obj % 1 === 0;
+      }
+      myChart.setOption({
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            // 坐标轴指示器，坐标轴触发有效
+            type: "shadow" // 默认为直线，可选为：'line' | 'shadow'
+          }
+        },
+        legend: {
+          data: ["累计发放", "当月发放", "年初预算"]
+        },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true
+        },
+        xAxis: [
+          {
+            type: "value",
+            axisLabel: {
+              show: true,
+              formatter: function(value, index) {
+                let text = "";
+                if (Math.abs(value) >= 10000000) {
+                  let divisionNum = value / 10000000;
+                  if (!isInteger(divisionNum)) {
+                    return (text = divisionNum.toFixed(2) + "千万");
+                  } else {
+                    return (text = divisionNum + "千万");
+                  }
+                } else if (Math.abs(value) > 10000) {
+                  let divisionNum = value / 10000;
+                  if (!isInteger(divisionNum)) {
+                    return (text = divisionNum.toFixed(2) + "万");
+                  } else {
+                    return (text = divisionNum + "万");
+                  }
+                } else {
+                  return value;
+                }
+              }
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: "category",
+            axisTick: {
+              show: false
+            },
+            data: [
+              "1月",
+              "2月",
+              "3月",
+              "4月",
+              "5月",
+              "6月",
+              "7月",
+              "8月",
+              "9月",
+              "10月",
+              "11月",
+              "12月"
+            ]
+          }
+        ],
+        series: [
+          {
+            name: "年初预算",
+            type: "bar",
+            // label: {
+            //   show: true,
+            //   position: "inside"
+            // },
+            data: budgetList
+            // barMaxWidth:60
+          },
+          {
+            name: "累计发放",
+            type: "bar",
+            stack: "总量",
+            // label: {
+            //   show: true,
+            //   position: "right"
+            // },
+            data: mouthTotal
+            // barMaxWidth:60
+          },
+          {
+            name: "当月发放",
+            type: "bar",
+            stack: "总量",
+            // label: {
+            //   show: true,
+            //   position: "left"
+            // },
+            data: mouth,
+            barMinHeight: 1
+          }
+        ]
+      });
+    },
+
+    RewardsInfo(res) {
+      var myCharts = this.$echarts.init(this.$refs.pptv);
+      let chartData = res.obj.allDetais;
+      let yAxisData = [];
+      let budgetData = [];
+      let grantData = [];
+      let surplusData = [];
+      for (let k in chartData) {
+        yAxisData.push(chartData[k].name);
+        budgetData.push(chartData[k].budget);
+        grantData.push(chartData[k].grant);
+        surplusData.push(chartData[k].surplus);
+      }
+      let labelFlag = "";
+      if (yAxisData.length >= 2) {
+        labelFlag = false;
+      } else {
+        labelFlag = true;
+      }
+      if (Number(yAxisData.length) >= 6) {
+        let calcNum = (yAxisData.length - 6) * 20;
+        this.calcHight = 400 + calcNum + "px";
+      } else {
+        this.calcHight = "400px";
+      }
+      myCharts.getDom().style.height = this.calcHight;
+      myCharts.resize();
+      function isInteger(obj) {
+        return obj % 1 === 0;
+      }
+      myCharts.setOption({
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            // 坐标轴指示器，坐标轴触发有效
+            type: "shadow" // 默认为直线，可选为：'line' | 'shadow'
+          }
+        },
+        legend: {
+          data: ["年初预算", "剩余可用", "已发"]
+        },
+        grid: {
+          left: "3%",
+          right: "4%",
+          bottom: "3%",
+          containLabel: true
+        },
+        xAxis: {
+          type: "value",
+          axisLabel: {
+            show: true,
+            formatter: function(value, index) {
+              let text = "";
+              if (Math.abs(value) >= 10000) {
+                let divisionNum = value / 10000;
+                if (!isInteger(divisionNum)) {
+                  return (text = divisionNum.toFixed(2) + "万");
+                } else {
+                  return (text = divisionNum + "万");
+                }
+              } else {
+                return value;
+              }
+            }
+          }
+        },
+        yAxis: {
+          type: "category",
+          data: yAxisData,
+          axisLabel: {
+            show: true,
+            formatter: function(value, index) {
+              let text = "";
+              if (value.length > 6) {
+                return value.substring(0, 6) + "..";
+              } else {
+                return value;
+              }
+            }
+          }
+        },
+        series: [
+          {
+            name: "年初预算",
+            type: "bar",
+            stack: "总量",
+            label: {
+              show: labelFlag,
+              position: "insideRight"
+            },
+            data: budgetData,
+            barMaxWidth: 20
+          },
+          {
+            name: "已发",
+            type: "bar",
+            stack: "可用",
+            label: {
+              show: labelFlag,
+              position: "insideRight"
+            },
+            data: grantData,
+            barMaxWidth: 20
+          },
+          {
+            name: "剩余可用",
+            type: "bar",
+            stack: "可用",
+            label: {
+              show: labelFlag,
+              position: "insideRight"
+            },
+            data: surplusData,
+            barMaxWidth: 20
+          }
+        ]
+      });
     }
   }
 };
 </script>
 
-<style>
+<style lang="stylus">
+.honghe {
+  width: 10px;
+  height: 15px;
+  display: inline-block;
+  background-color: red;
+}
 </style>
