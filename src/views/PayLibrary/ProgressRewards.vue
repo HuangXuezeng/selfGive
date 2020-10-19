@@ -90,9 +90,10 @@
             /> </van-popup
         ></van-col>
       </van-row>
-      <div style="width:100%">
+      <div style="width:100%" v-if="!showNodata">
         <div ref="pptv" :style="{ width: '100%', height: calcHight }"></div>
       </div>
+      <noData :showNodata='showNodata'></noData>
     </div>
     <payTab></payTab>
   </div>
@@ -101,13 +102,14 @@
 <script>
 import { Picker, Toast, DropdownMenu, DropdownItem, Col, Row } from "vant";
 import payTab from "@/components/PayLibrary/pay-tab.vue";
+import  noData  from "@/components/noData.vue";
 import {
   findRewardInfo,
   findRewardDetailsInfo
 } from "@/views/PayLibrary/PayLibrary.js";
 export default {
   components: {
-    payTab
+    payTab,noData
   },
   data() {
     return {
@@ -123,7 +125,8 @@ export default {
       DetailsRes: {},
       DetailsList: [],
       selectRewardName: "",
-      calcHight: "400px"
+      calcHight: "400px",
+      showNodata : false
     };
   },
   created() {
@@ -153,11 +156,16 @@ export default {
           this.selectedOrg = queryobj.downDeptName;
         } else {
           //更新第二张表
+          this.RewardTypeName = ''
           this.selectRewardName = queryobj.downDeptName;
           if (this.selectRewardName == "股份整体") {
+            var myCharts = this.$echarts.init(this.$refs.pptv);
+            myCharts.clear()
+            this.showNodata = true
             Toast.fail("暂无数据");
             return;
           }
+          this.showNodata = false
           this.updateFindRewardDetailsInfo(
             this.findDetail(queryobj.downDeptName)
           );
@@ -175,6 +183,7 @@ export default {
           this.selectedOrg = value.deptName;
         } else {
           this.selectRewardName = value.deptName;
+          this.RewardTypeName = ''
           //更新第二张表
           this.updateFindRewardDetailsInfo(
             this.findDetail(queryobj.downDeptName)
@@ -216,7 +225,9 @@ export default {
         if (res.code == 1000) {
           if (res.obj.title != "股份整体") {
             this.RewardsInfo(res);
+            this.showNodata = false
           } else {
+            this.showNodata = true
           }
         } else {
           Toast.fail(res.msg);
@@ -255,9 +266,12 @@ export default {
     queryfindRewardDetailsInfo(queryobj) {
       findRewardDetailsInfo({ jobnumber: "6006212", flag: "1" }).then(res => {
         if (res.code == 1000) {
+          // debugger
           if (res.obj.title != "股份整体") {
             this.RewardsInfo(res);
+            this.showNodata = false
           } else {
+            this.showNodata = true
           }
           this.DetailsRes = res;
           this.selectRewardName = res.obj.title;

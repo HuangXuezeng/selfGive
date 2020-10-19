@@ -37,4 +37,13 @@ export function findPerGetDetailsInfo (queryData) {
     data: JSON.stringify(queryData)
   })
 }
-//按照
+//平均年薪部门选择
+export function findPerYearInfo (queryData) {
+  return fetch({
+    url: `/kukacms/self/findPerYearInfo`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}

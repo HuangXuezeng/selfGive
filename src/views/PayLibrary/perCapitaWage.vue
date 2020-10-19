@@ -127,10 +127,40 @@
           </van-popup>
         </van-col>
       </van-row>
-      <div style="width:100%">
+      <div style="width:100%" v-if="!showNodata">
         <div ref="payEch" :style="{ width: '100%', height: '500px' }"></div>
       </div>
+      <noData :showNodata="showNodata"></noData>
     </div>
+    <div>
+      <van-row type="flex" justify="left" style="margin-bottom:10px">
+        <van-col>
+          <div style="font-size: 18px;font-weight: 700;;margin-top:20px">
+            <span class="honghe"></span>
+            平均年薪
+          </div></van-col
+        >
+      </van-row>
+      <choosedepartment
+        @transferFa="selctdept"
+        :Farequired="true"
+        labelTitle="部门"
+      ></choosedepartment>
+      <div class="resetVant">
+        <v-table
+          is-horizontal-resize
+          style="width:100%"
+          :columns="columnsAnnualSalary"
+          :table-data="tableDataAnnualSalary"
+          row-hover-color="#eee"
+          row-click-color="#edf7ff"
+          :cell-merge="cellMergeAnnualSalary"
+          :is-loading="lodingFlagAnnualSalary"
+          :column-cell-class-name="columnCellClassAnnualSalary"
+        ></v-table>
+      </div>
+    </div>
+
     <payTab></payTab>
   </div>
 </template>
@@ -151,11 +181,16 @@ import {
 import payTab from "@/components/PayLibrary/pay-tab.vue";
 import {
   findPerGetInfo,
-  findPerGetDetailsInfo
+  findPerGetDetailsInfo,
+  findPerYearInfo
 } from "@/views/PayLibrary/PayLibrary.js";
+import noData from "@/components/noData.vue";
+import chooseDepartment from "@/components/chooseDepartment.vue";
 export default {
   components: {
-    payTab
+    payTab,
+    noData,
+    choosedepartment: chooseDepartment
   },
   data() {
     return {
@@ -243,7 +278,161 @@ export default {
       selectzjName: "M3",
       selectZjNameMap: null,
       selctzjqueryLoading: false,
-      firstInflag:0
+      firstInflag: 0,
+      showNodata: false,
+      //平均年薪
+      columnsAnnualSalary: [
+        {
+          field: "zl",
+          title: "职类",
+          width: 80,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "zj",
+          title: "职级",
+          width: 80,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "lastTwelve",
+          title: "上年12月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "one",
+          title: "1月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "two",
+          title: "2月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "three",
+          title: "3月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "four",
+          title: "4月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "five",
+          title: "5月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "six",
+          title: "6月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "seven",
+          title: "7月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "eight",
+          title: "8月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "nine",
+          title: "9月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "ten",
+          title: "10月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "eleven",
+          title: "11月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "twelve",
+          title: "12月",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        },
+        {
+          field: "zf",
+          title: "较上年12月增幅",
+          width: 120,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          titleCellClassName: "titleclass"
+        }
+      ],
+      tableDataAnnualSalary: [],
+      lodingFlagAnnualSalary: true,
+      mAnnualSalary: 1,
+      pAnnualSalary: 1,
+      sAnnualSalary: 1,
+      oAnnualSalary: 1
     };
   },
   created() {
@@ -253,6 +442,7 @@ export default {
     this.maxDate = new Date(y, m, 1);
     this.queryfindPerGetInfo();
     this.queryfindPerGetDetailsInfo();
+    this.queryfindPerYearInfo()
     this.selectZj = new Set();
     this.selectZjNameMap = new Map();
   },
@@ -264,10 +454,9 @@ export default {
       return document.querySelector(".my-container");
     },
     rightPopShow() {
-      debugger
       this.rightPop = true;
       if (!this.firstInflag) {
-        this.firstInflag++
+        this.firstInflag++;
         this.$nextTick(() => {
           this.$refs.checkboxes[0].toggle(true);
         });
@@ -351,7 +540,7 @@ export default {
         return "oClass";
       }
       if (
-        this.slength + this.plength + this.mlength+this.olength < rowIndex &&
+        this.slength + this.plength + this.mlength + this.olength < rowIndex &&
         rowData.zl == "合计"
       ) {
         return "heClass";
@@ -362,7 +551,7 @@ export default {
       if (queryObj) {
         queryData = queryObj;
       } else {
-        queryData = { jobnumber: 6006212 };
+        queryData = { jobnumber: "6208052" };
       }
       findPerGetInfo(queryData).then(res => {
         if (res.code == 1000) {
@@ -443,7 +632,7 @@ export default {
         lastm = "12";
       }
       let queryObj = {
-        jobnumber: 6006212,
+        jobnumber: 6208052,
         year: y + m,
         lastYear: lasty + lastm
       };
@@ -452,9 +641,9 @@ export default {
       this.vanDateShow = false;
     },
     selctzjquery() {
-      if(!this.selectZj.size){
-        Toast.fail('请至少选择一项');
-        return
+      if (!this.selectZj.size) {
+        Toast.fail("请至少选择一项");
+        return;
       }
       this.selctzjqueryLoading = true;
       let zjListArry = Array.from(this.selectZj);
@@ -467,22 +656,25 @@ export default {
       });
       this.selectzjName = this.selectzjName.slice(1);
       findPerGetDetailsInfo({
-        jobnumber: "6006212",
+        jobnumber: "6208052",
         flag: "2",
         zjList: zjListArry
       }).then(res => {
         if (res.code == 1000) {
-          this.payEachrts(res);
-          this.selctzjqueryLoading = false;
+          this.showNodata = false;
+          this.$nextTick(() => {
+            this.payEachrts(res);
+          });
           this.rightPop = false;
         } else {
           Toast.fail(res.msg);
         }
+        this.selctzjqueryLoading = false;
       });
     },
     queryfindPerGetDetailsInfo() {
       findPerGetDetailsInfo({
-        jobnumber: "6006212",
+        jobnumber: "6208052",
         flag: "1",
         zjList: []
       }).then(res => {
@@ -507,7 +699,10 @@ export default {
               }
             }
           }
-          this.payEachrts(res);
+          this.showNodata = false;
+          this.$nextTick(() => {
+            this.payEachrts(res);
+          });
         } else {
           Toast.fail(res.msg);
         }
@@ -516,6 +711,11 @@ export default {
     payEachrts(res) {
       var myCharts = this.$echarts.init(this.$refs.payEch);
       let echartData = res.obj;
+      if (echartData.lastYear.length == 0) {
+        myCharts.clear();
+        this.showNodata = true;
+        return;
+      }
       let lastYear = echartData.lastYear[0].mon.substring(0, 4);
       let nowYear = echartData.year[0].mon.substring(0, 4);
       let lastYearList = [];
@@ -679,7 +879,131 @@ export default {
       for (let i = 0; i <= this.selectZjNameMap.size - 1; i++) {
         this.$refs.checkboxes[i].toggle(false);
       }
-      this.selectZj.clear()
+      this.selectZj.clear();
+    },
+    queryfindPerYearInfo(queryObj) {
+      debugger
+      let queryData = {};
+      if (queryObj) {
+        queryData = queryObj;
+      } else {
+        queryData = {
+          jobnumber: "6006212",
+          deptList: []
+        };
+      }
+      findPerYearInfo(queryData).then(res => {
+        if (res.code == 1000) {
+          //先初始化
+          this.tableDataAnnualSalary = [];
+          let mlist = [];
+          let plist = [];
+          let slist = [];
+          let olist = [];
+          for (let k in res.obj) {
+            if (res.obj[k].zl == "M类") {
+              mlist.push(res.obj[k]);
+            } else if (res.obj[k].zl == "P类") {
+              plist.push(res.obj[k]);
+            } else if (res.obj[k].zl == "S类") {
+              slist.push(res.obj[k]);
+            } else if (res.obj[k].zl == "O类") {
+              olist.push(res.obj[k]);
+            }
+          }
+          this.mAnnualSalary = mlist.length;
+          this.pAnnualSalary = plist.length;
+          this.sAnnualSalary = slist.length;
+          this.oAnnualSalary = olist.length;
+          this.orderPush(mlist)
+          this.orderPush(plist)
+          this.orderPush(slist)
+          this.orderPush(olist)
+           for (let t in res.obj) {
+            if (res.obj[t].zl == "合计") {
+               this.tableDataAnnualSalary.push(res.obj[t])
+            }
+          }
+        } else {
+          Toast.fail(res.msg);
+        }
+        this.lodingFlagAnnualSalary = false;
+      });
+    },
+    cellMergeAnnualSalary(rowIndex, rowData, field){
+      if (field === "zl" && rowData[field] === "M类") {
+        return {
+          colSpan: 1,
+          rowSpan: this.mAnnualSalary,
+          content: '<span style="color:red">M类</span>',
+          componentName: ""
+        };
+      }
+      if (field === "zl" && rowData[field] === "P类") {
+        return {
+          colSpan: 1,
+          rowSpan: this.pAnnualSalary,
+          content: '<span style="color:red">P类</span>',
+          componentName: ""
+        };
+      }
+      if (field === "zl" && rowData[field] === "S类") {
+        return {
+          colSpan: 1,
+          rowSpan: this.sAnnualSalary,
+          content: '<span style="color:red">S类</span>',
+          componentName: ""
+        };
+      }
+      if (field === "zl" && rowData[field] === "O类") {
+        return {
+          colSpan: 1,
+          rowSpan: this.oAnnualSalary,
+          content: '<span style="color:red">O类</span>',
+          componentName: ""
+        };
+      }
+      if (field === "zl" && rowData[field] === "合计") {
+        return {
+          colSpan: 2,
+          rowSpan: 1,
+          content: '<span style="color:red">合计</span>',
+          componentName: ""
+        };
+      }
+    },
+    columnCellClassAnnualSalary(rowIndex, columnName, rowData) {
+      if (rowIndex < this.mAnnualSalary) {
+        return "mClass";
+      }
+      if (this.mAnnualSalary <= rowIndex && rowData.zl == "P类") {
+        return "pClass";
+      }
+      if (this.pAnnualSalary < rowIndex && rowData.zl == "S类") {
+        return "sClass";
+      }
+      if (this.sAnnualSalary < rowIndex && rowData.zl == "O类") {
+        return "oClass";
+      }
+      if (
+        this.mAnnualSalary + this.pAnnualSalary + this.oAnnualSalary + this.sAnnualSalary <= rowIndex &&
+        rowData.zl == "合计"
+      ) {
+        return "heClass";
+      }
+    },
+    //按顺序装填数组
+    orderPush(list){
+      if(list){
+        for(let i in list){
+          this.tableDataAnnualSalary.push(list[i])
+        }
+      }
+    },
+    selctdept(data) {
+      debugger;
+      // this.addForm.a8TDPYXX013Name = data.content;
+      // this.addForm.a8TDPYXX013 = data.deptId;
     }
   }
 };

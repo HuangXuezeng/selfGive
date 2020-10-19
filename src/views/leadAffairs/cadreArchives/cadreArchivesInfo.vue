@@ -193,13 +193,14 @@
                 </div></van-col
               >
             </van-row>
-            <div v-if="KukaWorkList.length == 0">
+            <!-- <div v-if="KukaWorkList.length == 0">
               <van-empty
                 class="custom-image"
                 image="https://img.yzcdn.cn/vant/custom-empty-image.png"
                 description="暂无数据"
               />
-            </div>
+            </div> -->
+             <noData :showNodata='KukaWorkList.length == 0'></noData>
             <div class="contentbox" v-if="KukaWorkList.length != 0">
               <van-collapse
                 v-model="KukaWorkListActname"
@@ -241,13 +242,14 @@
                 </div></van-col
               >
             </van-row>
-            <div v-if="socialList.length == 0">
+            <!-- <div v-if="socialList.length == 0">
               <van-empty
                 class="custom-image"
                 image="https://img.yzcdn.cn/vant/custom-empty-image.png"
                 description="暂无数据"
               />
-            </div>
+            </div> -->
+             <noData :showNodata='socialList.length == 0'></noData>
             <div class="contentbox" v-if="socialList.length != 0">
               <van-collapse
                 v-model="activeNames"
@@ -309,13 +311,14 @@
               </div></van-col
             >
           </van-row>
-          <div>
+          <!-- <div>
             <van-empty
               class="custom-image"
               image="https://img.yzcdn.cn/vant/custom-empty-image.png"
               description="暂无数据"
             />
-          </div>
+          </div> -->
+          <noData :showNodata='true'></noData>
         </van-tab>
         <van-tab title="关键事件">
           <van-row type="flex" justify="center">
@@ -325,13 +328,14 @@
               </div></van-col
             >
           </van-row>
-          <div v-if="KeyEvents.length == 0">
+          <!-- <div v-if="KeyEvents.length == 0">
             <van-empty
               class="custom-image"
               image="https://img.yzcdn.cn/vant/custom-empty-image.png"
               description="暂无数据"
             />
-          </div>
+          </div> -->
+          <noData :showNodata='KeyEvents.length == 0'></noData>
           <div class="contentbox" v-if="KeyEvents.length != 0">
             <van-collapse
               v-model="KeyEventsActiveNames"
@@ -379,13 +383,14 @@
               </div></van-col
             >
           </van-row>
-           <div v-if="ability == null">
+           <!-- <div v-if="ability == null">
             <van-empty
               class="custom-image"
               image="https://img.yzcdn.cn/vant/custom-empty-image.png"
               description="暂无数据"
             />
-          </div>
+          </div> -->
+          <noData :showNodata='ability == null'></noData>
           <div class="contentbox" v-if="ability != null">
             <van-collapse v-model="abilityactname">
               <van-collapse-item name="0" title="能力">
@@ -432,13 +437,15 @@
               </div></van-col
             >
           </van-row>
-          <div>
+          <!-- <div>
             <van-empty
               class="custom-image"
               image="https://img.yzcdn.cn/vant/custom-empty-image.png"
               description="暂无数据"
             />
-          </div>
+          </div> -->
+          <noData :showNodata='true'></noData>
+
           <van-row type="flex" justify="center">
             <van-col>
               <div style="font-size: 20px;font-weight: 700;margin-top:20px">
@@ -446,13 +453,14 @@
               </div></van-col
             >
           </van-row>
-          <div v-if="listProject.length == 0">
+          <!-- <div v-if="listProject.length == 0">
             <van-empty
               class="custom-image"
               image="https://img.yzcdn.cn/vant/custom-empty-image.png"
               description="暂无数据"
             />
-          </div>
+          </div> -->
+          <noData :showNodata='listProject.length == 0'></noData>
           <div class="contentbox" v-if="listProject.length != 0">
             <van-collapse
               v-model="listProjectActiveNames"
@@ -500,13 +508,14 @@
               </div></van-col
             >
           </van-row>
-          <div v-if="teamlist.length == 0">
+          <!-- <div v-if="teamlist.length == 0">
             <van-empty
               class="custom-image"
               image="https://img.yzcdn.cn/vant/custom-empty-image.png"
               description="暂无数据"
             />
-          </div>
+          </div> -->
+          <noData :showNodata='teamlist.length == 0'></noData>
           <div class="contentbox" v-if="teamlist.length != 0">
             <van-collapse
               v-model="teamlistactname"
@@ -597,13 +606,14 @@
             :value="basicInfo.a01230"
             center
           />
-          <div v-if="!basicInfo.a01230">
+          <!-- <div v-if="!basicInfo.a01230">
             <van-empty
               class="custom-image"
               image="https://img.yzcdn.cn/vant/custom-empty-image.png"
               description="暂无数据"
             />
-          </div>
+          </div> -->
+          <noData :showNodata='basicInfo.a01230 == null '></noData>
         </van-tab>
       </van-tabs>
     </div>
@@ -623,7 +633,8 @@ import {
   CollapseItem,
   Tag,
   Tab,
-  Tabs
+  Tabs,
+  Empty
 } from "vant";
 import {
   findCadreBasicInfo,
@@ -633,9 +644,12 @@ import {
   listKukaWorkByJobnumber,
   findCadreAbility
 } from "@/views/leadAffairs/cadreArchives/cadreArchivesApi.js";
+//src/components/noData.vue
 import { findTeamBuildingInfo } from "@/views/personAffairs/teamFoster/teamFosterApi.js";
+import  noData  from "@/components/noData.vue";
+
 export default {
-  components: {},
+  components: {noData},
   data() {
     return {
       socialList: [],
@@ -658,8 +672,13 @@ export default {
     };
   },
   created() {
+    // debugger
     this.manageitem = this.$route.params.managerInfo;
-    this.itemjobnumber = this.manageitem.a0190;
+    if(!this.manageitem ){
+      this.itemjobnumber = localStorage.getItem('jobNum')
+    }else{
+      this.itemjobnumber = this.manageitem.a0190;
+    }
     this.querylsitWorkInfoByJobnumber();
     this.queryfindCadreKeyEvents();
     this.queryProjectByJobnumber();

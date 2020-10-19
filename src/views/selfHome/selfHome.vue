@@ -567,10 +567,18 @@ export default {
         this.save_type(sortNum)
         this.$router.push({name:'cadreArchives'})
         break;
-        // case '干部档案':
+         case '奖励进度':
         // this.save_type(sortNum)
-        // this.$router.push({name:'cadreArchives'})
-        // break;
+        this.$router.push({name:'ProgressRewards'})
+        break;
+         case '人均工资':
+        // this.save_type(sortNum)
+        this.$router.push({name:'perCapitaWage'})
+        break;
+        case '干部档案':
+        this.save_type(sortNum)
+        this.$router.push({name:'cadreArchives'})
+        break;
       }
     }
   },

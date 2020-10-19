@@ -3,7 +3,7 @@
     <van-field
       v-model="selectedDepartment"
       @click="pickDept"
-      label="团队所属机构："
+      :label="labelTitle"
       :placeholder="deptPlacehoder"
       :rules="reqireRule"
       type="textarea"
@@ -46,6 +46,10 @@ export default {
     },
     selectName: {
       type: String
+    },
+    labelTitle:{
+      type:String,
+      default:' 团队所属机构：'
     }
   },
   data() {
