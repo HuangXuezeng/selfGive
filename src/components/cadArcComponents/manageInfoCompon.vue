@@ -58,7 +58,7 @@
               <span>
                 <img
                   class="img"
-                  :src="items.photo ? items.photo : defaultAvatar"
+                  :src="items.photo != null ? items.photo : defaultAvatar"
                   alt
                 />
               </span>

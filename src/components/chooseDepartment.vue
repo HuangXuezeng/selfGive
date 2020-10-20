@@ -33,7 +33,10 @@
 <script>
 import { getOrz } from "@/views/leadAffairs/api.js";
 import { findTeamBuildingJGLJInfo } from "@/views/personAffairs/teamFoster/teamFosterApi.js";
+import { findPayrollDept } from "@/views/PayLibrary/PayLibrary.js";
+
 import { Notify, Toast } from "vant";
+// src/views/PayLibrary/PayLibrary.js
 export default {
   name: "chooseDepartment",
   props: {
@@ -50,6 +53,10 @@ export default {
     labelTitle:{
       type:String,
       default:' 团队所属机构：'
+    },
+    workingNum:{
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -79,20 +86,21 @@ export default {
       this.reqireRule = [{ required: true, message: "请选择部门" }];
       this.deptPlacehoder = "必填";
     }
-
     this.selectedDepartment = this.selectName;
   },
   mounted() {},
   methods: {
     //获取组织下的部门
     _getOrz() {
-      // let queryData = {
-      //   jobnumber: 6006212
-      // };
-      // getOrz(queryData).then(res => {
-      // });
-      const departRes =  JSON.parse(localStorage.getItem('departRes'))
-      this.deptData.push(departRes.obj.departments);
+      // debugger
+      if(this.workingNum){
+        findPayrollDept({jobnumber:localStorage.getItem('jobNum')}).then(res =>{
+          this.deptData = res.obj.depts;
+        })
+      }else{
+        const departRes =  JSON.parse(localStorage.getItem('departRes'))
+        this.deptData.push(departRes.obj.departments);
+      }
 
     },
     //选择部门

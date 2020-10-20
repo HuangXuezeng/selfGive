@@ -565,7 +565,7 @@ export default {
         break;
         case '人效分析':
         this.save_type(sortNum)
-        this.$router.push({name:'cadreArchives'})
+        this.$router.push({name:'humanEffect'})
         break;
          case '奖励进度':
         // this.save_type(sortNum)

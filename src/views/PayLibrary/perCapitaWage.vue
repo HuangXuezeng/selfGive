@@ -145,6 +145,7 @@
         @transferFa="selctdept"
         :Farequired="true"
         labelTitle="部门"
+        :workingNum='true'
       ></choosedepartment>
       <div class="resetVant">
         <v-table
@@ -1001,9 +1002,9 @@ export default {
       }
     },
     selctdept(data) {
-      debugger;
-      // this.addForm.a8TDPYXX013Name = data.content;
-      // this.addForm.a8TDPYXX013 = data.deptId;
+      if(!data.deptId){
+        this.queryfindPerYearInfo({jobnumber: "6006212",deptList: [data.deptId]})
+      }
     }
   }
 };

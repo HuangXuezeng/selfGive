@@ -5,7 +5,7 @@
         <van-tab title="基本信息">
           <van-card
             :desc="basicInfo.deptName ? basicInfo.deptName : ''"
-            :thumb="basicInfo.photo ? basicInfo.photo : defaultAvatar"
+            :thumb="basicInfo.photo != null ? basicInfo.photo : defaultAvatar"
           >
             <template #tags>
               <van-tag plain type="danger" v-if="basicInfo.a01136">{{
