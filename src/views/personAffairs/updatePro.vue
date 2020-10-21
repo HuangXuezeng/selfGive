@@ -1,26 +1,26 @@
 <template>
     <div>
         <div>
-            <van-field v-model="projectName" label="项目名称：" placeholder="必填"/>
+            <van-field v-model="projectName" label="项目名称：" maxlength="25" placeholder="限25个字（必填）" />
             <van-field v-model="startTime" label="进入项目时间：" @click="startTimeClick" readonly placeholder="必填"/>
             <van-field v-model="endTime" label="退出项目时间：" @click-input="endTimeClick" readonly placeholder="选填">
                 <template #button>
                     <i size="small" type="primary" @click="reset"><van-icon name="close" color="#ccc"/></i>
                 </template>
             </van-field>
-            <van-field v-model="trjlzb" label="投入精力占比：" placeholder="必填">
+            <van-field v-model="trjlzb" label="投入精力占比：" maxlength="25" placeholder="限25个字（必填）">
                 <template #button>
                     <i size="small" type="primary" @click="showAlert7"><van-icon name="question-o" color="red"/></i>
                 </template>
             </van-field>
-            <van-field v-model="jobType" label="任职类型：" placeholder="必填">
+            <van-field v-model="jobType" label="任职类型：" maxlength="25" placeholder="限25个字（必填）">
                 <template #button>
                     <i size="small" type="primary" @click="showAlert8"><van-icon name="question-o" color="red"/></i>
                 </template>
             </van-field>
-            <van-field v-model="projectRole" label="项目角色：" placeholder="必填"/>
+            <van-field v-model="projectRole" label="项目角色：" maxlength="25" placeholder="限25个字（必填）"/>
             <van-field v-model="projectProp" label="项目性质：" placeholder="必填" @click="typeClick" readonly/>
-            <van-field v-model="projectResult" label="项目成果：" placeholder="只能输入500个字符、250个字（选填）" type="textarea" autosize>
+            <van-field v-model="projectResult" label="项目成果：" placeholder="限500个字（选填）" type="textarea" autosize>
                 <template #button>
                     <i size="small" type="primary" @click="showAlert9"><van-icon name="question-o" color="red"/></i>
                 </template>
@@ -75,8 +75,8 @@ export default {
         projectProp: '', //项目性质
         propCode: '', //传给后台类型值
         projectResult: '', //项目成果
-        minDate: new Date(2010, 0, 1),
-        maxDate: new Date(2025, 10, 1),
+        minDate: new Date(1960, 0, 1),
+        maxDate: new Date(2030, 10, 1),
         currentDate: new Date(),
         showTime: false,
         timeFlag: '', //选择时间的标识
@@ -186,8 +186,8 @@ export default {
         if (typeof str != "string"){
             str += "";
         }
-        if(str.replace(/[^\x00-\xff]/g,"01").length > 500){
-            Notify({ type: 'warning', message: '项目成果不得大于500个字符！' })
+        if(str.replace(/[^\x00-\xff]/g,"01").length > 1000){
+            Notify({ type: 'warning', message: '项目成果不得超过500个字！' })
             return this.lengthFlag = false
         }else{
             return this.lengthFlag = true

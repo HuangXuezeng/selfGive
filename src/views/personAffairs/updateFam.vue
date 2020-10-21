@@ -5,7 +5,7 @@
             <p style="padding-left:16px">机构单位：<span>{{organ}}</span></p>
             <p style="padding-left:16px">任职岗位：<span>{{station}}</span></p>
             <p style="padding-left:16px">证明人：<span>{{witness}}</span></p>
-            <van-field v-model="mainWork" label="主要工作职责：" placeholder="必填">
+            <van-field v-model="mainWork" label="主要工作职责：" placeholder="限500个字（必填）">
                 <template #button>
                     <i size="small" type="primary" @click="showAlert8"><van-icon name="question-o" color="red"/></i>
                 </template>
@@ -41,6 +41,11 @@ export default {
             message: '确认提交修改？'
             }).then(() => {
             // on confirm
+            //判断项目成果字符长度
+            this.getStr(this.mainWork)
+            if(this.lengthFlag == false){
+                return
+            }
             if( this.mainWork == null || this.mainWork == '' ){
                     Notify({ type: 'danger', message: '您有必填写未填写，请填写后提交！' })
                 }else{
@@ -80,6 +85,19 @@ export default {
         this.organ = famData.organ
         this.station = famData.station
         this.witness = famData.witness
+    },
+    //字符串长度检测
+    getStr(str){
+        if (str == null) return 0;
+        if (typeof str != "string"){
+            str += "";
+        }
+        if(str.replace(/[^\x00-\xff]/g,"01").length > 1000){
+            Notify({ type: 'warning', message: '主要工作职责不得超过500个字！' })
+            return this.lengthFlag = false
+        }else{
+            return this.lengthFlag = true
+        }
     },
     //提示信息
     showAlert8() {

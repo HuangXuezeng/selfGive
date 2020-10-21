@@ -201,8 +201,8 @@ export default {
         a86012: '',
         sure: '', //是否最高学历值
         a86013: '',
-        minDate: new Date(2010, 0, 1),
-        maxDate: new Date(2025, 10, 1),
+        minDate: new Date(1960, 0, 1),
+        maxDate: new Date(2030, 10, 1),
         currentDate: new Date(),
         showTime: false,
         timeFlag: '', //选择时间的标识

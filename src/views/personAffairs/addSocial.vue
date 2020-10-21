@@ -7,7 +7,7 @@
             <van-field v-model="department" label="任职部门：" placeholder="必填"/>
             <van-field v-model="station" label="任职岗位：" placeholder="必填"/>
             <van-field v-model="witness" label="证明人及电话：" placeholder="必填"/>
-            <van-field v-model="description" label="工作内容描述：" rows="1" autosize type="textarea" placeholder="必填">
+            <van-field v-model="description" label="工作内容描述：" rows="1" autosize type="textarea" placeholder="限500个字（必填）">
                 <template #button>
                     <i size="small" type="primary" @click="showAlert8"><van-icon name="question-o" color="red"/></i>
                 </template>
@@ -104,7 +104,7 @@ export default {
         witness: '',
         description: '',
         remarks: '',
-        minDate: new Date(1980, 0, 1),
+        minDate: new Date(1960, 0, 1),
         maxDate: new Date(2030, 10, 1),
         currentDate: new Date(),
         showTime: false,
@@ -141,6 +141,11 @@ export default {
             let strEnd = this.endTime.split('-').join('')
             if(strStart>strEnd){
                 Notify({ type: 'warning', message: '开始时间不得大于结束时间！' })
+                return
+            }
+            //判断项目成果字符长度
+            this.getStr(this.description)
+            if(this.lengthFlag == false){
                 return
             }
             // console.log(sendData)
@@ -208,6 +213,19 @@ export default {
         var m = date.getMonth() + 1;    m = m < 10 ? '0' + m : m;    
         var d = date.getDate();    d = d < 10 ? ('0' + d) : d;       
         return y + '-' + m + '-' + d 
+    },
+    //字符串长度检测
+    getStr(str){
+        if (str == null) return 0;
+        if (typeof str != "string"){
+            str += "";
+        }
+        if(str.replace(/[^\x00-\xff]/g,"01").length > 1000){
+            Notify({ type: 'warning', message: '工作内容描述不得超过500个字!' })
+            return this.lengthFlag = false
+        }else{
+            return this.lengthFlag = true
+        }
     },
     //上传附件弹窗
     dialogOpen(){

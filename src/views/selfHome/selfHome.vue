@@ -214,8 +214,8 @@ export default {
     };
   },
   created(){
-    localStorage.setItem('jobNum',6006212)
-    // localStorage.setItem('jobNum',9050104)
+    // localStorage.setItem('jobNum',6006212)
+    localStorage.setItem('jobNum',9050104)
     // localStorage.setItem('jobNum',9102171)
     // localStorage.setItem('jobNum',9078825)
     // localStorage.setItem('jobNum',6003239)

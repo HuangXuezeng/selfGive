@@ -4,12 +4,12 @@
             <van-field v-model="form.department" @click="pickDept" readonly label="部门" placeholder="请选择部门(必填)" />
             <van-field v-model="form.jobnumber" label="工号" placeholder="请输入工号" />
             <van-field v-model="form.name" label="姓名" placeholder="请输入姓名" />
-            <van-field v-model="form.startTime" label="开始时间" @click="startTimeClick" placeholder="请选择(必填)" />
-            <van-field v-model="form.endTime" label="结束时间" @click="endTimeClick" placeholder="请选择(必填)" />
-            <van-field v-model="form.classic" label="异动分类" placeholder="请选择" />
+            <van-field v-model="form.startTime" label="开始时间" @click="startTimeClick" readonly placeholder="请选择(必填)" />
+            <van-field v-model="form.endTime" label="结束时间" @click="endTimeClick" readonly placeholder="请选择(必填)" />
+            <van-field v-model="form.classic" label="异动分类" placeholder="请选择" readonly/>
             <div class="btn">
-                <van-button type="primary" color="#fc5f10" size="small" @click="search">查询</van-button>
-                <!-- <van-button type="primary" color="#fc5f10" size="small" @click="reset">重置</van-button> -->
+                <van-button type="primary" color="#fc5f10" size="small" @click="search" style="width:45%">查询</van-button>
+                <van-button type="primary" color="#fc5f10" size="small" @click="reset" style="width:45%">重置</van-button>
                 <!-- <van-button type="primary" color="#fc5f10" size="small" @click="ceshi">测试</van-button> -->
             </div>
         </div>
@@ -258,6 +258,7 @@ export default {
                 isResize: true
             },									
         ],
+        defaultCheckedKeys:[], //选中的节点
     };
   },
   created(){
@@ -287,6 +288,19 @@ export default {
             })
         }
     },
+    // 重置条件
+    reset(){
+        this.form = {
+            department:'', //部门
+            jobnumber:'', //工号
+            name:'', //姓名
+            startTime:'', //开始日期
+            endTime:'', //结束日期
+            classic:'', //异动分类
+        }
+        //清空tree
+        this.$refs.tree.setCheckedKeys([]);
+    },
     //选择部门
     pickDept(){
         this.showPickDept = true
@@ -294,6 +308,7 @@ export default {
     //选择时触发
     handleCheckChange(data) {
         let res = this.$refs.tree.getCheckedNodes()
+        this.defaultCheckedKeys = res
         let str = ''
         let val = ''
         for(let i in res){
@@ -406,6 +421,7 @@ export default {
         .btn{
             padding 5px
             line-height 35px
+            text-align center
         }
     }
     .table{

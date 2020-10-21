@@ -546,6 +546,8 @@ export default {
             jobnumber: '',
             name: '',
         }
+        //清空tree
+        this.$refs.tree.setCheckedKeys([]);
     },
     //更多查询条件
     moreSearch(){
@@ -1061,6 +1063,7 @@ export default {
     //选择时触发
     handleCheckChange(data) {
         let res = this.$refs.tree.getCheckedNodes()
+        // console.log(res)
         this.defaultCheckedKeys = res
         // this.$refs.tree.setCheckedKeys(this.defaultCheckedKeys)
         // this.$refs.tree.getCheckedKeys().concat(this.$refs.tree.getHalfCheckedKeys())

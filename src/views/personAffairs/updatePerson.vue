@@ -321,8 +321,8 @@ export default {
         a01503Key: '', 
         a01191Key: '', 
         a0127Key: '', 
-        minDate: new Date(1980, 0, 1),
-        maxDate: new Date(2025, 10, 1),
+        minDate: new Date(1960, 0, 1),
+        maxDate: new Date(2030, 10, 1),
         currentDate: new Date(),
         showTime: false,
         showSure: false, //是否退伍军人弹窗
