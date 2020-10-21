@@ -100,14 +100,14 @@
         close-icon-position="bottom-right"
         get-container="body"
         position="top" 
-        :style="{ height: '70%' }">
+        :style="{ height: '80%' }">
           <div class="table">
               <v-table 
               ref="table" 
               is-horizontal-resize
               style="width:100%"
               columns-width-drag
-              :height="500"
+              :height="400"
               title-bg-color="#ccc"
               :columns="popupColumns"
               :table-data="popupTableData" 
@@ -124,6 +124,7 @@
     </div>
 </template>
 <script>
+import { Notify } from 'vant';
 import { querySelectTime,queryGwfl,queryGwcj,queryXlTeam,queryAgeTeam,querySexTeam,queryJobAgeTeam,queryDeptDetailTeam,queryRoster } from './api'
 import chooseDepartment from "@/components/pickerDeptOne.vue";
 import { mapMutations } from 'vuex'
@@ -386,7 +387,9 @@ components: {
             switch (params.name) {
               case '直接类（O类）':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.gwcjObj.gwcjzhijieJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -395,7 +398,9 @@ components: {
                 break;
               case '员工（P1/S1-P4/S4）':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.gwcjObj.gwcjyuangongJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -404,7 +409,9 @@ components: {
                 break;
               case '技术干部（P4/S4（主任）及以上）':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.gwcjObj.gwcjjishuJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -413,7 +420,9 @@ components: {
                 break;
               case '基层干部（M1-M3）':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.gwcjObj.gwcjjicengJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -422,7 +431,9 @@ components: {
                 break;
               case '中层干部（M4-M5）':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.gwcjObj.gwcjzhongcengJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -431,7 +442,9 @@ components: {
                 break;
               case '核心干部（M及以上）':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.gwcjObj.gwcjhexinJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -537,7 +550,9 @@ components: {
               case '初中':
                 console.log(data2[xIndex].name)
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.xlTeam.xlchuZhongJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -547,7 +562,9 @@ components: {
               case '高中中专':
                   console.log(data2[xIndex].name)
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.xlTeam.xlgaoZhongJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -557,7 +574,9 @@ components: {
               case '本科':
                   console.log(data2[xIndex].name)
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.xlTeam.xlbenKeJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -567,7 +586,9 @@ components: {
               case '大专':
                   console.log(data2[xIndex].name)
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.xlTeam.xldaZhuanJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -577,7 +598,9 @@ components: {
               case '小学':
                   console.log(data2[xIndex].name)
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.xlTeam.xlxiaoxueJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -587,7 +610,9 @@ components: {
               case '硕士及以上':
                   console.log(data2[xIndex].name)
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.xlTeam.xlshuoShiJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -597,7 +622,9 @@ components: {
               case 'MBA':
                   console.log(data2[xIndex].name)
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.xlTeam.xlmbajobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -607,7 +634,9 @@ components: {
               case '博士':
                 console.log(data2[xIndex].name)
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.xlTeam.xlboShiJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -676,7 +705,9 @@ components: {
               case '25岁以下':
                 //   console.log(params.data.title)
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.ageTeam.age25Jobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -686,7 +717,9 @@ components: {
               case '25-35岁':
                 //   console.log(params.data.title)
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.ageTeam.age25to35Jobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -696,7 +729,9 @@ components: {
               case '35-45岁':
                 //   console.log(params.data.title)
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.ageTeam.age35to45Jobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -706,7 +741,9 @@ components: {
               case '45-50岁':
                 //   console.log(params.data.title)
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.ageTeam.age45to50Jobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -715,7 +752,9 @@ components: {
                 break;
               case '50岁以上':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.ageTeam.age50Jobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -792,7 +831,9 @@ components: {
             switch (params.name) {
               case '男':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.sexTeam.manJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -801,7 +842,9 @@ components: {
                 break;
               case '女':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.sexTeam.womanJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -879,7 +922,9 @@ components: {
             switch (params.name) {
               case '6个月及以下':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.jobAgeTeam.jobAge6mJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -888,7 +933,9 @@ components: {
                 break;
               case '6个月至1年（含）':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.jobAgeTeam.jobAge6mTo1yJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -897,7 +944,9 @@ components: {
                 break;
               case '1年至3年（含）':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.jobAgeTeam.jobAge1yTo3yJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -906,7 +955,9 @@ components: {
                 break;
               case '3年以上':
                 var queryData = {}
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 queryData.jobnumbers = that.jobAgeTeam.jobAge3yJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
@@ -1065,26 +1116,6 @@ watch:{
                 {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
                 {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
                 {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
-            ],
-            this.popupColumns = [
-                {
-                    field: 'custome', width: 50, titleAlign: 'center', columnAlign: 'center',title: '序号',
-                    formatter: function (rowData, index) {
-                        return index + 1
-                    }, isResize:true,
-                },
-                {
-                    field: 'jobnumber',title: '工号',width: 100,titleAlign: 'center',columnAlign: 'center',
-                    formatter: function(rowData, rowIndex, pagingIndex, field) {
-                        return `<span>${rowData[field]}</span>`;
-                    },isResize: true,
-                },
-                {field: 'name',title: '姓名',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},
-                {field: 'department',title: '部门',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},
-                {field: 'post',title: '岗位',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},
-                {field: 'rank',title: '职级',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},
-                {field: 'rsrq',title: '入司日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},									
-                {field: 'currentState',title: '当前状态',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true},	
             ]
         }
     },
@@ -1120,6 +1151,8 @@ watch:{
             color #f39f57
             font-size 15px
             font-weight 700
+            box-shadow 0 2px 3px -1px #eee
+            margin-bottom 8px
             .borleft{
                 border-left 4px solid #f39f57
                 padding-right 6px

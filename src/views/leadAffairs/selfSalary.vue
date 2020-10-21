@@ -8,12 +8,7 @@
               <van-sidebar-item title="流失率" to="retention"/>
               <van-sidebar-item title="人员结构" to="perStructure"/>
               <van-sidebar-item title="人效分析" to="humanEffect"/>
-              <van-sidebar-item title="个人发展" />
-              <van-sidebar-item title="团队培训" />
-              <van-sidebar-item title="薪资库" />
-              <van-sidebar-item title="干部档案" />
-              <van-sidebar-item title="胜任力模型" />
-              <van-sidebar-item title="价值观思想" />
+              <van-sidebar-item title="人员异动" to="changes"/>
           </van-sidebar>
         </div>
         <div class="box_right" ref="right">

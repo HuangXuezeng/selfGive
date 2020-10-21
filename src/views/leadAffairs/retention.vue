@@ -146,14 +146,14 @@
         position="top" 
         closeable
         close-icon-position="bottom-right"
-        :style="{ height: '70%' }">
+        :style="{ height: '80%' }">
           <div class="table">
               <v-table 
               ref="table" 
               is-horizontal-resize
               style="width:100%"
               columns-width-drag
-              :height="500"
+              :height="400"
               title-bg-color="#ccc"
               :columns="popupColumns"
               :table-data="popupTableData" 
@@ -297,34 +297,40 @@ export default {
     //表格行点击事件
     rowClick1(rowIndex, rowData, column){
       //通过cloumn来判断点击的是哪个
-      this.showTable = true
       if(column.field=='runoffSum'){
+        this.showTable = true
         this.popupTableData = rowData.runoffPerson
         this.pagePev() //分页处理
       }else if(column.field=='cadreRunoffSum'){
+        this.showTable = true
         this.popupTableData = rowData.cadrePerson
         this.pagePev() //分页处理
       }else if(column.field=='activeSum'){
+        this.showTable = true
         this.popupTableData = rowData.activePerson
         this.pagePev() //分页处理
       }else if(column.field=='passiveSum'){
+        this.showTable = true
         this.popupTableData = rowData.passivePerson
         this.pagePev() //分页处理
       }
     },
     rowClick2(rowIndex, rowData, column){
       // console.log(rowData)
-      this.showTable = true
       if(column.field=='runoffSum'){
+        this.showTable = true
         this.popupTableData = rowData.runoffPerson
         this.pagePev() //分页处理
       }else if(column.field=='cadreRunoffSum'){
+        this.showTable = true
         this.popupTableData = rowData.cadrePerson
         this.pagePev() //分页处理
       }else if(column.field=='activeSum'){
+        this.showTable = true
         this.popupTableData = rowData.activePerson
         this.pagePev() //分页处理
       }else if(column.field=='passiveSum'){
+        this.showTable = true
         this.popupTableData = rowData.passivePerson
         this.pagePev() //分页处理
       }
@@ -428,28 +434,38 @@ export default {
               // console.log(data1[xIndex])
               switch (data2[xIndex].name) {
               case '股东':
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 console.log(data2[xIndex].name)
-                that.showTable = true
                 that.popupTableData = that.totalData.postMap.gd.runoffPerson
                 that.pagePev() //分页处理
                 break;
               case '直接类':
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 that.popupTableData = that.totalData.postMap.zjl.runoffPerson
                 that.pagePev() //分页处理
                 break;
               case '营销类':
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 that.popupTableData = that.totalData.postMap.yxl.runoffPerson
                 that.pagePev() //分页处理
                 break;
               case '技术类':
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 that.popupTableData = that.totalData.postMap.jsl.runoffPerson
                 that.pagePev() //分页处理
                 break;
               case '职能类':
-                that.showTable = true
+                setTimeout(() => {
+                  that.showTable = true
+                }, 500);
                 that.popupTableData = that.totalData.postMap.znl.runoffPerson
                 that.pagePev() //分页处理
                 break;
@@ -841,13 +857,6 @@ export default {
                   return `<span class='cell-edit-color-f'>${rowData[field]}</span>`;
                 },
               }
-            ],
-            this.popupColumns = [
-              {field: 'name', title: '工号',width: 100, titleAlign: 'center',columnAlign:'center'},
-              {field: 'jobnumber', title: '姓名',width: 100, titleAlign: 'center',columnAlign:'center'},
-              {field: 'department', title: '部门',width: 150, titleAlign: 'center',columnAlign:'center'},
-              {field: 'post', title: '岗位',width: 100, titleAlign: 'center',columnAlign:'center'},
-              {field: 'rank', title: '职级',width: 100, titleAlign: 'center',columnAlign:'center'},
             ]
           }
         }
@@ -1028,6 +1037,8 @@ export default {
         color #f39f57
         font-size 15px
         font-weight 700
+        box-shadow 0 2px 3px -1px #eee
+        margin-bottom 8px
         .borleft{
             border-left 4px solid #f39f57
             padding-right 6px

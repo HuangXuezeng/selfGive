@@ -154,3 +154,13 @@ export function queryRunoff (queryData) {
     data: JSON.stringify(queryData)
   })
 }
+//人员异动部分--------------------------------------------------------
+export function queryChanges (queryData) {
+  return fetch({
+    url: `/kukacms/self/turnover/selectTurnoverByCondition`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}

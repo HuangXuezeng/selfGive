@@ -211,6 +211,7 @@ export default {
                         this.showNew = true
                     }).catch(() => {
                     // on cancel
+                    this.$router.push({name:'selfHome'})
                 })
             }
         })

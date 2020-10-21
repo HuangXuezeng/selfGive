@@ -190,11 +190,9 @@ export default {
             this.endTime = this.formatDate(val)
             let strStart = this.startTime.split('-').join('')
             let strEnd = this.endTime.split('-').join('')
-            // console.log('时间：'+strStart)
-            // console.log('时间：'+this.endTime)
             if(strStart>strEnd){
                 Notify({ type: 'warning', message: '开始时间不得大于结束时间！' })
-                // this.endTime = ''
+                this.endTime = ''
             }
         }else{
             this.startTime = this.formatDate(val)

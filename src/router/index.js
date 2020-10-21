@@ -312,18 +312,36 @@ export default new Router({
           path: '/retention',
           name: 'retention',
           component: () => import('@/views/leadAffairs/retention'),
+          meta: {
+            keepAlive: true
+          }
         },
         //人员结构
         {
           path: '/perStructure',
           name: 'perStructure',
           component: () => import('@/views/leadAffairs/perStructure'),
+          meta: {
+            keepAlive: true
+          }
         },
         //人效分析
         {
           path: '/humanEffect',
           name: 'humanEffect',
           component: () => import('@/views/leadAffairs/humanEffect'),
+          meta: {
+            keepAlive: true
+          }
+        },
+        //异动情况
+        {
+          path: '/changes',
+          name: 'changes',
+          component: () => import('@/views/leadAffairs/changes'),
+          meta: {
+            keepAlive: true
+          }
         },
       ],
     },

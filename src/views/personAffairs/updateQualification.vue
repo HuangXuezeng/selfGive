@@ -223,8 +223,6 @@ export default {
     },
     //确认选中时间
     confirm(val){
-        // console.log('时间：'+strStart)
-        // console.log('时间：'+strEnd)
         if(this.timeFlag == 1){
             // debugger
             // console.log(this.startTime)
@@ -233,7 +231,7 @@ export default {
             let strEnd = this.endTime.split('-').join('')
             if(strStart>strEnd){
                 Notify({ type: 'warning', message: '开始时间不得大于结束时间！' })
-            // this.endTime = ''
+                this.endTime = ''
             }
         }else{
             this.startTime = this.formatDate(val)

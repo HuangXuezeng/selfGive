@@ -1035,6 +1035,7 @@ export default {
         // console.log(rowData)
         // console.log(this.save_jobNum)
         this.save_jobNum(rowData.jobnumber)
+        this.from_page(0) //存标识，从哪个页面过来的
         this.scroll_top(document.getElementsByClassName("v-table-body")[0].scrollTop)
         this.$router.push({name:'basicMsg'})
     },
@@ -1472,28 +1473,34 @@ export default {
         }
         return newArr
     },
+    //表格中盒子的滚动事件
+    scrool(){
+        let scrollHeight = document.getElementsByClassName("v-table-body")[0].scrollHeight
+        let clientHeight = document.getElementsByClassName("v-table-body")[0].clientHeight
+        let scrollTop = document.getElementsByClassName("v-table-body")[0].scrollTop
+        if (scrollHeight - clientHeight == scrollTop) {
+        //滚动条滚到最底部
+        alert("滚到了最底部");
+    }
+        ;
+    },
     ...mapMutations({
         save_jobNum:'save_jobNum',
-        scroll_top:'scroll_top'
+        scroll_top:'scroll_top',
+        from_page:'from_page',
     }),
-    //设置定时器
-    // setTime(){
-    //     this.intertimer = setInterval(() => {
-            
-    //     }, 3000);
-    // }
   },
   mounted() {
     　　 this.$dragging.$on('dragged', ({ value }) => {
             // console.log(value.item)
             console.log(value.list)
             this.newList = value.list
-            // console.log(value.otherData)
         })
         this.$dragging.$on('dragend', () => {
     
         })
         // console.log(this.$refs.table)
+        // document.getElementsByClassName("v-table-body")[0].addEventListener('scroll', this.scrool)
 　　},
 watch:{
     //赋值离开页面时的表格滑动的高度
@@ -1505,7 +1512,6 @@ watch:{
         }else{
             document.getElementsByClassName("v-table-body")[0].scrollTop = this.$route.params.scrollTop
         }
-        // document.getElementsByClassName("v-table-body")[0].scrollTop = this.$route.params.scrollTop
     }
 },
   components: {

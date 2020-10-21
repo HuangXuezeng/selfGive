@@ -180,8 +180,8 @@ export default {
         {sortNum:1,title:'流失率',img:'http://192.168.249.18:7020/menuImage/liushi.png'},
         {sortNum:2,title:'人员结构',img:'http://192.168.249.18:7020/menuImage/jiegou.png'},
         {sortNum:3,title:'人效分析',img:'http://192.168.249.18:7020/menuImage/renxiao.png'},
-        {sortNum:4,title:'编制分析',img:'http://192.168.249.18:7020/menuImage/bianzhi.png'},
-        {sortNum:5,title:'人员异动',img:'http://192.168.249.18:7020/menuImage/yidong.png'},
+        {sortNum:4,title:'人员异动',img:'http://192.168.249.18:7020/menuImage/yidong.png'},
+        {sortNum:5,title:'编制分析',img:'http://192.168.249.18:7020/menuImage/bianzhi.png'},
         {sortNum:6,title:'干部档案',img:'http://192.168.249.18:7020/menuImage/ganbu.png'},
         {sortNum:7,title:'薪资库',img:'http://192.168.249.18:7020/menuImage/xck.png'},
         {sortNum:8,title:'年薪分位值',img:'http://192.168.249.18:7020/menuImage/nxfw.png'},
@@ -218,7 +218,8 @@ export default {
     // localStorage.setItem('jobNum',9050104)
     // localStorage.setItem('jobNum',9102171)
     // localStorage.setItem('jobNum',9078825)
-    // localStorage.setItem('jobNum',9025434)
+    // localStorage.setItem('jobNum',6003239)
+    // localStorage.setItem('jobNum',9129738)
     this._getOrz()
     if(localStorage.getItem('jobNum') == '' || localStorage.getItem('jobNum') == null || localStorage.getItem('jobNum') == undefined){
       this.getUser()
@@ -422,22 +423,27 @@ export default {
       }
     },
     leadClick(){
-      window.open('http://www.rc.kukahome.com:8880/mrt/','_self')
+      // var url='dingtalk://dingtalkclient/action/openapp?corpid=ding4f82ce64859fa82335c2f4657eb6378f&container_type=work_platform&app_id=798823910&redirect_type=jump&redirect_url=http://www.rc.kukahome.com:8880/mrt/'
+      // const a = document.createElement('a'); // 创建a标签
+      // a.setAttribute('href', url);// href链接
+      // a.click();// 自执行点击事
+      window.open('http://www.rc.kukahome.com:8880/mrt/')
     },
     leadClick1(){
-      window.open('http://www.rc.kukahome.com:8880/hms/','_self')
+      window.open('http://www.rc.kukahome.com:8880/hms/')
     },
     leadClick2(){
-      window.open('http://family.kukahome.com:5080/kukacms/dist/','_self')
+      window.open('http://family.kukahome.com:5080/kukacms/dist/')
     },
     leadClick3(){
-      window.open('http://family.kukahome.com:5080/kukacms/tousu/','_self')
+      window.open('http://family.kukahome.com:5080/kukacms/tousu/')
     },
     leadClick4(){
-      window.open('https://res.exexm.com/dingtalk/common-no-cache/dingtalkindex.html?tenantId=kukahome&dd_full_screen=true','_self')
+      window.open('https://res.exexm.com/dingtalk/common-no-cache/dingtalkindex.html?tenantId=kukahome&dd_full_screen=true')
     },
     ...mapMutations({
-      save_type:'save_type'
+      save_type:'save_type',
+      to_Roster:'to_Roster'
     }),
     //编辑排序
     edit(){
@@ -552,7 +558,7 @@ export default {
       switch(teamName){
         case '花名册':
         this.save_type(sortNum)
-         this.to_Roster(0)
+        this.to_Roster(0)
         this.$router.push({name:'roster'})
         break;
         case '流失率':
@@ -567,7 +573,11 @@ export default {
         this.save_type(sortNum)
         this.$router.push({name:'humanEffect'})
         break;
-         case '奖励进度':
+        case '人员异动':
+        this.save_type(sortNum)
+        this.$router.push({name:'changes'})
+        break;
+        case '奖励进度':
         // this.save_type(sortNum)
         this.$router.push({name:'ProgressRewards'})
         break;

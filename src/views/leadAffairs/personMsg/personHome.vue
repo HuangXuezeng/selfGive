@@ -4,7 +4,10 @@
         <van-sticky>
           <div style="background-color:#fff">
             <div class="sidebox">
-              <div class="back" @click="back">
+              <div class="back" @click="backRoster" v-if="seeFlag == 0">
+                返回
+              </div>
+              <div class="back" @click="backChanges" v-if="seeFlag == 1">
                 返回
               </div>
                 <div class="contain">
@@ -83,12 +86,15 @@ export default {
       flag: true,
       hideleArr: true,
       showArr: false,
-      personObj: {}
+      personObj: {},
+      seeFlag: '', //从哪个页面点过来的
     };
   },
   computed: {},
   created(){
     this.getSome()
+    this.seeFlag = this.$store.state.fromPage
+    console.log(this.seeFlag)
   },
   methods:{
     //隐藏导航栏
@@ -128,8 +134,13 @@ export default {
       })
     },
     //返回花名册
-    back(){
+    backRoster(){
       this.$router.push({name:'roster',params:{scrollTop:this.$store.state.scrollTop}})
+      this.scroll_top(0)
+    },
+    //返回人员异动
+    backChanges(){
+      this.$router.push({name:'changes',params:{scrollTop:this.$store.state.scrollTop}})
       this.scroll_top(0)
     },
     ...mapMutations({

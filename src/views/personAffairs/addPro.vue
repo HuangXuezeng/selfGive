@@ -176,7 +176,7 @@ export default {
             let strEnd = this.endTime.split('-').join('')
             if(strStart>strEnd){
                 Notify({ type: 'warning', message: '开始时间不得大于结束时间！' })
-            // this.endTime = ''
+                this.endTime = ''
             }
         }else{
             this.startTime = this.formatDate(val)

@@ -14,6 +14,9 @@ const mutations = {
   scroll_top (state,scrollTop) {
     state.scrollTop = scrollTop
   },
+  from_page (state,fromPage) {
+    state.fromPage = fromPage
+  },
 }
 
 export default mutations
