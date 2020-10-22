@@ -578,11 +578,11 @@ export default {
         this.$router.push({name:'changes'})
         break;
         case '奖励进度':
-        // this.save_type(sortNum)
+        this.save_type(sortNum)
         this.$router.push({name:'ProgressRewards'})
         break;
          case '人均工资':
-        // this.save_type(sortNum)
+        this.save_type(sortNum)
         this.$router.push({name:'perCapitaWage'})
         break;
         case '干部档案':

@@ -5,7 +5,7 @@
         <van-tab title="基本信息">
           <van-card
             :desc="basicInfo.deptName ? basicInfo.deptName : ''"
-            :thumb="basicInfo.photo != null ? basicInfo.photo : defaultAvatar"
+            :thumb="basicInfo.photo"
           >
             <template #tags>
               <van-tag plain type="danger" v-if="basicInfo.a01136">{{
@@ -660,7 +660,6 @@ export default {
       listProject: [],
       listProjectActiveNames: [],
       basicInfo: {},
-      defaultAvatar: "src/assets/timg.jpg",
       manageitem: {},
       itemjobnumber: "",
       KukaWorkList: [],
@@ -750,7 +749,8 @@ export default {
             key == "a0111" ||
             key == "a0144" ||
             key == "a01519" ||
-            key == "a01518"
+            key == "a01518" ||
+            key == "photo"
           ) {
             if (key == "a0111") {
               this.basicInfo[key] = this.basicInfo.A0111;
@@ -760,6 +760,12 @@ export default {
               this.basicInfo[key] = this.basicInfo.A01519;
             } else if (key == "a01518") {
               this.basicInfo[key] = this.basicInfo.A01518;
+            }else if (key == "photo") {
+              if(this.basicInfo[key] != null && this.basicInfo[key] != ''&& this.basicInfo[key] != undefined){
+
+              }else{
+                this.basicInfo[key] = require('@/assets/timg.jpg');
+              }
             }
           }
         }

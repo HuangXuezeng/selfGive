@@ -14,18 +14,62 @@
       position="top"
       :style="{ height: '70%' }"
       get-container="body"
-      closeable
+      :closeable="closeableFlag"
     >
-      <el-tree
-        :data="deptData"
-        ref="tree"
-        node-key="deptId"
-        @check-change="handleCheckChange"
-        :props="props"
-        show-checkbox
-        :check-strictly="true"
-        :default-expanded-keys="openlist"
-      ></el-tree>
+      <div style="padding-bottom:10%">
+        <!-- <van-switch :value="isDownValue" @input="isDownMethods" /> -->
+        <van-cell
+          center
+          title="是否自动包含下级部门"
+          title-style="color:red"
+          icon="setting"
+          v-if="isSelctall"
+        >
+          <template #right-icon>
+            <van-switch
+              :value="isDownValue"
+              @input="isDownMethods"
+              size="15px"
+            />
+          </template>
+        </van-cell>
+        <el-tree
+          :data="deptData"
+          ref="tree"
+          node-key="deptId"
+          @check-change="handleCheckChange"
+          @check="judgeLowerLevel"
+          :props="props"
+          show-checkbox
+          :check-strictly="strictlyFlag"
+          :default-expanded-keys="openlist"
+        ></el-tree>
+      </div>
+      <div class="butnPosition" v-if="isSelctall">
+        <div class="butnPos">
+          <div
+            class="buttonChoose"
+            style="background-color:MediumAquamarine"
+            @click="RemoveNodeMeth"
+          >
+            重置
+          </div>
+          <div
+            class="buttonChoose"
+            :style="selectAllstyle"
+            @click="selctAllNodeMeth"
+          >
+            全选
+          </div>
+          <div
+            class="buttonChoose"
+            style="background-color:DeepSkyBlue"
+            @click="confirmNodeMeth"
+          >
+            确认
+          </div>
+        </div>
+      </div>
     </van-popup>
   </div>
 </template>
@@ -33,10 +77,8 @@
 <script>
 import { getOrz } from "@/views/leadAffairs/api.js";
 import { findTeamBuildingJGLJInfo } from "@/views/personAffairs/teamFoster/teamFosterApi.js";
-import { findPayrollDept } from "@/views/PayLibrary/PayLibrary.js";
 
-import { Notify, Toast } from "vant";
-// src/views/PayLibrary/PayLibrary.js
+import { Notify, Toast, Col, Row, Dialog, Switch } from "vant";
 export default {
   name: "chooseDepartment",
   props: {
@@ -50,13 +92,21 @@ export default {
     selectName: {
       type: String
     },
-    labelTitle:{
-      type:String,
-      default:' 团队所属机构：'
+    labelTitle: {
+      type: String,
+      default: " 团队所属机构："
     },
-    workingNum:{
+    workingNum: {
       type: Boolean,
       default: false
+    },
+    //区别单选和多选的标志，与团队培育分开
+    isSelctall: {
+      type: Boolean,
+      default: false
+    },
+    faDeptData:{
+      type: Array,
     }
   },
   data() {
@@ -76,8 +126,15 @@ export default {
       reqireRule: [],
       deptPlacehoder: "请选择部门",
       openlist: [],
-      onSelected:'',
-      firstIn:1
+      onSelected: "",
+      firstIn: 1,
+      strictlyFlag: true,
+      isDownValue: true,
+      closeableFlag: true,
+      selectkeySet: null,
+      beforeSelectName: "",
+      SelectNameMap: null,
+      selectAllstyle: "background-color:Coral"
     };
   },
   created() {
@@ -87,21 +144,24 @@ export default {
       this.deptPlacehoder = "必填";
     }
     this.selectedDepartment = this.selectName;
+    this.selectkeySet = new Set();
+    this.SelectNameMap = new Map();
   },
-  mounted() {},
+  mounted() {
+    if (this.isSelctall) {
+      this.strictlyFlag = false;
+      this.selectedDepartment = "全部";
+      this.closeableFlag = false;
+    }
+  },
   methods: {
     //获取组织下的部门
     _getOrz() {
-      // debugger
-      if(this.workingNum){
-        findPayrollDept({jobnumber:localStorage.getItem('jobNum')}).then(res =>{
-          this.deptData = res.obj.depts;
-        })
-      }else{
-        const departRes =  JSON.parse(localStorage.getItem('departRes'))
+      if (this.workingNum) {
+      } else {
+        const departRes = JSON.parse(localStorage.getItem("departRes"));
         this.deptData.push(departRes.obj.departments);
       }
-
     },
     //选择部门
     pickDept() {
@@ -109,57 +169,96 @@ export default {
       this.$nextTick(() => {
         this.$refs.tree.setChecked({ deptId: this.opennode }, true);
         this.openlist = [this.opennode];
-        // this.selectOrg.orgsid.push({deptId: this.opennode,content:this.selectName});
+        if (this.isSelctall && this.firstIn == 1) {
+          this.deptData = this.faDeptData
+          this.selctAllNodeMeth();
+          this.firstIn++;
+        }
       });
     },
-    //选择时触发
+    //团队培育用的方法 选择时触发
     handleCheckChange(data, checked, indeterminate) {
-      // 如果不存在数组中，并且数组中已经有一个id并且checked为true的时候，代表不能再次选择。
-      if(data.deptId  ==  this.onSelected){
-        this.onSelected = ''
-        return
-      }
-      if (this.selectOrg.orgsid.length === 1 && checked) {
-        // Toast.fail("只能选择一个部门");
-        // 设置已选择的节点为false 很重要
+      if (this.isSelctall) {
+      } else {
+        // 如果不存在数组中，并且数组中已经有一个id并且checked为true的时候，代表不能再次选择。
+        if (data.deptId == this.onSelected) {
+          this.onSelected = "";
+          return;
+        }
+        if (this.selectOrg.orgsid.length === 1 && checked) {
+          // Toast.fail("只能选择一个部门");
+          // 设置已选择的节点为false 很重要
           this.$refs.tree.setChecked(this.selectOrg.orgsid[0], false);
-          this.onSelected = this.selectOrg.orgsid[0].deptId
+          this.onSelected = this.selectOrg.orgsid[0].deptId;
           this.selectOrg.orgsid = [];
           this.selectOrg.orgsid.push(data);
           let assignData = Object.assign({}, data);
           this.mechanismPath(assignData);
           this.showPickDept = false;
           Notify("选择成功");
-
-      } else if (this.selectOrg.orgsid.length === 0 && checked) {
-        // 发现数组为空 并且是已选择
-        // 防止数组有值，首先清空，再push
-        this.selectOrg.orgsid = [];
-        this.selectOrg.orgsid.push(data);
-        // this.selectedDepartment = data.content;
-        let assignData = Object.assign({}, data);
-        this.mechanismPath(assignData);
-        if(this.firstIn == 1&&this.selectName){
-          this.firstIn++
-        }else{
-          this.showPickDept = false;
-          this.onSelected=''
-          Notify("选择成功");
+        } else if (this.selectOrg.orgsid.length === 0 && checked) {
+          // 发现数组为空 并且是已选择
+          // 防止数组有值，首先清空，再push
+          this.selectOrg.orgsid = [];
+          this.selectOrg.orgsid.push(data);
+          // this.selectedDepartment = data.content;
+          let assignData = Object.assign({}, data);
+          this.mechanismPath(assignData);
+          if (this.firstIn == 1 && this.selectName) {
+            this.firstIn++;
+          } else {
+            this.showPickDept = false;
+            this.onSelected = "";
+            Notify("选择成功");
+          }
+        } else if (this.selectOrg.orgsid.length === 1 && !checked) {
+          // 再次直接进行赋值为空操作
+          let assignData = { content: "", deptId: "" };
+          this.transferData(assignData);
+          this.selectedDepartment = "";
+          this.selectOrg.orgsid = [];
+          this.onSelected = "";
         }
-
-      } else if (
-        this.selectOrg.orgsid.length === 1 &&
-        !checked
-      ) {
-        // 再次直接进行赋值为空操作
-        let assignData = { content: "", deptId: "" };
-        this.transferData(assignData);
-        this.selectedDepartment = "";
-        this.selectOrg.orgsid = [];
-        this.onSelected=''
-
       }
     },
+    //输入框名字重新赋值
+    setbeforeSelectName(obj) {
+      this.beforeSelectName = "";
+      for (let p of this.selectkeySet) {
+        if (this.SelectNameMap.has(p)) {
+          this.beforeSelectName =
+            this.beforeSelectName + "," + this.SelectNameMap.get(p);
+        }
+      }
+    },
+    //多选的主要逻辑
+    judgeLowerLevel(checkedNodes, obj) {
+      if (this.isDownValue) {
+        this.selectkeySet.clear();
+        for (let k in obj.checkedKeys) {
+          this.selectkeySet.add(obj.checkedKeys[k]);
+          this.SelectNameMap.set(
+            obj.checkedNodes[k].deptId,
+            obj.checkedNodes[k].content
+          );
+        }
+        this.setbeforeSelectName(obj);
+      } else {
+        this.$refs.tree.setCheckedKeys([]);
+        this.SelectNameMap.set(checkedNodes.deptId, checkedNodes.content);
+        if (this.selectkeySet.has(checkedNodes.deptId)) {
+          this.selectkeySet.delete(checkedNodes.deptId);
+          this.setbeforeSelectName(obj);
+        } else {
+          this.selectkeySet.add(checkedNodes.deptId);
+          this.setbeforeSelectName(obj);
+        }
+        for (let item of this.selectkeySet) {
+          this.$refs.tree.setChecked(item, true, false);
+        }
+      }
+    },
+    //团队培育用的方法
     transferData(data) {
       this.$emit("transferFa", data);
     },
@@ -175,10 +274,91 @@ export default {
           Notify(res.msg);
         }
       });
+    },
+    RemoveNodeMeth() {
+      this.$refs.tree.setCheckedKeys([]);
+      //清空set
+      this.selectkeySet.clear();
+      this.beforeSelectName = "";
+    },
+    //点击确认按钮
+    confirmNodeMeth() {
+      let selctArray = Array.from(this.selectkeySet);
+      let isDown = "";
+      if (this.isDownValue) {
+        isDown = "Y";
+      } else {
+        isDown = "N";
+      }
+      if (selctArray.length == 0) {
+        Dialog.alert({
+          message: "请至少选择一个部门"
+        }).then(() => {
+          // on close
+        });
+        return;
+      }
+      this.$emit("confirmNode", selctArray, isDown);
+      this.showPickDept = false;
+      Notify("选择成功");
+      this.selectedDepartment = this.beforeSelectName.slice(1);
+    },
+    //全选按钮
+    selctAllNodeMeth() {
+      if (!this.isDownValue) {
+        return;
+      }
+      this.$refs.tree.setCheckedKeys([this.deptData[0].deptId], false);
+      this.selectkeySet.clear();
+      this.selectkeySet.add(this.deptData[0].deptId);
+    },
+    //开关按钮方法
+    isDownMethods(isDownValue) {
+      let isDownTip = "";
+      if (!isDownValue) {
+        isDownTip = "关闭";
+      } else {
+        isDownTip = "开启";
+      }
+      Dialog.confirm({
+        title: "提醒",
+        message: `是否${isDownTip}自动包含下级？`
+      }).then(() => {
+        this.isDownValue = isDownValue;
+        if (!isDownValue) {
+          this.selectAllstyle = "background-color:#ccc";
+        } else {
+          this.selectAllstyle = "background-color:Coral";
+        }
+      });
     }
   }
 };
 </script>
 
-<style>
+<style lang="stylus" >
+.butnPosition {
+  position: fixed;
+  bottom: 30vh;
+  z-index: 99;
+  padding: 2px;
+  width: 100%;
+  background-color: #fff;
+}
+
+.butnPos {
+  display: flex;
+  justify-content: space-between;
+}
+
+.buttonChoose {
+  display: inline-block;
+  width: 17vh;
+  height: 5vh;
+  text-align: center;
+  border: 1px solid #ccc;
+  line-height: 5vh;
+  color: #fff;
+  border-radius: 12px;
+}
 </style>
