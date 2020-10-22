@@ -142,10 +142,11 @@
         >
       </van-row>
       <choosedepartment
-        @transferFa="selctdept"
+        @confirmNode="selctdept"
         :Farequired="true"
         labelTitle="部门"
-        :workingNum='true'
+        :workingNum="true"
+        :isSelctall='true'
       ></choosedepartment>
       <div class="resetVant">
         <v-table
@@ -443,7 +444,7 @@ export default {
     this.maxDate = new Date(y, m, 1);
     this.queryfindPerGetInfo();
     this.queryfindPerGetDetailsInfo();
-    this.queryfindPerYearInfo()
+    this.queryfindPerYearInfo();
     this.selectZj = new Set();
     this.selectZjNameMap = new Map();
   },
@@ -709,49 +710,122 @@ export default {
         }
       });
     },
+    //公共方法 补全月份
+    /**
+     * type 1 当前年份，echartData：原始数据，YearList：月份数组，avgNumbeList：折线图数据
+     */
+    MonFull(echartData, YearList, avgNumbeList, nowYear, type) {
+      // nowYear = echartData.year[0].mon.substring(0, 4);
+      if (type == 1) {
+        for (let k in echartData.year) {
+          let splityear = echartData.year[k].mon.replace(
+            /^(\d{4})(\d{2})$/,
+            "$1-$2"
+          );
+          YearList.push(splityear);
+          avgNumbeList.push(echartData.year[k].avgNumber);
+        }
+      } else {
+        for (let k in echartData.lastYear) {
+          let splityear = echartData.lastYear[k].mon.replace(
+            /^(\d{4})(\d{2})$/,
+            "$1-$2"
+          );
+          YearList.push(splityear);
+          avgNumbeList.push(echartData.lastYear[k].avgNumber);
+        }
+      }
+
+      //年份数据不全，补全月份
+      let MinstagingList = [];
+      let MinavgNumbestagingList = [];
+      let MaxstagingList = [];
+      let MaxavgNumbestagingList = [];
+      let maxMon = YearList[YearList.length - 1].split("-")[1];
+      let minMon = YearList[0].split("-")[1];
+      if (maxMon != "12") {
+        let NumnowLast = Number(maxMon);
+        for (let p = NumnowLast + 1; p <= 12; p++) {
+          MaxstagingList.push(nowYear + "-" + p.toString().padStart(2, "0"));
+          MaxavgNumbestagingList.push("");
+        }
+      }
+      if (minMon != "01") {
+        let minMonNum = Number(minMon);
+        for (let t = 1; t < minMonNum; t++) {
+          MinstagingList.push(nowYear + "-" + t.toString().padStart(2, "0"));
+          MinavgNumbestagingList.push("");
+        }
+      }
+      YearList = MinstagingList.concat(YearList);
+      YearList = YearList.concat(MaxstagingList);
+      avgNumbeList = MinavgNumbestagingList.concat(avgNumbeList);
+      avgNumbeList = avgNumbeList.concat(MaxavgNumbestagingList);
+      return { avgNumbeList: avgNumbeList, YearList: YearList };
+    },
     payEachrts(res) {
       var myCharts = this.$echarts.init(this.$refs.payEch);
       let echartData = res.obj;
-      if (echartData.lastYear.length == 0) {
-        myCharts.clear();
-        this.showNodata = true;
-        return;
-      }
-      let lastYear = echartData.lastYear[0].mon.substring(0, 4);
-      let nowYear = echartData.year[0].mon.substring(0, 4);
       let lastYearList = [];
       let lastavgNumberList = [];
       let YearList = [];
       let avgNumbeList = [];
-      for (let i in echartData.lastYear) {
-        let splityear = echartData.lastYear[i].mon.replace(
-          /^(\d{4})(\d{2})$/,
-          "$1-$2"
+      let nowYear = "";
+      let lastYear = "";
+      if (echartData.year.length == 0 && echartData.lastYear.length == 0) {
+        //判断今年和去年都为空
+        myCharts.clear();
+        this.showNodata = true;
+        return;
+      } else if (
+        echartData.lastYear.length == 0 &&
+        echartData.year.length != 0
+      ) {
+        //判断今年不为空，去年为空
+        nowYear = echartData.year[0].mon.substring(0, 4);
+        lastYear = Number(nowYear) - 1;
+        let nowyearobj = this.MonFull(
+          echartData,
+          YearList,
+          avgNumbeList,
+          nowYear,
+          1
         );
-        lastYearList.push(splityear);
-        lastavgNumberList.push(echartData.lastYear[i].avgNumber);
-      }
-
-      for (let k in echartData.year) {
-        let splityear = echartData.year[k].mon.replace(
-          /^(\d{4})(\d{2})$/,
-          "$1-$2"
-        );
-        YearList.push(splityear);
-        avgNumbeList.push(echartData.year[k].avgNumber);
-      }
-      let nowLast = YearList[YearList.length - 1].split("-")[1];
-      if (nowLast != "12") {
-        let NumnowLast = Number(nowLast);
-        for (let p = NumnowLast + 1; p <= 12; p++) {
-          YearList.push(nowYear + "-" + p.toString().padStart(2, "0"));
-          avgNumbeList.push("");
+        YearList = nowyearobj.YearList;
+        avgNumbeList = nowyearobj.avgNumbeList;
+        avgNumbeList.push(echartData.jdlj);
+        for (let u = 1; u <= 12; u++) {
+          lastYearList.push(lastYear + "-" + u.toString().padStart(2, "0"));
+          lastavgNumberList.push("");
         }
+        YearList.push("阶段累计");
+        lastYearList.push("阶段累计");
+        lastavgNumberList.push("");
+      } else {
+        //今年和去年都有数据的
+        lastYear = echartData.lastYear[0].mon.substring(0, 4);
+        nowYear = echartData.year[0].mon.substring(0, 4);
+        let lastyearobj = this.MonFull(
+          echartData,
+          lastYearList,
+          lastavgNumberList,
+          lastYear
+        );
+        lastYearList = lastyearobj.YearList;
+        lastavgNumberList = lastyearobj.avgNumbeList;
+        let nowyearobj = this.MonFull(
+          echartData,
+          YearList,
+          avgNumbeList,
+          nowYear,1
+        );
+        YearList = nowyearobj.YearList;
+        avgNumbeList = nowyearobj.avgNumbeList;
+        lastYearList.push("阶段累计");
+        YearList.push("阶段累计");
+        avgNumbeList.push(echartData.jdlj);
+        lastavgNumberList.push(echartData.lastJdlj);
       }
-      lastYearList.push("阶段累计");
-      YearList.push("阶段累计");
-      avgNumbeList.push(echartData.jdlj);
-      lastavgNumberList.push(echartData.lastJdlj);
       var colors = ["#5793f3", "#d14a61", "#675bba"];
       function isInteger(obj) {
         return obj % 1 === 0;
@@ -883,7 +957,6 @@ export default {
       this.selectZj.clear();
     },
     queryfindPerYearInfo(queryObj) {
-      debugger
       let queryData = {};
       if (queryObj) {
         queryData = queryObj;
@@ -916,13 +989,13 @@ export default {
           this.pAnnualSalary = plist.length;
           this.sAnnualSalary = slist.length;
           this.oAnnualSalary = olist.length;
-          this.orderPush(mlist)
-          this.orderPush(plist)
-          this.orderPush(slist)
-          this.orderPush(olist)
-           for (let t in res.obj) {
+          this.orderPush(mlist);
+          this.orderPush(plist);
+          this.orderPush(slist);
+          this.orderPush(olist);
+          for (let t in res.obj) {
             if (res.obj[t].zl == "合计") {
-               this.tableDataAnnualSalary.push(res.obj[t])
+              this.tableDataAnnualSalary.push(res.obj[t]);
             }
           }
         } else {
@@ -931,7 +1004,7 @@ export default {
         this.lodingFlagAnnualSalary = false;
       });
     },
-    cellMergeAnnualSalary(rowIndex, rowData, field){
+    cellMergeAnnualSalary(rowIndex, rowData, field) {
       if (field === "zl" && rowData[field] === "M类") {
         return {
           colSpan: 1,
@@ -987,23 +1060,31 @@ export default {
         return "oClass";
       }
       if (
-        this.mAnnualSalary + this.pAnnualSalary + this.oAnnualSalary + this.sAnnualSalary <= rowIndex &&
+        this.mAnnualSalary +
+          this.pAnnualSalary +
+          this.oAnnualSalary +
+          this.sAnnualSalary <=
+          rowIndex &&
         rowData.zl == "合计"
       ) {
         return "heClass";
       }
     },
     //按顺序装填数组
-    orderPush(list){
-      if(list){
-        for(let i in list){
-          this.tableDataAnnualSalary.push(list[i])
+    orderPush(list) {
+      if (list) {
+        for (let i in list) {
+          this.tableDataAnnualSalary.push(list[i]);
         }
       }
     },
     selctdept(data) {
-      if(!data.deptId){
-        this.queryfindPerYearInfo({jobnumber: "6006212",deptList: [data.deptId]})
+      if (data.length != 0) {
+        this.queryfindPerYearInfo({
+          jobnumber: "6006212",
+          deptList: data,
+          isDown:'Y'
+        });
       }
     }
   }

@@ -7,14 +7,14 @@
             <!-- <span><img class="img" src="../../assets/timg.jpg" alt=""></span> -->
             <span>
               <img
-                class="img"
-                :src="items.photo ? items.photo : defaultAvatar"
+                class="imgpps"
+                :src="items.photo != null ? items.photo : defaultAvatar"
                 alt
               />
             </span>
             <span class="resuName">{{ items.a0101 }}</span>
             <br />
-            <div style="display: flex;flex-direction: column;">
+            <div class="mangetouxiang">
               <span class="resuNamess">
                 岗位：
                 <i style="color:black">{{ items.gwName }}</i>
@@ -102,10 +102,12 @@ export default {
   },
   data() {
     return {
-      defaultAvatar: "src/assets/timg.jpg"
+      defaultAvatar: null
     };
   },
-  created() {},
+  created() {
+    this.defaultAvatar = require('@/assets/timg.jpg')
+  },
   methods: {
     manageInfoMethod(item) {
       this.$router.push({
@@ -120,7 +122,7 @@ export default {
 };
 </script>
 
-<style lang="stylus">
+<style lang="stylus" >
 .headbgc {
   height: 30%;
   background-image: linear-gradient(#ff3334, #fd9d9d);
@@ -156,7 +158,7 @@ export default {
   margin-top: 10px;
 }
 
-.img {
+.imgpps {
   float: left;
   border-radius: 50%;
   border: 1px solid #eee;
@@ -188,5 +190,9 @@ export default {
   color: black;
   font-size: 14px;
   padding-left: 5px;
+}
+.mangetouxiang{
+display: flex;
+flex-direction: column;
 }
 </style>

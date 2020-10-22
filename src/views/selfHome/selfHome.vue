@@ -5,7 +5,7 @@
             </div>
             <div style="clear:both">
               <div class="headTop">
-                <div class="messageInfoos">
+                <div class="messageInfoos ">
                     <span @click="uploadImg"><img class="img" :src="personObj.photo" alt=""></span>
                     <div style="padding-top:10px">
                       <span style="font-weight:700;font-size:16px">{{personObj.a0101}}</span>
@@ -214,12 +214,11 @@ export default {
     };
   },
   created(){
-    // localStorage.setItem('jobNum',6006212)
-    localStorage.setItem('jobNum',9050104)
+    localStorage.setItem('jobNum',6006212)
+    // localStorage.setItem('jobNum',9050104)
     // localStorage.setItem('jobNum',9102171)
     // localStorage.setItem('jobNum',9078825)
-    // localStorage.setItem('jobNum',6003239)
-    // localStorage.setItem('jobNum',9129738)
+    // localStorage.setItem('jobNum',9025434)
     this._getOrz()
     if(localStorage.getItem('jobNum') == '' || localStorage.getItem('jobNum') == null || localStorage.getItem('jobNum') == undefined){
       this.getUser()
@@ -423,23 +422,19 @@ export default {
       }
     },
     leadClick(){
-      // var url='dingtalk://dingtalkclient/action/openapp?corpid=ding4f82ce64859fa82335c2f4657eb6378f&container_type=work_platform&app_id=798823910&redirect_type=jump&redirect_url=http://www.rc.kukahome.com:8880/mrt/'
-      // const a = document.createElement('a'); // 创建a标签
-      // a.setAttribute('href', url);// href链接
-      // a.click();// 自执行点击事
-      window.open('http://www.rc.kukahome.com:8880/mrt/')
+      window.open('http://www.rc.kukahome.com:8880/mrt/','_self')
     },
     leadClick1(){
-      window.open('http://www.rc.kukahome.com:8880/hms/')
+      window.open('http://www.rc.kukahome.com:8880/hms/','_self')
     },
     leadClick2(){
-      window.open('http://family.kukahome.com:5080/kukacms/dist/')
+      window.open('http://family.kukahome.com:5080/kukacms/dist/','_self')
     },
     leadClick3(){
-      window.open('http://family.kukahome.com:5080/kukacms/tousu/')
+      window.open('http://family.kukahome.com:5080/kukacms/tousu/','_self')
     },
     leadClick4(){
-      window.open('https://res.exexm.com/dingtalk/common-no-cache/dingtalkindex.html?tenantId=kukahome&dd_full_screen=true')
+      window.open('https://res.exexm.com/dingtalk/common-no-cache/dingtalkindex.html?tenantId=kukahome&dd_full_screen=true','_self')
     },
     ...mapMutations({
       save_type:'save_type',
@@ -558,7 +553,7 @@ export default {
       switch(teamName){
         case '花名册':
         this.save_type(sortNum)
-        this.to_Roster(0)
+         this.to_Roster(0)
         this.$router.push({name:'roster'})
         break;
         case '流失率':
@@ -577,12 +572,12 @@ export default {
         this.save_type(sortNum)
         this.$router.push({name:'changes'})
         break;
-        case '奖励进度':
-        // this.save_type(sortNum)
+         case '奖励进度':
+        this.save_type(sortNum)
         this.$router.push({name:'ProgressRewards'})
         break;
          case '人均工资':
-        // this.save_type(sortNum)
+        this.save_type(sortNum)
         this.$router.push({name:'perCapitaWage'})
         break;
         case '干部档案':
