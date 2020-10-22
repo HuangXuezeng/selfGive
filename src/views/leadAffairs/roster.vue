@@ -17,7 +17,8 @@
             <v-table 
             ref="table" 
             columns-width-drag
-            :height="500"
+            :is-loading="isLoading"
+            :height="400"
             title-bg-color="#e5ecf0"
             :columns="columns"
             :table-data="tableData" 
@@ -28,6 +29,7 @@
             @sort-change="sortChange"
             :paging-index="(pageIndex-1)*pageSize"   	
             ></v-table>	
+            <!-- <div style="padding:10px 10px 10px 0"><van-tag type="warning">总条数：{{total}}</van-tag></div> -->
         </div>
         <div class="more">
             <van-tag type="warning">总条数：{{total}}</van-tag>
@@ -247,6 +249,7 @@ import draggable from 'vuedraggable'
 export default {
   data () {
     return {
+        isLoading: true,
         intertimer: null, //定时器
         checked: true, //是否包含下级部门
         dataList: [],
@@ -518,6 +521,7 @@ export default {
                 this.deptIds = res.obj.deptIds
                 this.deptData.push(res.obj.departments)
                 this.tableData = res.obj.employees
+                this.isLoading = false
                 this.pagePev() //获取的表格数据分组
             })
         }
@@ -532,10 +536,10 @@ export default {
     _queryPerson(){
         let queryData = {
             isAll: 'Y',
-            pageNum: 1
         }
         queryPerson(queryData).then(res=>{
             this.tableData = res.obj
+            this.isLoading = false
             this.pagePev() //获取的表格数据分组
         })
     },
@@ -559,18 +563,14 @@ export default {
     },
     //查询添加表格
     search(){
-        this.form.department = this.deptVal
-        this.form.pageNum = 1
-        this.form.currentDept = this.currentDept
-        this.form.deptIds = this.deptIds
-        this.form.idStr = this.form.department
-        let queryData = this.form
+        let queryData = {
+            currentDept : this.currentDept,
+            deptIds : this.deptIds,
+            idStr : this.deptVal
+        }
         querySome(queryData).then(res=>{
             this.tableData =  res.obj
             this.pagePev() //获取的表格数据分组
-            this.form.department = this.deptVal = ''
-            this.form.jobnumber = ''
-            this.form.name = ''
         })
         // console.log(this.form)
     },
@@ -611,21 +611,6 @@ export default {
     },
     //弹窗里条件的查询
     searchMore() {
-        this.form.currentState = this.stateVal
-        this.form.sex = this.sex
-        this.form.education = this.xueliVal
-        this.form.schoolProp = this.schoolVal
-        this.form.bzlx = this.bianzhi
-        this.form.category = this.zhileiVal
-        this.form.rank = this.zhijiVal
-        this.form.postOne = this.fenlei1Val
-        this.form.postTwo = this.fenlei2Val
-        this.form.zyxbq = this.zhuanyeVal
-        this.form.isVeteran = this.junrenVal
-        this.form.isPerson = this.qinshuVal
-        this.form.isTrain = this.peixunVal
-        this.form.isCompete = this.jingyeVal
-        this.form.personType = this.leibieVal
         // console.log(this.form)
         // if(this.form.currentState !== ''){
         //     let obj1 = {
@@ -799,45 +784,46 @@ export default {
             this.columns.push(obj25)
         }
         //查询请求
-        this.form.department = this.deptVal
-        this.form.pageNum = 1
-        this.form.currentDept = this.currentDept
-        this.form.deptIds = this.deptIds
-        this.form.idStr = this.form.department
-        let queryData = this.form
+        let queryData = {
+            currentState : this.stateVal,
+            sex : this.sex,
+            education : this.xueliVal,
+            schoolProp : this.schoolVal,
+            bzlx : this.bianzhi,
+            category : this.zhileiVal,
+            rank : this.zhijiVal,
+            postOne : this.fenlei1Val,
+            postTwo : this.fenlei2Val,
+            zyxbq : this.zhuanyeVal,
+            isVeteran : this.junrenVal,
+            isPerson : this.qinshuVal,
+            isTrain : this.peixunVal,
+            isCompete : this.jingyeVal,
+            personType : this.leibieVal,
+            currentDept : this.currentDept,
+            deptIds : this.deptIds,
+            idStr : this.deptVal,
+            jobnumber : this.form.jobnumber,
+            name : this.form.name,
+            age : this.form.age,
+            schoolName : this.form.schoolName,
+            walk : this.form.walk,
+            post : this.form.post,
+            entryStartTime : this.form.entryStartTime,
+            entryEndTime : this.form.entryEndTime,
+            entryAge : this.form.entryAge,
+            syjsEndTime : this.form.syjsEndTime,
+            syjsStartTime : this.form.syjsStartTime,
+            sjzzStartTime : this.form.sjzzStartTime,
+            sjzzEndTime : this.form.sjzzEndTime,
+            company : this.form.company,
+            zcName : this.form.zcName,
+        }
+        // let queryData = this.form
         querySome(queryData).then(res=>{
             //接受数据
             this.tableData = res.obj
             this.pagePev() //获取的表格数据分组
-            //清空搜索框
-            this.form.currentState = this.stateVal = ''
-            this.form.sex = this.sex = ''
-            this.form.education = this.xueliVal = ''
-            this.form.schoolProp = this.schoolVal = ''
-            this.form.bzlx = this.bianzhi = ''
-            this.form.category = this.zhileiVal = ''
-            this.form.rank = this.zhijiVal = ''
-            this.form.postOne = this.fenlei1Val = ''
-            this.form.postTwo = this.fenlei2Val = ''
-            this.form.zyxbq = this.zhuanyeVal = ''
-            this.form.isVeteran = this.junrenVal = ''
-            this.form.isPerson = this.qinshuVal = ''
-            this.form.isTrain = this.peixunVal = ''
-            this.form.isCompete = this.jingyeVal = ''
-            this.form.personType = this.leibieVal = ''
-            this.form.age  = ''
-            this.form.schoolName  = ''
-            this.form.walk  = ''
-            this.form.post  = ''
-            this.form.entryStartTime  = ''
-            this.form.entryEndTime  = ''
-            this.form.entryAge  = ''
-            this.form.syjsEndTime  = ''
-            this.form.syjsStartTime  = ''
-            this.form.sjzzStartTime  = ''
-            this.form.sjzzEndTime  = ''
-            this.form.company  = ''
-            this.form.zcName  = ''
         })
         //数组去重
         this.columns = this.unique(this.columns)
@@ -1062,6 +1048,9 @@ export default {
     },
     //选择时触发
     handleCheckChange(data) {
+        // console.log(this.deptIds)
+        // console.log(data.deptId)
+        // this.deptIds.indexOf(data.deptId)
         let res = this.$refs.tree.getCheckedNodes()
         // console.log(res)
         this.defaultCheckedKeys = res
@@ -1077,8 +1066,6 @@ export default {
             str = str.substr(0,str.length - 1)
             val = val.substr(0,str.length - 1)
         }
-        // console.log(res)
-        // console.log(val)
         this.form.department = str
         this.deptVal = val
     },
@@ -1432,7 +1419,6 @@ export default {
         console.log('加载中')
         let queryData = {
             isAll: 'Y',
-            pageNum: 2
         }
         queryPerson(queryData).then(res=>{
             this.tableData.push(res.obj)
@@ -1482,10 +1468,15 @@ export default {
         let clientHeight = document.getElementsByClassName("v-table-body")[0].clientHeight
         let scrollTop = document.getElementsByClassName("v-table-body")[0].scrollTop
         if (scrollHeight - clientHeight == scrollTop) {
-        //滚动条滚到最底部
-        alert("滚到了最底部");
-    }
-        ;
+            //滚动条滚到最底部
+            console.log("滚到了最底部");
+            this.dataIndex++ //点击+1
+            if(this.dataIndex >= this.fenyeData.length){
+                Notify({ type: "warning", message: "没有更多数据了哦~" });
+            }else{
+                this.tableData = this.tableData.concat(this.fenyeData[this.dataIndex])
+            }
+        }
     },
     ...mapMutations({
         save_jobNum:'save_jobNum',
