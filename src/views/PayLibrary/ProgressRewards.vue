@@ -126,7 +126,8 @@ export default {
       DetailsList: [],
       selectRewardName: "",
       calcHight: "400px",
-      showNodata : false
+      showNodata : false,
+      ddJobNum :localStorage.getItem('jobNum')
     };
   },
   created() {
@@ -264,7 +265,7 @@ export default {
       return queryData;
     },
     queryfindRewardDetailsInfo(queryobj) {
-      findRewardDetailsInfo({ jobnumber: "6006212", flag: "1" }).then(res => {
+      findRewardDetailsInfo({ jobnumber: this.ddJobNum, flag: "1" }).then(res => {
         if (res.code == 1000) {
           // debugger
           if (res.obj.title != "股份整体") {
@@ -283,7 +284,7 @@ export default {
     },
     queryfindRewardInfo(queryobj) {
       let queryData = {};
-      queryData = { jobnumber: "6006212", flag: "1" };
+      queryData = { jobnumber: this.ddJobNum, flag: "1" };
       findRewardInfo(queryData).then(res => {
         if (res.code == 1000) {
           this.setcolumns(res);

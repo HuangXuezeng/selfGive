@@ -147,6 +147,7 @@
         labelTitle="部门"
         :workingNum="true"
         :isSelctall='true'
+        :faDeptData='deptData'
       ></choosedepartment>
       <div class="resetVant">
         <v-table
@@ -184,7 +185,8 @@ import payTab from "@/components/PayLibrary/pay-tab.vue";
 import {
   findPerGetInfo,
   findPerGetDetailsInfo,
-  findPerYearInfo
+  findPerYearInfo,
+  findPayrollDept
 } from "@/views/PayLibrary/PayLibrary.js";
 import noData from "@/components/noData.vue";
 import chooseDepartment from "@/components/chooseDepartment.vue";
@@ -434,7 +436,9 @@ export default {
       mAnnualSalary: 1,
       pAnnualSalary: 1,
       sAnnualSalary: 1,
-      oAnnualSalary: 1
+      oAnnualSalary: 1,
+      ddJobNum :localStorage.getItem('jobNum'),
+      deptData:[]
     };
   },
   created() {
@@ -445,6 +449,7 @@ export default {
     this.queryfindPerGetInfo();
     this.queryfindPerGetDetailsInfo();
     this.queryfindPerYearInfo();
+    this.queryfindPayrollDept()
     this.selectZj = new Set();
     this.selectZjNameMap = new Map();
   },
@@ -553,7 +558,7 @@ export default {
       if (queryObj) {
         queryData = queryObj;
       } else {
-        queryData = { jobnumber: "6208052" };
+        queryData = { jobnumber: this.ddJobNum };
       }
       findPerGetInfo(queryData).then(res => {
         if (res.code == 1000) {
@@ -658,7 +663,7 @@ export default {
       });
       this.selectzjName = this.selectzjName.slice(1);
       findPerGetDetailsInfo({
-        jobnumber: "6208052",
+        jobnumber: this.ddJobNum,
         flag: "2",
         zjList: zjListArry
       }).then(res => {
@@ -674,9 +679,16 @@ export default {
         this.selctzjqueryLoading = false;
       });
     },
+    queryfindPayrollDept(){
+      findPayrollDept({ jobnumber: localStorage.getItem("jobNum") }).then(
+          res => {
+            this.deptData = res.obj.depts;
+          }
+        );
+    },
     queryfindPerGetDetailsInfo() {
       findPerGetDetailsInfo({
-        jobnumber: "6208052",
+        jobnumber: this.ddJobNum,
         flag: "1",
         zjList: []
       }).then(res => {
@@ -962,7 +974,7 @@ export default {
         queryData = queryObj;
       } else {
         queryData = {
-          jobnumber: "6006212",
+          jobnumber: this.ddJobNum,
           deptList: []
         };
       }
@@ -1078,12 +1090,12 @@ export default {
         }
       }
     },
-    selctdept(data) {
+    selctdept(data,isDown) {
       if (data.length != 0) {
         this.queryfindPerYearInfo({
-          jobnumber: "6006212",
+          jobnumber: this.ddJobNum,
           deptList: data,
-          isDown:'Y'
+          isDown: isDown
         });
       }
     }
