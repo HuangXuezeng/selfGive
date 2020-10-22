@@ -5,10 +5,10 @@
           <div style="background-color:#fff">
             <div class="sidebox">
               <div class="back" @click="backRoster" v-if="seeFlag == 0">
-                返回
+                <i class="iconfont icon-fanhui"></i> 返回
               </div>
               <div class="back" @click="backChanges" v-if="seeFlag == 1">
-                返回
+                <i class="iconfont icon-fanhui"></i> 返回
               </div>
                 <div class="contain">
                     <div>

@@ -105,6 +105,7 @@
               <v-table 
               ref="table" 
               is-horizontal-resize
+              :is-loading="isLoading"
               style="width:100%"
               columns-width-drag
               :height="400"
@@ -134,6 +135,7 @@ components: {
 },
   data () {
     return {
+        isLoading: true,
         showTable: false, //表格弹窗
         selectTime: '',
         selectChangeTime: '', //传给后台的时间值
@@ -356,7 +358,7 @@ components: {
                     position:'outer',
                     alignTo:'edge',
                     margin:10,
-                    formatter: '{c}人/n {d}%'
+                    formatter: '{c}人 {d}%'
                   }
                 },
         　　data: [
@@ -393,6 +395,7 @@ components: {
                 queryData.jobnumbers = that.gwcjObj.gwcjzhijieJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -404,6 +407,7 @@ components: {
                 queryData.jobnumbers = that.gwcjObj.gwcjyuangongJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -415,6 +419,7 @@ components: {
                 queryData.jobnumbers = that.gwcjObj.gwcjjishuJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -426,6 +431,7 @@ components: {
                 queryData.jobnumbers = that.gwcjObj.gwcjjicengJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -437,6 +443,7 @@ components: {
                 queryData.jobnumbers = that.gwcjObj.gwcjzhongcengJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -448,6 +455,7 @@ components: {
                 queryData.jobnumbers = that.gwcjObj.gwcjhexinJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -556,6 +564,7 @@ components: {
                 queryData.jobnumbers = that.xlTeam.xlchuZhongJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -568,6 +577,7 @@ components: {
                 queryData.jobnumbers = that.xlTeam.xlgaoZhongJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -580,6 +590,7 @@ components: {
                 queryData.jobnumbers = that.xlTeam.xlbenKeJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -592,6 +603,7 @@ components: {
                 queryData.jobnumbers = that.xlTeam.xldaZhuanJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -604,6 +616,7 @@ components: {
                 queryData.jobnumbers = that.xlTeam.xlxiaoxueJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -616,6 +629,7 @@ components: {
                 queryData.jobnumbers = that.xlTeam.xlshuoShiJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -628,6 +642,7 @@ components: {
                 queryData.jobnumbers = that.xlTeam.xlmbajobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -640,6 +655,7 @@ components: {
                 queryData.jobnumbers = that.xlTeam.xlboShiJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -711,6 +727,7 @@ components: {
                 queryData.jobnumbers = that.ageTeam.age25Jobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -723,6 +740,7 @@ components: {
                 queryData.jobnumbers = that.ageTeam.age25to35Jobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -735,6 +753,7 @@ components: {
                 queryData.jobnumbers = that.ageTeam.age35to45Jobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -747,6 +766,7 @@ components: {
                 queryData.jobnumbers = that.ageTeam.age45to50Jobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -758,6 +778,7 @@ components: {
                 queryData.jobnumbers = that.ageTeam.age50Jobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -837,6 +858,7 @@ components: {
                 queryData.jobnumbers = that.sexTeam.manJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -848,6 +870,7 @@ components: {
                 queryData.jobnumbers = that.sexTeam.womanJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -865,7 +888,6 @@ components: {
         // 　　title: { text: '分析报表' },
         // 　　tooltip: {},
             legend:{
-              // textStyle:{color:'#f00'},
               orient: 'vertical',
               left: 'left',
               padding: 20
@@ -928,6 +950,7 @@ components: {
                 queryData.jobnumbers = that.jobAgeTeam.jobAge6mJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -939,6 +962,7 @@ components: {
                 queryData.jobnumbers = that.jobAgeTeam.jobAge6mTo1yJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -950,6 +974,7 @@ components: {
                 queryData.jobnumbers = that.jobAgeTeam.jobAge1yTo3yJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -961,6 +986,7 @@ components: {
                 queryData.jobnumbers = that.jobAgeTeam.jobAge3yJobnumber
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.isLoading = false
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
@@ -978,6 +1004,7 @@ components: {
         queryData.jobnumbers = rowData.jobnumbers
         queryRoster(queryData).then(res=>{
             this.popupTableData = res.obj
+            this.isLoading = false
             this.pagePev() //获取的表格数据分组
         })
     },
@@ -1132,6 +1159,8 @@ watch:{
         padding 10px
     }
     .total{
+        // margin 0 10px 0 10px
+        // border-radius 8px
         height 60px
         line-height 30px
         background-color #dfe6e7
@@ -1139,8 +1168,10 @@ watch:{
         p:nth-child(1){
             font-weight 700
             color #4f8fa0
+            font-size 16px
         }
         p:nth-child(2){
+            font-weight 700
             font-size 14px
         }
     }
