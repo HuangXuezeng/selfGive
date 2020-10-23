@@ -65,7 +65,8 @@ export default {
       deptPlacehoder: "请选择单位",
       openlist: [],
       onSelected:'',
-      firstIn:1
+      firstIn:1,
+      restFlag: false
     };
   },
   created() {
@@ -168,6 +169,15 @@ export default {
     //清空输入框
     showAlert1(){
       this.selectedDepartment = ''
+    }
+  },
+  watch:{
+    'restFlag' : function(newVal,oldVal){
+        // console.log(this.restFlag)
+      if(this.restFlag == true){
+        this.$refs.tree.setCheckedKeys([])
+        this.restFlag = false
+      }
     }
   }
 };

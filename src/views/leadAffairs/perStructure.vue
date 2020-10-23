@@ -2,7 +2,16 @@
     <div>
         <div class="header">
             <van-field v-model="selectTime" label="选择时间：" placeholder="请选择" @click="timeClick=showTime=true" readonly/>
-            <choosedepartment @transferFa="selctdept" :Farequired="true"></choosedepartment>
+            <choosedepartment 
+            ref="dept_content" 
+            @transferFa="selctdept" 
+            :Farequired="true">
+            </choosedepartment>
+            <div class="btn">
+                <van-button type="primary" color="#fc5f10" size="small" @click="search" style="width:45%">查询</van-button>
+                <van-button type="primary" color="#fc5f10" size="small" @click="reset" style="width:45%">重置</van-button>
+                <!-- <van-button type="primary" color="#fc5f10" size="small" @click="ceshi">测试</van-button> -->
+            </div>
         </div>
         <div class="total">
             <p>{{gwObj.allCount}}人</p>
@@ -103,7 +112,7 @@
         :style="{ height: '80%' }">
           <div class="table">
               <v-table 
-              ref="table" 
+              ref="pop_table"
               is-horizontal-resize
               :is-loading="isLoading"
               style="width:100%"
@@ -142,6 +151,7 @@ components: {
         selectDeptContent: '', //传给后台的部门值
         selectDeptId: '', //传给后台的部门id
         selectDeptGrade: '', //传给后台的部门层级
+        results: '',
         showTime: false, //选择时间弹窗
         columns1: [],
         gwObj: {}, //岗位分类
@@ -195,53 +205,6 @@ components: {
         // console.log(newStr)
         this.selectChangeTime = newStr
         //选择条件发送请求
-        //获取岗位分类
-        let queryData = {
-            jobnumber:localStorage.getItem('jobNum'),
-            flag:2,
-            content:this.selectDeptContent,
-            deptId:this.selectDeptId,
-            grade:this.selectDeptGrade,
-            time:newStr,
-        }
-        queryGwfl(queryData).then(res=>{
-            this.gwObj = res.obj
-        })
-        //查询岗位层级
-        queryGwcj(queryData).then(res=>{
-            this.gwcjObj = res.obj
-            this.initCharts()
-        })
-        //查询按学历
-        queryXlTeam(queryData).then(res=>{
-            this.xlTeam = res.obj
-            this.initCharts1()
-        })
-        //查询按年龄
-        queryAgeTeam(queryData).then(res=>{
-            this.ageTeam = res.obj
-            this.initCharts2()
-        })
-        //查询按性别
-        querySexTeam(queryData).then(res=>{
-            this.sexTeam = res.obj
-            this.initCharts3()
-        })
-        //查询按司龄
-        queryJobAgeTeam(queryData).then(res=>{
-            this.jobAgeTeam = res.obj
-            this.initCharts4()
-        })
-        //查询部门详细
-        queryDeptDetailTeam(queryData).then(res=>{
-            this.deptName = res.obj
-            this.tableData = res.obj.details
-            this.columns = [
-                {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
-                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
-                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
-            ]
-        })
         this.showTime = false
     },
     //弹窗表格中的行点击
@@ -999,14 +962,17 @@ components: {
     //表格行点击事件
     rowClick(rowIndex, rowData, column){
         // console.log(rowData)
-        this.showTable = true
-        let queryData = {}
-        queryData.jobnumbers = rowData.jobnumbers
-        queryRoster(queryData).then(res=>{
-            this.popupTableData = res.obj
-            this.isLoading = false
-            this.pagePev() //获取的表格数据分组
-        })
+        //通过cloumn来判断点击的是哪个
+        if(column.field=='deptCount'){
+            this.showTable = true
+            let queryData = {}
+            queryData.jobnumbers = rowData.jobnumbers
+            queryRoster(queryData).then(res=>{
+                this.popupTableData = res.obj
+                this.isLoading = false
+                this.pagePev() //获取的表格数据分组
+            })
+        }
     },
     cellMerge(rowIndex,rowData,field){
         if (field === 'highDeptName') {
@@ -1019,25 +985,66 @@ components: {
 
         }
     },
-    //选择部门
-    // deptClick() {
-    //     console.log('选择部门')
-    // },
     selctdept(data) {
         // console.log(data)
         //截取部门
         let result = data.content.split( "-" )
-        let result1 = result[1]
+        this.results = result[1]
         // console.log(result1)
-        this.selectDeptContent = result1
+        this.selectDeptContent = this.results
         this.selectDeptId = data.deptId
         this.selectDeptGrade = data.grade
+    },
+    // 岗位分类查看详情
+    znClick(){
+        this.showTable = true
+        let queryData = {}
+        queryData.jobnumbers = this.gwObj.gwzhinengJobnumber
+        queryRoster(queryData).then(res=>{
+            this.popupTableData = res.obj
+            this.isLoading = false
+            this.pagePev() //获取的表格数据分组
+        })
+    },
+    jsClick(){
+        this.showTable = true
+        let queryData = {}
+        queryData.jobnumbers = this.gwObj.gwjiShuJobnumber
+        queryRoster(queryData).then(res=>{
+            this.popupTableData = res.obj
+            this.isLoading = false
+            this.pagePev() //获取的表格数据分组
+        })
+    },
+    yxClick(){
+        this.showTable = true
+        let queryData = {}
+        queryData.jobnumbers = this.gwObj.gwyingXiaoJobnumber
+        queryRoster(queryData).then(res=>{
+            this.popupTableData = res.obj
+            this.isLoading = false
+            this.pagePev() //获取的表格数据分组
+            // console.log(this.$refs.pop_table)
+        })
+    },
+    zjClick(){
+        this.showTable = true
+        let queryData = {}
+        queryData.jobnumbers = this.gwObj.gwzhiJieJobnumber
+        queryRoster(queryData).then(res=>{
+            this.popupTableData = res.obj
+            this.isLoading = false
+            this.pagePev() //获取的表格数据分组
+        })
+    },
+    //查询
+    search(){
         let queryData = {
             jobnumber:localStorage.getItem('jobNum'),
             flag:2,
-            content:result1,
-            deptId:data.deptId,
-            grade:data.grade,
+            content:this.results,
+            deptId:this.selectDeptId,
+            grade:this.selectDeptGrade,
             time:this.selectChangeTime,
         }
         queryGwfl(queryData).then(res=>{
@@ -1079,42 +1086,27 @@ components: {
             ]
         })
     },
-    // 岗位分类查看详情
-    znClick(){
-        this.showTable = true
-        let queryData = {}
-        queryData.jobnumbers = this.gwObj.gwzhinengJobnumber
-        queryRoster(queryData).then(res=>{
-            this.popupTableData = res.obj
-            this.pagePev() //获取的表格数据分组
-        })
+    //重置
+    reset(){
+        this.selectTime = ''
+        this.$refs.dept_content.restFlag = true
+        this.$refs.dept_content.selectedDepartment = ''
     },
-    jsClick(){
-        this.showTable = true
-        let queryData = {}
-        queryData.jobnumbers = this.gwObj.gwjiShuJobnumber
-        queryRoster(queryData).then(res=>{
-            this.popupTableData = res.obj
-            this.pagePev() //获取的表格数据分组
-        })
-    },
-    yxClick(){
-        this.showTable = true
-        let queryData = {}
-        queryData.jobnumbers = this.gwObj.gwyingXiaoJobnumber
-        queryRoster(queryData).then(res=>{
-            this.popupTableData = res.obj
-            this.pagePev() //获取的表格数据分组
-        })
-    },
-    zjClick(){
-        this.showTable = true
-        let queryData = {}
-        queryData.jobnumbers = this.gwObj.gwzhiJieJobnumber
-        queryRoster(queryData).then(res=>{
-            this.popupTableData = res.obj
-            this.pagePev() //获取的表格数据分组
-        })
+    //表格中盒子的滚动事件
+    scrool(){
+        let scrollHeight = document.getElementsByClassName("bodycontain")[0].scrollHeight
+        let clientHeight = document.getElementsByClassName("bodycontain")[0].clientHeight
+        let scrollTop = document.getElementsByClassName("bodycontain")[0].scrollTop
+        if (scrollHeight - clientHeight == scrollTop) {
+            //滚动条滚到最底部
+            console.log("滚到了最底部");
+            // this.dataIndex++ //点击+1
+            // if(this.dataIndex >= this.fenyeData.length){
+            //     Notify({ type: "warning", message: "没有更多数据了哦~" });
+            // }else{
+            //     this.tableData = this.tableData.concat(this.fenyeData[this.dataIndex])
+            // }
+        }
     },
     //vuex
     ...mapMutations({
@@ -1122,7 +1114,7 @@ components: {
     }),
   },
   mounted(){
-      
+    // document.getElementsByClassName("bodycontain")[0].addEventListener('scroll', this.scrool)
 　},
 watch:{
     '$store.state.arrflag': function (newVal,oldVal) {
@@ -1157,6 +1149,11 @@ watch:{
 <style lang="stylus" scoped>
     .header{
         padding 10px
+        .btn{
+            padding 5px
+            line-height 35px
+            text-align center
+        }
     }
     .total{
         // margin 0 10px 0 10px

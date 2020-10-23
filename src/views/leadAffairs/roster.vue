@@ -1,7 +1,20 @@
 <template>
     <div>
         <div class="header">
-            <van-field v-model="form.department" @click="pickDept" readonly label="部门" placeholder="请选择部门" />
+            <!-- <van-field v-model="form.department" @click="pickDept" readonly label="部门" placeholder="请选择部门" /> -->
+            <!-- 选择部门 -->
+            <div style="border-bottom:1px solid #ebedf0">
+                <choosedepartment
+                    ref="select"
+                    @confirmNode="selctdept"
+                    :Farequired="true"
+                    labelTitle="部门"
+                    :workingNum="true"
+                    :isSelctall='true'
+                    :isFromRost='true'
+                    :faDeptData='deptData'
+                ></choosedepartment>
+            </div>
             <van-field v-model="form.jobnumber" label="工号" placeholder="请输入工号" />
             <van-field v-model="form.name" label="姓名" placeholder="请输入姓名" />
             <div class="btn">
@@ -77,35 +90,6 @@
         <!-- 排序弹窗 -->
         <van-popup v-model="showPx" position="top" :style="{ height: '70%' }" get-container="body" closeable close-icon-position="bottom-right">
             <div class="pick">
-                <!-- <van-checkbox-group v-model="results" ref="checkboxGroup"> -->
-                    <!-- <van-checkbox name="zt" :disabled="false1">当前状态</van-checkbox>
-                    <van-checkbox name="xb" :disabled='false2'>性别</van-checkbox>
-                    <van-checkbox name="nl" :disabled='false3'>年龄</van-checkbox>
-                    <van-checkbox name="zgxl" :disabled='false4'>最高学历</van-checkbox>
-                    <van-checkbox name="yxxz" :disabled='false5'>院校性质</van-checkbox>
-                    <van-checkbox name="byyx" :disabled='false6'>毕业院校</van-checkbox>
-                    <van-checkbox name="zy" :disabled='false7'>专业</van-checkbox>
-                    <van-checkbox name="bzlx" :disabled='false8'>编制类型</van-checkbox>
-                    <van-checkbox name="gjzl" :disabled='false10'>职类</van-checkbox>
-                    <van-checkbox name="gwfly" :disabled='false12'>岗位分类一</van-checkbox>
-                    <van-checkbox name="gwfle" :disabled='false13'>岗位分类二</van-checkbox>
-                    <van-checkbox name="sl" :disabled='false15'>司龄</van-checkbox>
-                    <van-checkbox name="syjsrq" :disabled='false16'>试用结束日期</van-checkbox>
-                    <van-checkbox name="syzzrq" :disabled='false17'>试用转正日期</van-checkbox>
-                    <van-checkbox name="zyxbq" :disabled='false18'>专业线标签</van-checkbox>
-                    <van-checkbox name="sfwtwjr" :disabled='false19'>是否为退伍军人</van-checkbox>
-                    <van-checkbox name="sfyqsgx" :disabled='false20'>是否在本公司有亲属关系</van-checkbox>
-                    <van-checkbox name="sfqdpxxy" :disabled='false21'>是否签订培训协议</van-checkbox>
-                    <van-checkbox name="sfqdjyxy" :disabled='false22'>是否签订竞业协议</van-checkbox>
-                    <van-checkbox name="gzdw" :disabled='false23'>工作单位</van-checkbox>
-                    <van-checkbox name="zjmc" :disabled='false24'>职级名称</van-checkbox>
-                    <van-checkbox name="rylb" :disabled='false25'>人员类别</van-checkbox> -->
-                    
-                    <!-- <van-checkbox name="rsrq" :disabled='false14'>入司日期</van-checkbox> -->
-                    <!-- <van-checkbox name="gjzj" :disabled='false11'>职级</van-checkbox> -->
-                    <!-- <van-checkbox name="gw" :disabled='false9'>岗位</van-checkbox> -->
-                <!-- </van-checkbox-group> -->
-
                 <!-- 排序 -->
                 <transition-group 
                 type="transition" 
@@ -124,7 +108,7 @@
             </div>
         </van-popup>
         <!-- 选择部门弹出框 -->
-        <van-popup v-model="showPickDept" position="top" :style="{ height: '70%' }" get-container="body" closeable>
+        <!-- <van-popup v-model="showPickDept" position="top" :style="{ height: '70%' }" get-container="body" closeable>
             <van-checkbox v-model="checked" @change="changeDept">是否包含下级部门</van-checkbox>
             <el-tree 
             :data="deptData" 
@@ -133,7 +117,7 @@
             node-key="deptId"
             :props="props" 
             show-checkbox></el-tree>
-        </van-popup>
+        </van-popup> -->
         <!-- 弹出时间选择框 -->
         <van-popup v-model="showTime" position="bottom" :style="{ height: '50%' }" >
             <van-datetime-picker
@@ -245,10 +229,12 @@
 import { Popup,Checkbox,CheckboxGroup,List,Notify } from 'vant'
 import { queryDept,getSelectVal,getOrz,queryFen2,queryPerson,queryRank,queryDeptIdName,querySome,queryRoster } from './api'
 import { mapMutations } from 'vuex'
+import chooseDepartment from "@/components/chooseDepartment.vue";
 import draggable from 'vuedraggable'
 export default {
   data () {
     return {
+        deptData:[],
         isLoading: true,
         intertimer: null, //定时器
         checked: true, //是否包含下级部门
@@ -316,9 +302,6 @@ export default {
         result7: [], //人员类别
         result8: [], //职类
         result9: [], //职级
-        false1:false,false2:false,false3:false,false4:false,false5:false,false6:false,false7:false,false8:false,false9:false,
-        false10:false,false11:false,false12:false,false13:false,false14:false,false15:false,false16:false,false17:false,false18:false,
-        false19:false,false20:false,false21:false,false22:false,false23:false,false24:false,false25:false,
         pickFalse: '',
         total:0,
         pageIndex:1,
@@ -550,8 +533,7 @@ export default {
             jobnumber: '',
             name: '',
         }
-        //清空tree
-        this.$refs.tree.setCheckedKeys([]);
+        this.$refs.select.selectedDepartment = ''
     },
     //更多查询条件
     moreSearch(){
@@ -1478,6 +1460,14 @@ export default {
             }
         }
     },
+    //选择部门
+    selctdept(data) {
+      console.log(data)
+      this.deptVal = data
+    },
+    ceshi(){
+        console.log(this.$refs.select.selectedDepartment)
+    },
     ...mapMutations({
         save_jobNum:'save_jobNum',
         scroll_top:'scroll_top',
@@ -1509,7 +1499,8 @@ watch:{
     }
 },
   components: {
-      draggable
+      draggable,
+      choosedepartment: chooseDepartment
   },
 }
 </script>
