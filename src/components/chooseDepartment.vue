@@ -7,6 +7,7 @@
       :placeholder="deptPlacehoder"
       :rules="reqireRule"
       type="textarea"
+      :label-class='labelStyle'
       readonly
     />
     <van-popup
@@ -108,7 +109,7 @@ export default {
     faDeptData:{
       type: Array,
     },
-    isFromRost: {
+     isFromRost: {
       type: Boolean,
       default: false
     }
@@ -138,7 +139,8 @@ export default {
       selectkeySet: null,
       beforeSelectName: "",
       SelectNameMap: null,
-      selectAllstyle: "background-color:Coral"
+      selectAllstyle: "background-color:Coral",
+      labelStyle:''
     };
   },
   created() {
@@ -162,7 +164,6 @@ export default {
       }
       this.closeableFlag = false;
     }
-   
   },
   methods: {
     //获取组织下的部门
@@ -207,7 +208,7 @@ export default {
           let assignData = Object.assign({}, data);
           this.mechanismPath(assignData);
           this.showPickDept = false;
-          Notify({ type: 'success', message: '选择成功' });
+           Notify({ type: 'success', message: '选择成功' });
         } else if (this.selectOrg.orgsid.length === 0 && checked) {
           // 发现数组为空 并且是已选择
           // 防止数组有值，首先清空，再push
@@ -221,7 +222,7 @@ export default {
           } else {
             this.showPickDept = false;
             this.onSelected = "";
-            Notify({ type: 'success', message: '选择成功' });
+             Notify({ type: 'success', message: '选择成功' });
           }
         } else if (this.selectOrg.orgsid.length === 1 && !checked) {
           // 再次直接进行赋值为空操作
@@ -313,7 +314,11 @@ export default {
       this.$emit("confirmNode", selctArray, isDown);
       this.showPickDept = false;
       Notify({ type: 'success', message: '选择成功' });
-      this.selectedDepartment = this.beforeSelectName.slice(1);
+      if(this.beforeSelectName.split(',').length  != 1){
+        this.selectedDepartment = this.beforeSelectName.slice(1);
+      }else{
+        this.selectedDepartment = this.beforeSelectName;
+      }
     },
     //全选按钮
     selctAllNodeMeth() {
@@ -323,6 +328,7 @@ export default {
       this.$refs.tree.setCheckedKeys([this.deptData[0].deptId], false);
       this.selectkeySet.clear();
       this.selectkeySet.add(this.deptData[0].deptId);
+      this.beforeSelectName = '全部'
     },
     //开关按钮方法
     isDownMethods(isDownValue) {
@@ -373,4 +379,7 @@ export default {
   color: #fff;
   border-radius: 12px;
 }
+.labelStyle{
+  color :red
+  }
 </style>

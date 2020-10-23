@@ -1,169 +1,197 @@
 <template>
   <div style="padding-bottom: 25%;" class="my-container">
-    <van-row type="flex" justify="left" style="margin-bottom:10px">
-      <van-col>
-        <div style="font-size: 18px;font-weight: 700;;margin-top:20px">
-          <span class="honghe"></span>
-          人均工资
-        </div></van-col
-      >
-    </van-row>
-    <van-row type="flex">
-      <van-col span="24">
-        <van-field
-          readonly
-          clickable
-          label="年/月"
-          v-model="selectedyear"
-          placeholder="请选择年月"
-          @click="vanDateShow = true"
-        />
-        <van-action-sheet v-model="vanDateShow">
-          <van-datetime-picker
-            v-model="currentDate"
-            type="year-month"
-            title="选择年月"
-            :min-date="minDate"
-            :max-date="maxDate"
-            :formatter="formatter"
-            @confirm="confirmYear"
-          />
-        </van-action-sheet>
-      </van-col>
-    </van-row>
-    <div class="resetVant">
-      <v-table
-        is-horizontal-resize
-        style="width:100%"
-        :columns="columns"
-        :table-data="tableData"
-        row-hover-color="#eee"
-        row-click-color="#edf7ff"
-        :cell-merge="cellMerge"
-        :is-loading="lodingFlag"
-        :column-cell-class-name="columnCellClass"
-      ></v-table>
-    </div>
-    <div>
-      <van-row type="flex" justify="left" style="margin-bottom:10px">
-        <van-col>
-          <div style="font-size: 18px;font-weight: 700;;margin-top:20px">
-            <span class="honghe"></span>
-            各职级平均工资
-          </div></van-col
-        >
-      </van-row>
-      <van-row type="flex">
-        <van-col span="24">
-          <van-field
-            readonly
-            clickable
-            label="职级"
-            v-model="selectzjName"
-            placeholder="请选择职级"
-            @click="rightPopShow"
-          />
-          <van-popup
-            v-model="rightPop"
-            position="right"
-            style="width: 40%; height: 100%; z-index: 2048;"
-            :get-container="getContainer"
-          >
-            <div style="height: 90%;overflow: auto;">
-              <div v-for="item in checkboxlist" :key="item.zl">
-                <van-cell clickable @click="toggleZL(item)">
-                  <template #title>
-                    <div style="font-size: 15px;font-weight: 700;">
-                      <span class="honghe"></span>
-                      {{ item.zl }}
-                    </div>
-                  </template>
-                  <template #right-icon>
-                    <van-checkbox
-                      :name="item.zlNum"
-                      v-model="item.zlchecked"
-                      ref="checkboxesZL"
-                      shape="square"
-                    />
-                  </template>
-                </van-cell>
-                <van-checkbox-group v-model="result">
-                  <van-cell-group>
-                    <van-cell
-                      v-for="items in item.zjList"
-                      clickable
-                      :key="items.number"
-                      :title="`${items.zj}`"
-                      @click="toggle(items)"
-                    >
+    <van-tabs
+      v-model="vanTabsActive"
+      scrollspy
+      sticky
+      type="card"
+      ref="vanTabs"
+    >
+      <van-tab title="人均工资" name="人均工资">
+        <div class="shodowRewards">
+          <van-row type="flex" justify="left" style="margin-bottom:10px">
+            <van-col>
+              <div class="titleRewards" >
+                <span class="honghe"></span>
+                 人均工资
+              </div></van-col
+            >
+          </van-row>
+          <van-row type="flex">
+            <van-col span="24">
+              <van-field
+                readonly
+                clickable
+                label="年/月"
+                label-class='labelStyle'
+                v-model="selectedyear"
+                placeholder="请选择年月"
+                @click="vanDateShow = true"
+              />
+              <van-action-sheet v-model="vanDateShow">
+                <van-datetime-picker
+                  v-model="currentDate"
+                  type="year-month"
+                  title="选择年月"
+                  :min-date="minDate"
+                  :max-date="maxDate"
+                  :formatter="formatter"
+                  @confirm="confirmYear"
+                />
+              </van-action-sheet>
+            </van-col>
+          </van-row>
+        </div>
+        <div class="resetVant">
+          <v-table
+            is-horizontal-resize
+            style="width:100%"
+            :columns="columns"
+            :table-data="tableData"
+            row-hover-color="#eee"
+            row-click-color="#edf7ff"
+            :cell-merge="cellMerge"
+            :is-loading="lodingFlag"
+            :column-cell-class-name="columnCellClass"
+          ></v-table>
+        </div>
+      </van-tab>
+      <van-tab title="各职级平均工资" name="各职级平均工资">
+        <div  class="shodowRewards">
+          <van-row type="flex" justify="left" style="margin-bottom:10px">
+            <van-col>
+              <div class="titleRewards">
+                <span class="honghe"></span>
+                各职级平均工资
+              </div></van-col
+            >
+          </van-row>
+          <van-row type="flex">
+            <van-col span="24">
+              <van-field
+                readonly
+                clickable
+                label="职级"
+                label-class='labelStyle'
+                v-model="selectzjName"
+                placeholder="请选择职级"
+                @click="rightPopShow"
+              />
+              <van-popup
+                v-model="rightPop"
+                position="right"
+                style="width: 40%; height: 100%; z-index: 2048;"
+                :get-container="getContainer"
+              >
+                <div style="height: 90%;overflow: auto;">
+                  <div v-for="item in checkboxlist" :key="item.zl">
+                    <van-cell clickable @click="toggleZL(item)">
+                      <template #title>
+                        <div style="font-size: 15px;font-weight: 700;">
+                          <span class="honghe"></span>
+                          {{ item.zl }}
+                        </div>
+                      </template>
                       <template #right-icon>
                         <van-checkbox
-                          :name="items.indexNumber"
-                          ref="checkboxes"
+                          :name="item.zlNum"
+                          v-model="item.zlchecked"
+                          ref="checkboxesZL"
+                          shape="square"
                         />
                       </template>
                     </van-cell>
-                  </van-cell-group>
-                </van-checkbox-group>
-              </div>
-            </div>
-            <van-row type="flex" justify="space-around">
-              <van-col span="10">
-                <van-button type="info" size="normal" @click="restSelectZj"
-                  >重置</van-button
-                >
-              </van-col>
-              <van-col span="10">
-                <van-button
-                  :loading="selctzjqueryLoading"
-                  loading-type="spinner"
-                  type="primary"
-                  size="normal"
-                  @click="selctzjquery"
-                  >确认</van-button
-                >
-              </van-col>
-            </van-row>
-          </van-popup>
-        </van-col>
-      </van-row>
-      <div style="width:100%" v-if="!showNodata">
-        <div ref="payEch" :style="{ width: '100%', height: '500px' }"></div>
+                    <van-checkbox-group v-model="result">
+                      <van-cell-group>
+                        <van-cell
+                          v-for="items in item.zjList"
+                          clickable
+                          :key="items.number"
+                          :title="`${items.zj}`"
+                          @click="toggle(items)"
+                        >
+                          <template #right-icon>
+                            <van-checkbox
+                              :name="items.indexNumber"
+                              ref="checkboxes"
+                            />
+                          </template>
+                        </van-cell>
+                      </van-cell-group>
+                    </van-checkbox-group>
+                  </div>
+                </div>
+                <van-row type="flex" justify="space-around">
+                  <van-col span="10">
+                    <van-button type="info" size="normal" @click="restSelectZj"
+                      >重置</van-button
+                    >
+                  </van-col>
+                  <van-col span="10">
+                    <van-button
+                      :loading="selctzjqueryLoading"
+                      loading-type="spinner"
+                      type="primary"
+                      size="normal"
+                      @click="selctzjquery"
+                      >确认</van-button
+                    >
+                  </van-col>
+                </van-row>
+              </van-popup>
+            </van-col>
+          </van-row>
+        </div>
+        <div style="width:100%" v-if="!showNodata">
+          <div ref="payEch" :style="{ width: '100%', height: '500px' }"></div>
+        </div>
+        <noData :showNodata="showNodata"></noData>
+      </van-tab>
+      <van-tab title="人均年薪" name="人均年薪">
+        <div  class="shodowRewards">
+          <van-row type="flex" justify="left" style="margin-bottom:10px">
+            <van-col>
+              <div class="titleRewards">
+                <span class="honghe"></span>
+                人均年薪
+              </div></van-col
+            >
+          </van-row>
+          <choosedepartment
+            @confirmNode="selctdept"
+            :Farequired="true"
+            labelTitle="部门"
+            :workingNum="true"
+            :isSelctall="true"
+            :faDeptData="deptData"
+          ></choosedepartment>
+        </div>
+        <div class="resetVant">
+          <v-table
+            is-horizontal-resize
+            style="width:100%"
+            :columns="columnsAnnualSalary"
+            :table-data="tableDataAnnualSalary"
+            row-hover-color="#eee"
+            row-click-color="#edf7ff"
+            :cell-merge="cellMergeAnnualSalary"
+            :is-loading="lodingFlagAnnualSalary"
+            :column-cell-class-name="columnCellClassAnnualSalary"
+            :row-click="lineChart"
+          ></v-table>
+        </div>
+      </van-tab>
+    </van-tabs>
+    <van-overlay :show="lineChartShow" @click="lineChartShow = false">
+      <div class="lineChartWrapper">
+        <div class="lineChartBox" @click.stop>
+          <div
+            ref="lineChart"
+            :style="{ width: '300px', height: '300px' }"
+          ></div>
+        </div>
       </div>
-      <noData :showNodata="showNodata"></noData>
-    </div>
-    <div>
-      <van-row type="flex" justify="left" style="margin-bottom:10px">
-        <van-col>
-          <div style="font-size: 18px;font-weight: 700;;margin-top:20px">
-            <span class="honghe"></span>
-            平均年薪
-          </div></van-col
-        >
-      </van-row>
-      <choosedepartment
-        @confirmNode="selctdept"
-        :Farequired="true"
-        labelTitle="部门"
-        :workingNum="true"
-        :isSelctall='true'
-        :faDeptData='deptData'
-      ></choosedepartment>
-      <div class="resetVant">
-        <v-table
-          is-horizontal-resize
-          style="width:100%"
-          :columns="columnsAnnualSalary"
-          :table-data="tableDataAnnualSalary"
-          row-hover-color="#eee"
-          row-click-color="#edf7ff"
-          :cell-merge="cellMergeAnnualSalary"
-          :is-loading="lodingFlagAnnualSalary"
-          :column-cell-class-name="columnCellClassAnnualSalary"
-        ></v-table>
-      </div>
-    </div>
-
+    </van-overlay>
     <payTab></payTab>
   </div>
 </template>
@@ -179,7 +207,9 @@ import {
   DatetimePicker,
   Popup,
   Checkbox,
-  CheckboxGroup
+  CheckboxGroup,
+  Notify,
+  Overlay
 } from "vant";
 import payTab from "@/components/PayLibrary/pay-tab.vue";
 import {
@@ -279,12 +309,12 @@ export default {
       result: [],
       checkboxlist: [],
       selectZj: null,
-      selectzjName: "M3",
+      selectzjName: "全部",
       selectZjNameMap: null,
       selctzjqueryLoading: false,
       firstInflag: 0,
       showNodata: false,
-      //平均年薪
+      //人均年薪
       columnsAnnualSalary: [
         {
           field: "zl",
@@ -302,7 +332,11 @@ export default {
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
-          titleCellClassName: "titleclass"
+          titleCellClassName: "titleclass",
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<span class='bluejunpColor'>${rowData[field]}</span>`;
+            //  '<span  onclick=test("' + rowData +');>'+rowData[field]+'</span>'
+          }
         },
         {
           field: "lastTwelve",
@@ -437,35 +471,55 @@ export default {
       pAnnualSalary: 1,
       sAnnualSalary: 1,
       oAnnualSalary: 1,
-      ddJobNum :localStorage.getItem('jobNum'),
-      deptData:[]
+      ddJobNum: localStorage.getItem("jobNum"),
+      deptData: [],
+      lineChartShow: false,
+      vanTabsActive: "人均工资"
     };
   },
+  watch: {
+    tableData: function() {
+      this.$nextTick(() => {
+        //判断由那个入口进来的 salaryFlag 0平均工资 1人均年薪
+        if (this.$route.params.salaryFlag == 1) {
+          this.$refs.vanTabs.scrollTo("人均年薪");
+        } else {
+          this.$refs.vanTabs.scrollTo("人均工资");
+        }
+      });
+    }
+  },
   created() {
-    let nowData = new Date();
-    let y = nowData.getFullYear();
-    let m = nowData.getMonth() - 1;
-    this.maxDate = new Date(y, m, 1);
-    this.queryfindPerGetInfo();
-    this.queryfindPerGetDetailsInfo();
-    this.queryfindPerYearInfo();
-    this.queryfindPayrollDept()
-    this.selectZj = new Set();
-    this.selectZjNameMap = new Map();
+    this.initMethods();
   },
   mounted() {
-    // this.$refs.checkboxes[0].toggle(true);
+    //  this.$refs.vanTabs.scrollTo("人均工资");
   },
+
   methods: {
+    async initMethods() {
+      let nowData = new Date();
+      let y = nowData.getFullYear();
+      let m = nowData.getMonth() - 1;
+      this.maxDate = new Date(y, m, 1);
+      await this.queryfindPerGetInfo();
+      await this.queryfindPerGetDetailsInfo();
+      await this.queryfindPerYearInfo();
+      await this.queryfindPayrollDept();
+      this.selectZj = new Set();
+      this.selectZjNameMap = new Map();
+    },
     getContainer() {
       return document.querySelector(".my-container");
     },
+    //弹出右边职级选择框
     rightPopShow() {
       this.rightPop = true;
       if (!this.firstInflag) {
         this.firstInflag++;
         this.$nextTick(() => {
-          this.$refs.checkboxes[0].toggle(true);
+          this.restSelectZj(1);
+          // this.$refs.checkboxes[0].toggle(true);
         });
       }
     },
@@ -540,14 +594,14 @@ export default {
       if (this.mlength <= rowIndex && rowData.zl == "P类") {
         return "pClass";
       }
-      if (this.plength < rowIndex && rowData.zl == "S类") {
+      if (this.plength <= rowIndex && rowData.zl == "S类") {
         return "sClass";
       }
-      if (this.slength < rowIndex && rowData.zl == "O类") {
+      if (this.slength <= rowIndex && rowData.zl == "O类") {
         return "oClass";
       }
       if (
-        this.slength + this.plength + this.mlength + this.olength < rowIndex &&
+        this.slength + this.plength + this.mlength + this.olength <= rowIndex &&
         rowData.zl == "合计"
       ) {
         return "heClass";
@@ -639,7 +693,7 @@ export default {
         lastm = "12";
       }
       let queryObj = {
-        jobnumber: 6208052,
+        jobnumber: this.ddJobNum,
         year: y + m,
         lastYear: lasty + lastm
       };
@@ -679,12 +733,12 @@ export default {
         this.selctzjqueryLoading = false;
       });
     },
-    queryfindPayrollDept(){
+    queryfindPayrollDept() {
       findPayrollDept({ jobnumber: localStorage.getItem("jobNum") }).then(
-          res => {
-            this.deptData = res.obj.depts;
-          }
-        );
+        res => {
+          this.deptData = res.obj.depts;
+        }
+      );
     },
     queryfindPerGetDetailsInfo() {
       findPerGetDetailsInfo({
@@ -702,9 +756,9 @@ export default {
             if (zlList[i].zjList != null) {
               for (let k in zlList[i].zjList) {
                 zlList[i].zjList[k].indexNumber = indexNum;
-                if (zlList[i].zjList[k].zj == "M3") {
-                  this.selectZj.add(zlList[i].zjList[k].number);
-                }
+                // if (zlList[i].zjList[k].zj == "M3") {
+                this.selectZj.add(zlList[i].zjList[k].number);
+                // }
                 indexNum++;
                 this.selectZjNameMap.set(
                   zlList[i].zjList[k].number,
@@ -829,7 +883,8 @@ export default {
           echartData,
           YearList,
           avgNumbeList,
-          nowYear,1
+          nowYear,
+          1
         );
         YearList = nowyearobj.YearList;
         avgNumbeList = nowyearobj.avgNumbeList;
@@ -958,13 +1013,21 @@ export default {
         ]
       });
     },
-    restSelectZj() {
-      this.checkboxlist;
+    //重置选择的职级(第一次进全选)
+    restSelectZj(type) {
       for (let k in this.checkboxlist) {
-        this.checkboxlist[k].zlchecked = false;
+        if (type == 1) {
+          this.checkboxlist[k].zlchecked = true;
+        } else {
+          this.checkboxlist[k].zlchecked = false;
+        }
       }
       for (let i = 0; i <= this.selectZjNameMap.size - 1; i++) {
-        this.$refs.checkboxes[i].toggle(false);
+        if (type == 1) {
+          this.$refs.checkboxes[i].toggle(true);
+        } else {
+          this.$refs.checkboxes[i].toggle(false);
+        }
       }
       this.selectZj.clear();
     },
@@ -1009,6 +1072,12 @@ export default {
             if (res.obj[t].zl == "合计") {
               this.tableDataAnnualSalary.push(res.obj[t]);
             }
+          }
+          //第一次请求不需要重置位置
+          if (queryObj) {
+            this.$nextTick(() => {
+              this.$refs.vanTabs.scrollTo("人均年薪");
+            });
           }
         } else {
           Toast.fail(res.msg);
@@ -1065,10 +1134,10 @@ export default {
       if (this.mAnnualSalary <= rowIndex && rowData.zl == "P类") {
         return "pClass";
       }
-      if (this.pAnnualSalary < rowIndex && rowData.zl == "S类") {
+      if (this.pAnnualSalary <= rowIndex && rowData.zl == "S类") {
         return "sClass";
       }
-      if (this.sAnnualSalary < rowIndex && rowData.zl == "O类") {
+      if (this.sAnnualSalary <= rowIndex && rowData.zl == "O类") {
         return "oClass";
       }
       if (
@@ -1082,6 +1151,91 @@ export default {
         return "heClass";
       }
     },
+    lineChart(rowIndex, rowData, column) {
+      this.lineChartShow = true;
+      var myCharts = this.$echarts.init(this.$refs.lineChart);
+      let chartData = [
+        rowData.lastTwelve,
+        rowData.one,
+        rowData.two,
+        rowData.three,
+        rowData.four,
+        rowData.five,
+        rowData.six,
+        rowData.seven,
+        rowData.eight,
+        rowData.nine,
+        rowData.ten,
+        rowData.eleven,
+        rowData.twelve
+      ];
+      function isInteger(obj) {
+        return obj % 1 === 0;
+      }
+      myCharts.setOption({
+        xAxis: {
+          type: "category",
+          data: [
+            "上年12月",
+            "1月",
+            "2月",
+            "3月",
+            "4月",
+            "5月",
+            "6月",
+            "7月",
+            "8月",
+            "9月",
+            "10月",
+            "12月"
+          ]
+        },
+        yAxis: {
+          type: "value",
+          axisLabel: {
+            show: true,
+            formatter: function(value, index) {
+              let text = "";
+              if (Math.abs(value) >= 10000) {
+                let divisionNum = value / 10000;
+                if (!isInteger(divisionNum)) {
+                  return (text = divisionNum.toFixed(2) + "万");
+                } else {
+                  return (text = divisionNum + "万");
+                }
+              } else if (Math.abs(value) >= 1000) {
+                let divisionNum = value / 1000;
+                if (!isInteger(divisionNum)) {
+                  return (text = divisionNum.toFixed(2) + "千");
+                } else {
+                  return (text = divisionNum + "千");
+                }
+              } else {
+                return value;
+              }
+            }
+          }
+        },
+        title: {
+          text: rowData.zj + "趋势图",
+          left: "center",
+          align: "right"
+        },
+        grid: {
+          left: 50
+        },
+        tooltip: {
+          trigger: "axis"
+        },
+        series: [
+          {
+            data: chartData,
+            type: "line",
+            smooth: true
+          }
+        ]
+      });
+    },
     //按顺序装填数组
     orderPush(list) {
       if (list) {
@@ -1090,7 +1244,8 @@ export default {
         }
       }
     },
-    selctdept(data,isDown) {
+    selctdept(data, isDown) {
+      this.lodingFlagAnnualSalary = true;
       if (data.length != 0) {
         this.queryfindPerYearInfo({
           jobnumber: this.ddJobNum,
@@ -1134,5 +1289,32 @@ export default {
 
 .heClass {
   background-color: #FFEBCD;
+}
+
+.bluejunpColor {
+  color: blue;
+}
+
+.lineChartWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.lineChartBox {
+  width: 300px;
+  height: 300px;
+  background-color: #fff;
+}
+
+.shodowRewards {
+  box-shadow: rgba(100, 101, 102, 0.12) -9px 5px 60px -10px;
+}
+.titleRewards{
+  font-size: 18px;font-weight: 700;;margin-top:20px;color:red
+}
+.labelStyle{
+  color:red
 }
 </style>

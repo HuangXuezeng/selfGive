@@ -1,99 +1,107 @@
 <template>
   <div style="padding-bottom: 20%;">
     <div>
-      <van-row type="flex" justify="left" style="margin-bottom:10px">
-        <van-col>
-          <div style="font-size: 18px;font-weight: 700;;margin-top:20px">
-            <span class="honghe"></span>
-            整体进度
-          </div></van-col
-        >
-      </van-row>
-      <van-dropdown-menu>
-        <van-dropdown-item v-model="years" :options="yearList" />
-      </van-dropdown-menu>
-      <van-row type="flex">
-        <van-col span="24">
-          <van-field
-            readonly
-            clickable
-            label="部门/组织"
-            v-model="selectedOrg"
-            placeholder="请选择部门/组织"
-            @click="showPicker1 = true"/>
-          <van-popup v-model="showPicker1" round position="bottom">
-            <van-picker
-              show-toolbar
-              :columns="columns"
-              @cancel="showPicker1 = false"
-              @confirm="
-                (value, index) => {
-                  onConfirm(value, index, '1');
-                }
-              "
-            /> </van-popup
-        ></van-col>
-      </van-row>
+      <div class="shodowRewards">
+        <van-row type="flex" justify="left" style="margin-bottom:10px">
+          <van-col>
+            <div class="titleRewards">
+              <span class="honghe"></span>
+              整体进度
+            </div></van-col
+          >
+        </van-row>
+        <van-dropdown-menu>
+          <van-dropdown-item v-model="years" :options="yearList" />
+        </van-dropdown-menu>
+        <van-row type="flex">
+          <van-col span="24">
+            <van-field
+              readonly
+              clickable
+              label="部门/组织"
+              label-class='labelStyle'
+              v-model="selectedOrg"
+              placeholder="请选择部门/组织"
+              @click="showPicker1 = true"/>
+            <van-popup v-model="showPicker1" round position="bottom">
+              <van-picker
+                show-toolbar
+                :columns="columns"
+                @cancel="showPicker1 = false"
+                @confirm="
+                  (value, index) => {
+                    onConfirm(value, index, '1');
+                  }
+                "
+              /> </van-popup
+          ></van-col>
+        </van-row>
+      </div>
       <div style="width:100%;height:600px">
         <div ref="ppt" :style="{ width: '100%', height: '600px' }"></div>
       </div>
     </div>
     <div>
-      <van-row type="flex" justify="left" style="margin-bottom:10px">
-        <van-col>
-          <div style="font-size: 18px;font-weight: 700;;margin-top:20px">
-            <span class="honghe"></span>
-            项目奖励进度
-          </div></van-col
-        >
-      </van-row>
-      <van-dropdown-menu>
-        <van-dropdown-item v-model="years" :options="yearList" />
-      </van-dropdown-menu>
-      <van-row type="flex">
-        <van-col span="24">
-          <van-field
-            readonly
-            clickable
-            label="部门/组织"
-            v-model="selectRewardName"
-            placeholder="请选择部门/组织"
-            @click="showPicker2 = true"/>
-          <van-popup v-model="showPicker2" round position="bottom">
-            <van-picker
-              show-toolbar
-              :columns="columns"
-              @cancel="showPicker = false"
-              @confirm="
-                (value, index) => {
-                  onConfirm(value, index, '2');
-                }
-              "
-            /> </van-popup
-        ></van-col>
-      </van-row>
-      <van-row type="flex">
-        <van-col span="24">
-          <van-field
-            readonly
-            clickable
-            label="奖励类型"
-            v-model="RewardTypeName"
-            placeholder="请选择奖励类型"
-            @click="showPicker = true"/>
-          <van-popup v-model="showPicker" round position="bottom">
-            <van-picker
-              show-toolbar
-              :columns="DetailsList"
-              @cancel="showPicker = false"
-              @confirm="RewardTypeConfirm"
-            /> </van-popup
-        ></van-col>
-      </van-row>
+      <div class="shodowRewards">
+        <van-row type="flex" justify="left" style="margin-bottom:10px">
+          <van-col>
+            <div class="titleRewards">
+              <span class="honghe"></span>
+              项目奖励进度
+            </div></van-col
+          >
+        </van-row>
+        <van-dropdown-menu>
+          <van-dropdown-item v-model="years" :options="yearList" />
+        </van-dropdown-menu>
+        <van-row type="flex">
+          <van-col span="24">
+            <van-field
+              readonly
+              clickable
+              label="部门/组织"
+              label-class='labelStyle'
+              v-model="selectRewardName"
+              placeholder="请选择部门/组织"
+              @click="showPicker2 = true"/>
+            <van-popup v-model="showPicker2" round position="bottom">
+              <van-picker
+                show-toolbar
+                :columns="columns"
+                @cancel="showPicker = false"
+                @confirm="
+                  (value, index) => {
+                    onConfirm(value, index, '2');
+                  }
+                "
+              /> </van-popup
+          ></van-col>
+        </van-row>
+        <van-row type="flex">
+          <van-col span="24">
+            <van-field
+              readonly
+              clickable
+              label="奖励类型"
+              label-class='labelStyle'
+              v-model="RewardTypeName"
+              placeholder="请选择奖励类型"
+              @click="showPicker = true"/>
+            <van-popup v-model="showPicker" round position="bottom">
+              <van-picker
+                show-toolbar
+                :columns="DetailsList"
+                @cancel="showPicker = false"
+                @confirm="RewardTypeConfirm"
+              /> </van-popup
+          ></van-col>
+        </van-row>
+      </div>
+
       <div style="width:100%" v-if="!showNodata">
         <div ref="pptv" :style="{ width: '100%', height: calcHight }"></div>
       </div>
-      <noData :showNodata='showNodata'></noData>
+      <noData :showNodata="showNodata"></noData>
     </div>
     <payTab></payTab>
   </div>
@@ -102,14 +110,15 @@
 <script>
 import { Picker, Toast, DropdownMenu, DropdownItem, Col, Row } from "vant";
 import payTab from "@/components/PayLibrary/pay-tab.vue";
-import  noData  from "@/components/noData.vue";
+import noData from "@/components/noData.vue";
 import {
   findRewardInfo,
   findRewardDetailsInfo
 } from "@/views/PayLibrary/PayLibrary.js";
 export default {
   components: {
-    payTab,noData
+    payTab,
+    noData
   },
   data() {
     return {
@@ -126,8 +135,8 @@ export default {
       DetailsList: [],
       selectRewardName: "",
       calcHight: "400px",
-      showNodata : false,
-      ddJobNum :localStorage.getItem('jobNum')
+      showNodata: false,
+      ddJobNum: localStorage.getItem("jobNum")
     };
   },
   created() {
@@ -157,16 +166,16 @@ export default {
           this.selectedOrg = queryobj.downDeptName;
         } else {
           //更新第二张表
-          this.RewardTypeName = ''
+          this.RewardTypeName = "";
           this.selectRewardName = queryobj.downDeptName;
           if (this.selectRewardName == "股份整体") {
             var myCharts = this.$echarts.init(this.$refs.pptv);
-            myCharts.clear()
-            this.showNodata = true
+            myCharts.clear();
+            this.showNodata = true;
             Toast.fail("暂无数据");
             return;
           }
-          this.showNodata = false
+          this.showNodata = false;
           this.updateFindRewardDetailsInfo(
             this.findDetail(queryobj.downDeptName)
           );
@@ -184,7 +193,7 @@ export default {
           this.selectedOrg = value.deptName;
         } else {
           this.selectRewardName = value.deptName;
-          this.RewardTypeName = ''
+          this.RewardTypeName = "";
           //更新第二张表
           this.updateFindRewardDetailsInfo(
             this.findDetail(queryobj.downDeptName)
@@ -226,9 +235,9 @@ export default {
         if (res.code == 1000) {
           if (res.obj.title != "股份整体") {
             this.RewardsInfo(res);
-            this.showNodata = false
+            this.showNodata = false;
           } else {
-            this.showNodata = true
+            this.showNodata = true;
           }
         } else {
           Toast.fail(res.msg);
@@ -265,22 +274,24 @@ export default {
       return queryData;
     },
     queryfindRewardDetailsInfo(queryobj) {
-      findRewardDetailsInfo({ jobnumber: this.ddJobNum, flag: "1" }).then(res => {
-        if (res.code == 1000) {
-          // debugger
-          if (res.obj.title != "股份整体") {
-            this.RewardsInfo(res);
-            this.showNodata = false
+      findRewardDetailsInfo({ jobnumber: this.ddJobNum, flag: "1" }).then(
+        res => {
+          if (res.code == 1000) {
+            // debugger
+            if (res.obj.title != "股份整体") {
+              this.RewardsInfo(res);
+              this.showNodata = false;
+            } else {
+              this.showNodata = true;
+            }
+            this.DetailsRes = res;
+            this.selectRewardName = res.obj.title;
+            this.findDetail(res.obj.title);
           } else {
-            this.showNodata = true
+            Toast.fail(res.msg);
           }
-          this.DetailsRes = res;
-          this.selectRewardName = res.obj.title;
-          this.findDetail(res.obj.title);
-        } else {
-          Toast.fail(res.msg);
         }
-      });
+      );
     },
     queryfindRewardInfo(queryobj) {
       let queryData = {};
@@ -622,5 +633,12 @@ export default {
   height: 15px;
   display: inline-block;
   background-color: red;
+}
+
+.shodowRewards {
+  box-shadow: rgba(100, 101, 102, 0.12) -9px 5px 60px -10px;
+}
+.titleRewards{
+  font-size: 18px;font-weight: 700;;margin-top:20px;color:red
 }
 </style>
