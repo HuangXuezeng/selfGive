@@ -7,6 +7,7 @@
       :placeholder="deptPlacehoder"
       :rules="reqireRule"
       type="textarea"
+      :autosize='autosize'
       :label-class='labelStyle'
       readonly
     />
@@ -140,7 +141,8 @@ export default {
       beforeSelectName: "",
       SelectNameMap: null,
       selectAllstyle: "background-color:Coral",
-      labelStyle:''
+      labelStyle:'',
+      autosize:{maxHeight: 100, minHeight: 20}
     };
   },
   created() {
@@ -161,6 +163,7 @@ export default {
         this.deptPlacehoder = "请选择部门"
       }else{
         this.selectedDepartment = "全部";
+        this.labelStyle = 'labelStyle'
       }
       this.closeableFlag = false;
     }

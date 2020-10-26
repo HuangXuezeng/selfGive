@@ -18,7 +18,7 @@
             <van-field
               readonly
               clickable
-              label="部门/组织"
+              label="部门/组织:"
               label-class='labelStyle'
               v-model="selectedOrg"
               placeholder="请选择部门/组织"
@@ -59,7 +59,7 @@
             <van-field
               readonly
               clickable
-              label="部门/组织"
+              label="部门/组织:"
               label-class='labelStyle'
               v-model="selectRewardName"
               placeholder="请选择部门/组织"
@@ -82,7 +82,7 @@
             <van-field
               readonly
               clickable
-              label="奖励类型"
+              label="奖励类型:"
               label-class='labelStyle'
               v-model="RewardTypeName"
               placeholder="请选择奖励类型"

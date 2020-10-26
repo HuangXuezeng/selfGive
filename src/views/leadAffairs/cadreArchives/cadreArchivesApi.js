@@ -81,4 +81,29 @@ export function findCadreAbility (queryData) {
     data: qs.stringify(queryData)
   })
 }
+//获取个人信息
+export function findCadreTrainInfo (queryData) {
+  return fetch({
+    url: `/kukacms/self/findCadreTrainInfo`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//获取个人信息
+export function findCadreTeamBuilding (queryData) {
+  return fetch({
+    url: `/kukacms/self/findCadreTeamBuilding`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//获取个人信息
+export function findCadreAchieveInfo (queryData) {
+  return fetch({
+    url: `/kukacms/self/findCadreAchieveInfo`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+
 

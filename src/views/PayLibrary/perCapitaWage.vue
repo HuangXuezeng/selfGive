@@ -22,7 +22,7 @@
               <van-field
                 readonly
                 clickable
-                label="年/月"
+                label="年/月:"
                 label-class='labelStyle'
                 v-model="selectedyear"
                 placeholder="请选择年月"
@@ -71,7 +71,7 @@
               <van-field
                 readonly
                 clickable
-                label="职级"
+                label="职级:"
                 label-class='labelStyle'
                 v-model="selectzjName"
                 placeholder="请选择职级"
@@ -160,7 +160,7 @@
           <choosedepartment
             @confirmNode="selctdept"
             :Farequired="true"
-            labelTitle="部门"
+            labelTitle="部门:"
             :workingNum="true"
             :isSelctall="true"
             :faDeptData="deptData"
@@ -1312,7 +1312,7 @@ export default {
   box-shadow: rgba(100, 101, 102, 0.12) -9px 5px 60px -10px;
 }
 .titleRewards{
-  font-size: 18px;font-weight: 700;;margin-top:20px;color:red
+  font-size: 18px;font-weight: 700;;margin-top:20px;color:red;
 }
 .labelStyle{
   color:red

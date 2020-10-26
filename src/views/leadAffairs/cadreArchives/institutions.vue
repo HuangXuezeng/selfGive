@@ -37,7 +37,8 @@ export default {
       deptList: [],
       achlist: [],
       defaultAvatar: "src/assets/timg.jpg",
-      nextDeptlist:{}
+      nextDeptlist:{},
+      ddJobNum: localStorage.getItem("jobNum"),
     };
   },
   created() {
@@ -45,7 +46,7 @@ export default {
   },
   methods: {
     queryInstitiu() {
-      findCadreDept({ jobnumber:6006212}).then(res => {
+      findCadreDept({ jobnumber:this.ddJobNum}).then(res => {
         if (res.code == 1000) {
           for (let i in res.obj) {
             //进行数据的转换

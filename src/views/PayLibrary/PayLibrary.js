@@ -37,7 +37,7 @@ export function findPerGetDetailsInfo (queryData) {
     data: JSON.stringify(queryData)
   })
 }
-//平均年薪部门选择
+//平均年薪
 export function findPerYearInfo (queryData) {
   return fetch({
     url: `/kukacms/self/findPerYearInfo`,
@@ -51,6 +51,14 @@ export function findPerYearInfo (queryData) {
 export function findPayrollDept (queryData) {
   return fetch({
     url: `/kukacms/self/findPayrollDept`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//薪资库查询
+export function findPayrollInfo (queryData) {
+  return fetch({
+    url: `/kukacms/self/findPayrollInfo`,
     method: 'post',
     data: qs.stringify(queryData)
   })
