@@ -871,7 +871,7 @@ export default {
       });
     },
     queryfindCadreAbility() {
-      findCadreAbility({ jobnumber: '6201092' }).then(res => {
+      findCadreAbility({ jobnumber: this.itemjobnumber }).then(res => {
         // debugger;
         this.listAbility = res.obj;
         if (res.obj.length == 0) {
@@ -896,7 +896,7 @@ export default {
       });
     },
     queryfindCadreAchieveInfo(){
-      findCadreAchieveInfo({ jobnumber: '9050104' }).then(res =>{
+      findCadreAchieveInfo({ jobnumber: this.itemjobnumber }).then(res =>{
         this.cadreAchieveInfoList = res.obj
       })
     },

@@ -181,27 +181,27 @@ export default {
         
       },
       briefColumns: [
-        {
-          field: "custome",
-          title: "序号",
-          width: 80,
-          titleAlign: "center",
-          columnAlign: "center",
-          isResize: true,
-          titleCellClassName: "titleclass",
-          isFrozen: true,
-          formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return (
-              '<span style="color:red;font-weight: bold;">' +
-              (rowIndex + 1) +
-              "</span>"
-            );
-          }
-        },
+        // {
+        //   field: "custome",
+        //   title: "序号",
+        //   width: 80,
+        //   titleAlign: "center",
+        //   columnAlign: "center",
+        //   isResize: true,
+        //   titleCellClassName: "titleclass",
+        //   isFrozen: true,
+        //   formatter: function(rowData, rowIndex, pagingIndex, field) {
+        //     return (
+        //       '<span style="color:red;font-weight: bold;">' +
+        //       (rowIndex + 1) +
+        //       "</span>"
+        //     );
+        //   }
+        // },
         {
           field: "a0101",
           title: "姓名",
-          width: 120,
+          width: 80,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -210,7 +210,7 @@ export default {
         {
           field: "a8602005",
           title: "调整前",
-          width: 120,
+          width: 80,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -218,8 +218,8 @@ export default {
         },
         {
           field: "a8602010",
-          title: "月固薪",
-          width: 120,
+          title: "调整后",
+          width: 80,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -228,7 +228,7 @@ export default {
         {
           field: "txfd",
           title: "幅度",
-          width: 120,
+          width: 50,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -237,7 +237,7 @@ export default {
         {
           field: "A8602014",
           title: "调薪日期",
-          width: 120,
+          width: 110,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -308,6 +308,7 @@ export default {
             titleAlign: "center",
             columnAlign: "center",
             isResize: true,
+            isFrozen: true,
             titleCellClassName: "titleclass"
           },
           {
