@@ -1,7 +1,24 @@
 <template>
     <div>
         <div class="header">
-            <van-field v-model="form.department" @click="pickDept" readonly label="部门" placeholder="请选择部门(必填)" />
+            <!-- <van-field v-model="form.department" @click-input="pickDept" readonly label="部门" placeholder="请选择部门(必填)" >
+                <template #button>
+                    <i size="small" type="primary" @click="showMore"><van-icon name="more-o" color="#5bb8ff"/></i>
+                </template>
+            </van-field> -->
+            <!-- 选择部门 -->
+            <div style="border-bottom:1px solid #ebedf0">
+                <choosedepartment
+                    ref="select"
+                    @confirmNode="selctdept"
+                    :Farequired="true"
+                    labelTitle="部门"
+                    :workingNum="true"
+                    :isSelctall='true'
+                    :isFromRost='true'
+                    :faDeptData='deptData'
+                ></choosedepartment>
+            </div>
             <van-field v-model="form.jobnumber" label="工号" placeholder="请输入工号" />
             <van-field v-model="form.name" label="姓名" placeholder="请输入姓名" />
             <van-field v-model="form.startTime" label="开始时间" @click="startTimeClick" readonly placeholder="请选择(必填)" />
@@ -41,31 +58,42 @@
             />
         </van-popup>
         <!-- 人数表格 -->
-        <div class="table">
-            <v-table 
-            ref="table" 
-            columns-width-drag
-            :height="400"
-            title-bg-color="#e5ecf0"
-            :columns="columns"
-            :table-data="tableData" 
-            row-hover-color="#eee" 
-            row-click-color="#edf7ff" 
-            :row-click="rowClick"
-            :paging-index="(pageIndex-1)*pageSize"   	
-            ></v-table>	
+        <div v-if="seeTable">
+            <div class="table">
+                <v-table 
+                ref="table" 
+                columns-width-drag
+                :height="400"
+                style="font-size:14px"
+                title-bg-color="#e5ecf0"
+                :columns="columns"
+                :table-data="tableData" 
+                row-hover-color="#eee" 
+                row-click-color="#edf7ff" 
+                :row-click="rowClick"
+                :paging-index="(pageIndex-1)*pageSize"   	
+                ></v-table>	
+            </div>
+            <div class="more">
+                <van-tag type="warning">总条数：{{total}}</van-tag>
+                <span style="float:right" @click="loadMore"><van-tag type="warning">下一页</van-tag></span>
+            </div>
         </div>
-        <div class="more">
-            <van-tag type="warning">总条数：{{total}}</van-tag>
-            <span style="float:right" @click="loadMore"><van-tag type="warning">下一页</van-tag></span>
-        </div>
+        <!-- 查看更多选择的部门名称 -->
+        <van-dialog v-model="showMoreDept" title="选择的部门" get-container="body">
+            <div class="deptcontent">{{this.form.department}}</div>
+        </van-dialog>
     </div>
 </template>
 <script>
 import { Field,Button,DatetimePicker,Popup,Notify,Dialog } from 'vant'
+import chooseDepartment from "@/components/chooseDepartment.vue";
 import { mapMutations } from 'vuex'
 import { queryChanges } from './api'
 export default {
+components: {
+    choosedepartment: chooseDepartment
+    },
   data () {
     return {
         form:{
@@ -75,9 +103,10 @@ export default {
             startTime:'', //开始日期
             endTime:'', //结束日期
             classic:'', //异动分类
-            deptIdStr:'', //选择的部门id集合
+            deptIdStr: '', //选择的部门id集合
         },
         showPickDept: false, //选择部门弹出窗
+        showMoreDept: false, //查看更多选择的部门名称
         deptData: [], //部门数据
         props: {
           label: 'content',
@@ -259,6 +288,7 @@ export default {
             },									
         ],
         defaultCheckedKeys:[], //选中的节点
+        seeTable: false, //有数据显示
     };
   },
   created(){
@@ -273,13 +303,14 @@ export default {
     },
     //按条件查询
     search(){
-        if(this.form.department == ''){
+        if(this.$refs.select.selectedDepartment == ''){
             Notify({ type: 'warning', message: '请选择部门！' })
         }else if(this.form.startTime == ''){
             Notify({ type: 'warning', message: '请选择开始时间！' })
         }else if(this.form.endTime == ''){
             Notify({ type: 'warning', message: '请选择结束时间！' })
         }else{
+            this.seeTable = true
             let queryData = {}
             queryData = this.form
             queryChanges(queryData).then(res=>{
@@ -298,8 +329,10 @@ export default {
             endTime:'', //结束日期
             classic:'', //异动分类
         }
-        //清空tree
-        this.$refs.tree.setCheckedKeys([]);
+        // //清空tree
+        // this.$refs.tree.setCheckedKeys([]);
+        this.$refs.select.selectedDepartment = ''
+        this.$refs.select.restFlag = true
     },
     //选择部门
     pickDept(){
@@ -377,6 +410,10 @@ export default {
             this.tableData = this.tableData.concat(this.fenyeData[this.dataIndex])
         }
     },
+    //查看更多选择框里面的部门内容
+    showMore(){
+        this.showMoreDept = true
+    },
     //处理表格的分页方法
     pagePev(){
         this.total = this.tableData.length
@@ -388,6 +425,14 @@ export default {
         // console.log(result)
         this.tableData = result[0] //默认显示100条
         this.fenyeData = result
+    },
+    //选择部门
+    selctdept(data) {
+    //   console.log(data)
+    //数组转字符串
+      this.form.deptIdStr = data.toString()
+      console.log(this.form.deptIdStr)
+    //   this.deptVal = data
     },
     ...mapMutations({
         save_jobNum:'save_jobNum',
@@ -431,5 +476,11 @@ export default {
     .more{
         font-size 14px
         padding 10px
+    }
+    .deptcontent{
+        padding 10px
+        height 400px
+        line-height 30px
+        overflow auto
     }
 </style>

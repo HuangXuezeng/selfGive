@@ -49,28 +49,28 @@
         <!-- 按学历 -->
         <div class="post">
             <p class="titlea"><span class="borleft"></span> 按学历</p>
-            <div class="postrank">
+            <div class="ages">
                 <div class="pie" ref="chart1" id="chart1"></div>
             </div>
         </div>
         <!-- 按年龄 -->
         <div class="post">
             <p class="titlea"><span class="borleft"></span> 按年龄</p>
-            <div class="postrank">
+            <div class="ages">
                 <div class="pie" ref="chart2" id="chart2"></div>
             </div>
         </div>
         <!-- 按性别 -->
         <div class="post">
             <p class="titlea"><span class="borleft"></span> 按性别</p>
-            <div class="postrank">
+            <div class="ages">
                 <div class="pie" ref="chart3" id="chart3"></div>
             </div>
         </div>
         <!-- 按司龄 -->
         <div class="post">
             <p class="titlea"><span class="borleft"></span> 按司龄</p>
-            <div class="postrank">
+            <div class="ages">
                 <div class="pie" ref="chart4" id="chart4"></div>
             </div>
         </div>
@@ -81,7 +81,7 @@
                 <v-table 
                 ref="table" 
                 is-horizontal-resize
-                style="width:100%"
+                style="width:100%;font-size:14px"
                 columns-width-drag
                 title-bg-color="#e5ecf0"
                 :columns="columns"
@@ -115,9 +115,9 @@
               ref="pop_table"
               is-horizontal-resize
               :is-loading="isLoading"
-              style="width:100%"
               columns-width-drag
               :height="400"
+              style="width:100%;font-size:14px"
               title-bg-color="#ccc"
               :columns="popupColumns"
               :table-data="popupTableData" 
@@ -209,7 +209,11 @@ components: {
     },
     //弹窗表格中的行点击
     rowClick3(rowIndex, rowData, column){
-        console.log(rowData)
+        // console.log(rowData)
+        this.save_jobNum(rowData.jobnumber)
+        this.from_page(2) //存标识，从哪个页面过来的
+        // this.scroll_top(document.getElementsByClassName("v-table-body")[0].scrollTop)
+        this.$router.push({name:'basicMsg'})
     },
     //加载更多数据
     loadMore(){
@@ -300,7 +304,7 @@ components: {
         // 　　tooltip: {},
             legend:{
               // textStyle:{color:'#f00'},
-              orient: 'vertical',
+            //   orient: 'vertical',
               left: 'left',
               padding: 20
             },
@@ -321,7 +325,12 @@ components: {
                     position:'outer',
                     alignTo:'edge',
                     margin:10,
-                    formatter: '{c}人 {d}%'
+                    formatter: '{c}人 {d}% \n\n',
+                    padding: [0,50],
+                    textStyle: {
+                        color: "#f64971",
+                        fontWeight: "700"
+                    }
                   }
                 },
         　　data: [
@@ -334,13 +343,13 @@ components: {
               ],
               itemStyle: {
                   normal: {
-                  color: function(params) {
-                          //自定义颜色
-                          var colorList = [
-                          'skyblue', 'lightgreen', 'orange','pink','#f66bbf','#e02c28'
-                          ];
-                          return colorList[params.dataIndex]
-                      }
+                    color: function(params) {
+                        //自定义颜色
+                        var colorList = [
+                        'skyblue', 'lightgreen', 'orange','pink','#f66bbf','#e02c28'
+                        ];
+                        return colorList[params.dataIndex]
+                    }
                   }
               }
         　　}]
@@ -491,6 +500,7 @@ components: {
                 {
                     label: seriesLabel,
                     // name: '2011年',
+                    barWidth: 25,
                     type: 'bar',
                     data: data1,
                     itemStyle: {
@@ -654,6 +664,7 @@ components: {
             },
             series: [{
                 label: seriesLabel,
+                barWidth: 25,
                 data: [
                         {name:this.ageTeam.age25Pct,value:this.ageTeam.age25Count,title:'25岁以下'},
                         {name:this.ageTeam.age25to35Pct,value:this.ageTeam.age25to35Count,title:'25-35岁'},
@@ -872,14 +883,19 @@ components: {
                     position:'outer',
                     alignTo:'edge',
                     margin:10,
-                    formatter: '{c}人 {d}%',
+                    formatter: '{c}人 {d}% \n\n',
+                    padding: [0,0],
+                    textStyle: {
+                        color: "#f64971",
+                        fontWeight: "700"
+                    }
                   }
                 },
                 labelLine: {   //引导线设置
                     normal: {
                         show:true,       //引导线不显示
-                        length:5 
-                    }
+                        length:5 ,
+                    },
                 },
         　　data: [
                 {name:'6个月及以下',value:this.jobAgeTeam.jobAge6mCount},
@@ -1110,11 +1126,15 @@ components: {
     },
     //vuex
     ...mapMutations({
-        arr_flag:'arr_flag'
+        arr_flag:'arr_flag',
+        save_jobNum:'save_jobNum',
+        from_page:'from_page',
     }),
   },
   mounted(){
     // document.getElementsByClassName("bodycontain")[0].addEventListener('scroll', this.scrool)
+    // document.body.scrollTop = 0
+    // console.log(document.body.scrollTop)
 　},
 watch:{
     '$store.state.arrflag': function (newVal,oldVal) {
@@ -1215,6 +1235,14 @@ watch:{
         }
         .postrank{
             height 500px
+            background-color #f6f6f8
+            .pie{
+                width 100%
+                height 100%
+            }
+        }
+        .ages{
+            height 350px
             background-color #f6f6f8
             .pie{
                 width 100%

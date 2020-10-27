@@ -138,7 +138,8 @@ export default {
       selectkeySet: null,
       beforeSelectName: "",
       SelectNameMap: null,
-      selectAllstyle: "background-color:Coral"
+      selectAllstyle: "background-color:Coral",
+      restFlag: false //花名册清空勾选
     };
   },
   created() {
@@ -344,6 +345,15 @@ export default {
         }
       });
     }
+  },
+  watch:{
+    'restFlag' : function(newVal,oldVal){
+        // console.log(this.restFlag)
+      if(this.restFlag == true){
+        this.$refs.tree.setCheckedKeys([])
+        this.restFlag = false
+      }
+    }
   }
 };
 </script>
@@ -359,17 +369,18 @@ export default {
 }
 
 .butnPos {
+  padding 10px
   display: flex;
   justify-content: space-between;
 }
 
 .buttonChoose {
   display: inline-block;
-  width: 17vh;
-  height: 5vh;
+  width: 16vh;
+  height: 4vh;
   text-align: center;
   border: 1px solid #ccc;
-  line-height: 5vh;
+  line-height: 4vh;
   color: #fff;
   border-radius: 12px;
 }

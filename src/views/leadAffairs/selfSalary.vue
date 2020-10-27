@@ -3,7 +3,7 @@
       <div class="box">
         <div class="box_left" v-if="flag">
           <!-- 左导航栏 -->
-          <van-sidebar v-model="activeKey" class="van-sidebar">
+          <van-sidebar v-model="activeKey" @change="onChange" class="van-sidebar">
               <van-sidebar-item title="花名册" to="roster"/>
               <van-sidebar-item title="流失率" to="retention"/>
               <van-sidebar-item title="人员结构" to="perStructure"/>
@@ -12,7 +12,6 @@
           </van-sidebar>
         </div>
         <div class="box_right" ref="right">
-          <!-- <button @click="hiddle">haha</button> -->
           <span @click="hiddle" class="arrow" v-if="hideleArr">
             <van-icon name="arrow-left" color="orange" />
           </span>
@@ -71,14 +70,28 @@ export default {
       this.$refs.right.style.width = ''
       this.$refs.right.children[0].style.left = ''
     },
+    //导航栏点击时
+    onChange() {
+      // console.log(document.getElementsByClassName("box")[0].scrollTop)
+      // console.log(document.getElementsByClassName("box_right"))
+      // document.getElementsByClassName("box_right")[0].scrollTop = 0
+      // console.log(document.body.scrollTop)
+      // document.getElementsByClassName("rightcont")[0].scrollTop = 0
+      
+    },
+    // scrollHandle(){
+    //     let top = document.getElementsByClassName("container")[0].scrollTop;    // 获取页面滚动高度
+    //     console.log(top);
+    // },
     ...mapMutations({
       save_type:'save_type',
       arr_flag:'arr_flag'
     })
   },
   mounted(){
-    
-  }
+    // console.log(this.$refs.right.style.height)
+    // window.addEventListener('scroll',this.scrollHandle);//绑定页面滚动事件
+  },
 }
 </script>
 <style lang="stylus" scoped>

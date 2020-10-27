@@ -118,7 +118,7 @@ export default {
           this.mechanismPath(assignData);
           this.selectedDepartment = data.content
           this.showPickDept = false;
-          Notify("选择成功");
+          Notify({ type: 'success', message: '选择成功' });
 
       } else if (this.selectOrg.orgsid.length === 0 && checked) {
         // 发现数组为空 并且是已选择
@@ -134,7 +134,7 @@ export default {
         }else{
           this.showPickDept = false;
           this.onSelected=''
-          Notify("选择成功");
+          Notify({ type: 'success', message: '选择成功' });
         }
 
       } else if (

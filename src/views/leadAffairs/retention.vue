@@ -62,7 +62,7 @@
               <v-table 
               ref="table" 
               is-horizontal-resize
-              style="width:100%"
+              style="width:100%;font-size:14px"
               columns-width-drag
               title-bg-color="#e5ecf0"
               :columns="columns"
@@ -89,7 +89,7 @@
               <v-table 
               ref="table"
               is-horizontal-resize
-              style="width:100%"
+              style="width:100%;font-size:14px"
               columns-width-drag 
               title-bg-color="#e5ecf0"
               :columns="columns1"
@@ -151,7 +151,7 @@
               <v-table 
               ref="table" 
               is-horizontal-resize
-              style="width:100%"
+              style="width:100%;font-size:14px"
               columns-width-drag
               :height="400"
               title-bg-color="#ccc"
@@ -285,7 +285,7 @@ export default {
         {field: 'department', title: '部门',width: 150, titleAlign: 'center',columnAlign:'center',isResize:true},
         {field: 'post', title: '岗位',width: 100, titleAlign: 'center',columnAlign:'center',isResize:true},
         {field: 'rank', title: '职级',width: 100, titleAlign: 'center',columnAlign:'center',isResize:true},
-      ]
+      ],
     };
   },
   created(){
@@ -337,7 +337,10 @@ export default {
     },
     //弹窗表格中的行点击
     rowClick3(rowIndex, rowData, column){
-        console.log(rowData)
+        // console.log(rowData)
+        this.save_jobNum(rowData.jobnumber)
+        this.from_page(3) //存标识，从哪个页面过来的
+        this.$router.push({name:'basicMsg'})
     },
     //单元格样式
     columnCellClass(rowIndex,columnName,rowData){
@@ -347,22 +350,23 @@ export default {
     },
     //按岗位分类一
     initCharts () {
+        console.log(this.totalData.postMap.yxl.runoffRate)
     　　let myChart = this.$echarts.init(this.$refs.chart);
         let seriesLabel = {
-              normal: {
-                show: true,
-                position: 'insideLeft',	//在上方显示
-                textBorderWidth: 2,
-                formatter: `{c}人 {b}`,
-              }
+          normal: {
+            show: true,
+            position: 'insideLeft',	//在上方显示
+            textBorderWidth: 2,
+            formatter: `{c}人 {b}`,
           }
+        }
         let data1 = [
-              {name:this.totalData.postMap.gd.runoffRate,value:this.totalData.postMap.gd.runoffSum},
-              {name:this.totalData.postMap.zjl.runoffRate,value:this.totalData.postMap.zjl.runoffSum},
-              {name:this.totalData.postMap.yxl.runoffRate,value:this.totalData.postMap.yxl.runoffSum},
-              {name:this.totalData.postMap.jsl.runoffRate,value:this.totalData.postMap.jsl.runoffSum},
-              {name:this.totalData.postMap.znl.runoffRate,value:this.totalData.postMap.znl.runoffSum},
-          ];
+          {name:this.totalData.postMap.gd.runoffRate,value:this.totalData.postMap.gd.runoffSum},
+          {name:this.totalData.postMap.zjl.runoffRate,value:this.totalData.postMap.zjl.runoffSum},
+          {name:this.totalData.postMap.yxl.runoffRate,value:this.totalData.postMap.yxl.runoffSum},
+          {name:this.totalData.postMap.jsl.runoffRate,value:this.totalData.postMap.jsl.runoffSum},
+          {name:this.totalData.postMap.znl.runoffRate,value:this.totalData.postMap.znl.runoffSum},
+        ]
         let data2 = [
           {name:'股东'},
           {name:'直接类'},
@@ -402,6 +406,7 @@ export default {
             series: [
               {
                 label: seriesLabel,
+                barWidth: 25,
                 // name: '2011年',
                 type: 'bar',
                 data: data1,
@@ -772,7 +777,9 @@ export default {
     },
     ...mapMutations({
       save_type:'save_type',
-      arr_flag:'arr_flag'
+      arr_flag:'arr_flag',
+      save_jobNum:'save_jobNum',
+      from_page:'from_page'
     })
   },
   mounted(){

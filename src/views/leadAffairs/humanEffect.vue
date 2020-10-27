@@ -18,6 +18,7 @@
               <v-table 
               ref="table"
               :height="400" 
+              style="font-size:14px"
               title-bg-color="#e5ecf0"
               :columns="columns1"
               :table-data="tableData" 
@@ -167,7 +168,7 @@ export default {
     },
     //查询
     search(){
-
+      
     },
     initCharts () {
     　　let myChart = this.$echarts.init(this.$refs.chart);

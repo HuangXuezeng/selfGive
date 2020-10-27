@@ -32,6 +32,7 @@
             columns-width-drag
             :is-loading="isLoading"
             :height="400"
+            style="font-size:14px"
             title-bg-color="#e5ecf0"
             :columns="columns"
             :table-data="tableData" 
@@ -534,6 +535,7 @@ export default {
             name: '',
         }
         this.$refs.select.selectedDepartment = ''
+        this.$refs.select.restFlag = true
     },
     //更多查询条件
     moreSearch(){

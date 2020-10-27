@@ -10,6 +10,12 @@
               <div class="back" @click="backChanges" v-if="seeFlag == 1">
                 <i class="iconfont icon-fanhui"></i> 返回
               </div>
+              <div class="back" @click="backperStr" v-if="seeFlag == 2">
+                <i class="iconfont icon-fanhui"></i> 返回
+              </div>
+              <div class="back" @click="backRetStr" v-if="seeFlag == 3">
+                <i class="iconfont icon-fanhui"></i> 返回
+              </div>
                 <div class="contain">
                     <div>
                         <div><span style="font-weight:700">{{personObj.a0101}}</span><span style="float:right"><img class="img" :src="personObj.photo" alt=""></span></div>
@@ -141,6 +147,16 @@ export default {
     //返回人员异动
     backChanges(){
       this.$router.push({name:'changes',params:{scrollTop:this.$store.state.scrollTop}})
+      this.scroll_top(0)
+    },
+    //返回人员结构
+    backperStr(){
+      this.$router.push({name:'perStructure'})
+      this.scroll_top(0)
+    },
+    //返回流失率
+    backRetStr(){
+      this.$router.push({name:'retention'})
       this.scroll_top(0)
     },
     ...mapMutations({
