@@ -63,3 +63,13 @@ export function findPayrollInfo (queryData) {
     data: qs.stringify(queryData)
   })
 }
+//薪资库搜索天剑查询
+export function findPayrollInfoBySearch (queryData) {
+  return fetch({
+    url: `/kukacms/self/findPayrollInfoBySearch`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}

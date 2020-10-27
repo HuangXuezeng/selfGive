@@ -580,9 +580,13 @@ export default {
         this.save_type(sortNum)
         this.$router.push({name:'perCapitaWage',params: { salaryFlag: 1 }})
         break;
-         case '人均工资':
+        case '人均工资':
         this.save_type(sortNum)
         this.$router.push({name:'perCapitaWage',params: { salaryFlag: 0 }})
+        break;
+        case '薪资库':
+        this.save_type(sortNum)
+        this.$router.push({name:'SalaryLibrary'})
         break;
         case '干部档案':
         this.save_type(sortNum)
