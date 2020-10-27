@@ -68,7 +68,9 @@ export default {
       nextpage: 1,
       searchValue: "",
       loadFlag: true,
-      searchList: []
+      searchList: [],
+      ddJobNum: localStorage.getItem("jobNum"),
+      firstIn:1
     };
   },
   created() {
@@ -77,7 +79,7 @@ export default {
   methods: {
     //请求数据
     queryDepartmentPersonnel() {
-      findCadreRosterInfo({ jobnumber: 6003305, pageNum: this.nextpage }).then(
+      findCadreRosterInfo({ jobnumber: this.ddJobNum, pageNum: this.nextpage }).then(
         res => {
           if (res.code == "1000") {
             if (res.obj.length != 0) {
@@ -101,7 +103,7 @@ export default {
       this.$refs.loadingSpin.showUp();
       let queryData = {
         jobnumber: this.searchValue,
-        jobnumber1: "6006234"
+        jobnumber1: this.ddJobNum
       };
       await this.searchQuery(queryData);
 

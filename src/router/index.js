@@ -386,6 +386,11 @@ export default new Router({
       name: 'perCapitaWage',
       component: () => import('@/views/PayLibrary/perCapitaWage'),
     },
+    {
+      path: '/SalaryLibrary',
+      name: 'SalaryLibrary',
+      component: () => import('@/views/PayLibrary/SalaryLibrary'),
+    },
     /**
      * 薪酬结束
      */

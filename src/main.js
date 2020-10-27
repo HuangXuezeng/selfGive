@@ -61,6 +61,9 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.use(ElementUI);
+router.afterEach((to, from, next) => {
+  window.scrollTo(0, 0)
+})
 
 Vue.config.productionTip = false
 
