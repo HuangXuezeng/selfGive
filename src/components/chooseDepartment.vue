@@ -7,8 +7,8 @@
       :placeholder="deptPlacehoder"
       :rules="reqireRule"
       type="textarea"
-      :autosize='autosize'
-      :label-class='labelStyle'
+      :autosize="autosize"
+      :label-class="labelStyle"
       readonly
     />
     <van-popup
@@ -18,7 +18,7 @@
       get-container="body"
       :closeable="closeableFlag"
     >
-      <div style="padding-bottom:10%">
+      <div style="padding-bottom:12%">
         <!-- <van-switch :value="isDownValue" @input="isDownMethods" /> -->
         <van-cell
           center
@@ -107,8 +107,8 @@ export default {
       type: Boolean,
       default: false
     },
-    faDeptData:{
-      type: Array,
+    faDeptData: {
+      type: Array
     },
     isFromRost: {
       type: Boolean,
@@ -141,9 +141,9 @@ export default {
       beforeSelectName: "",
       SelectNameMap: null,
       selectAllstyle: "background-color:Coral",
-      labelStyle:'',
-      restFlag: false ,//花名册清空勾选,
-      autosize:{maxHeight: 100, minHeight: 20}
+      labelStyle: "",
+      restFlag: false, //花名册清空勾选,
+      autosize: { maxHeight: 100, minHeight: 20 }
     };
   },
   created() {
@@ -159,12 +159,12 @@ export default {
   mounted() {
     if (this.isSelctall) {
       this.strictlyFlag = false;
-       if (this.isFromRost) {
+      if (this.isFromRost) {
         this.selectedDepartment = "";
-        this.deptPlacehoder = "请选择部门"
-      }else{
+        this.deptPlacehoder = "请选择部门";
+      } else {
         this.selectedDepartment = "全部";
-        this.labelStyle = 'labelStyle'
+        this.labelStyle = "labelStyle";
       }
       this.closeableFlag = false;
     }
@@ -185,8 +185,10 @@ export default {
         this.$refs.tree.setChecked({ deptId: this.opennode }, true);
         this.openlist = [this.opennode];
         if (this.isSelctall && this.firstIn == 1) {
-          this.deptData = this.faDeptData
-          if(!this.isFromRost){
+          debugger;
+          this.deptData = this.faDeptData;
+          this.openlist = [this.faDeptData[0].deptId];
+          if (!this.isFromRost) {
             this.selctAllNodeMeth();
           }
           this.firstIn++;
@@ -212,7 +214,7 @@ export default {
           let assignData = Object.assign({}, data);
           this.mechanismPath(assignData);
           this.showPickDept = false;
-           Notify({ type: 'success', message: '选择成功' });
+          Notify({ type: "success", message: "选择成功" });
         } else if (this.selectOrg.orgsid.length === 0 && checked) {
           // 发现数组为空 并且是已选择
           // 防止数组有值，首先清空，再push
@@ -226,7 +228,7 @@ export default {
           } else {
             this.showPickDept = false;
             this.onSelected = "";
-             Notify({ type: 'success', message: '选择成功' });
+            Notify({ type: "success", message: "选择成功" });
           }
         } else if (this.selectOrg.orgsid.length === 1 && !checked) {
           // 再次直接进行赋值为空操作
@@ -317,10 +319,10 @@ export default {
       }
       this.$emit("confirmNode", selctArray, isDown);
       this.showPickDept = false;
-      Notify({ type: 'success', message: '选择成功' });
-      if(this.beforeSelectName.split(',').length  != 1){
+      Notify({ type: "success", message: "选择成功" });
+      if (this.beforeSelectName.split(",").length != 1) {
         this.selectedDepartment = this.beforeSelectName.slice(1);
-      }else{
+      } else {
         this.selectedDepartment = this.beforeSelectName;
       }
     },
@@ -332,7 +334,7 @@ export default {
       this.$refs.tree.setCheckedKeys([this.deptData[0].deptId], false);
       this.selectkeySet.clear();
       this.selectkeySet.add(this.deptData[0].deptId);
-      this.beforeSelectName = '全部'
+      this.beforeSelectName = "全部";
     },
     //开关按钮方法
     isDownMethods(isDownValue) {
@@ -355,12 +357,12 @@ export default {
       });
     }
   },
-  watch:{
-    'restFlag' : function(newVal,oldVal){
-        // console.log(this.restFlag)
-      if(this.restFlag == true){
-        this.$refs.tree.setCheckedKeys([])
-        this.restFlag = false
+  watch: {
+    restFlag: function(newVal, oldVal) {
+      // console.log(this.restFlag)
+      if (this.restFlag == true) {
+        this.$refs.tree.setCheckedKeys([]);
+        this.restFlag = false;
       }
     }
   }
@@ -370,15 +372,16 @@ export default {
 <style lang="stylus" >
 .butnPosition {
   position: fixed;
-  bottom: 30vh;
+  bottom: 28vh;
   z-index: 99;
-  padding: 2px;
+  padding: 5px;
   width: 100%;
   background-color: #fff;
+  box-sizing: content-box;
 }
 
 .butnPos {
-  padding 10px
+  padding: 10px;
   display: flex;
   justify-content: space-between;
 }
@@ -393,7 +396,8 @@ export default {
   color: #fff;
   border-radius: 12px;
 }
-.labelStyle{
-  color :red
-  }
+
+.labelStyle {
+  color: red;
+}
 </style>

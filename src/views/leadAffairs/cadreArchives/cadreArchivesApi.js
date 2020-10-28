@@ -44,7 +44,8 @@ export function findCadreBasicInfo (queryData) {
 //获取个人信息
 export function lsitWorkInfoByJobnumber (queryData) {
   return fetch({
-    url: `/kukacms/self/workinfo/lsitWorkInfoByJobnumber`,
+    url: `/kukacms/self/findCadreWorkInfo`,
+    // url: `/kukacms/self/workinfo/lsitWorkInfoByJobnumber`,
     method: 'post',
     data: qs.stringify(queryData)
   })
