@@ -176,7 +176,7 @@ export default {
       if (this.workingNum) {
       } else {
         const departRes = JSON.parse(localStorage.getItem("departRes"));
-        this.deptData.push(departRes.obj.departments);
+        this.deptData.push(departRes);
       }
     },
     //选择部门
