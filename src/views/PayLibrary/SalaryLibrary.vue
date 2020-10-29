@@ -6,8 +6,8 @@
       show-action
       :clearable="false"
       @search="onSearch(1)"
-      background='Chocolate'
-      shape='round'
+      background="Chocolate"
+      shape="round"
     >
       <template #action>
         <span
@@ -20,7 +20,6 @@
           @click="clearSearchName"
           style="display: inline-block;color:#fff"
           v-show="seachFlag"
-
           >取消</span
         >
 
@@ -50,7 +49,7 @@
           :is-loading="isLoading"
           :paging-index="(pageIndex - 1) * pageSize"
           :vertical-resize-offset="tableBootomHight"
-          :even-bg-color='"LightGrey"'
+          :even-bg-color="'LightGrey'"
         ></v-table>
       </van-tab>
       <van-tab title="详情" name="详情">
@@ -59,7 +58,7 @@
             is-horizontal-resize
             style="width:100%;"
             is-vertical-resize
-            :min-height='300'
+            :min-height="300"
             :title-rows="tableConfig.titleRows"
             :columns="tableConfig.columns"
             :table-data="tableConfig.tableData"
@@ -68,7 +67,7 @@
             :is-loading="isLoading"
             :paging-index="(pageIndex - 1) * pageSize"
             :vertical-resize-offset="tableBootomHight"
-            :even-bg-color='"LightGrey"'
+            :even-bg-color="'LightGrey'"
           ></v-table>
         </div>
       </van-tab>
@@ -204,7 +203,7 @@ export default {
       searchObj: {
         num: 1,
         name: "",
-        jobnumber: '',
+        jobnumber: "",
         pageNum: 1,
         dept: []
       },
@@ -474,7 +473,7 @@ export default {
             width: 80,
             titleAlign: "center",
             columnAlign: "center",
-            isResize: true,
+            isResize: true
           }
         ],
         titleRows: [
@@ -485,7 +484,6 @@ export default {
               titleAlign: "center",
               rowspan: 2,
               titleCellClassName: "normalLabelStyle"
-
             },
             {
               fields: ["oneDeptName"],
@@ -493,7 +491,6 @@ export default {
               titleAlign: "center",
               rowspan: 2,
               titleCellClassName: "normalLabelStyle"
-
             },
             {
               fields: ["twoDeptName"],
@@ -501,7 +498,6 @@ export default {
               titleAlign: "center",
               rowspan: 2,
               titleCellClassName: "normalLabelStyle"
-
             },
             {
               fields: ["threeDeptName"],
@@ -509,7 +505,6 @@ export default {
               titleAlign: "center",
               rowspan: 2,
               titleCellClassName: "normalLabelStyle"
-
             },
             {
               fields: ["a0190"],
@@ -517,7 +512,6 @@ export default {
               titleAlign: "center",
               rowspan: 2,
               titleCellClassName: "normalLabelStyle"
-
             },
             {
               fields: ["a0101"],
@@ -525,7 +519,6 @@ export default {
               titleAlign: "center",
               rowspan: 2,
               titleCellClassName: "normalLabelStyle"
-
             },
             {
               fields: ["a0122"],
@@ -533,7 +526,6 @@ export default {
               titleAlign: "center",
               rowspan: 2,
               titleCellClassName: "normalLabelStyle"
-
             },
             {
               fields: ["xl"],
@@ -541,7 +533,6 @@ export default {
               titleAlign: "center",
               rowspan: 2,
               titleCellClassName: "normalLabelStyle"
-
             },
             {
               fields: ["zj"],
@@ -549,7 +540,6 @@ export default {
               titleAlign: "center",
               rowspan: 2,
               titleCellClassName: "normalLabelStyle"
-
             },
             {
               fields: [
@@ -585,7 +575,6 @@ export default {
               titleAlign: "center",
               rowspan: 2,
               titleCellClassName: "normalLabelStyle"
-
             },
             {
               fields: ["txfd"],
@@ -593,7 +582,6 @@ export default {
               titleAlign: "center",
               rowspan: 2,
               titleCellClassName: "normalLabelStyle"
-
             }
           ],
           [
@@ -602,85 +590,72 @@ export default {
               title: "岗位名称",
               titleAlign: "center",
               titleCellClassName: "BeforeConfirmationSty"
-
             },
             {
               fields: ["a8602005"],
               title: "月固薪",
               titleAlign: "center",
               titleCellClassName: "BeforeConfirmationSty"
-
             },
             {
               fields: ["a8602006"],
               title: "年固薪合计",
               titleAlign: "center",
               titleCellClassName: "BeforeConfirmationSty"
-
             },
             {
               fields: ["a8602007"],
               title: "年度绩效",
               titleAlign: "center",
               titleCellClassName: "BeforeConfirmationSty"
-
             },
             {
               fields: ["a8602008"],
               title: "年终奖",
               titleAlign: "center",
               titleCellClassName: "BeforeConfirmationSty"
-
             },
             {
               fields: ["a8602009"],
               title: "标准年薪",
               titleAlign: "center",
               titleCellClassName: "BeforeConfirmationSty"
-
             },
             {
               fields: ["zzgwmc"],
               title: "岗位名称",
               titleAlign: "center",
               titleCellClassName: "afterConfirmationSty"
-
-
             },
             {
               fields: ["a8602010"],
               title: "月固薪",
               titleAlign: "center",
               titleCellClassName: "afterConfirmationSty"
-
             },
             {
               fields: ["a8602021"],
               title: "年固薪合计",
               titleAlign: "center",
               titleCellClassName: "afterConfirmationSty"
-
             },
             {
               fields: ["a8602011"],
               title: "年度绩效",
               titleAlign: "center",
               titleCellClassName: "afterConfirmationSty"
-
             },
             {
               fields: ["a8602012"],
               title: "年终奖金",
               titleAlign: "center",
               titleCellClassName: "afterConfirmationSty"
-
             },
             {
               fields: ["a8602013"],
               title: "标准年薪",
               titleAlign: "center",
               titleCellClassName: "afterConfirmationSty"
-
             }
           ]
         ]
@@ -729,7 +704,7 @@ export default {
           this.tableConfig.tableData = res.obj.salaryList;
           this.total = res.obj.count;
           this.seachFlag = 1;
-          this.resizeHeight()
+          this.resizeHeight();
         } else {
           Toast.fail(res.msg);
         }
@@ -752,7 +727,7 @@ export default {
           this.tableConfig.tableData = res.obj.salaryList;
           this.total = res.obj.count;
           this.seachFlag = 1;
-          this.resizeHeight()
+          this.resizeHeight();
         } else {
           Toast.fail(res.msg);
         }
@@ -763,7 +738,7 @@ export default {
       this.seachFlag = 0;
       this.searchObj.name = "";
       this.queryFindPayrollInfo();
-      this.restSeach()
+      this.restSeach();
     },
     selctdept(data, isDown) {
       if (data) {
@@ -781,19 +756,28 @@ export default {
       this.filtrateFlag = false;
       this.upDateNewSearch();
     },
-    restSeach(){
-      this.searchObj = {dept:[],jobnumber:this.ddJobNum,name:'',num:1,pageNum:1}
-      this.$refs.salaryDep.RemoveNodeMeth()
+    restSeach() {
+      this.searchObj = {
+        dept: [],
+        jobnumber: this.ddJobNum,
+        name: "",
+        num: 1,
+        pageNum: 1
+      };
+      this.$refs.salaryDep.RemoveNodeMeth();
     },
-    resizeHeight(){
-      this.tableBootomHight = window.screen.height * 0.1;
-      console.log(this.tableBootomHight)
+    resizeHeight() {
+      if (navigator.userAgent.indexOf("iPhone") > -1) {
+        this.tableBootomHight = window.screen.height * 0.1;
+      } else {
+        this.tableBootomHight = window.screen.height * 0.06;
+      }
     }
   },
   created() {
     this.queryFindPayrollInfo();
     this.queryfindPayrollDept();
-    this.resizeHeight()
+    this.resizeHeight();
   }
 };
 </script>
@@ -823,15 +807,16 @@ export default {
 
 .BeforeConfirmationSty {
   background-color: Peru;
-  color:#fff;
+  color: #fff;
 }
 
 .afterConfirmationSty {
   background-color: Chocolate;
-  color:#fff;
+  color: #fff;
 }
-.normalLabelStyle{
+
+.normalLabelStyle {
   background-color: IndianRed;
-  color:#fff;
+  color: #fff;
 }
 </style>

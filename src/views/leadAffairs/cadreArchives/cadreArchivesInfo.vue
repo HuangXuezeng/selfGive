@@ -412,7 +412,7 @@
                   <span>pbc链接</span>
                   <a
                     class="floatRight"
-                    :href="item.a832URL"
+                    :href="item.a832htmURL"
                     style="color:blue"
                     >{{ item.a832005 + " " + item.contentone }}</a
                   >
@@ -1254,7 +1254,7 @@ export default {
             contentone: "无",
             a832019: "无",
             a832009: "无",
-            a832URL: ""
+            a832htmURL: ""
           });
         } else {
           this.pbcList = res.obj.pbcList;
