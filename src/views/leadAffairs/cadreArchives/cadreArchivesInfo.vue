@@ -410,7 +410,12 @@
                 </p>
                 <p>
                   <span>pbc链接</span>
-                  <a class="floatRight" :href="item.a832URL" style="color:blue" >{{ item.a832005 +' '+ item.contentone}}</a>
+                  <a
+                    class="floatRight"
+                    :href="item.a832URL"
+                    style="color:blue"
+                    >{{ item.a832005 + " " + item.contentone }}</a
+                  >
                 </p>
               </van-collapse-item>
             </van-collapse>
@@ -718,52 +723,55 @@
                   <span>团队规模：</span>
                   <span class="floatRight">{{ item.a8TDPYXX014 }}</span>
                 </p>
+                <div style="position:relative">
+                  <div class="successorFull">
+                    <div
+                      style="display: flex;flex-direction: column-reverse;justify-content: space-between;"
+                    >
+                      <div style="padding:1px;">
+                        <div>
+                          继任者成熟度：
+                        </div>
+                      </div>
 
-                <div class="successorFull">
-                  <div
-                    style="display: flex;flex-direction: column-reverse;justify-content: space-between;"
-                  >
-                    <div style="padding:1px;">
-                      <div>
-                        继任者成熟度：
+                      <div style="padding:1px">
+                        <div>
+                          继任者：
+                        </div>
                       </div>
                     </div>
-
-                    <div style="padding:1px;border-bottom:1px solid #ccc">
-                      <div>
-                        继任者：
+                    <div
+                      style="justify-content: space-between;flex-direction: row;display: flex;"
+                    >
+                      <div class="cellclass">
+                        <div>
+                          {{ item.a8TDPYXX015 }}
+                        </div>
+                        <div>
+                          {{ item.a8TDPYXX016name }}
+                        </div>
+                      </div>
+                      <div class="cellclass">
+                        <div>
+                          {{ item.a8TDPYXX017 }}
+                        </div>
+                        <div>
+                          {{ item.a8TDPYXX018name }}
+                        </div>
+                      </div>
+                      <div class="cellclass">
+                        <div>
+                          {{ item.a8TDPYXX019 }}
+                        </div>
+                        <div>
+                          {{ item.a8TDPYXX020name }}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div
-                    style="justify-content: space-between;flex-direction: row;display: flex;"
-                  >
-                    <div class="cellclass">
-                      <div class="nameClad">
-                        {{ item.a8TDPYXX015 }}
-                      </div>
-                      <div>
-                        {{ item.a8TDPYXX016name }}
-                      </div>
-                    </div>
-                    <div class="cellclass">
-                      <div class="nameClad">
-                        {{ item.a8TDPYXX017 }}
-                      </div>
-                      <div>
-                        {{ item.a8TDPYXX018name }}
-                      </div>
-                    </div>
-                    <div class="cellclass">
-                      <div class="nameClad">
-                        {{ item.a8TDPYXX019 }}
-                      </div>
-                      <div>
-                        {{ item.a8TDPYXX020name }}
-                      </div>
-                    </div>
+                    <span class="lineCCC"></span>
                   </div>
                 </div>
+
                 <!-- <p>
                   <span>继任者：</span>
                   <span class="floatRight">
@@ -809,7 +817,7 @@
               title="职业倾向:"
               :value="basicInfo.a01230"
               :center="true"
-            />˝
+            />
           </div>
         </van-tab>
       </van-tabs>
@@ -893,7 +901,7 @@ export default {
     };
   },
   created() {
-    debugger;
+    // debugger;
     this.manageitem = this.$route.params.managerInfo;
     if (!this.manageitem) {
       this.itemjobnumber = localStorage.getItem("jobNum");
@@ -1240,15 +1248,15 @@ export default {
         } else {
           this.showcadreAchieveInfoListMore = true;
         }
-        if(res.obj.pbcList.length == 0){
-           this.pbcList.push({
-             a832005:'无',
-             contentone:'无',
-             a832019:'无',
-             a832009:'无',
-             a832URL:'',
-           })
-        }else{
+        if (res.obj.pbcList.length == 0) {
+          this.pbcList.push({
+            a832005: "无",
+            contentone: "无",
+            a832019: "无",
+            a832009: "无",
+            a832URL: ""
+          });
+        } else {
           this.pbcList = res.obj.pbcList;
         }
         //  <p>
@@ -1271,7 +1279,6 @@ export default {
         //           <span>pbc链接</span>
         //           <a class="floatRight" :href="item.a832URL" style="color:blue" >{{ item.a832005 +' '+ item.contentone}}</a>
         //         </p>
-
       });
     },
     echatsMethod(expanditem) {
@@ -1346,7 +1353,7 @@ export default {
       }
     },
     docClick(e) {
-      debugger;
+      // debugger;
       if (e.target.className == "strClampAll") {
         e.target.className = " strClamp";
       } else {
@@ -1450,8 +1457,12 @@ export default {
   justify-content: space-between;
 }
 
-.nameClad {
-  border-bottom: 1px solid #ccc;
+.lineCCC {
+  position: absolute;
+  top: 50%;
+  left: 0px;
+  width: 100%;
+  border-bottom: 0.5px solid #ccc;
 }
 
 .successorFull {

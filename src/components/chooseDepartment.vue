@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="resetVant">
     <van-field
       v-model="selectedDepartment"
       @click="pickDept"
@@ -10,6 +10,7 @@
       :autosize="autosize"
       :label-class="labelStyle"
       readonly
+
     />
     <van-popup
       v-model="showPickDept"
@@ -18,7 +19,7 @@
       get-container="body"
       :closeable="closeableFlag"
     >
-      <div style="padding-bottom:12%">
+      <div style="padding-bottom:12%" >
         <!-- <van-switch :value="isDownValue" @input="isDownMethods" /> -->
         <van-cell
           center
@@ -143,7 +144,7 @@ export default {
       selectAllstyle: "background-color:Coral",
       labelStyle: "",
       restFlag: false, //花名册清空勾选,
-      autosize: { maxHeight: 100, minHeight: 20 }
+      autosize: { maxHeight: '35', minHeight: '10' }
     };
   },
   created() {
@@ -185,7 +186,6 @@ export default {
         this.$refs.tree.setChecked({ deptId: this.opennode }, true);
         this.openlist = [this.opennode];
         if (this.isSelctall && this.firstIn == 1) {
-          debugger;
           this.deptData = this.faDeptData;
           this.openlist = [this.faDeptData[0].deptId];
           if (!this.isFromRost) {
@@ -299,6 +299,7 @@ export default {
       //清空set
       this.selectkeySet.clear();
       this.beforeSelectName = "";
+      this.selectedDepartment = ''
     },
     //点击确认按钮
     confirmNodeMeth() {
