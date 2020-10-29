@@ -23,13 +23,20 @@
               <div style="font-size: 20px;font-weight: 700;display: flex;">
                 {{ basicInfo.a0101 }}
                 <div @click="imageClick">
-                  <van-image v-if="seedlings"
+                  <van-image
+                    v-if="seedlings"
                     round
                     width="1rem"
                     height="1rem"
                     :src="seedlings"
                   />
-                  <van-image round width="1rem" height="1rem" :src="oldWine" v-if="oldWine" />
+                  <van-image
+                    round
+                    width="1rem"
+                    height="1rem"
+                    :src="oldWine"
+                    v-if="oldWine"
+                  />
                 </div>
               </div>
             </template>
@@ -133,15 +140,30 @@
                   center
                 />
                 <van-cell
+                  class=" strClamp"
+                  @click="docClick"
                   title="首次晋升经理红文编号:"
-                  :value="basicInfo.a01226 ? basicInfo.a01226 : '无'"
                   center
-                />
+                >
+                  <template #default>
+                    <div class=" strClamp">
+                      {{ basicInfo.a01226 ? basicInfo.a01226 : "无" }}
+                    </div>
+                  </template>
+                </van-cell>
                 <van-cell
+                  class=" strClamp"
+                  @click="docClick"
                   title="首次晋升总监红文编号:"
-                  :value="basicInfo.a01225 ? basicInfo.a01225 : '无'"
                   center
-                />
+                >
+                  <template #default>
+                    <div class="strClamp">
+                      {{ basicInfo.a01225 ? basicInfo.a01225 : "无" }}
+                    </div>
+                  </template>
+                </van-cell>
+
                 <van-cell
                   title="高潜人才池:"
                   :value="basicInfo.a01223 ? basicInfo.a01223 : '无'"
@@ -153,14 +175,13 @@
                   center
                 />
                 <van-cell
-                  title="XXX届青苗:"
-                  :value="basicInfo.a01136 ? basicInfo.jnc : '无'"
+                  title="青苗:"
+                  :value="basicInfo.a01136 ? basicInfo.a01136 : '无'"
                   center
                 />
               </van-cell-group>
-            </van-col>
-          </van-row></van-tab
-        >
+            </van-col> </van-row
+        ></van-tab>
         <van-tab title="工作经历">
           <div>
             <van-row type="flex" justify="center">
@@ -176,13 +197,14 @@
                 v-model="KukaWorkListActname"
                 v-for="(item, index) in KukaWorkList"
                 :key="item.id"
+                @change="KukaWorkListClick"
               >
                 <van-collapse-item :name="index">
                   <template #title>
                     <div class="fontweig">
-                      <van-tag mark type="primary" color="#fc5f10"
-                        >顾家履历{{ index + 1 }}</van-tag
-                      >
+                      <van-tag mark type="primary" color="#fc5f10">{{
+                        item.startTime + " " + item.type
+                      }}</van-tag>
                     </div>
                   </template>
                   <p>
@@ -208,6 +230,19 @@
                     }}</span>
                   </p>
                 </van-collapse-item>
+                <van-collapse-item
+                  v-if="index == KukaWorkList.length - 1"
+                  v-show="showKukaWorkFlag"
+                  name="000"
+                >
+                  <template #title>
+                    <div class="fontweig">
+                      <van-tag mark type="primary" color="#fc5f10"
+                        >...更多顾家工作履历</van-tag
+                      >
+                    </div>
+                  </template>
+                </van-collapse-item>
               </van-collapse>
             </div>
           </div>
@@ -221,43 +256,67 @@
             </van-row>
             <!-- <noData :showNodata="socialList.length == 0"></noData> -->
             <div class="contentbox">
-              <van-collapse
-                v-model="activeNames"
-                v-for="(item, index) in socialList"
-                :key="item.recordid"
+              <div
+                v-if="showSocialListFlag"
+                style="font-size: 16px;font-weight: 700;color: red;text-align:center"
               >
-                <van-collapse-item :name="index">
-                  <template #title>
-                    <div class="fontweig">
-                      <van-tag mark type="primary" color="#fc5f10"
-                        >社会履历{{ index + 1 }}</van-tag
+                青苗无社会工作履历
+              </div>
+              <div v-if="!showSocialListFlag">
+                <van-collapse
+                  v-model="activeNames"
+                  v-for="(item, index) in socialList"
+                  :key="item.recordid"
+                  @change="SocialListClick"
+                >
+                  <van-collapse-item :name="index">
+                    <template #title>
+                      <div class="fontweig">
+                        <van-tag mark type="primary" color="#fc5f10">{{
+                          item.workUnit
+                        }}</van-tag>
+                      </div>
+                    </template>
+                    <p>
+                      <span>公司：</span>
+                      <span class="floatRight">{{ item.workUnit }}</span>
+                    </p>
+                    <p>
+                      <span>任职岗位：</span>
+                      <span class="floatRight">{{ item.station }}</span>
+                    </p>
+                    <p>
+                      <span>开始日期：</span>
+                      <span class="floatRight">{{ item.startTime }}</span>
+                    </p>
+                    <p>
+                      <span>截止日期：</span>
+                      <span class="floatRight">{{ item.endTime }}</span>
+                    </p>
+                    <p>
+                      <span>主要描述：</span>
+                      <span
+                        class="floatRight strClamp"
+                        @click="strClampClick"
+                        >{{ item.description }}</span
                       >
-                    </div>
-                  </template>
-                  <p>
-                    <span>公司：</span>
-                    <span class="floatRight">{{ item.workUnit }}</span>
-                  </p>
-                  <p>
-                    <span>任职岗位：</span>
-                    <span class="floatRight">{{ item.station }}</span>
-                  </p>
-                  <p>
-                    <span>开始日期：</span>
-                    <span class="floatRight">{{ item.startTime }}</span>
-                  </p>
-                  <p>
-                    <span>截止日期：</span>
-                    <span class="floatRight">{{ item.endTime }}</span>
-                  </p>
-                  <p>
-                    <span>主要描述：</span>
-                    <span class="floatRight strClamp" @click="strClampClick">{{
-                      item.description
-                    }}</span>
-                  </p>
-                </van-collapse-item>
-              </van-collapse>
+                    </p>
+                  </van-collapse-item>
+                  <van-collapse-item
+                    v-if="index == socialList.length - 1"
+                    v-show="showSocialListMore"
+                    name="000"
+                  >
+                    <template #title>
+                      <div class="fontweig">
+                        <van-tag mark type="primary" color="#fc5f10"
+                          >...更多顾家社会履历</van-tag
+                        >
+                      </div>
+                    </template>
+                  </van-collapse-item>
+                </van-collapse>
+              </div>
             </div>
           </div>
         </van-tab>
@@ -274,13 +333,14 @@
               v-model="cadreAchieveInfoActiveNames"
               v-for="(item, index) in cadreAchieveInfoList"
               :key="item.recordid"
+              @change="cadreAchieveInfoListClick"
             >
               <van-collapse-item :name="index">
                 <template #title>
                   <div class="fontweig">
-                    <van-tag mark type="primary" color="#fc5f10"
-                      >{{ item.a812005 + ' ' + item.a812006}}</van-tag
-                    >
+                    <van-tag mark type="primary" color="#fc5f10">{{
+                      item.a812005 + " " + item.a812006
+                    }}</van-tag>
                   </div>
                 </template>
                 <p>
@@ -294,6 +354,68 @@
                 <p>
                   <span>等级</span>
                   <span class="floatRight">{{ item.a812012 }}</span>
+                </p>
+              </van-collapse-item>
+              <van-collapse-item
+                v-if="index == cadreAchieveInfoList.length - 1"
+                v-show="showcadreAchieveInfoListMore"
+                name="000"
+              >
+                <template #title>
+                  <div class="fontweig">
+                    <van-tag mark type="primary" color="#fc5f10"
+                      >...更多近3年绩效</van-tag
+                    >
+                  </div>
+                </template>
+              </van-collapse-item>
+            </van-collapse>
+          </div>
+          <div class="contentbox">
+            <van-row type="flex" justify="center">
+              <van-col>
+                <div style="font-size: 20px;font-weight: 700;;margin-top:20px">
+                  pbc详情
+                </div></van-col
+              >
+            </van-row>
+            <van-collapse
+              v-model="pbcListActiveNames"
+              v-for="(item, index) in pbcList"
+              :key="item.recordid"
+            >
+              <van-collapse-item :name="index">
+                <template #title>
+                  <div class="fontweig">
+                    <van-tag mark type="primary" color="#fc5f10">{{
+                      item.a832005
+                    }}</van-tag>
+                  </div>
+                </template>
+                <p>
+                  <span>年份:</span>
+                  <span class="floatRight">{{ item.a832005 }}</span>
+                </p>
+                <p>
+                  <span>一级单位</span>
+                  <span class="floatRight">{{ item.contentone }}</span>
+                </p>
+                <p>
+                  <span>岗位</span>
+                  <span class="floatRight">{{ item.a832019 }}</span>
+                </p>
+                <p>
+                  <span>分数</span>
+                  <span class="floatRight">{{ item.a832009 }}</span>
+                </p>
+                <p>
+                  <span>pbc链接</span>
+                  <a
+                    class="floatRight"
+                    :href="item.a832URL"
+                    style="color:blue"
+                    >{{ item.a832005 + " " + item.contentone }}</a
+                  >
                 </p>
               </van-collapse-item>
             </van-collapse>
@@ -313,13 +435,14 @@
               v-model="KeyEventsActiveNames"
               v-for="(item, index) in KeyEvents"
               :key="item.recordid"
+              @change="KeyEventsClick"
             >
               <van-collapse-item :name="index">
                 <template #title>
                   <div class="fontweig">
-                    <van-tag mark type="primary" color="#fc5f10"
-                      >关键事件{{ index + 1 }}</van-tag
-                    >
+                    <van-tag mark type="primary" color="#fc5f10">{{
+                      item.a813006
+                    }}</van-tag>
                   </div>
                 </template>
                 <p>
@@ -351,6 +474,19 @@
                   <span class="floatRight">{{ item.a813011 }}</span>
                 </p>
               </van-collapse-item>
+              <van-collapse-item
+                v-if="index == KeyEvents.length - 1"
+                v-show="showKeyEventsMore"
+                name="000"
+              >
+                <template #title>
+                  <div class="fontweig">
+                    <van-tag mark type="primary" color="#fc5f10"
+                      >...更多关键事件</van-tag
+                    >
+                  </div>
+                </template>
+              </van-collapse-item>
             </van-collapse>
           </div>
         </van-tab>
@@ -364,15 +500,19 @@
           </van-row>
           <!-- <noData :showNodata="ability == null"></noData> -->
           <div class="contentbox">
-            <van-collapse v-model="listAbilityNames"
+            <van-collapse
+              v-model="listAbilityNames"
               v-for="(item, index) in listAbility"
-              :key="item.recordid" @change='abilityClick(item)' accordion>
-              <van-collapse-item :name="index" >
+              :key="item.recordid"
+              @change="abilityClick(item)"
+              accordion
+            >
+              <van-collapse-item :name="index">
                 <template #title>
                   <div class="fontweig">
-                    <van-tag mark type="primary" color="#fc5f10"
-                      >{{ item.A8SRLMX005 }}</van-tag
-                    >
+                    <van-tag mark type="primary" color="#fc5f10">{{
+                      item.A8SRLMX005
+                    }}</van-tag>
                   </div>
                 </template>
                 <p>
@@ -385,15 +525,15 @@
                 </p>
                 <p>
                   <span>素质测评得分:</span>
-                  <span class="floatRight">{{ item.a8SRLMX009 }}</span>
-                </p>
-                <p>
-                  <span>360得分:</span>
                   <span class="floatRight">{{ item.qualityNum }}</span>
                 </p>
                 <p>
+                  <span>360得分:</span>
+                  <span class="floatRight">{{ item.s360Num }}</span>
+                </p>
+                <p>
                   <span>BEI/案例分析得分:</span>
-                  <span class="floatRight">{{ item.BEINum }}</span>
+                  <span class="floatRight">{{ item.beinum }}</span>
                 </p>
                 <p>
                   <span>加权总分:</span>
@@ -418,8 +558,13 @@
               </van-collapse-item>
             </van-collapse>
           </div>
-
-
+          <van-row type="flex" justify="center">
+            <van-col>
+              <div style="font-size: 20px;font-weight: 700;margin-top:20px">
+                360度评价雷达图
+              </div></van-col
+            >
+          </van-row>
           <div style="width:100%;height:400px">
             <div ref="ppt" :style="{ width: '100%', height: '400px' }"></div>
           </div>
@@ -442,9 +587,9 @@
               <van-collapse-item :name="index">
                 <template #title>
                   <div class="fontweig">
-                    <van-tag mark type="primary" color="#fc5f10"
-                      >培训经历{{ index + 1 }}</van-tag
-                    >
+                    <van-tag mark type="primary" color="#fc5f10">{{
+                      item.a836008
+                    }}</van-tag>
                   </div>
                 </template>
                 <p>
@@ -490,13 +635,14 @@
               v-model="listProjectActiveNames"
               v-for="(item, index) in listProject"
               :key="item.recordid"
+              @change="listProjectClick"
             >
               <van-collapse-item :name="index">
                 <template #title>
                   <div class="fontweig">
-                    <van-tag mark type="primary" color="#fc5f10"
-                      >项目经历{{ index + 1 }}</van-tag
-                    >
+                    <van-tag mark type="primary" color="#fc5f10">{{
+                      item.projectName
+                    }}</van-tag>
                   </div>
                 </template>
                 <p>
@@ -529,6 +675,19 @@
                     item.projectResult
                   }}</span>
                 </p>
+              </van-collapse-item>
+              <van-collapse-item
+                v-if="index == listProject.length - 1"
+                v-show="showlistProjectMore"
+                name="000"
+              >
+                <template #title>
+                  <div class="fontweig">
+                    <van-tag mark type="primary" color="#fc5f10"
+                      >...更多项目经历</van-tag
+                    >
+                  </div>
+                </template>
               </van-collapse-item>
             </van-collapse>
           </div>
@@ -564,27 +723,83 @@
                   <span>团队规模：</span>
                   <span class="floatRight">{{ item.a8TDPYXX014 }}</span>
                 </p>
+                <div style="position:relative;">
+                  <div class="successorFull">
+                    <div
+                      style="display: flex;flex-direction: column-reverse;justify-content:space-around;"
+                    >
+                      <div style="padding:1px;">
+                        <div>
+                          继任者成熟度：
+                        </div>
+                      </div>
 
-                <p>
+                      <div style="padding:1px">
+                        <div>
+                          继任者：
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style="justify-content: space-between;flex-direction: row;display: flex;"
+                    >
+                      <div class="cellclass">
+                        <div>
+                          {{ item.a8TDPYXX015 }}
+                        </div>
+                        <div>
+                          {{ item.a8TDPYXX016name }}
+                        </div>
+                      </div>
+                      <div class="cellclass">
+                        <div>
+                          {{ item.a8TDPYXX017 }}
+                        </div>
+                        <div>
+                          {{ item.a8TDPYXX018name }}
+                        </div>
+                      </div>
+                      <div class="cellclass">
+                        <div>
+                          {{ item.a8TDPYXX019 }}
+                        </div>
+                        <div>
+                          {{ item.a8TDPYXX020name }}
+                        </div>
+                      </div>
+                    </div>
+                    <span class="lineCCC"></span>
+                  </div>
+                </div>
+
+                <!-- <p>
                   <span>继任者：</span>
-                  <span class="floatRight">{{
-                    item.a8TDPYXX015 +
-                      "," +
-                      item.a8TDPYXX017 +
-                      "," +
-                      item.a8TDPYXX019
-                  }}</span>
+                  <span class="floatRight">
+                    <div class="teamJr">
+                      {{ item.a8TDPYXX015 }}
+                    </div>
+                    <div class="teamJr">
+                      {{ item.a8TDPYXX017 }}
+                    </div>
+                    <div class="teamJr">
+                      {{ item.a8TDPYXX019 }}
+                    </div></span
+                  >
                 </p>
                 <p>
                   <span>继任者成熟度：</span>
-                  <span class="floatRight">{{
-                    item.a8TDPYXX016name +
-                      "," +
-                      item.a8TDPYXX018name +
-                      "," +
-                      item.a8TDPYXX020name
-                  }}</span>
-                </p>
+                  <span class="floatRight">
+                    <div class="teamJr">
+                      {{ item.a8TDPYXX016name }}
+                    </div>
+                    <div class="teamJr">
+                      {{ item.a8TDPYXX018name }}
+                    </div>
+                    <div class="teamJr">
+                      {{ item.a8TDPYXX020name }}
+                    </div>
+                  </span>
+                </p> -->
               </van-collapse-item>
             </van-collapse>
           </div>
@@ -599,12 +814,11 @@
           </van-row>
           <div style="padding:0 10px">
             <van-cell
-            title="职业倾向:"
-            :value="basicInfo.a01230"
-            :center="true"
-          />˝
+              title="职业倾向:"
+              :value="basicInfo.a01230"
+              :center="true"
+            />
           </div>
-
         </van-tab>
       </van-tabs>
     </div>
@@ -649,15 +863,19 @@ export default {
     return {
       socialList: [],
       activeNames: [0],
+      socialListMore: [],
       active: 0,
       KeyEvents: [],
       KeyEventsActiveNames: [0],
+      KeyEventsMore: [],
       listProject: [],
       listProjectActiveNames: [0],
+      listProjectMore: [],
       basicInfo: {},
       manageitem: {},
       itemjobnumber: "",
       KukaWorkList: [],
+      KukaWorkListMore: [],
       KukaWorkListActname: [0],
       teamlist: [],
       teamlistactname: [0],
@@ -665,16 +883,25 @@ export default {
       abilityactname: ["0"],
       trainedExperienceActiveNames: [0],
       trainedExperienceList: [],
-      listAbilityNames:0,
-      listAbility:[],
-      cadreAchieveInfoActiveNames:[0],
-      cadreAchieveInfoList:[],
-      seedlings: '',
-      oldWine: ''
+      listAbilityNames: 0,
+      listAbility: [],
+      cadreAchieveInfoActiveNames: [0],
+      cadreAchieveInfoList: [],
+      cadreAchieveInfoListMore: [],
+      pbcListActiveNames: [0],
+      pbcList: [],
+      seedlings: "",
+      oldWine: "",
+      showKukaWorkFlag: true,
+      showSocialListFlag: false,
+      showSocialListMore: true,
+      showKeyEventsMore: true,
+      showlistProjectMore: true,
+      showcadreAchieveInfoListMore: true
     };
   },
   created() {
-    debugger;
+    // debugger;
     this.manageitem = this.$route.params.managerInfo;
     if (!this.manageitem) {
       this.itemjobnumber = localStorage.getItem("jobNum");
@@ -689,7 +916,7 @@ export default {
     this.findTeam();
     this.queryfindCadreAbility();
     this.queryfindCadreTrainInfo();
-    this.queryfindCadreAchieveInfo()
+    this.queryfindCadreAchieveInfo();
   },
   mounted() {
     // this.echatsMethod();
@@ -698,7 +925,8 @@ export default {
     //项目经历
     querylsitWorkInfoByJobnumber(data) {
       lsitWorkInfoByJobnumber({ jobnumber: this.itemjobnumber }).then(res => {
-        if (res.obj == 0) {
+        // debugger;
+        if (res.obj.workList.length == 0 && res.obj.isCrops == "N") {
           this.socialList.push({
             workUnit: "无",
             station: "无",
@@ -706,15 +934,30 @@ export default {
             endTime: "无",
             description: "无"
           });
+          this.showSocialListMore = false;
         } else {
-          this.socialList = res.obj;
+          if (res.obj.isCrops == "Y" && res.obj.workList.length == 0) {
+            this.showSocialListFlag = true;
+          } else {
+            for (let i in res.obj.workList) {
+              if (i <= 0) {
+                this.socialList.push(res.obj.workList[i]);
+              } else {
+                this.socialListMore.push(res.obj.workList[i]);
+              }
+            }
+            if (this.socialListMore.length == 0) {
+              this.showSocialListMore = false;
+            } else {
+              this.showSocialListMore = true;
+            }
+          }
         }
       });
     },
     //关键事件
     queryfindCadreKeyEvents(data) {
       findCadreKeyEvents({ jobnumber: this.itemjobnumber }).then(res => {
-        // debugger;
         if (res.obj == 0) {
           this.KeyEvents.push({
             A813005: "无",
@@ -725,8 +968,22 @@ export default {
             a813010: "无",
             a813011: "无"
           });
+          this.showKeyEventsMore = false;
         } else {
-          this.KeyEvents = res.obj;
+          for (let i in res.obj) {
+            if (i <= 0) {
+              this.KeyEvents.push(res.obj[i]);
+            } else {
+              this.KeyEventsMore.push(res.obj[i]);
+            }
+          }
+          // debugger
+          if (this.KeyEventsMore.length == 0) {
+            this.showKeyEventsMore = false;
+          } else {
+            this.showKeyEventsMore = true;
+          }
+          // this.KeyEvents = res.obj;
         }
       });
     },
@@ -744,8 +1001,22 @@ export default {
             jobType: "无",
             projectResult: "无"
           });
+          this.showlistProjectMore = false;
         } else {
-          this.listProject = res.obj;
+          for (let i in res.obj) {
+            if (i <= 0) {
+              this.listProject.push(res.obj[i]);
+            } else {
+              this.listProjectMore.push(res.obj[i]);
+            }
+          }
+          if (this.listProjectMore.length == 0) {
+            this.showlistProjectMore = false;
+          } else {
+            this.showlistProjectMore = true;
+          }
+
+          // this.listProject = res.obj;
         }
       });
     },
@@ -760,10 +1031,73 @@ export default {
             startTime: "无",
             mainWork: "无"
           });
+          this.showKukaWorkFlag = false;
         } else {
-          this.KukaWorkList = res.obj;
+          for (let item of res.obj) {
+            if (item.mainWork != null) {
+              if (this.KukaWorkList.length <= 0) {
+                this.KukaWorkList.push(item);
+              } else {
+                this.KukaWorkListMore.push(item);
+              }
+            }
+          }
+          if (this.KukaWorkList.length == 0) {
+            this.KukaWorkList.push({
+              organ: "无",
+              station: "无",
+              type: "无",
+              startTime: "无",
+              mainWork: "无"
+            });
+            this.showKukaWorkFlag = false;
+          } else {
+            this.showKukaWorkFlag = true;
+          }
         }
       });
+    },
+    KukaWorkListClick(data) {
+      let dataset = new Set(data);
+      if (dataset.has("000")) {
+        this.KukaWorkList = this.KukaWorkList.concat(this.KukaWorkListMore);
+        this.showKukaWorkFlag = false;
+        this.KukaWorkListMore = [];
+      }
+    },
+    SocialListClick(data) {
+      let dataset = new Set(data);
+      if (dataset.has("000")) {
+        this.socialList = this.socialList.concat(this.socialListMore);
+        this.showSocialListMore = false;
+        this.socialListMore = [];
+      }
+    },
+    KeyEventsClick(data) {
+      let dataset = new Set(data);
+      if (dataset.has("000")) {
+        this.KeyEvents = this.KeyEvents.concat(this.KeyEventsMore);
+        this.showKeyEventsMore = false;
+        this.KeyEventsMore = [];
+      }
+    },
+    listProjectClick(data) {
+      let dataset = new Set(data);
+      if (dataset.has("000")) {
+        this.listProject = this.listProject.concat(this.listProjectMore);
+        this.showlistProjectMore = false;
+        this.listProjectMore = [];
+      }
+    },
+    cadreAchieveInfoListClick(data) {
+      let dataset = new Set(data);
+      if (dataset.has("000")) {
+        this.cadreAchieveInfoList = this.cadreAchieveInfoList.concat(
+          this.cadreAchieveInfoListMore
+        );
+        this.showcadreAchieveInfoListMore = false;
+        this.cadreAchieveInfoListMore = [];
+      }
     },
     //培训信息
     queryfindCadreTrainInfo() {
@@ -850,17 +1184,17 @@ export default {
               } else {
                 this.basicInfo[key] = require("@/assets/timg.jpg");
               }
-            } else if ((key == "a01230")) {
+            } else if (key == "a01230") {
               // debugger;
               if (!this.basicInfo[key]) {
                 this.basicInfo[key] = "无";
               }
-            } else if ((key == "a01136")) {
+            } else if (key == "a01136") {
               if (this.basicInfo[key]) {
                 this.seedlings = require("@/assets/EF8DB818-6CA2-4d8f-AD69-DB7FF7AF22A8.png");
               } else {
               }
-            } else if ((key == "jnc")) {
+            } else if (key == "jnc") {
               if (this.basicInfo[key]) {
                 this.oldWine = require("@/assets/timg[5].jpg");
               } else {
@@ -871,7 +1205,7 @@ export default {
       });
     },
     queryfindCadreAbility() {
-      findCadreAbility({ jobnumber: '6201092' }).then(res => {
+      findCadreAbility({ jobnumber: this.itemjobnumber }).then(res => {
         // debugger;
         this.listAbility = res.obj;
         if (res.obj.length == 0) {
@@ -886,24 +1220,71 @@ export default {
             a8SRLMX012: "无",
             promote: "无"
           });
-          this.echatsMethod('');
-
+          this.echatsMethod("");
         } else {
-          this.listAbility =  res.obj
+          this.listAbility = res.obj;
           this.echatsMethod(res.obj[0]);
-
         }
       });
     },
-    queryfindCadreAchieveInfo(){
-      findCadreAchieveInfo({ jobnumber: '9050104' }).then(res =>{
-        this.cadreAchieveInfoList = res.obj
-      })
+    queryfindCadreAchieveInfo() {
+      findCadreAchieveInfo({ jobnumber: this.itemjobnumber }).then(res => {
+        for (let i in res.obj.jxList) {
+          if (i <= 3) {
+            this.cadreAchieveInfoList.push(res.obj.jxList[i]);
+          } else {
+            this.cadreAchieveInfoListMore.push(res.obj.jxList[i]);
+          }
+        }
+        if (res.obj.jxList.length == 0) {
+          this.cadreAchieveInfoList.push({
+            a812005: "无",
+            a812006: "无",
+            a812012: "无"
+          });
+        }
+        if (this.cadreAchieveInfoListMore.length == 0) {
+          this.showcadreAchieveInfoListMore = false;
+        } else {
+          this.showcadreAchieveInfoListMore = true;
+        }
+        if (res.obj.pbcList.length == 0) {
+          this.pbcList.push({
+            a832005: "无",
+            contentone: "无",
+            a832019: "无",
+            a832009: "无",
+            a832URL: ""
+          });
+        } else {
+          this.pbcList = res.obj.pbcList;
+        }
+        //  <p>
+        //           <span>年份:</span>
+        //           <span class="floatRight">{{ item.a832005 }}</span>
+        //         </p>
+        //         <p>
+        //           <span>一级单位</span>
+        //           <span class="floatRight">{{ item.contentone }}</span>
+        //         </p>
+        //         <p>
+        //           <span>岗位</span>
+        //           <span class="floatRight">{{ item.a832019 }}</span>
+        //         </p>
+        //         <p>
+        //           <span>分数</span>
+        //           <span class="floatRight">{{ item.a832009 }}</span>
+        //         </p>
+        //         <p>
+        //           <span>pbc链接</span>
+        //           <a class="floatRight" :href="item.a832URL" style="color:blue" >{{ item.a832005 +' '+ item.contentone}}</a>
+        //         </p>
+      });
     },
     echatsMethod(expanditem) {
       var myChart = this.$echarts.init(this.$refs.ppt);
       let ecartsData = [];
-      if (expanditem == '' || expanditem.a8SRLMX015 == null) {
+      if (expanditem == "" || expanditem.a8SRLMX015 == null) {
         ecartsData = [0, 0, 0, 0, 0, 0, 0, 0];
       } else {
         ecartsData = [
@@ -971,18 +1352,26 @@ export default {
         e.target.className = "floatRight strClampAll";
       }
     },
-    imageClick() {
-      let  ImagePreviewList = [this.basicInfo.photo]
-      if(this.seedlings){
-        ImagePreviewList.push(this.seedlings)
+    docClick(e) {
+      // debugger;
+      if (e.target.className == "strClampAll") {
+        e.target.className = " strClamp";
+      } else {
+        e.target.className = "strClampAll";
       }
-      if(this.oldWine){
-        ImagePreviewList.push(this.oldWine)
+    },
+    imageClick() {
+      let ImagePreviewList = [this.basicInfo.photo];
+      if (this.seedlings) {
+        ImagePreviewList.push(this.seedlings);
+      }
+      if (this.oldWine) {
+        ImagePreviewList.push(this.oldWine);
       }
       ImagePreview(ImagePreviewList);
     },
-    abilityClick(item){
-      this.echatsMethod(item)
+    abilityClick(item) {
+      this.echatsMethod(item);
     }
   }
 };
@@ -1049,5 +1438,36 @@ export default {
   display: -webkit-box;
   -webkit-line-clamp: 100;
   -webkit-box-orient: vertical;
+}
+
+.teamJr {
+  display: inline-block;
+  width: 60px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+.cellclass {
+  width: 9vh;
+  border-left: 1px solid #ccc;
+  text-align: center;
+  padding: 2px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.lineCCC {
+  position: absolute;
+  top: 50%;
+  left: 0px;
+  width: 100%;
+  border-bottom: 1px solid #ccc;
+}
+
+.successorFull {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #ccc;
 }
 </style>
