@@ -27,3 +27,11 @@ export function setMenu (queryData) {
     data: JSON.stringify(queryData)
   })
 }
+//判断是否为领导
+export function isLead (queryData) {
+  return fetch({
+    url: `/kukacms/self/dept/getDeptInfo`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}

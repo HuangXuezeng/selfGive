@@ -158,7 +158,7 @@ import { Button,Grid,GridItem,Icon,Popup,Notify } from 'vant'
 import { mapMutations } from 'vuex'
 import { setDDConfig } from '@/api/dd'
 import fetch from '@/api/fetch'
-import { queryPerson,getMenu,setMenu } from './api'
+import { queryPerson,getMenu,setMenu,isLead } from './api'
 import draggable from 'vuedraggable'
 import { getOrz } from "@/views/leadAffairs/api.js";
 export default {
@@ -219,26 +219,33 @@ export default {
     // localStorage.setItem('jobNum',9102171)
     // localStorage.setItem('jobNum',9078825)
     // localStorage.setItem('jobNum',9025434)
-    this._getOrz()
+    // this._getOrz()
     if(localStorage.getItem('jobNum') == '' || localStorage.getItem('jobNum') == null || localStorage.getItem('jobNum') == undefined){
       this.getUser()
     }else{
+      this._isLead() //是否为领导
       this.getPerson()
       this._getMenu() //获取首页显示的菜单
       this._getMenus() //获取弹窗要排序显示的菜单
     }
   },
   methods:{
-     //获取组织下的部门
-    _getOrz() {
+    //是否为领导
+    _isLead(){
       let queryData = {
-        jobnumber: 6006212
-      };
-      getOrz(queryData).then(res => {
-        // this.deptData.push(res.obj.departments);
-        localStorage.setItem('departRes',JSON.stringify(res))
-        // localStorage.setItem()
-      });
+        jobnumber:localStorage.getItem('jobNum')
+      }
+      isLead(queryData).then(res=>{
+        if(res.obj.isLeader == 'Y'){
+          localStorage.setItem('currentDeptsRes',JSON.stringify(res.obj.currentDepts))
+          localStorage.setItem('deptIdsRes',JSON.stringify(res.obj.deptIds))
+          let searchData = res.obj.currentDepts
+          getOrz(searchData).then(res => {
+            localStorage.setItem('departRes',JSON.stringify(res.obj))
+            // console.log(localStorage.getItem('departRes'))
+          });
+        }
+      })
     },
     //获取用户基本信息
     getPerson(){

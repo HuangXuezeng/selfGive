@@ -3,8 +3,8 @@
         <div class="tiaojian">
           <van-field v-model="selectYear" label="选择年：" placeholder="请选择" @click-input="showyear=true" readonly/>
           <div class="btns">
-              <van-button type="primary" size="small" color="#fc5f10" @click="search" style="width:100%;font-size:15px">查询</van-button>
-              <!-- <van-button type="primary" size="small" color="#fc5f10" @click="reset" style="width:45%;font-size:15px">重置</van-button> -->
+              <van-button type="primary" size="small" color="#fc5f10" @click="search" style="width:45%;font-size:15px">查询</van-button>
+              <van-button type="primary" size="small" color="#fc5f10" @click="reset" style="width:45%;font-size:15px">重置</van-button>
               <!-- <van-button type="primary" size="small" color="#fc5f10" @click="ceshi" style="font-size:15px">测试</van-button> -->
           </div>
         </div>
@@ -99,6 +99,12 @@ export default {
         {name:'北美事业部',danwei:'四部门',fenlei:'分类四',target:'目标111',yuerenxiao:'20%',tongbi:'35%',counts:'400',leiji:'20%',jindu:'10%',chayi:-3.3}
       ],
       columns1:[
+        {
+          field: 'custome', width: 50, titleAlign: 'center', columnAlign: 'center',title: '序号',
+          formatter: function (rowData, index) {
+              return index + 1
+          }, isResize:true,
+        },
         {field: 'name', title: '一级单位', width: 150, titleAlign: 'center',columnAlign:'center'},
         {field: 'danwei', title: '二级部门', width: 150, titleAlign: 'center',columnAlign:'center'},
         {field: 'fenlei', title: '岗位分类', width: 150, titleAlign: 'center',columnAlign:'center',},

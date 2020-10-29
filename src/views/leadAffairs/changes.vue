@@ -169,7 +169,7 @@ components: {
             {
                 field: 'beforeDept',
                 title: '异动前部门路径',
-                width: 200,
+                width: 300,
                 titleAlign: 'center',
                 columnAlign: 'center',
                 isResize: true
@@ -225,7 +225,7 @@ components: {
             {
                 field: 'afterDept',
                 title: '异动后部门路径',
-                width: 200,
+                width: 300,
                 titleAlign: 'center',
                 columnAlign: 'center',
                 isResize: true

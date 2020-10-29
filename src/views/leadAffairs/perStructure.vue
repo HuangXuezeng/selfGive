@@ -360,6 +360,7 @@ components: {
         myChart.on('click', function (params) {
             switch (params.name) {
               case '直接类（O类）':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -372,6 +373,7 @@ components: {
                 })
                 break;
               case '员工（P1/S1-P4/S4）':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -384,6 +386,7 @@ components: {
                 })
                 break;
               case '技术干部（P4/S4（主任）及以上）':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -396,6 +399,7 @@ components: {
                 })
                 break;
               case '基层干部（M1-M3）':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -408,6 +412,7 @@ components: {
                 })
                 break;
               case '中层干部（M4-M5）':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -420,6 +425,7 @@ components: {
                 })
                 break;
               case '核心干部（M及以上）':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -529,7 +535,8 @@ components: {
               // console.log(data1[xIndex])
             switch (data2[xIndex].name) {
               case '初中':
-                console.log(data2[xIndex].name)
+                that.dataIndex = 0
+                // console.log(data2[xIndex].name)
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -542,7 +549,7 @@ components: {
                 })
                 break;
               case '高中中专':
-                  console.log(data2[xIndex].name)
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -555,7 +562,7 @@ components: {
                 })
                 break;
               case '本科':
-                  console.log(data2[xIndex].name)
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -568,7 +575,7 @@ components: {
                 })
                 break;
               case '大专':
-                  console.log(data2[xIndex].name)
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -581,7 +588,7 @@ components: {
                 })
                 break;
               case '小学':
-                  console.log(data2[xIndex].name)
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -594,7 +601,7 @@ components: {
                 })
                 break;
               case '硕士及以上':
-                  console.log(data2[xIndex].name)
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -607,7 +614,7 @@ components: {
                 })
                 break;
               case 'MBA':
-                  console.log(data2[xIndex].name)
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -620,7 +627,7 @@ components: {
                 })
                 break;
               case '博士':
-                console.log(data2[xIndex].name)
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -690,10 +697,10 @@ components: {
         let that = this //改变this指向
         //点击事件
         myChart.on('click', function (params) {
-            console.log(params)
+            // console.log(params)
             switch (params.data.title) {
               case '25岁以下':
-                //   console.log(params.data.title)
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -706,7 +713,7 @@ components: {
                 })
                 break;
               case '25-35岁':
-                //   console.log(params.data.title)
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -719,7 +726,7 @@ components: {
                 })
                 break;
               case '35-45岁':
-                //   console.log(params.data.title)
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -732,7 +739,7 @@ components: {
                 })
                 break;
               case '45-50岁':
-                //   console.log(params.data.title)
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -745,6 +752,7 @@ components: {
                 })
                 break;
               case '50岁以上':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -825,6 +833,7 @@ components: {
             // window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
             switch (params.name) {
               case '男':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -837,6 +846,7 @@ components: {
                 })
                 break;
               case '女':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -922,6 +932,7 @@ components: {
         myChart.on('click', function (params) {
             switch (params.name) {
               case '6个月及以下':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -934,6 +945,7 @@ components: {
                 })
                 break;
               case '6个月至1年（含）':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -946,6 +958,7 @@ components: {
                 })
                 break;
               case '1年至3年（含）':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -958,6 +971,7 @@ components: {
                 })
                 break;
               case '3年以上':
+                that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
@@ -980,6 +994,7 @@ components: {
         // console.log(rowData)
         //通过cloumn来判断点击的是哪个
         if(column.field=='deptCount'){
+            this.dataIndex = 0
             this.showTable = true
             let queryData = {}
             queryData.jobnumbers = rowData.jobnumbers
@@ -1014,6 +1029,7 @@ components: {
     // 岗位分类查看详情
     znClick(){
         this.showTable = true
+        this.dataIndex = 0
         let queryData = {}
         queryData.jobnumbers = this.gwObj.gwzhinengJobnumber
         queryRoster(queryData).then(res=>{
@@ -1024,6 +1040,7 @@ components: {
     },
     jsClick(){
         this.showTable = true
+        this.dataIndex = 0
         let queryData = {}
         queryData.jobnumbers = this.gwObj.gwjiShuJobnumber
         queryRoster(queryData).then(res=>{
@@ -1034,6 +1051,7 @@ components: {
     },
     yxClick(){
         this.showTable = true
+        this.dataIndex = 0
         let queryData = {}
         queryData.jobnumbers = this.gwObj.gwyingXiaoJobnumber
         queryRoster(queryData).then(res=>{
@@ -1045,6 +1063,7 @@ components: {
     },
     zjClick(){
         this.showTable = true
+        this.dataIndex = 0
         let queryData = {}
         queryData.jobnumbers = this.gwObj.gwzhiJieJobnumber
         queryRoster(queryData).then(res=>{
@@ -1110,9 +1129,9 @@ components: {
     },
     //表格中盒子的滚动事件
     scrool(){
-        let scrollHeight = document.getElementsByClassName("bodycontain")[0].scrollHeight
-        let clientHeight = document.getElementsByClassName("bodycontain")[0].clientHeight
-        let scrollTop = document.getElementsByClassName("bodycontain")[0].scrollTop
+        let scrollHeight = this.$refs.pop_table.$el.children[0].children[1].scrollHeight
+        let clientHeight = this.$refs.pop_table.$el.children[0].children[1].clientHeight
+        let scrollTop = this.$refs.pop_table.$el.children[0].children[1].scrollTop
         if (scrollHeight - clientHeight == scrollTop) {
             //滚动条滚到最底部
             console.log("滚到了最底部");
@@ -1124,6 +1143,11 @@ components: {
             // }
         }
     },
+    ceshi(){
+        // console.log(this.$refs.pop_table)
+        // console.log(this.$refs.pop_table.$el.children[0].children[1].scrollTop)
+        // console.log(this.$refs.pop_table.$el.children[0].children[1].scrollHeight)
+    },
     //vuex
     ...mapMutations({
         arr_flag:'arr_flag',
@@ -1132,9 +1156,7 @@ components: {
     }),
   },
   mounted(){
-    // document.getElementsByClassName("bodycontain")[0].addEventListener('scroll', this.scrool)
-    // document.body.scrollTop = 0
-    // console.log(document.body.scrollTop)
+    // this.$refs.pop_table.$el.children[0].children[1].addEventListener('scroll', this.scrool)
 　},
 watch:{
     '$store.state.arrflag': function (newVal,oldVal) {

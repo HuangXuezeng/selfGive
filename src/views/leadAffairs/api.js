@@ -18,11 +18,13 @@ export function getSelectVal (queryData) {
   })
 }
 //组织架构
-export function getOrz (queryData) {
+export function getOrz (searchData) {
   return fetch({
-    url: `/kukacms/self/roster/selectDefaultOrgan`,
+    url: `/kukacms/self/roster/selectOrgan`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
     method: 'post',
-    data: qs.stringify(queryData)
+    data: JSON.stringify(searchData)
   })
 }
 //根据岗位分类1查分类2的选择条件
@@ -37,22 +39,17 @@ export function queryFen2 (queryData) {
 export function queryPerson (queryData) {
   return fetch({
     url: `/kukacms/self/roster/selectDefaultEmployee`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
     method: 'post',
-    data: qs.stringify(queryData)
+    data: JSON.stringify(queryData)
+    // data: qs.stringify(queryData)
   })
 }
 //根据职类查询职级
 export function queryRank (queryData) {
   return fetch({
     url: `/kukacms/self/roster/listRank`,
-    method: 'post',
-    data: qs.stringify(queryData)
-  })
-}
-//获取传给后台的部门名称和部门id
-export function queryDeptIdName (queryData) {
-  return fetch({
-    url: `/kukacms/self/roster/selectDefaultRoster`,
     method: 'post',
     data: qs.stringify(queryData)
   })
@@ -152,6 +149,13 @@ export function queryRunoff (queryData) {
     dataType: 'json',
     method: 'post',
     data: JSON.stringify(queryData)
+  })
+}
+export function selectPerson (queryData) {
+  return fetch({
+    url: `/kukacms/self/runoff/selectPerson`,
+    method: 'post',
+    data: qs.stringify(queryData)
   })
 }
 //人员异动部分--------------------------------------------------------
