@@ -59,6 +59,7 @@
             is-horizontal-resize
             style="width:100%;"
             is-vertical-resize
+            :min-height='300'
             :title-rows="tableConfig.titleRows"
             :columns="tableConfig.columns"
             :table-data="tableConfig.tableData"
@@ -219,7 +220,7 @@ export default {
           isFrozen: true
         },
         {
-          field: "a8602005",
+          field: "a8602009",
           title: "调整前",
           width: 80,
           titleAlign: "center",
@@ -228,7 +229,7 @@ export default {
           titleCellClassName: "normalLabelStyle"
         },
         {
-          field: "a8602010",
+          field: "a8602013",
           title: "调整后",
           width: 80,
           titleAlign: "center",
@@ -790,7 +791,6 @@ export default {
     }
   },
   created() {
-    debugger
     this.queryFindPayrollInfo();
     this.queryfindPayrollDept();
     this.resizeHeight()

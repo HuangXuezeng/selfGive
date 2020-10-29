@@ -144,7 +144,7 @@ export default {
       selectAllstyle: "background-color:Coral",
       labelStyle: "",
       restFlag: false, //花名册清空勾选,
-      autosize: { maxHeight: '35', minHeight: '10' }
+      autosize: { maxHeight: '25', minHeight: '20' }
     };
   },
   created() {

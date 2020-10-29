@@ -723,10 +723,10 @@
                   <span>团队规模：</span>
                   <span class="floatRight">{{ item.a8TDPYXX014 }}</span>
                 </p>
-                <div style="position:relative">
+                <div style="position:relative;">
                   <div class="successorFull">
                     <div
-                      style="display: flex;flex-direction: column-reverse;justify-content: space-between;"
+                      style="display: flex;flex-direction: column-reverse;justify-content:space-around;"
                     >
                       <div style="padding:1px;">
                         <div>
@@ -1448,7 +1448,7 @@ export default {
 }
 
 .cellclass {
-  width: 10vh;
+  width: 9vh;
   border-left: 1px solid #ccc;
   text-align: center;
   padding: 2px 0;
@@ -1462,7 +1462,7 @@ export default {
   top: 50%;
   left: 0px;
   width: 100%;
-  border-bottom: 0.5px solid #ccc;
+  border-bottom: 1px solid #ccc;
 }
 
 .successorFull {
