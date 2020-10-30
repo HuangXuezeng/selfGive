@@ -8,7 +8,7 @@
             </van-field> -->
             <!-- 选择部门 -->
             <div style="border-bottom:1px solid #ebedf0">
-                <choosedepartment
+                <pickdeptmore
                     ref="select"
                     @confirmNode="selctdept"
                     :Farequired="true"
@@ -17,7 +17,7 @@
                     :isSelctall='true'
                     :isFromRost='true'
                     :faDeptData='deptData'
-                ></choosedepartment>
+                ></pickdeptmore>
             </div>
             <van-field v-model="form.jobnumber" label="工号" placeholder="请输入工号" />
             <van-field v-model="form.name" label="姓名" placeholder="请输入姓名" />
@@ -87,12 +87,12 @@
 </template>
 <script>
 import { Field,Button,DatetimePicker,Popup,Notify,Dialog } from 'vant'
-import chooseDepartment from "@/components/chooseDepartment.vue";
+import pickDeptMore from "@/components/pickDeptMore.vue";
 import { mapMutations } from 'vuex'
 import { queryChanges } from './api'
 export default {
 components: {
-    choosedepartment: chooseDepartment
+    pickdeptmore: pickDeptMore
     },
   data () {
     return {
@@ -299,7 +299,7 @@ components: {
     initData(){
         //初始化部门数据
         const departRes =  JSON.parse(localStorage.getItem('departRes'))
-        this.deptData.push(departRes.obj.departments)
+        this.deptData.push(departRes)
     },
     //按条件查询
     search(){

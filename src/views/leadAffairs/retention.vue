@@ -961,7 +961,8 @@ export default {
           year: this.selectYear,
           month: this.selectMonth,
           deptId: this.deptId,
-          deptIds: this.deptIds
+          deptIds: this.deptIds,
+          jobnumber: localStorage.getItem('jobNum')
         };
         queryRunoff(queryData).then(res => {
           this.totalData = res.obj;
@@ -982,8 +983,8 @@ export default {
     },
     //默认展示最新年份
     initData() {
-      const departRes = JSON.parse(localStorage.getItem("departRes"));
-      this.deptIds = departRes.obj.deptIds;
+      const deptIdsRes = JSON.parse(localStorage.getItem('deptIdsRes'))
+      this.deptIds = deptIdsRes;
       this.selectYear = this.formatDate(new Date())
       let queryData = {
         year: this.selectYear,

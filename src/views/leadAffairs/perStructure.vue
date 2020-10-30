@@ -10,7 +10,7 @@
             <div class="btn">
                 <van-button type="primary" color="#fc5f10" size="small" @click="search" style="width:45%">查询</van-button>
                 <van-button type="primary" color="#fc5f10" size="small" @click="reset" style="width:45%">重置</van-button>
-                <!-- <van-button type="primary" color="#fc5f10" size="small" @click="ceshi">测试</van-button> -->
+                <!-- <van-button type="primary" color="#fc5f10" size="small" @click="_isHaveQx">测试</van-button> -->
             </div>
         </div>
         <div class="total">
@@ -134,8 +134,8 @@
     </div>
 </template>
 <script>
-import { Notify } from 'vant';
-import { querySelectTime,queryGwfl,queryGwcj,queryXlTeam,queryAgeTeam,querySexTeam,queryJobAgeTeam,queryDeptDetailTeam,queryRoster } from './api'
+import { Notify,Toast } from 'vant';
+import { querySelectTime,queryGwfl,queryGwcj,queryXlTeam,queryAgeTeam,querySexTeam,queryJobAgeTeam,queryDeptDetailTeam,queryRoster,isHaveQx } from './api'
 import chooseDepartment from "@/components/pickerDeptOne.vue";
 import { mapMutations } from 'vuex'
 export default {
@@ -144,6 +144,7 @@ components: {
 },
   data () {
     return {
+        qxFlag: false,
         isLoading: true,
         showTable: false, //表格弹窗
         selectTime: '',

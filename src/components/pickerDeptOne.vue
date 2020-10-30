@@ -30,9 +30,9 @@
 </template>
 
 <script>
-import { getOrz } from "@/views/leadAffairs/api.js";
+import { getOrz,isHaveQx } from "@/views/leadAffairs/api.js";
 import { findTeamBuildingJGLJInfo } from "@/views/personAffairs/teamFoster/teamFosterApi.js";
-import { Notify, Toast } from "vant";
+import { Notify,Toast } from "vant";
 export default {
   name: "chooseDepartment",
   props: {
@@ -88,7 +88,7 @@ export default {
       // getOrz(queryData).then(res => {
       // });
       const departRes =  JSON.parse(localStorage.getItem('departRes'))
-      this.deptData.push(departRes.obj.departments);
+      this.deptData.push(departRes);
 
     },
     //选择部门
@@ -102,52 +102,68 @@ export default {
     },
     //选择时触发
     handleCheckChange(data, checked, indeterminate) {
-      // 如果不存在数组中，并且数组中已经有一个id并且checked为true的时候，代表不能再次选择。
-      if(data.deptId  ==  this.onSelected){
-        this.onSelected = ''
-        return
+      //验证选择部门的权限
+      const deptIdsRes = JSON.parse(localStorage.getItem('deptIdsRes'))
+      let searchData = {
+          deptId: data.deptId,
+          deptIds: deptIdsRes
       }
-      if (this.selectOrg.orgsid.length === 1 && checked) {
-        // Toast.fail("只能选择一个部门");
-        // 设置已选择的节点为false 很重要
-          this.$refs.tree.setChecked(this.selectOrg.orgsid[0], false);
-          this.onSelected = this.selectOrg.orgsid[0].deptId
-          this.selectOrg.orgsid = [];
-          this.selectOrg.orgsid.push(data);
-          let assignData = Object.assign({}, data);
-          this.mechanismPath(assignData);
-          this.selectedDepartment = data.content
-          this.showPickDept = false;
-          Notify({ type: 'success', message: '选择成功' });
+      if(checked == true){
+          isHaveQx(searchData).then(res=>{
+            if(res.code == 1001 && checked == true){
+                this.$refs.tree.setCheckedKeys([])
+                Toast.fail(res.msg)
+                return
+            }else{
+              // 如果不存在数组中，并且数组中已经有一个id并且checked为true的时候，代表不能再次选择。
+              if(data.deptId  ==  this.onSelected){
+                this.onSelected = ''
+                return
+              }
+              if (this.selectOrg.orgsid.length === 1 && checked) {
+                // Toast.fail("只能选择一个部门");
+                // 设置已选择的节点为false 很重要
+                  this.$refs.tree.setChecked(this.selectOrg.orgsid[0], false);
+                  this.onSelected = this.selectOrg.orgsid[0].deptId
+                  this.selectOrg.orgsid = [];
+                  this.selectOrg.orgsid.push(data);
+                  let assignData = Object.assign({}, data);
+                  this.mechanismPath(assignData);
+                  this.selectedDepartment = data.content
+                  this.showPickDept = false;
+                  Notify({ type: 'success', message: '选择成功' });
 
-      } else if (this.selectOrg.orgsid.length === 0 && checked) {
-        // 发现数组为空 并且是已选择
-        // 防止数组有值，首先清空，再push
-        this.selectOrg.orgsid = [];
-        this.selectOrg.orgsid.push(data);
-        // this.selectedDepartment = data.content;
-        let assignData = Object.assign({}, data);
-        this.mechanismPath(assignData);
-        this.selectedDepartment = data.content
-        if(this.firstIn == 1&&this.selectName){
-          this.firstIn++
-        }else{
-          this.showPickDept = false;
-          this.onSelected=''
-          Notify({ type: 'success', message: '选择成功' });
-        }
+              } else if (this.selectOrg.orgsid.length === 0 && checked) {
+                // 发现数组为空 并且是已选择
+                // 防止数组有值，首先清空，再push
+                this.selectOrg.orgsid = [];
+                this.selectOrg.orgsid.push(data);
+                // this.selectedDepartment = data.content;
+                let assignData = Object.assign({}, data);
+                this.mechanismPath(assignData);
+                this.selectedDepartment = data.content
+                if(this.firstIn == 1&&this.selectName){
+                  this.firstIn++
+                }else{
+                  this.showPickDept = false;
+                  this.onSelected=''
+                  Notify({ type: 'success', message: '选择成功' });
+                }
 
-      } else if (
-        this.selectOrg.orgsid.length === 1 &&
-        !checked
-      ) {
-        // 再次直接进行赋值为空操作
-        let assignData = { content: "", deptId: "" };
-        this.transferData(assignData);
-        this.selectedDepartment = "";
-        this.selectOrg.orgsid = [];
-        this.onSelected=''
+              } else if (
+                this.selectOrg.orgsid.length === 1 &&
+                !checked
+              ) {
+                // 再次直接进行赋值为空操作
+                let assignData = { content: "", deptId: "" };
+                this.transferData(assignData);
+                this.selectedDepartment = "";
+                this.selectOrg.orgsid = [];
+                this.onSelected=''
 
+              }
+            }
+        })
       }
     },
     transferData(data) {

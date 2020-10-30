@@ -64,6 +64,26 @@ export function querySome (queryData) {
     data: JSON.stringify(queryData)
   })
 }
+//组件pickOne的选择时判断是否有权限选择(流失率和人员结构选择部门)
+export function checkDept (queryData) {
+  return fetch({
+    url: `/kukacms/self/dept/checkDept`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}
+//组件chooseDepet的选择时判断是否有权限选择(花名册选择部门)
+export function isHaveQx (queryData) {
+  return fetch({
+    url: `/kukacms/self/isHaveQx`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}
 //从其他页面进入花名册查看
 export function queryRoster (queryData) {
   return fetch({

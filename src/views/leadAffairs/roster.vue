@@ -4,7 +4,7 @@
       <!-- <van-field v-model="form.department" @click="pickDept" readonly label="部门" placeholder="请选择部门" /> -->
       <!-- 选择部门 -->
       <div style="border-bottom:1px solid #ebedf0">
-        <choosedepartment
+        <pickdeptmore
           ref="select"
           @confirmNode="selctdept"
           :Farequired="true"
@@ -13,7 +13,7 @@
           :isSelctall="true"
           :isFromRost="true"
           :faDeptData="deptData"
-        ></choosedepartment>
+        ></pickdeptmore>
       </div>
       <van-field
         v-model="form.jobnumber"
@@ -520,7 +520,7 @@ import {
   queryRoster
 } from "./api";
 import { mapMutations } from "vuex";
-import chooseDepartment from "@/components/chooseDepartment.vue";
+import pickDeptMore from "@/components/pickDeptMore.vue";
 import draggable from "vuedraggable";
 export default {
   data() {
@@ -838,8 +838,12 @@ export default {
         ids: this.deptVal
       };
       querySome(queryData).then(res => {
-        this.tableData = res.obj;
-        this.pagePev(); //获取的表格数据分组
+        if(res.code == 1000){
+          this.tableData = res.obj;
+          this.pagePev(); //获取的表格数据分组
+        }else{
+          
+        }
       });
       // console.log(this.form)
     },
@@ -2038,7 +2042,7 @@ export default {
   },
   components: {
     draggable,
-    choosedepartment: chooseDepartment
+    pickdeptmore: pickDeptMore
   }
 };
 </script>
