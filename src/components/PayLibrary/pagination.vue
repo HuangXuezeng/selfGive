@@ -39,9 +39,8 @@ export default {
   },
   methods: {
    pageChange(pageIndex) {
-    //  debugger
       this.pageIndex = pageIndex;
-      if(this.Faseachflag = 1){
+      if(this.Faseachflag == 1){
         this.$emit("queryNewSearch",this.pageIndex);
       }else{
         this.$emit("queryNew",this.pageIndex);

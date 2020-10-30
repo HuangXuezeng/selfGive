@@ -161,6 +161,7 @@ import fetch from '@/api/fetch'
 import { queryPerson,getMenu,setMenu,isLead } from './api'
 import draggable from 'vuedraggable'
 import { getOrz } from "@/views/leadAffairs/api.js";
+import {findPayrollDept} from "@/views/PayLibrary/PayLibrary.js";
 export default {
   data () {
     return {
@@ -219,7 +220,6 @@ export default {
     // localStorage.setItem('jobNum',9107021)
     // localStorage.setItem('jobNum',9078825)
     // localStorage.setItem('jobNum',9025434)
-    // this._getOrz()
     if(localStorage.getItem('jobNum') == '' || localStorage.getItem('jobNum') == null || localStorage.getItem('jobNum') == undefined){
       this.getUser()
     }else{
@@ -227,7 +227,9 @@ export default {
       this.getPerson()
       this._getMenu() //获取首页显示的菜单
       this._getMenus() //获取弹窗要排序显示的菜单
+      this.SalaryDept()//薪酬模块按工号获取部门
     }
+    this._getOrz()
   },
   methods:{
     //是否为领导
@@ -246,6 +248,27 @@ export default {
           });
         }
       })
+    },
+     //获取组织下的部门
+    _getOrz() {
+      let queryData = [{
+        content: "顾家家居股份有限公司",
+        deptCode: "1",
+        deptId: 1,
+        grade: 1,
+        parentId: null,
+      }];
+      getOrz(queryData).then(res => {
+        localStorage.setItem('AlldepartRes',JSON.stringify(res))
+        // localStorage.setItem()
+      });
+    },
+    SalaryDept(){
+      findPayrollDept({ jobnumber: localStorage.getItem("jobNum") }).then(
+        res => {
+           localStorage.setItem('SalaryDeptRes',JSON.stringify(res))
+        }
+      );
     },
     //获取用户基本信息
     getPerson(){

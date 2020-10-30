@@ -11,9 +11,9 @@
         <div class="shodowRewards">
           <van-row type="flex" justify="left" style="margin-bottom:10px">
             <van-col>
-              <div class="titleRewards" >
+              <div class="titleRewards">
                 <span class="honghe"></span>
-                 人均工资
+                人均工资
               </div></van-col
             >
           </van-row>
@@ -23,7 +23,7 @@
                 readonly
                 clickable
                 label="年/月:"
-                label-class='labelStyle'
+                label-class="labelStyle"
                 v-model="selectedyear"
                 placeholder="请选择年月"
                 @click="vanDateShow = true"
@@ -57,7 +57,7 @@
         </div>
       </van-tab>
       <van-tab title="各职级平均工资" name="各职级平均工资">
-        <div  class="shodowRewards">
+        <div class="shodowRewards">
           <van-row type="flex" justify="left" style="margin-bottom:10px">
             <van-col>
               <div class="titleRewards">
@@ -72,7 +72,7 @@
                 readonly
                 clickable
                 label="职级:"
-                label-class='labelStyle'
+                label-class="labelStyle"
                 v-model="selectzjName"
                 placeholder="请选择职级"
                 @click="rightPopShow"
@@ -80,10 +80,12 @@
               <van-popup
                 v-model="rightPop"
                 position="right"
-                style="width: 40%; height: 100%; z-index: 2048;"
+                :overlay='true'
+                :lazy-render='true'
+                style="width: 40%; height: 100%;"
                 :get-container="getContainer"
               >
-                <div style="height: 90%;overflow: auto;">
+                <div style="height: 90%;overflow: auto;z-index: 2049;">
                   <div v-for="item in checkboxlist" :key="item.zl">
                     <van-cell clickable @click="toggleZL(item)">
                       <template #title>
@@ -148,7 +150,7 @@
         <noData :showNodata="showNodata"></noData>
       </van-tab>
       <van-tab title="人均年薪" name="人均年薪">
-        <div  class="shodowRewards">
+        <div class="shodowRewards">
           <van-row type="flex" justify="left" style="margin-bottom:10px">
             <van-col>
               <div class="titleRewards">
@@ -734,11 +736,21 @@ export default {
       });
     },
     queryfindPayrollDept() {
-      findPayrollDept({ jobnumber: localStorage.getItem("jobNum") }).then(
-        res => {
-          this.deptData = res.obj.depts;
-        }
-      );
+      if (
+        localStorage.getItem("SalaryDeptRes") == "" ||
+        localStorage.getItem("SalaryDeptRes") == null ||
+        localStorage.getItem("SalaryDeptRes") == "underfined" ||
+        JSON.parse(localStorage.getItem("SalaryDeptRes")).code != "1000"
+      ) {
+        findPayrollDept({ jobnumber: localStorage.getItem("jobNum") }).then(
+          res => {
+            this.deptData = res.obj.depts;
+          }
+        );
+      } else {
+        const SalaryDeptRes = JSON.parse(localStorage.getItem("SalaryDeptRes"));
+        this.deptData = SalaryDeptRes.obj.depts;
+      }
     },
     queryfindPerGetDetailsInfo() {
       findPerGetDetailsInfo({
@@ -1311,10 +1323,15 @@ export default {
 .shodowRewards {
   box-shadow: rgba(100, 101, 102, 0.12) -9px 5px 60px -10px;
 }
-.titleRewards{
-  font-size: 18px;font-weight: 700;;margin-top:20px;color:red;
+
+.titleRewards {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 20px;
+  color: red;
 }
-.labelStyle{
-  color:red
+
+.labelStyle {
+  color: red;
 }
 </style>

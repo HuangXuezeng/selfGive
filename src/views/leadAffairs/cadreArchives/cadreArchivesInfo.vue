@@ -1254,7 +1254,7 @@ export default {
             contentone: "无",
             a832019: "无",
             a832009: "无",
-            a832htmURL: ""
+            a832htmURL: "javascript:void(0);"
           });
         } else {
           this.pbcList = res.obj.pbcList;

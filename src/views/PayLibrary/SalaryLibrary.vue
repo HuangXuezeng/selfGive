@@ -23,7 +23,7 @@
           >取消</span
         >
 
-        <span class="searchSty" @click="filtrateFlag = true">
+        <span class="searchSty" @click="showPopupClick">
           <van-icon name="filter-o" />
           <span style="font-size:12px;">筛选</span>
         </span>
@@ -78,13 +78,15 @@
       :style="{ height: '100%', width: '80%' }"
       :get-container="'body'"
     >
-      <van-row type="flex" justify="center" style="margin-bottom:10px">
-        <van-col>
-          <div class="titleRewards">
-            筛选条件
-          </div></van-col
-        >
-      </van-row>
+      <div style="background-color: Chocolate;">
+        <van-row type="flex" justify="center" style="margin-bottom:10px">
+          <van-col>
+            <div class="titleRewards">
+              筛选条件
+            </div></van-col
+          >
+        </van-row>
+      </div>
       <div>
         <choosedepartment
           @confirmNode="selctdept"
@@ -93,7 +95,6 @@
           :workingNum="true"
           :isSelctall="true"
           :faDeptData="deptData"
-          :isFromRost="true"
           ref="salaryDep"
         ></choosedepartment>
         <span class="cadreLine"></span>
@@ -108,30 +109,28 @@
           </template>
         </van-cell> -->
         <!-- <span class="cadreLine"></span> -->
-        <van-field label="最近调薪记录:">
+        <van-field label="最近调薪记录:" label-width="7em">
           <template #input>
             <van-stepper v-model="searchObj.num" />
           </template>
         </van-field>
         <!-- <span class="cadreLine"></span> -->
-        <van-row type="flex" justify="space-between" style="margin-bottom:10px">
-          <van-col span="10">
+        <van-row type="flex" justify="space-around" style="margin-top:20px">
+          <van-col span="8">
             <van-button
               type="primary"
               size="normal"
-              round
               @click="restSeach"
-              style="width:20vh"
+              style="width:15vh"
               >重置</van-button
             >
           </van-col>
-          <van-col span="10">
+          <van-col span="8">
             <van-button
               type="danger"
               size="normal"
-              round
               @click="confirmSearch"
-              style="width:20vh"
+              style="width:15vh"
               >确定</van-button
             >
           </van-col>
@@ -207,6 +206,7 @@ export default {
         pageNum: 1,
         dept: []
       },
+      concelFlag: false,
       briefColumns: [
         {
           field: "a0101",
@@ -671,6 +671,15 @@ export default {
       this.pageIndex = 1;
       this.pageSize = pageSize;
     },
+    showPopupClick() {
+      this.filtrateFlag = true;
+      this.$nextTick(() => {
+        if (this.concelFlag) {
+          this.$refs.salaryDep.RemoveNodeMeth();
+          this.concelFlag = false;
+        }
+      });
+    },
     queryFindPayrollInfo(data) {
       this.isLoading = true;
       let pageNumber = "";
@@ -746,17 +755,29 @@ export default {
       }
     },
     queryfindPayrollDept() {
-      findPayrollDept({ jobnumber: localStorage.getItem("jobNum") }).then(
-        res => {
-          this.deptData = res.obj.depts;
-        }
-      );
+      if (
+        localStorage.getItem("SalaryDeptRes") == "" ||
+        localStorage.getItem("SalaryDeptRes") == null ||
+        localStorage.getItem("SalaryDeptRes") == 'underfined'
+        || JSON.parse(localStorage.getItem("SalaryDeptRes")).code != '1000'
+      ) {
+        findPayrollDept({ jobnumber: localStorage.getItem("jobNum") }).then(
+          res => {
+            this.deptData = res.obj.depts;
+          }
+        );
+      } else {
+        const SalaryDeptRes = JSON.parse(localStorage.getItem("SalaryDeptRes"));
+        this.deptData = SalaryDeptRes.obj.depts;
+      }
     },
     confirmSearch() {
       this.filtrateFlag = false;
+
       this.upDateNewSearch();
     },
     restSeach() {
+      // debugger
       this.searchObj = {
         dept: [],
         jobnumber: this.ddJobNum,
@@ -764,7 +785,7 @@ export default {
         num: 1,
         pageNum: 1
       };
-      this.$refs.salaryDep.RemoveNodeMeth();
+      this.concelFlag = true;
     },
     resizeHeight() {
       if (navigator.userAgent.indexOf("iPhone") > -1) {
@@ -795,8 +816,8 @@ export default {
 .titleRewards {
   font-size: 18px;
   font-weight: 700;
-  margin-top: 20px;
-  color: red;
+  padding: 20px;
+  color: #fff;
 }
 
 .cadreLine {

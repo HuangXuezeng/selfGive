@@ -174,9 +174,11 @@ export default {
     //获取组织下的部门
     _getOrz() {
       if (this.workingNum) {
+
       } else {
-        const departRes = JSON.parse(localStorage.getItem("departRes"));
-        this.deptData.push(departRes);
+        const departRes = JSON.parse(localStorage.getItem("AlldepartRes"));
+        this.deptData = [departRes.obj];
+        this.openlist = [this.deptData[0].deptId];
       }
     },
     //选择部门
@@ -197,6 +199,7 @@ export default {
     },
     //团队培育用的方法 选择时触发
     handleCheckChange(data, checked, indeterminate) {
+      // debugger
       if (this.isSelctall) {
       } else {
         // 如果不存在数组中，并且数组中已经有一个id并且checked为true的时候，代表不能再次选择。
