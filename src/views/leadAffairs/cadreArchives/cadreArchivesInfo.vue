@@ -20,20 +20,20 @@
             </template>
             <template #title>
               <!-- <van-tag plain type="danger">青苗</van-tag> -->
-              <div style="font-size: 20px;font-weight: 700;display: flex;">
+              <div style="font-size: 25px;font-weight: 700;display: flex;align-items: center;">
                 {{ basicInfo.a0101 }}
                 <div @click="imageClick">
                   <van-image
                     v-if="seedlings"
                     round
-                    width="1rem"
-                    height="1rem"
+                    width="1.4rem"
+                    height="1.4rem"
                     :src="seedlings"
                   />
                   <van-image
                     round
-                    width="1rem"
-                    height="1rem"
+                    width="1.4rem"
+                    height="1.4rem"
                     :src="oldWine"
                     v-if="oldWine"
                   />
@@ -41,147 +41,195 @@
               </div>
             </template>
           </van-card>
-          <van-row type="flex" justify="center">
+          <van-row type="flex" class="resetVant">
             <van-col span="12">
-              <van-cell-group class="resetVant">
-                <van-cell
-                  title="出生日期:"
-                  :value="basicInfo.a0111 ? basicInfo.a0111 : '无'"
-                  center
-                />
-
-                <van-cell
-                  title="婚姻状况:"
-                  :value="basicInfo.a0127 ? basicInfo.a0127 : '无'"
-                  center
-                />
-
-                <van-cell
-                  title="专业:"
-                  :value="basicInfo.a011971 ? basicInfo.a011971 : '无'"
-                  center
-                />
-
-                <van-cell
-                  title="现岗位:"
-                  :value="basicInfo.nowPost ? basicInfo.nowPost : '无'"
-                  center
-                />
-
-                <van-cell
-                  title="入司日期:"
-                  :value="basicInfo.a0144 ? basicInfo.a0144 : '无'"
-                  center
-                />
-
-                <van-cell
-                  title="社会工龄:"
-                  :value="basicInfo.a01122 ? basicInfo.a01122 + '年' : '无'"
-                  center
-                />
-
-                <van-cell
-                  title="晋升经理时间:"
-                  :value="basicInfo.a01519 ? basicInfo.a01519 : '无'"
-                  center
-                />
-                <van-cell
-                  title="晋升总监时间:"
-                  :value="basicInfo.a01518 ? basicInfo.a01518 : '无'"
-                  center
-                />
-                <van-cell
-                  title="成熟度:"
-                  :value="basicInfo.a01224 ? basicInfo.a01224 : '无'"
-                  center
-                />
-                <van-cell
-                  title="英语是否可做工作语言:"
-                  :value="basicInfo.a01003 ? basicInfo.a01003 : '无'"
-                  center
-                />
-                <van-cell
-                  title="90后干部:"
-                  :value="basicInfo.a01141 ? basicInfo.a01141 : '无'"
-                  center
-                />
-              </van-cell-group>
+              <van-cell
+                title="出生日期:"
+                :value="basicInfo.a0111 ? basicInfo.a0111 : '无'"
+                center
+              />
             </van-col>
             <van-col span="12">
-              <van-cell-group class="resetVant">
-                <van-cell
-                  title="政治面貌:"
-                  :value="basicInfo.a01577 ? basicInfo.a01577 : '无'"
-                  center
-                />
-                <van-cell
-                  title="毕业院校:"
-                  :value="basicInfo.a011901 ? basicInfo.a011901 : '无'"
-                  center
-                />
-                <van-cell
-                  title="最高学历:"
-                  :value="basicInfo.a01504 ? basicInfo.a01504 : '无'"
-                  center
-                />
-                <van-cell
-                  title="职级:"
-                  :value="basicInfo.a01516 ? basicInfo.a01516 : '无'"
-                  center
-                />
-                <van-cell
-                  title="司龄:"
-                  :value="basicInfo.a0122 ? basicInfo.a0122 + '年' : '无'"
-                  center
-                />
-                <van-cell
-                  title="当前岗位工龄:"
-                  :value="basicInfo.a01140 ? basicInfo.a01140 + '年' : '无'"
-                  center
-                />
-                <van-cell
-                  class=" strClamp"
-                  @click="docClick"
-                  title="首次晋升经理红文编号:"
-                  center
-                >
-                  <template #default>
-                    <div class=" strClamp">
-                      {{ basicInfo.a01226 ? basicInfo.a01226 : "无" }}
-                    </div>
-                  </template>
-                </van-cell>
-                <van-cell
-                  class=" strClamp"
-                  @click="docClick"
-                  title="首次晋升总监红文编号:"
-                  center
-                >
-                  <template #default>
-                    <div class="strClamp">
-                      {{ basicInfo.a01225 ? basicInfo.a01225 : "无" }}
-                    </div>
-                  </template>
-                </van-cell>
-
-                <van-cell
-                  title="高潜人才池:"
-                  :value="basicInfo.a01223 ? basicInfo.a01223 : '无'"
-                  center
-                />
-                <van-cell
-                  title="几年陈:"
-                  :value="basicInfo.jnc ? basicInfo.jnc : '无'"
-                  center
-                />
-                <van-cell
-                  title="青苗:"
-                  :value="basicInfo.a01136 ? basicInfo.a01136 : '无'"
-                  center
-                />
-              </van-cell-group>
-            </van-col> </van-row
-        ></van-tab>
+              <van-cell
+                title="政治面貌:"
+                :value="basicInfo.a01577 ? basicInfo.a01577 : '无'"
+                center
+              />
+            </van-col>
+          </van-row>
+          <van-row type="flex" class="resetVant">
+            <van-col span="12">
+              <van-cell
+                title="婚姻状况:"
+                :value="basicInfo.a0127 ? basicInfo.a0127 : '无'"
+                center
+              />
+            </van-col>
+            <van-col span="12">
+              <van-cell
+                title="毕业院校:"
+                :value="basicInfo.a011901 ? basicInfo.a011901 : '无'"
+                center
+              />
+            </van-col>
+          </van-row>
+          <van-row type="flex" class="resetVant">
+            <van-col span="12">
+              <van-cell
+                title="专业:"
+                :value="basicInfo.a011971 ? basicInfo.a011971 : '无'"
+                center
+              />
+            </van-col>
+            <van-col span="12">
+              <van-cell
+                title="最高学历:"
+                :value="basicInfo.a01504 ? basicInfo.a01504 : '无'"
+                center
+              />
+            </van-col>
+          </van-row>
+          <van-row type="flex" class="resetVant">
+            <van-col span="12">
+              <van-cell
+                title="现岗位:"
+                :value="basicInfo.nowPost ? basicInfo.nowPost : '无'"
+                center
+              />
+            </van-col>
+            <van-col span="12">
+              <van-cell
+                title="职级:"
+                :value="basicInfo.a01516 ? basicInfo.a01516 : '无'"
+                center
+              />
+            </van-col>
+          </van-row>
+          <van-row type="flex" class="resetVant">
+            <van-col span="12">
+              <van-cell
+                title="入司日期:"
+                :value="basicInfo.a0144 ? basicInfo.a0144 : '无'"
+                center
+              />
+            </van-col>
+            <van-col span="12">
+              <van-cell
+                title="司龄:"
+                :value="basicInfo.a0122 ? basicInfo.a0122 + '年' : '无'"
+                center
+              />
+            </van-col>
+          </van-row>
+          <van-row type="flex" class="resetVant">
+            <van-col span="12">
+              <van-cell
+                title="社会工龄:"
+                :value="basicInfo.a01122 ? basicInfo.a01122 + '年' : '无'"
+                center
+              />
+            </van-col>
+            <van-col span="12">
+              <van-cell
+                title="岗位工龄:"
+                :value="basicInfo.a01140 ? basicInfo.a01140 + '年' : '无'"
+                center
+              />
+            </van-col>
+          </van-row>
+          <van-row type="flex" class="resetVant">
+            <van-col span="12">
+              <van-cell
+                title="晋升经理:"
+                :value="basicInfo.a01519 ? basicInfo.a01519 : '无'"
+                center
+              />
+            </van-col>
+            <van-col span="12">
+              <van-cell
+                @click="docClick"
+                title="首次晋升经理红文编号:"
+                center
+              >
+                <template #default>
+                  <div class=" strOneClamp">
+                    {{ basicInfo.a01226 ? basicInfo.a01226 : "无" }}
+                  </div>
+                </template>
+              </van-cell>
+            </van-col>
+          </van-row>
+          <van-row type="flex" class="resetVant">
+            <van-col span="12">
+              <van-cell
+                title="晋升总监:"
+                :value="basicInfo.a01518 ? basicInfo.a01518 : '无'"
+                center
+              />
+            </van-col>
+            <van-col span="12">
+              <van-cell
+                @click="docClick"
+                title="首次晋升总监红文编号:"
+                center
+              >
+                <template #default>
+                  <div class="strOneClamp">
+                    {{ basicInfo.a01225 ? basicInfo.a01225 : "无" }}
+                  </div>
+                </template>
+              </van-cell>
+            </van-col>
+          </van-row>
+          <van-row type="flex" class="resetVant">
+            <van-col span="12">
+              <van-cell
+                title="成熟度:"
+                :value="basicInfo.a01224 ? basicInfo.a01224 : '无'"
+                center
+              />
+            </van-col>
+            <van-col span="12">
+              <van-cell
+                title="高潜人才池:"
+                :value="basicInfo.a01223 ? basicInfo.a01223 : '无'"
+                center
+              />
+            </van-col>
+          </van-row>
+          <van-row type="flex" class="resetVant">
+            <van-col span="12">
+              <van-cell
+                title="英语是否可做工作语言:"
+                :value="basicInfo.a01003 ? basicInfo.a01003 : '无'"
+                center
+              />
+            </van-col>
+            <van-col span="12">
+              <van-cell
+                title="几年陈:"
+                :value="basicInfo.jnc ? basicInfo.jnc : '无'"
+                center
+              />
+            </van-col>
+          </van-row>
+          <van-row type="flex" class="resetVant">
+            <van-col span="12">
+              <van-cell
+                title="90后干部:"
+                :value="basicInfo.a01141 ? basicInfo.a01141 : '无'"
+                center
+              />
+            </van-col>
+            <van-col span="12">
+              <van-cell
+                title="青苗:"
+                :value="basicInfo.a01136 ? basicInfo.a01136 : '无'"
+                center
+              />
+            </van-col>
+          </van-row>
+        </van-tab>
         <van-tab title="工作经历">
           <div>
             <van-row type="flex" justify="center">
@@ -515,43 +563,43 @@
                     }}</van-tag>
                   </div>
                 </template>
-                <p>
+                <p v-if="item.A8SRLMX005">
                   <span>日期:</span>
                   <span class="floatRight">{{ item.A8SRLMX005 }}</span>
                 </p>
-                <p>
+                <p v-if="item.a8SRLMX006">
                   <span>排名:</span>
                   <span class="floatRight">{{ item.a8SRLMX006 }}</span>
                 </p>
-                <p>
+                <p v-if="item.qualityNum">
                   <span>素质测评得分:</span>
                   <span class="floatRight">{{ item.qualityNum }}</span>
                 </p>
-                <p>
+                <p v-if="item.s360Num">
                   <span>360得分:</span>
                   <span class="floatRight">{{ item.s360Num }}</span>
                 </p>
-                <p>
+                <p v-if="item.beinum">
                   <span>BEI/案例分析得分:</span>
                   <span class="floatRight">{{ item.beinum }}</span>
                 </p>
-                <p>
+                <p v-if="item.a8SRLMX011">
                   <span>加权总分:</span>
                   <span class="floatRight">{{ item.a8SRLMX011 }}</span>
                 </p>
-                <p>
+                <p v-if="item.jiuGZ">
                   <span>九宫格位置:</span>
                   <span class="floatRight">{{ item.jiuGZ }}</span>
                 </p>
-                <p>
+                <p v-if="item.a8SRLMX012">
                   <span>评估人:</span>
                   <span class="floatRight"> {{ item.a8SRLMX012 }}</span>
                 </p>
-                <p>
+                <p v-if="item.promote">
                   <span>待提升项:</span>
                   <span class="floatRight">{{ item.promote }}</span>
                 </p>
-                <p>
+                <p v-if="item.teamFw">
                   <span>团队氛围:</span>
                   <span class="floatRight">{{ item.teamFw }}</span>
                 </p>
@@ -821,6 +869,7 @@
           </div>
         </van-tab>
       </van-tabs>
+      <van-button type="primary" @click="test">测试下载</van-button>
     </div>
   </div>
 </template>
@@ -851,7 +900,8 @@ import {
   findCadreAbility,
   findCadreTrainInfo,
   findCadreTeamBuilding,
-  findCadreAchieveInfo
+  findCadreAchieveInfo,
+  download
 } from "@/views/leadAffairs/cadreArchives/cadreArchivesApi.js";
 //src/components/noData.vue
 import { findTeamBuildingInfo } from "@/views/personAffairs/teamFoster/teamFosterApi.js";
@@ -901,12 +951,15 @@ export default {
     };
   },
   created() {
-    // debugger;
     this.manageitem = this.$route.params.managerInfo;
-    if (!this.manageitem) {
-      this.itemjobnumber = localStorage.getItem("jobNum");
-    } else {
+    if (this.manageitem) {
       this.itemjobnumber = this.manageitem.a0190;
+      localStorage.setItem("cadreArchivesJobNumber", this.manageitem.a0190);
+    } else {
+      let cadreArchivesJobNumber = localStorage.getItem(
+        "cadreArchivesJobNumber"
+      );
+      this.itemjobnumber = cadreArchivesJobNumber;
     }
     this.querylsitWorkInfoByJobnumber();
     this.queryfindCadreKeyEvents();
@@ -1191,12 +1244,19 @@ export default {
               }
             } else if (key == "a01136") {
               if (this.basicInfo[key]) {
-                this.seedlings = require("@/assets/EF8DB818-6CA2-4d8f-AD69-DB7FF7AF22A8.png");
+                this.seedlings = require("@/assets/Snipaste_2020-11-02_13-25-30.png");
               } else {
               }
             } else if (key == "jnc") {
               if (this.basicInfo[key]) {
-                this.oldWine = require("@/assets/timg[5].jpg");
+                if(this.basicInfo[key] == '3年陈'){
+                  this.oldWine = require("@/assets/Snipaste_2020-11-02_13-26-01.png");
+                }else if(this.basicInfo[key] == '5年陈'){
+                  this.oldWine = require("@/assets/Snipaste_2020-11-02_13-25-55.png");
+
+                }else if(this.basicInfo[key] == '10年陈'){
+                  this.oldWine = require("@/assets/Snipaste_2020-11-02_13-25-47.png");
+                }
               } else {
               }
             }
@@ -1355,7 +1415,7 @@ export default {
     docClick(e) {
       // debugger;
       if (e.target.className == "strClampAll") {
-        e.target.className = " strClamp";
+        e.target.className = " strOneClamp";
       } else {
         e.target.className = "strClampAll";
       }
@@ -1372,6 +1432,58 @@ export default {
     },
     abilityClick(item) {
       this.echatsMethod(item);
+    },
+    test() {
+      let queryData = {};
+      queryData.basic = this.basicInfo;
+      queryData.kukaWork = this.cleearWU(this.KukaWorkList);
+      queryData.work = this.cleearWU(this.socialList);
+      queryData.keyEvents = this.cleearWU(this.KeyEvents);
+      queryData.ability = this.cleearWU(this.listAbility);
+      queryData.train = this.cleearWU(this.trainedExperienceList);
+      queryData.project = this.cleearWU(this.listProject);
+      queryData.teamBuilding = this.cleearWU(this.teamlist);
+      queryData.jx = this.cleearWU(this.cadreAchieveInfoList);
+      queryData.jxPbc = this.cleearWU(this.pbcList);
+      // debugger
+      // return
+      download(queryData).then(res => {
+        // debugger
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", res, true);
+        xhr.responseType = "blob";
+        xhr.onload = function(oEvent) {
+          var content = xhr.response;
+          var fileName = `资源${new Date().getTime()}.xls`; // 保存的文件名
+          var elink = document.createElement("a");
+          elink.download = filename;
+          elink.style.display = "none";
+
+          var blob = new Blob([content]);
+          elink.href = URL.createObjectURL(blob);
+
+          document.body.appendChild(elink);
+          elink.click();
+
+          document.body.removeChild(elink);
+        };
+        xhr.send();
+      });
+    },
+    cleearWU(list) {
+      // debugger
+      if (list.length == 0) {
+        return [];
+      }
+      for (let item of list) {
+        for (let key in item) {
+          if (item[key] == "无") {
+            return [];
+          } else {
+            return list;
+          }
+        }
+      }
     }
   }
 };
@@ -1440,6 +1552,15 @@ export default {
   -webkit-box-orient: vertical;
 }
 
+.strOneClamp {
+  word-break: break-all;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}
+
 .teamJr {
   display: inline-block;
   width: 60px;
@@ -1469,5 +1590,13 @@ export default {
   display: flex;
   justify-content: space-between;
   border: 1px solid #ccc;
+}
+
+.caderStyle {
+  width: 3vh;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 100;
 }
 </style>

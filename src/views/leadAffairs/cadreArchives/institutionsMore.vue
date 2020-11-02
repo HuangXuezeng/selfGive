@@ -179,7 +179,7 @@ export default {
 }
 
 .img {
-  float: left;
+  // float: left;
   border-radius: 50%;
   border: 1px solid #eee;
   width: 50px;

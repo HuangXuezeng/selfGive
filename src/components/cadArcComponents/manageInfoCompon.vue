@@ -5,26 +5,27 @@
         <div class="myContents">
           <div class="messageInfoos" @click="manageInfoMethod(items)">
             <!-- <span><img class="img" src="../../assets/timg.jpg" alt=""></span> -->
-            <span>
+            <span style="float: left;">
               <img
                 class="imgpps"
                 :src="items.photo != null ? items.photo : defaultAvatar"
                 alt
               />
             </span>
-            <span class="resuName">{{ items.a0101 }}</span>
-            <br />
-            <div class="mangetouxiang">
-              <span class="resuNamess">
-                岗位：
-                <i style="color:black">{{ items.gwName }}</i>
-              </span>
-              <span class="resuNamesss">
-                职级：
-                <i style="color:#ccc">{{
-                  items.zjName ? items.zjName : items.a01516
-                }}</i>
-              </span>
+            <div>
+              <span class="resuName">{{ items.a0101 }}</span>
+              <div class="mangetouxiang">
+                <span class="resuNamess">
+                  岗位：
+                  <i style="color:black">{{ items.gwName }}</i>
+                </span>
+                <span class="resuNamesss">
+                  职级：
+                  <i style="color:#ccc">{{
+                    items.zjName ? items.zjName : items.a01516
+                  }}</i>
+                </span>
+              </div>
             </div>
             <br />
           </div>
@@ -55,23 +56,24 @@
         <div class="marginsides" v-for="items in Fachlist" :key="items.a0190">
           <div class="myContents">
             <div class="messageInfoos" @click="manageInfoMethod(items)">
-              <span>
+              <span style="float: left;">
                 <img
                   class="img"
                   :src="items.photo != null ? items.photo : defaultAvatar"
                   alt
                 />
               </span>
-              <span class="resuName">{{ items.a0101 }}</span>
-              <br />
-              <div style="display: flex;flex-direction: column;">
-                <div class="resuNamess">
-                  岗位：
-                  <i style="color:black">{{ items.gwName }}</i>
-                </div>
-                <div class="resuNamesss">
-                  职级：
-                  <i style="color:#ccc">{{ items.zjName }}</i>
+              <div>
+                <span class="resuName">{{ items.a0101 }}</span>
+                <div style="display: flex;flex-direction: column;">
+                  <div class="resuNamess">
+                    岗位：
+                    <i style="color:black">{{ items.gwName }}</i>
+                  </div>
+                  <div class="resuNamesss">
+                    职级：
+                    <i style="color:#ccc">{{ items.zjName }}</i>
+                  </div>
                 </div>
               </div>
               <br />
@@ -106,7 +108,7 @@ export default {
     };
   },
   created() {
-    this.defaultAvatar = require('@/assets/timg.jpg')
+    this.defaultAvatar = require("@/assets/timg.jpg");
   },
   methods: {
     manageInfoMethod(item) {
@@ -159,7 +161,7 @@ export default {
 }
 
 .imgpps {
-  float: left;
+  // float: left;
   border-radius: 50%;
   border: 1px solid #eee;
   width: 50px;
@@ -191,8 +193,9 @@ export default {
   font-size: 14px;
   padding-left: 5px;
 }
-.mangetouxiang{
-display: flex;
-flex-direction: column;
+
+.mangetouxiang {
+  display: flex;
+  flex-direction: column;
 }
 </style>
