@@ -12,11 +12,11 @@
               <van-tag plain type="danger" v-if="basicInfo.a01136">{{
                 basicInfo.a01136
               }}</van-tag>
-              <van-tag plain type="danger">{{ basicInfo.a01504 }}</van-tag>
-              <van-tag plain type="danger">{{ basicInfo.a01516 }}</van-tag>
-              <van-tag plain type="danger">{{ basicInfo.nowPost }}</van-tag>
-              <van-tag plain type="danger">{{ basicInfo.a01740 }}</van-tag>
-              <van-tag plain type="danger">{{ basicInfo.a0107 }}</van-tag>
+              <van-tag plain type="danger" v-if="basicInfo.a01504" >{{ basicInfo.a01504 }}</van-tag>
+              <van-tag plain type="danger" v-if="basicInfo.a01516">{{ basicInfo.a01516 }}</van-tag>
+              <van-tag plain type="danger" v-if="basicInfo.nowPost">{{ basicInfo.nowPost }}</van-tag>
+              <van-tag plain type="danger" v-if="basicInfo.a01740">{{ basicInfo.a01740 }}</van-tag>
+              <van-tag plain type="danger" v-if="basicInfo.a0107">{{ basicInfo.a0107 }}</van-tag>
             </template>
             <template #title>
               <!-- <van-tag plain type="danger">青苗</van-tag> -->
@@ -1244,7 +1244,7 @@ export default {
               }
             } else if (key == "a01136") {
               if (this.basicInfo[key]) {
-                this.seedlings = require("@/assets/Snipaste_2020-11-02_13-25-30.png");
+                this.seedlings = require("@/assets/Snipaste_2020-11-02_15-08-47.png");
               } else {
               }
             } else if (key == "jnc") {
