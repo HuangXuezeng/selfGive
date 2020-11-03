@@ -48,13 +48,13 @@
               </div>
             </div>
 
-            <div class="other">
+            <div class="other" v-if="judgeLeadList.length != 0">
               <div>
                 <span class="border"></span>
                 <span style="font-weight:900">我的团队</span>
               </div>
               <div class="_items">
-                <div class="_item" v-for="item in leadList" :key="item.title" @click="handlerTeam(item)">
+                <div class="_item" v-for="item in judgeLeadList" :key="item.title" @click="handlerTeam(item)">
                   <img :src="item.img" alt="">
                   <span>{{item.title}}</span>
                 </div>
@@ -176,6 +176,7 @@ export default {
       gerenList: [], //菜单项
       gerenLists: [], //弹窗获取全部
       newList: [], //排序后的顺序
+      judgeLeadList:[],
       leadList: [
         {sortNum:0,title:'花名册',img:'http://192.168.249.18:7020/upload/menuImage/huaming.png'},
         {sortNum:1,title:'流失率',img:'http://192.168.249.18:7020/upload/menuImage/liushi.png'},
@@ -183,7 +184,7 @@ export default {
         {sortNum:3,title:'人效分析',img:'http://192.168.249.18:7020/upload/menuImage/renxiao.png'},
         {sortNum:4,title:'人员异动',img:'http://192.168.249.18:7020/upload/menuImage/yidong.png'},
         {sortNum:5,title:'编制分析',img:'http://192.168.249.18:7020/upload/menuImage/bianzhi.png'},
-        {sortNum:6,title:'干部档案',img:'http://192.168.249.18:7020/upload/menuImage/ganbu.png'},
+        {sortNum:6,title:'干部档案',img:'http://ehrfile.kukahome.com:7020/menuImage/ganbu.png'},
         {sortNum:7,title:'薪资库',img:'http://192.168.249.18:7020/upload/menuImage/xck.png'},
         {sortNum:8,title:'年薪分位值',img:'http://192.168.249.18:7020/upload/menuImage/nxfw.png'},
         {sortNum:9,title:'人均年薪',img:'http://192.168.249.18:7020/upload/menuImage/xck.png'},
@@ -215,7 +216,7 @@ export default {
     };
   },
   created(){
-    localStorage.setItem('jobNum',6006212)
+    localStorage.setItem('jobNum',9107021)
     // localStorage.setItem('jobNum',9050104)
     // localStorage.setItem('jobNum',9107021)
     // localStorage.setItem('jobNum',9078825)
@@ -223,15 +224,20 @@ export default {
     if(localStorage.getItem('jobNum') == '' || localStorage.getItem('jobNum') == null || localStorage.getItem('jobNum') == undefined){
       this.getUser()
     }else{
+      this.init()
+    }
+  },
+  methods:{
+    //数据初始化
+    init(){
       this._isLead() //是否为领导
       this.getPerson()
       this._getMenu() //获取首页显示的菜单
       this._getMenus() //获取弹窗要排序显示的菜单
       this.SalaryDept()//薪酬模块按工号获取部门
-    }
-    this._getOrz()
-  },
-  methods:{
+      this.isManPowerJudge()//判断干部档案
+      this._getOrz()
+    },
     //是否为领导
     _isLead(){
       let queryData = {
@@ -513,9 +519,11 @@ export default {
                     // that.save_userId(res.userId)
                     localStorage.setItem('jobNum',res.jobNumber)
                     localStorage.setItem('telNum',res.mobile) //手机号
-                    that.getPerson()
-                    that._getMenu() //获取首页显示的菜单
-                    that._getMenus() //获取弹窗要排序显示的菜单
+                    localStorage.setItem('userinfo',JSON.stringify(res)) //个人信息
+                    this.init()
+                    // that.getPerson()
+                    // that._getMenu() //获取首页显示的菜单
+                    // that._getMenus() //获取弹窗要排序显示的菜单
                   })
                 },
                 onFail: function(err) {
@@ -541,10 +549,11 @@ export default {
                   // that.save_userId(res.userId)
                   localStorage.setItem('jobNum',res.jobNumber)
                   localStorage.setItem('telNum',res.mobile) //手机号
-                  console.log('首页获取的工号'+localStorage.getItem('jobNum'))
-                  that.getPerson()
-                  that._getMenu() //获取首页显示的菜单
-                  that._getMenus() //获取弹窗要排序显示的菜单
+                  localStorage.setItem('userinfo',JSON.stringify(res)) //个人信息
+                  // that.getPerson()
+                  // that._getMenu() //获取首页显示的菜单
+                  // that._getMenus() //获取弹窗要排序显示的菜单
+                  this.init()
                 })
               },
               onFail : function(err) {
@@ -556,6 +565,22 @@ export default {
         }
 
       })
+    },
+    //判断干部档案能否显示
+    isManPowerJudge(){
+      let userinfo = JSON.parse(localStorage.getItem('userinfo'))
+      if(userinfo != null  && userinfo.isManPower == 'N' && userinfo.isCadre == 'N'){
+        for(let i in this.leadList){
+          if(this.leadList[i].title == '干部档案'){
+            this.leadList.splice(i,1);
+            break
+          }
+        }
+      }
+      if(userinfo != null){
+        this.judgeLeadList = this.leadList
+      }
+      this.judgeLeadList = this.leadList
     },
     //确认排序
     updateConfirm(){

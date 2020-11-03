@@ -6,21 +6,32 @@
           <van-card
             :desc="basicInfo.deptName ? basicInfo.deptName : ''"
             :thumb="basicInfo.photo"
-            @click="imageClick"
           >
             <template #tags>
               <van-tag plain type="danger" v-if="basicInfo.a01136">{{
                 basicInfo.a01136
               }}</van-tag>
-              <van-tag plain type="danger" v-if="basicInfo.a01504" >{{ basicInfo.a01504 }}</van-tag>
-              <van-tag plain type="danger" v-if="basicInfo.a01516">{{ basicInfo.a01516 }}</van-tag>
-              <van-tag plain type="danger" v-if="basicInfo.nowPost">{{ basicInfo.nowPost }}</van-tag>
-              <van-tag plain type="danger" v-if="basicInfo.a01740">{{ basicInfo.a01740 }}</van-tag>
-              <van-tag plain type="danger" v-if="basicInfo.a0107">{{ basicInfo.a0107 }}</van-tag>
+              <van-tag plain type="danger" v-if="basicInfo.a01504">{{
+                basicInfo.a01504
+              }}</van-tag>
+              <van-tag plain type="danger" v-if="basicInfo.a01516">{{
+                basicInfo.a01516
+              }}</van-tag>
+              <van-tag plain type="danger" v-if="basicInfo.nowPost">{{
+                basicInfo.nowPost
+              }}</van-tag>
+              <van-tag plain type="danger" v-if="basicInfo.a01740">{{
+                basicInfo.a01740
+              }}</van-tag>
+              <van-tag plain type="danger" v-if="basicInfo.a0107">{{
+                basicInfo.a0107
+              }}</van-tag>
             </template>
             <template #title>
               <!-- <van-tag plain type="danger">青苗</van-tag> -->
-              <div style="font-size: 25px;font-weight: 700;display: flex;align-items: center;">
+              <div
+                style="font-size: 25px;font-weight: 700;display: flex;align-items: center;"
+              >
                 {{ basicInfo.a0101 }}
                 <div @click="imageClick">
                   <van-image
@@ -38,6 +49,14 @@
                     v-if="oldWine"
                   />
                 </div>
+              </div>
+            </template>
+            <template #footer>
+              <div @click="downCarde">
+                <van-icon name="printer" size="22" color="blue">
+                  <!-- 下载 -->
+                </van-icon>
+                <span style="color:blue">下载</span>
               </div>
             </template>
           </van-card>
@@ -146,13 +165,9 @@
               />
             </van-col>
             <van-col span="12">
-              <van-cell
-                @click="docClick"
-                title="首次晋升经理红文编号:"
-                center
-              >
+              <van-cell title="首次晋升经理红文编号:" center>
                 <template #default>
-                  <div class=" strOneClamp">
+                  <div class="strOneClamp" @click="docClick">
                     {{ basicInfo.a01226 ? basicInfo.a01226 : "无" }}
                   </div>
                 </template>
@@ -168,13 +183,9 @@
               />
             </van-col>
             <van-col span="12">
-              <van-cell
-                @click="docClick"
-                title="首次晋升总监红文编号:"
-                center
-              >
+              <van-cell title="首次晋升总监红文编号:" center>
                 <template #default>
-                  <div class="strOneClamp">
+                  <div class="strOneClamp" @click="docClick">
                     {{ basicInfo.a01225 ? basicInfo.a01225 : "无" }}
                   </div>
                 </template>
@@ -773,18 +784,15 @@
                 </p>
                 <div style="position:relative;">
                   <div class="successorFull">
-                    <div
-                      style="display: flex;flex-direction: column-reverse;justify-content:space-around;"
-                    >
-                      <div style="padding:1px;">
-                        <div>
-                          继任者成熟度：
-                        </div>
-                      </div>
-
-                      <div style="padding:1px">
+                    <div style="height: 14vh;text-align: center;">
+                      <div style="height:7vh;line-height: 7vh;">
                         <div>
                           继任者：
+                        </div>
+                      </div>
+                      <div style="height:7vh;line-height: 7vh;">
+                        <div>
+                          继任者成熟度：
                         </div>
                       </div>
                     </div>
@@ -792,26 +800,26 @@
                       style="justify-content: space-between;flex-direction: row;display: flex;"
                     >
                       <div class="cellclass">
-                        <div>
+                        <div class="ceterHeight">
                           {{ item.a8TDPYXX015 }}
                         </div>
-                        <div>
+                        <div class="ceterHeight">
                           {{ item.a8TDPYXX016name }}
                         </div>
                       </div>
                       <div class="cellclass">
-                        <div>
+                        <div class="ceterHeight">
                           {{ item.a8TDPYXX017 }}
                         </div>
-                        <div>
+                        <div class="ceterHeight">
                           {{ item.a8TDPYXX018name }}
                         </div>
                       </div>
                       <div class="cellclass">
-                        <div>
+                        <div class="ceterHeight">
                           {{ item.a8TDPYXX019 }}
                         </div>
-                        <div>
+                        <div class="ceterHeight">
                           {{ item.a8TDPYXX020name }}
                         </div>
                       </div>
@@ -869,8 +877,8 @@
           </div>
         </van-tab>
       </van-tabs>
-      <van-button type="primary" @click="test">测试下载</van-button>
     </div>
+    <loadingSpin ref="loadingSpin"></loadingSpin>
   </div>
 </template>
 
@@ -906,9 +914,9 @@ import {
 //src/components/noData.vue
 import { findTeamBuildingInfo } from "@/views/personAffairs/teamFoster/teamFosterApi.js";
 import noData from "@/components/noData.vue";
-
+import loadingSpin from "@/components/loadingSpin.vue";
 export default {
-  components: { noData },
+  components: { noData, loadingSpin },
   data() {
     return {
       socialList: [],
@@ -961,20 +969,24 @@ export default {
       );
       this.itemjobnumber = cadreArchivesJobNumber;
     }
-    this.querylsitWorkInfoByJobnumber();
-    this.queryfindCadreKeyEvents();
-    this.queryProjectByJobnumber();
-    this.queryFindCadreBasicInfo();
-    this.querylistKukaWorkByJobnumber();
-    this.findTeam();
-    this.queryfindCadreAbility();
-    this.queryfindCadreTrainInfo();
-    this.queryfindCadreAchieveInfo();
+    this.init();
   },
   mounted() {
     // this.echatsMethod();
   },
   methods: {
+    async init() {
+      await this.querylsitWorkInfoByJobnumber();
+      await this.queryfindCadreKeyEvents();
+      await this.queryProjectByJobnumber();
+      await this.queryFindCadreBasicInfo();
+      await this.querylistKukaWorkByJobnumber();
+      await this.findTeam();
+      await this.queryfindCadreAbility();
+      await this.queryfindCadreTrainInfo();
+      await this.queryfindCadreAchieveInfo();
+      this.$refs.loadingSpin.shutdown();
+    },
     //项目经历
     querylsitWorkInfoByJobnumber(data) {
       lsitWorkInfoByJobnumber({ jobnumber: this.itemjobnumber }).then(res => {
@@ -1249,12 +1261,11 @@ export default {
               }
             } else if (key == "jnc") {
               if (this.basicInfo[key]) {
-                if(this.basicInfo[key] == '3年陈'){
+                if (this.basicInfo[key] == "3年陈") {
                   this.oldWine = require("@/assets/Snipaste_2020-11-02_13-26-01.png");
-                }else if(this.basicInfo[key] == '5年陈'){
+                } else if (this.basicInfo[key] == "5年陈") {
                   this.oldWine = require("@/assets/Snipaste_2020-11-02_13-25-55.png");
-
-                }else if(this.basicInfo[key] == '10年陈'){
+                } else if (this.basicInfo[key] == "10年陈") {
                   this.oldWine = require("@/assets/Snipaste_2020-11-02_13-25-47.png");
                 }
               } else {
@@ -1344,39 +1355,49 @@ export default {
     echatsMethod(expanditem) {
       var myChart = this.$echarts.init(this.$refs.ppt);
       let ecartsData = [];
+      let maxNum = 10;
+      let minNum = 0;
       if (expanditem == "" || expanditem.a8SRLMX015 == null) {
         ecartsData = [0, 0, 0, 0, 0, 0, 0, 0];
       } else {
         ecartsData = [
-          expanditem.a8SRLMX015,
-          expanditem.a8SRLMX016,
-          expanditem.a8SRLMX017,
-          expanditem.a8SRLMX018,
-          expanditem.a8SRLMX019,
-          expanditem.a8SRLMX020,
-          expanditem.a8SRLMX021,
-          expanditem.a8SRLMX022
+          Number(expanditem.a8SRLMX015),
+          Number(expanditem.a8SRLMX016),
+          Number(expanditem.a8SRLMX017),
+          Number(expanditem.a8SRLMX018),
+          Number(expanditem.a8SRLMX019),
+          Number(expanditem.a8SRLMX020),
+          Number(expanditem.a8SRLMX021),
+          Number(expanditem.a8SRLMX022)
         ];
+        maxNum = Math.max.apply(Math, ecartsData);
+        minNum = Math.min.apply(Math, ecartsData);
       }
-
+      // minNum = Math.trunc(minNum)
+      // maxNum = Math.ceil(maxNum)
       myChart.setOption({
         tooltip: {
           trigger: "axis"
         },
+        axisTick: {
+          show: true
+        },
         radar: [
           {
             indicator: [
-              { text: "坦诚正直", max: 10 },
-              { text: "事业激情", max: 10 },
-              { text: "团队领导", max: 10 },
-              { text: "团结协作", max: 10 },
-              { text: "战略决策", max: 10 },
-              { text: "推动变革", max: 10 },
-              { text: "用户中心", max: 10 },
-              { text: "业绩导向", max: 10 }
+              { text: "坦诚正直", max: maxNum, min: minNum },
+              { text: "事业激情", max: maxNum, min: minNum },
+              { text: "团队领导", max: maxNum, min: minNum },
+              { text: "团结协作", max: maxNum, min: minNum },
+              { text: "战略决策", max: maxNum, min: minNum },
+              { text: "推动变革", max: maxNum, min: minNum },
+              { text: "用户中心", max: maxNum, min: minNum },
+              { text: "业绩导向", max: maxNum, min: minNum }
             ],
             center: ["50%", "50%"],
-            radius: 80
+            radius: 80,
+            splitNumber: 5,
+            scale: true
           }
         ],
         series: [
@@ -1389,7 +1410,13 @@ export default {
             data: [
               {
                 value: ecartsData,
-                name: "个人能力"
+                name: "个人能力",
+                label: {
+                  show: true,
+                  formatter: function(params) {
+                    return params.value;
+                  }
+                }
               }
             ]
           }
@@ -1415,7 +1442,7 @@ export default {
     docClick(e) {
       // debugger;
       if (e.target.className == "strClampAll") {
-        e.target.className = " strOneClamp";
+        e.target.className = "strOneClamp";
       } else {
         e.target.className = "strClampAll";
       }
@@ -1433,7 +1460,7 @@ export default {
     abilityClick(item) {
       this.echatsMethod(item);
     },
-    test() {
+    downCarde() {
       let queryData = {};
       queryData.basic = this.basicInfo;
       queryData.kukaWork = this.cleearWU(this.KukaWorkList);
@@ -1445,30 +1472,42 @@ export default {
       queryData.teamBuilding = this.cleearWU(this.teamlist);
       queryData.jx = this.cleearWU(this.cadreAchieveInfoList);
       queryData.jxPbc = this.cleearWU(this.pbcList);
-      // debugger
-      // return
+      queryData.jobnumber = localStorage.getItem("jobNum");
+      this.concatMore(queryData);
+      this.$refs.loadingSpin.showUp();
       download(queryData).then(res => {
-        // debugger
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", res, true);
-        xhr.responseType = "blob";
-        xhr.onload = function(oEvent) {
-          var content = xhr.response;
-          var fileName = `资源${new Date().getTime()}.xls`; // 保存的文件名
-          var elink = document.createElement("a");
-          elink.download = filename;
-          elink.style.display = "none";
-
-          var blob = new Blob([content]);
-          elink.href = URL.createObjectURL(blob);
-
-          document.body.appendChild(elink);
-          elink.click();
-
-          document.body.removeChild(elink);
-        };
-        xhr.send();
+        if (res.code == "1000") {
+          Toast.success(res.msg);
+        } else {
+          Toast.fail(res.msg);
+        }
+        this.$refs.loadingSpin.shutdown();
       });
+    },
+    concatMore(obj) {
+      for (let key in obj) {
+        if (key == "kukaWork") {
+          if (this.KukaWorkListMore.length != 0) {
+            obj[key] = obj[key].concat(this.KukaWorkListMore);
+          }
+        } else if (key == "work") {
+          if (this.socialListMore.length != 0) {
+            obj[key] = obj[key].concat(this.socialListMore);
+          }
+        } else if (key == "keyEvents") {
+          if (this.KeyEventsMore.length != 0) {
+            obj[key] = obj[key].concat(this.KeyEventsMore);
+          }
+        } else if (key == "project") {
+          if (this.listProjectMore.length != 0) {
+            obj[key] = obj[key].concat(this.listProjectMore);
+          }
+        } else if (key == "jx") {
+          if (this.cadreAchieveInfoListMore.length != 0) {
+            obj[key] = obj[key].concat(this.cadreAchieveInfoListMore);
+          }
+        }
+      }
     },
     cleearWU(list) {
       // debugger
@@ -1598,5 +1637,9 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   -webkit-line-clamp: 100;
+}
+
+.ceterHeight {
+  line-height: 7vh;
 }
 </style>
