@@ -2,6 +2,11 @@
     <div>
         <div class="tiaojian">
           <van-field v-model="selectYear" label="选择年：" placeholder="请选择" @click-input="showyear=true" readonly/>
+          <choosedepartment 
+          ref="dept_content" 
+          @transferFa="selctdept" 
+          :Farequired="true">
+          </choosedepartment>
           <div class="btns">
               <van-button type="primary" size="small" color="#fc5f10" @click="search" style="width:45%;font-size:15px">查询</van-button>
               <van-button type="primary" size="small" color="#fc5f10" @click="reset" style="width:45%;font-size:15px">重置</van-button>
@@ -83,7 +88,11 @@
 <script>
 import { Notify } from 'vant';
 import { mapMutations } from 'vuex'
+import chooseDepartment from "@/components/pickerDeptOne.vue";
 export default {
+  components: {
+    choosedepartment: chooseDepartment
+  },
   data () {
     return {
       selectYear: '', //选择年
@@ -92,6 +101,7 @@ export default {
       maxDate: new Date(2025, 0,0),
       currentDate: new Date(),
       columnTime: [], //年
+      results: '', //部门截取过后
       tableData:[
         {name:'北美事业部',danwei:'一部门',fenlei:'分类一',target:'目标111',yuerenxiao:'20%',tongbi:'35%',counts:'4300',leiji:'20%',jindu:'10%',chayi:-0.2},
         {name:'北美事业部',danwei:'二部门',fenlei:'分类二',target:'目标111',yuerenxiao:'20%',tongbi:'35%',counts:'5600',leiji:'20%',jindu:'10%',chayi:0.22},
@@ -175,6 +185,18 @@ export default {
     //查询
     search(){
       
+    },
+    //选择部门
+    selctdept(data) {
+        console.log(data)
+        //截取部门
+        // let result = data.content.split( "-" )
+        // this.results = result[1]
+        // console.log(this.results)
+
+        // this.selectDeptContent = this.results
+        // this.selectDeptId = data.deptId
+        // this.selectDeptGrade = data.grade
     },
     initCharts () {
     　　let myChart = this.$echarts.init(this.$refs.chart);

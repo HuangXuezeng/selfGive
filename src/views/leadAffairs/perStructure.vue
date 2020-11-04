@@ -109,7 +109,7 @@
         close-icon-position="bottom-right"
         get-container="body"
         position="top" 
-        :style="{ height: '80%' }">
+        :style="{ height: '490px' }">
           <div class="table">
               <v-table 
               ref="pop_table"
