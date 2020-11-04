@@ -59,12 +59,12 @@
               <van-sidebar-item 
               title="亲属关系" 
               to="relMsg"/>
-              <van-sidebar-item 
+              <!-- <van-sidebar-item 
               title="家庭成员" 
-              to="memberMsg"/>
-              <van-sidebar-item 
+              to="memberMsg"/> -->
+              <!-- <van-sidebar-item 
               title="绩效考核" 
-              to="jixiaoMsg"/>
+              to="jixiaoMsg"/> -->
           </van-sidebar>
         </div>
         <div class="box_right" ref="right">

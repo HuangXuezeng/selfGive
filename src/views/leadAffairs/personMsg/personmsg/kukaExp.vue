@@ -10,6 +10,7 @@
                     <!-- <p><span>职级：{{item.position}}</span></p> -->
                     <p><span>机构单位：{{item.organ}}</span></p>
                     <p><span>任职岗位：{{item.station}}</span></p>
+                    <p><span>职级：{{item.position}}</span></p>
                     <p><span>证明人：{{item.witness}}</span></p>
                 </van-collapse-item>
             </van-collapse>
