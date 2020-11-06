@@ -16,8 +16,8 @@
                     <p><span>学位：{{item.a86011}}</span></p>
                     <p><span>是否最高学历：{{item.a86012}}</span></p>
                     <p><span>学历编号：{{item.a86013}}</span></p>
-                    <p><span @click="seePdf(item)">学历证：<span style="border-bottom:1px solid #ccc;padding:2px">{{item.xlFileName}}</span></span></p>
-                    <p><span @click="seePdf1(item)">学位证：<span style="border-bottom:1px solid #ccc;padding:2px">{{item.xwFileName}}</span></span></p>
+                    <!-- <p><span @click="seePdf(item)">学历证：<span style="border-bottom:1px solid #ccc;padding:2px">{{item.xlFileName}}</span></span></p>
+                    <p><span @click="seePdf1(item)">学位证：<span style="border-bottom:1px solid #ccc;padding:2px">{{item.xwFileName}}</span></span></p> -->
                     <!-- <p>
                         <span>请上传学历证/学位证附件:</span>
                         <span>

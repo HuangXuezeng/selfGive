@@ -94,6 +94,16 @@ export function queryRoster (queryData) {
     data: JSON.stringify(queryData)
   })
 }
+//花名册导出表格
+export function exportExl (queryData) {
+  return fetch({
+    url: `/kukacms/self/roster/exportExcel`,
+    method: 'post',
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    data: JSON.stringify(queryData)
+  })
+}
 
 //人员结构部分----------------------------------------------------------
 
@@ -182,6 +192,24 @@ export function selectPerson (queryData) {
 export function queryChanges (queryData) {
   return fetch({
     url: `/kukacms/self/turnover/selectTurnoverByCondition`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}
+// 查询异动分类
+export function getClassic (queryData) {
+  return fetch({
+    url: `/kukacms/self/turnover/getSelector`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+// 异动分类导出表格
+export function exportExcel (queryData) {
+  return fetch({
+    url: `/kukacms/self/turnover/exportExcel`,
     headers:{"content-type":"application/json"},
     dataType: 'json',
     method: 'post',

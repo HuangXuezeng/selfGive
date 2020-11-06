@@ -414,7 +414,7 @@ export default {
 <style lang="stylus" >
 .butnPosition {
   position: fixed;
-  bottom: 28vh;
+  bottom: 30vh;
   z-index: 99;
   padding: 5px;
   width: 100%;

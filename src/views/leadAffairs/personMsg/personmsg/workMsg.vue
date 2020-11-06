@@ -5,6 +5,11 @@
             <p><span>岗位：{{jobData.post}}</span></p>
             <p><span>入司日期：{{jobData.A0144}}</span></p>
             <p><span>兼职岗位：{{jobData.a01130}}</span></p>
+            <p><span>岗位分类一：{{jobData.gwfl1}}</span></p>
+            <p><span>岗位分类二：{{jobData.gwfl2}}</span></p>
+            <p><span>专业线标签：{{jobData.a01216}}</span></p>
+            <p><span>是否签订培训协议：{{jobData.a01187}}</span></p>
+            <p><span>是否签订竞业协议：{{jobData.a01189}}</span></p>
             <p><span>试用开始日期：{{jobData.A01520}}</span></p>
             <p><span>试用期限：{{jobData.a01299}}</span></p>
             <p><span>实际转正日期：{{jobData.A01103}}</span></p>

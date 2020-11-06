@@ -178,7 +178,7 @@
       position="top"
       closeable
       close-icon-position="bottom-right"
-      :style="{ height: '80%' }"
+      :style="{ height: '490px' }"
     >
       <div class="table">
         <v-table

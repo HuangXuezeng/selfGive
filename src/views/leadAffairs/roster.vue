@@ -22,14 +22,17 @@
       />
       <van-field v-model="form.name" label="姓名" placeholder="请输入姓名" />
       <div class="btn">
-        <van-button type="primary" color="#fc5f10" size="small" @click="search"
+        <van-button type="primary" color="#fc5f10" size="small" @click="search" style="width:23.333%"
           >查询</van-button
         >
-        <van-button type="primary" color="#fc5f10" size="small" @click="reset"
+        <van-button type="primary" color="#fc5f10" size="small" @click="reset" style="width:23.333%"
           >重置</van-button
         >
-        <van-button type="primary" color="#fc5f10" size="small" @click="setMenu"
+        <van-button type="primary" color="#fc5f10" size="small" @click="setMenu" style="width:23.333%"
           >排序</van-button
+        >
+        <van-button type="primary" color="#fc5f10" size="small" @click="_exportExl" style="width:23.333%"
+          >导出</van-button
         >
         <van-button
           type="primary"
@@ -54,7 +57,6 @@
         row-hover-color="#eee"
         row-click-color="#edf7ff"
         :row-click="rowClick"
-        :paging-index="(pageIndex - 1) * pageSize"
       ></v-table>
       <!-- <div style="padding:10px 10px 10px 0"><van-tag type="warning">总条数：{{total}}</van-tag></div> -->
     </div>
@@ -294,7 +296,7 @@
             v-dragging="{ item: item, list: columns, group: 'columns' }"
             :key="item.title"
           >
-            <div :name="item.title">{{ item.title }}</div>
+            <div :name="item.title" class="paixu">{{ item.title }}</div>
           </div>
         </transition-group>
       </div>
@@ -517,7 +519,8 @@ import {
   queryPerson,
   queryRank,
   querySome,
-  queryRoster
+  queryRoster,
+  exportExl
 } from "./api";
 import { mapMutations } from "vuex";
 import pickDeptMore from "@/components/pickDeptMore.vue";
@@ -525,6 +528,8 @@ import draggable from "vuedraggable";
 export default {
   data() {
     return {
+      download: 1, //传给后台，导出的是否是默认的数据
+      allTableData: [], //所有的表格数据
       deptData: [],
       isLoading: true,
       intertimer: null, //定时器
@@ -635,39 +640,7 @@ export default {
         {
           field: "department",
           title: "部门",
-          width: 200,
-          titleAlign: "center",
-          columnAlign: "center",
-          isResize: true
-        },
-        {
-          field: "post",
-          title: "岗位",
-          width: 200,
-          titleAlign: "center",
-          columnAlign: "center",
-          isResize: true
-        },
-        {
-          field: "rank",
-          title: "职级",
-          width: 150,
-          titleAlign: "center",
-          columnAlign: "center",
-          isResize: true
-        },
-        {
-          field: "rsrq",
-          title: "入司日期",
-          width: 150,
-          titleAlign: "center",
-          columnAlign: "center",
-          isResize: true
-        },
-        {
-          field: "currentState",
-          title: "当前状态",
-          width: 150,
+          width: 300,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true
@@ -687,8 +660,8 @@ export default {
       zhuanyeList: [], //下拉选择专业线
       stateList: [], //下拉选择当前状态
       personList: [], //下拉选择人员
-      minDate: new Date(2020, 0, 1),
-      maxDate: new Date(2025, 10, 1),
+      minDate: new Date(1980, 0, 1),
+      maxDate: new Date(2030, 10, 1),
       currentDate: new Date(),
       column1: [
         { keyId: "1", text: "是" },
@@ -784,6 +757,43 @@ export default {
     _queryDeptIdName() {
         this._getOrz(); //获取部门
         this._queryPerson(); //获取人员
+        let initColumns = [
+        {
+          field: "post",
+          title: "岗位",
+          width: 200,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "rank",
+          title: "职级",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "rsrq",
+          title: "入司日期",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "currentState",
+          title: "当前状态",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        }
+      ]
+      for(let i in initColumns){
+        this.columns.push(initColumns[i])
+      }
     },
     //获取组织下的部门
     _getOrz() {
@@ -805,18 +815,18 @@ export default {
         }
       queryPerson(queryData).then(res => {
         this.tableData = res.obj;
+        this.allTableData = res.obj;
         this.isLoading = false;
         this.pagePev(); //获取的表格数据分组
       });
     },
     //重置
     reset() {
-      this.form = {
-        department: "",
-        jobnumber: "",
-        name: ""
-      };
-      this.deptVal = "";
+      this.form.department = ""
+      this.form.jobnumber = ""
+      this.form.name = ""
+      //清空选择的部门
+      this.deptVal = [];
       this.$refs.select.selectedDepartment = "";
       this.$refs.select.restFlag = true;
     },
@@ -828,21 +838,68 @@ export default {
     setMenu() {
       this.showPx = true;
     },
+    //搜索前初始化表格数据
+    initTableData(){
+      this.columns = [
+        {
+          field: "custome",
+          width: 100,
+          titleAlign: "center",
+          columnAlign: "center",
+          title: "序号",
+          formatter: function(rowData, index) {
+            return index + 1;
+          },
+          isResize: true
+        },
+        {
+          field: "jobnumber",
+          title: "工号",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<span>${rowData[field]}</span>`;
+          },
+          isResize: true
+          // isFrozen: true,
+        },
+        {
+          field: "name",
+          title: "姓名",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "department",
+          title: "部门",
+          width: 300,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        }
+      ]
+    },
     //查询添加表格
     search() {
+      this.initTableData()
       let queryData = {
-        name: this.form.name,
         jobnumber: this.form.jobnumber,
+        name: this.form.name,
         currentDept: this.currentDept,
         deptIds: this.deptIds,
         ids: this.deptVal
       };
       querySome(queryData).then(res => {
         if(res.code == 1000){
+          this.download = 2
           this.tableData = res.obj;
+          this.allTableData = res.obj;
           this.pagePev(); //获取的表格数据分组
         }else{
-          
+          Notify({ type: "warning", message: res.msg });
         }
       });
       // console.log(this.form)
@@ -884,13 +941,33 @@ export default {
     },
     //弹窗里条件的查询
     searchMore() {
-      // console.log(this.form)
-      // if(this.form.currentState !== ''){
-      //     let obj1 = {
-      //         field: 'currentState',title: '当前状态',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
-      //     }
-      //     this.columns.push(obj1)
-      // }
+      //初始化表格显示的数据
+      this.initTableData()
+      // console.log(this.form.post)
+      if(this.form.post !== ""){
+          let obj26 = {
+              field: 'post',title: '岗位',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+          }
+          this.columns.push(obj26)
+      }
+      if(this.form.rank !== ""){
+          let obj27 = {
+              field: 'rank',title: '职级',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+          }
+          this.columns.push(obj27)
+      }
+      if(this.form.entryStartTime !== "" || this.form.entryEndTime !== ""){
+          let obj28 = {
+              field: 'rsrq',title: '入司日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+          }
+          this.columns.push(obj28)
+      }
+      if(this.form.currentState !== ""){
+          let obj1 = {
+              field: 'currentState',title: '当前状态',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+          }
+          this.columns.push(obj1)
+      }
       if (this.form.sex !== "") {
         let obj2 = {
           field: "sex",
@@ -899,9 +976,9 @@ export default {
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
-          formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span>${rowData[field] == 1 ? "男" : "女"}</span>`;
-          }
+          // formatter: function(rowData, rowIndex, pagingIndex, field) {
+          //   return `<span>${rowData[field] == 1 ? "男" : "女"}</span>`;
+          // }
         };
         this.columns.push(obj2);
       }
@@ -1100,9 +1177,9 @@ export default {
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
-          formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span>${rowData[field] == 1 ? "是" : "否"}</span>`;
-          }
+          // formatter: function(rowData, rowIndex, pagingIndex, field) {
+          //   return `<span>${rowData[field] == 1 ? "是" : "否"}</span>`;
+          // }
         };
         this.columns.push(obj19);
       }
@@ -1114,9 +1191,9 @@ export default {
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
-          formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span>${rowData[field] == 1 ? "是" : "否"}</span>`;
-          }
+          // formatter: function(rowData, rowIndex, pagingIndex, field) {
+          //   return `<span>${rowData[field] == 1 ? "是" : "否"}</span>`;
+          // }
         };
         this.columns.push(obj20);
       }
@@ -1128,9 +1205,9 @@ export default {
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
-          formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span>${rowData[field] == 1 ? "是" : "否"}</span>`;
-          }
+          // formatter: function(rowData, rowIndex, pagingIndex, field) {
+          //   return `<span>${rowData[field] == 1 ? "是" : "否"}</span>`;
+          // }
         };
         this.columns.push(obj21);
       }
@@ -1142,9 +1219,9 @@ export default {
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
-          formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span>${rowData[field] == 1 ? "是" : "否"}</span>`;
-          }
+          // formatter: function(rowData, rowIndex, pagingIndex, field) {
+          //   return `<span>${rowData[field] == 1 ? "是" : "否"}</span>`;
+          // }
         };
         this.columns.push(obj22);
       }
@@ -1219,9 +1296,15 @@ export default {
       };
       // let queryData = this.form
       querySome(queryData).then(res => {
-        //接受数据
-        this.tableData = res.obj;
-        this.pagePev(); //获取的表格数据分组
+        if(res.code == 1000){
+          //接受数据
+          this.tableData = res.obj;
+          this.allTableData = res.obj;
+          this.download = 2
+          this.pagePev(); //获取的表格数据分组
+        }else{
+          Notify({ type: "warning", message: res.msg });
+        }
       });
       //数组去重
       this.columns = this.unique(this.columns);
@@ -1999,9 +2082,12 @@ export default {
       //   console.log(data)
       this.deptVal = data;
     },
-    ceshi() {
-      console.log(this.$refs.select.selectedDepartment);
-    },
+    // ceshi() {
+    //   this.download = 2
+    // },
+    // ceshi2() {
+    //   console.log(this.download)
+    // },
     //关闭排序的弹窗
     closePop() {
       this.showPx = false;
@@ -2010,10 +2096,26 @@ export default {
     closeSearch() {
       this.showPick = false;
     },
+    //导出表格
+    _exportExl(){
+      let queryData = {
+        jobnumber: localStorage.getItem('jobNum'),
+        download:this.download,
+        employee:this.allTableData
+      }
+      exportExl(queryData).then(res=>{
+        if(res.code == 1000){
+          Notify({ type: "success", message: res.msg });
+        }else{
+          Notify({ type: "warning", message: res.msg });
+        }
+      })
+    },
     ...mapMutations({
       save_jobNum: "save_jobNum",
       scroll_top: "scroll_top",
-      from_page: "from_page"
+      from_page: "from_page",
+      arr_flag:'arr_flag'
     })
   },
   mounted() {
@@ -2038,7 +2140,14 @@ export default {
           "v-table-body"
         )[0].scrollTop = this.$route.params.scrollTop;
       }
-    }
+    },
+    // '$store.state.arrflag': function (newVal,oldVal) {
+    //   // console.log(newVal+'-----新')
+    //   if(newVal == 1){
+    //     // console.log('折起来了')
+    //     this.columns[0].width = 99
+    //   }
+    // }
   },
   components: {
     draggable,
@@ -2075,14 +2184,15 @@ td {
 .pick {
   padding: 10px 10px 35px 10px;
   line-height: 25px;
+  .paixu{
+    font-weight 700
+    text-align center
+    color orange
+  }
 }
 
 .van-checkbox {
   padding: 5px;
-}
-
-.eletable {
-  overflow-y: auto;
 }
 
 .infoitems {
