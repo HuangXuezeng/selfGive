@@ -80,8 +80,8 @@
               <van-popup
                 v-model="rightPop"
                 position="right"
-                :overlay='true'
-                :lazy-render='true'
+                :overlay="true"
+                :lazy-render="true"
                 style="width: 40%; height: 100%;"
                 :get-container="getContainer"
               >
@@ -602,10 +602,7 @@ export default {
       if (this.slength <= rowIndex && rowData.zl == "O类") {
         return "oClass";
       }
-      if (
-        this.slength + this.plength + this.mlength + this.olength <= rowIndex &&
-        rowData.zl == "合计"
-      ) {
+      if (rowData.zl == "合计") {
         return "heClass";
       }
     },
@@ -1152,14 +1149,7 @@ export default {
       if (this.sAnnualSalary <= rowIndex && rowData.zl == "O类") {
         return "oClass";
       }
-      if (
-        this.mAnnualSalary +
-          this.pAnnualSalary +
-          this.oAnnualSalary +
-          this.sAnnualSalary <=
-          rowIndex &&
-        rowData.zl == "合计"
-      ) {
+      if (rowData.zl == "合计") {
         return "heClass";
       }
     },

@@ -81,7 +81,7 @@
       <div style="background-color: Chocolate;">
         <van-row type="flex" justify="center" style="margin-bottom:10px">
           <van-col>
-            <div class="titleRewards">
+            <div class="titleRewardSalary">
               筛选条件
             </div></van-col
           >
@@ -813,7 +813,7 @@ export default {
   border-radius: 10px;
 }
 
-.titleRewards {
+.titleRewardSalary {
   font-size: 18px;
   font-weight: 700;
   padding: 20px;

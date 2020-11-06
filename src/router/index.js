@@ -391,6 +391,12 @@ export default new Router({
       name: 'SalaryLibrary',
       component: () => import('@/views/PayLibrary/SalaryLibrary'),
     },
+    //年薪分位值
+    {
+      path: '/annualSalaryPercentile',
+      name: 'annualSalaryPercentile',
+      component: () => import('@/views/PayLibrary/annualSalaryPercentile'),
+    },
     /**
      * 薪酬结束
      */

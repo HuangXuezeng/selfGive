@@ -73,3 +73,13 @@ export function findPayrollInfoBySearch (queryData) {
     data: JSON.stringify(queryData)
   })
 }
+//分位值
+export function findFwValueInfo (queryData) {
+  return fetch({
+    url: `/kukacms/self/findFwValueInfo`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}

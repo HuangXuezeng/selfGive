@@ -178,19 +178,20 @@ export default {
       newList: [], //排序后的顺序
       judgeLeadList:[],
       leadList: [
-        {sortNum:0,title:'花名册',img:'http://192.168.249.18:7020/upload/menuImage/huaming.png'},
-        {sortNum:1,title:'流失率',img:'http://192.168.249.18:7020/upload/menuImage/liushi.png'},
-        {sortNum:2,title:'人员结构',img:'http://192.168.249.18:7020/upload/menuImage/jiegou.png'},
-        {sortNum:3,title:'人效分析',img:'http://192.168.249.18:7020/upload/menuImage/renxiao.png'},
-        {sortNum:4,title:'人员异动',img:'http://192.168.249.18:7020/upload/menuImage/yidong.png'},
-        {sortNum:5,title:'编制分析',img:'http://192.168.249.18:7020/upload/menuImage/bianzhi.png'},
+        {sortNum:0,title:'花名册',img:'http://ehrfile.kukahome.com:7020/menuImage/huaming.png'},
+        {sortNum:1,title:'流失率',img:'http://ehrfile.kukahome.com:7020/menuImage/liushi.png'},
+        {sortNum:2,title:'人员结构',img:'http://ehrfile.kukahome.com:7020/menuImage/jiegou.png'},
+        {sortNum:3,title:'人效分析',img:'http://ehrfile.kukahome.com:7020/menuImage/renxiao.png'},
+        {sortNum:4,title:'人员异动',img:'http://ehrfile.kukahome.com:7020/menuImage/yidong.png'},
+        {sortNum:5,title:'编制分析',img:'http://ehrfile.kukahome.com:7020/menuImage/bianzhi.png'},
         {sortNum:6,title:'干部档案',img:'http://ehrfile.kukahome.com:7020/menuImage/ganbu.png'},
-        {sortNum:7,title:'薪资库',img:'http://192.168.249.18:7020/upload/menuImage/xck.png'},
-        {sortNum:8,title:'年薪分位值',img:'http://192.168.249.18:7020/upload/menuImage/nxfw.png'},
-        {sortNum:9,title:'人均年薪',img:'http://192.168.249.18:7020/upload/menuImage/xck.png'},
-        {sortNum:10,title:'人均工资',img:'http://192.168.249.18:7020/upload/menuImage/xck.png'},
-        {sortNum:11,title:'人工费用',img:'http://192.168.249.18:7020/upload/menuImage/rgfy.png'},
-        {sortNum:12,title:'奖励进度',img:'http://192.168.249.18:7020/upload/menuImage/jljd.png'},
+        {sortNum:7,title:'薪资库',img:'http://ehrfile.kukahome.com:7020/menuImage/xzk.png'},
+        {sortNum:8,title:'年薪分位值',img:'http://ehrfile.kukahome.com:7020/menuImage/nxfwz.png'},
+        {sortNum:9,title:'人均年薪',img:'http://ehrfile.kukahome.com:7020/menuImage/rjnx.png'},
+        {sortNum:10,title:'人均工资',img:'http://ehrfile.kukahome.com:7020/menuImage/rjgz.png'},
+        {sortNum:11,title:'人工费用',img:'http://ehrfile.kukahome.com:7020/menuImage/rgfy.png'},
+        {sortNum:12,title:'奖励进度',img:'http://ehrfile.kukahome.com:7020/menuImage/jljd.png'},
+        {sortNum:12,title:'自动提醒',img:'http://ehrfile.kukahome.com:7020/menuImage/zdtx.png'},
       ],
       colors: [{
             text: "Aquamarine"
@@ -216,7 +217,7 @@ export default {
     };
   },
   created(){
-    localStorage.setItem('jobNum',9107021)
+    localStorage.setItem('jobNum',6006212)
     // localStorage.setItem('jobNum',9050104)
     // localStorage.setItem('jobNum',9107021)
     // localStorage.setItem('jobNum',9078825)
@@ -646,6 +647,10 @@ export default {
         case '干部档案':
         this.save_type(sortNum)
         this.$router.push({name:'cadreArchives'})
+        break;
+         case '年薪分位值':
+        this.save_type(sortNum)
+        this.$router.push({name:'annualSalaryPercentile'})
         break;
       }
     }
