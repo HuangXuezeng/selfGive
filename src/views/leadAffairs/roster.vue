@@ -22,24 +22,25 @@
       />
       <van-field v-model="form.name" label="姓名" placeholder="请输入姓名" />
       <div class="btn">
-        <van-button type="primary" color="#fc5f10" size="small" @click="search" style="width:23.333%"
+        <van-button type="primary" color="#fc5f10" size="mini" @click="search" style="width:16%"
           >查询</van-button
         >
-        <van-button type="primary" color="#fc5f10" size="small" @click="reset" style="width:23.333%"
+        <van-button type="primary" color="#fc5f10" size="mini" @click="reset" style="width:16%"
           >重置</van-button
         >
-        <van-button type="primary" color="#fc5f10" size="small" @click="setMenu" style="width:23.333%"
+        <van-button type="primary" color="#fc5f10" size="mini" @click="setMenu" style="width:16%"
           >排序</van-button
         >
-        <van-button type="primary" color="#fc5f10" size="small" @click="_exportExl" style="width:23.333%"
+        <van-button type="primary" color="#fc5f10" size="mini" @click="_exportExl" style="width:16%"
           >导出</van-button
         >
         <van-button
           type="primary"
           color="#fc5f10"
-          size="small"
+          size="mini"
+          style="width:23.333%"
           @click="moreSearch"
-          >更多查询条件</van-button
+          >更多条件</van-button
         >
         <!-- <van-button type="primary" color="#fc5f10" size="small" @click="ceshi">测试</van-button> -->
       </div>
@@ -50,7 +51,9 @@
         ref="table"
         :is-loading="isLoading"
         :height="400"
-        style="font-size:14px"
+        is-horizontal-resize
+        column-width-drag
+        style="font-size:14px;width:100%"
         title-bg-color="#e5ecf0"
         :columns="columns"
         :table-data="tableData"
@@ -75,203 +78,286 @@
       position="top"
       :style="{ height: '70%' }"
       get-container="body"
-      closeable
     >
       <div class="pick">
-        <van-field
-          v-model="form.currentState"
-          label="当前状态"
-          placeholder="请选择"
-          readonly
-          @click-input="selectState"
-        />
-        <van-field
-          v-model="form.sex"
-          label="性别"
-          placeholder="请选择"
-          readonly
-          @click-input="selectSex"
-        />
-        <van-field v-model="form.age" label="年龄" placeholder="请输入年龄" />
-        <van-field
-          v-model="form.education"
-          label="最高学历"
-          placeholder="请选择"
-          readonly
-          @click-input="selectXueli"
-        />
-        <van-field
-          v-model="form.schoolProp"
-          label="院校性质"
-          placeholder="请选择"
-          readonly
-          @click-input="selectSchool"
-        />
-        <van-field
-          v-model="form.schoolName"
-          label="毕业院校"
-          placeholder="请输入毕业院校"
-        />
-        <van-field v-model="form.walk" label="专业" placeholder="请输入专业" />
-        <van-field
-          v-model="form.bzlx"
-          label="编制类型"
-          placeholder="请选择"
-          readonly
-          @click-input="selectBian"
-        />
-        <van-field v-model="form.post" label="岗位" placeholder="请输入岗位" />
-        <van-field
-          v-model="form.category"
-          label="职类"
-          placeholder="请选择"
-          readonly
-          @click-input="selectzl"
-        />
-        <van-field
-          v-model="form.rank"
-          label="职级"
-          placeholder="请输入职级"
-          readonly
-          @click-input="selectzj"
-        />
-        <van-field
-          v-model="form.postOne"
-          label="岗位分类一"
-          placeholder="请输入岗位分类一"
-          readonly
-          @click-input="selectFl1"
-        />
-        <van-field
-          v-model="form.postTwo"
-          label="岗位分类二"
-          placeholder="请输入岗位分类二"
-          readonly
-          @click-input="selectFl2"
-        />
-        <van-field
-          v-model="form.entryStartTime"
-          label="入司开始日期"
-          placeholder="请选择"
-          readonly
-          @click-input="entryStartTime"
-        />
-        <van-field
-          v-model="form.entryEndTime"
-          label="入司结束日期"
-          placeholder="请选择"
-          readonly
-          @click-input="entryEndTime"
-        />
-        <van-field
-          v-model="form.entryAge"
-          label="司龄"
-          placeholder="请输入司龄"
-        />
-        <van-field
-          v-model="form.syjsStartTime"
-          label="试用开始日期"
-          placeholder="请选择"
-          readonly
-          @click-input="syjsStartTime"
-        />
-        <van-field
-          v-model="form.syjsEndTime"
-          label="试用结束日期"
-          placeholder="请选择"
-          readonly
-          @click-input="endTime"
-        />
-        <van-field
-          v-model="form.sjzzStartTime"
-          label="实际转正开始日期"
-          placeholder="请选择"
-          readonly
-          @click-input="startTime"
-        />
-        <van-field
-          v-model="form.sjzzEndTime"
-          label="实际转正结束日期"
-          placeholder="请选择"
-          readonly
-          @click-input="sjzzEndTime"
-        />
-        <van-field
-          v-model="form.zyxbq"
-          label="专业线标签"
-          placeholder="请选择"
-          readonly
-          @click-input="selectZhuanye"
-        />
-        <van-field
-          v-model="form.isVeteran"
-          label="是否为退伍军人"
-          placeholder="请选择"
-          readonly
-          @click-input="selectVal"
-        />
-        <van-field
-          v-model="form.isPerson"
-          label="是否在本公司有亲属关系"
-          placeholder="请选择"
-          readonly
-          @click-input="selectQs"
-        />
-        <van-field
-          v-model="form.isTrain"
-          label="是否签订培训协议"
-          placeholder="请选择"
-          readonly
-          @click-input="selectPxxy"
-        />
-        <van-field
-          v-model="form.isCompete"
-          label="是否签订竞业协议"
-          placeholder="请选择"
-          readonly
-          @click-input="selectJyxy"
-        />
-        <van-field
-          v-model="form.company"
-          label="工作单位"
-          placeholder="请输入工作单位"
-        />
-        <van-field
-          v-model="form.zcName"
-          label="职称名称"
-          placeholder="请输入职称名称"
-        />
-        <van-field
-          v-model="form.personType"
-          label="人员类别"
-          placeholder="请选择"
-          readonly
-          @click="selectPerson"
-        />
+         <van-checkbox-group v-model="resultMore" ref="checkboxGroupMore">
+            <van-checkbox name="当前状态">
+              <van-field
+              v-model="form.currentState"
+              label="当前状态"
+              placeholder="请选择"
+              readonly
+              @click-input="selectState"
+            />
+            </van-checkbox>
+            <van-checkbox name="性别">
+              <van-field
+              v-model="form.sex"
+              label="性别"
+              placeholder="请选择"
+              readonly
+              @click-input="selectSex"
+            />
+            </van-checkbox>
+            <van-checkbox name="最高学历">
+              <van-field
+                v-model="form.education"
+                label="最高学历"
+                placeholder="请选择"
+                readonly
+                @click-input="selectXueli"
+              />
+            </van-checkbox>
+            <van-checkbox name="院校性质">
+              <van-field
+                v-model="form.schoolProp"
+                label="院校性质"
+                placeholder="请选择"
+                readonly
+                @click-input="selectSchool"
+              />
+            </van-checkbox>
+            <van-checkbox name="毕业院校">
+              <van-field
+                v-model="form.schoolName"
+                label="毕业院校"
+                placeholder="请输入毕业院校"
+              />
+            </van-checkbox>
+            <van-checkbox name="专业">
+              <van-field v-model="form.walk" label="专业" placeholder="请输入专业" />
+            </van-checkbox>
+            <van-checkbox name="编制类型">
+              <van-field
+                v-model="form.bzlx"
+                label="编制类型"
+                placeholder="请选择"
+                readonly
+                @click-input="selectBian"
+              />
+            </van-checkbox>
+            <van-checkbox name="职类">
+              <van-field
+                v-model="form.category"
+                label="职类"
+                placeholder="请选择"
+                readonly
+                @click-input="selectzl"
+              />
+            </van-checkbox>
+            <van-checkbox name="职级">
+              <van-field
+                v-model="form.rank"
+                label="职级"
+                placeholder="请选择"
+                readonly
+                @click-input="selectzj"
+              />
+            </van-checkbox>
+            <van-checkbox name="岗位分类一">
+              <van-field
+                v-model="form.postOne"
+                label="岗位分类一"
+                placeholder="请选择"
+                readonly
+                @click-input="selectFl1"
+              />
+            </van-checkbox>
+            <van-checkbox name="岗位分类二">
+              <van-field
+                v-model="form.postTwo"
+                label="岗位分类二"
+                placeholder="请选择"
+                readonly
+                @click-input="selectFl2"
+              />
+            </van-checkbox>
+            <van-checkbox name="入司开始日期">
+              <van-field
+                v-model="form.entryStartTime"
+                label="入司开始日期"
+                placeholder="请选择"
+                readonly
+                @click-input="entryStartTime"
+              />
+            </van-checkbox>
+            <van-checkbox name="入司结束日期">
+              <van-field
+                v-model="form.entryEndTime"
+                label="入司结束日期"
+                placeholder="请选择"
+                readonly
+                @click-input="entryEndTime"
+              />
+            </van-checkbox>
+            <van-checkbox name="试用开始日期">
+              <van-field
+                v-model="form.syjsStartTime"
+                label="试用开始日期"
+                placeholder="请选择"
+                readonly
+                @click-input="syjsStartTime"
+              />
+            </van-checkbox>
+            <van-checkbox name="试用结束日期">
+              <van-field
+                v-model="form.syjsEndTime"
+                label="试用结束日期"
+                placeholder="请选择"
+                readonly
+                @click-input="endTime"
+              />
+            </van-checkbox>
+            <van-checkbox name="实际转正开始日期">
+              <van-field
+                v-model="form.sjzzStartTime"
+                label="实际转正开始日期"
+                placeholder="请选择"
+                readonly
+                @click-input="startTime"
+              />
+            </van-checkbox>
+            <van-checkbox name="实际转正结束日期">
+              <van-field
+                v-model="form.sjzzEndTime"
+                label="实际转正结束日期"
+                placeholder="请选择"
+                readonly
+                @click-input="sjzzEndTime"
+              />
+            </van-checkbox>
+            <van-checkbox name="专业线标签">
+              <van-field
+                v-model="form.zyxbq"
+                label="专业线标签"
+                placeholder="请选择"
+                readonly
+                @click-input="selectZhuanye"
+              />
+            </van-checkbox>
+            <van-checkbox name="是否为退伍军人">
+              <van-field
+                v-model="form.isVeteran"
+                label="是否为退伍军人"
+                placeholder="请选择"
+                readonly
+                @click-input="selectVal"
+              />
+            </van-checkbox>
+            <van-checkbox name="是否在本公司有亲属关系">
+              <van-field
+                v-model="form.isPerson"
+                label="是否在本公司有亲属关系"
+                placeholder="请选择"
+                readonly
+                @click-input="selectQs"
+              />
+            </van-checkbox>
+            <van-checkbox name="是否签订培训协议">
+              <van-field
+                v-model="form.isTrain"
+                label="是否签订培训协议"
+                placeholder="请选择"
+                readonly
+                @click-input="selectPxxy"
+              />
+            </van-checkbox>
+            <van-checkbox name="是否签订竞业协议">
+              <van-field
+                v-model="form.isCompete"
+                label="是否签订竞业协议"
+                placeholder="请选择"
+                readonly
+                @click-input="selectJyxy"
+              />
+            </van-checkbox>
+            <van-checkbox name="工作单位">
+              <van-field
+                v-model="form.company"
+                label="工作单位"
+                placeholder="请输入工作单位"
+              />
+            </van-checkbox>
+            <van-checkbox name="职称名称">
+              <van-field
+                v-model="form.zcName"
+                label="职称名称"
+                placeholder="请输入职称名称"
+              />
+            </van-checkbox>
+            <van-checkbox name="人员类别">
+              <van-field
+                v-model="form.personType"
+                label="人员类别"
+                placeholder="请选择"
+                readonly
+                @click="selectPerson"
+              />
+            </van-checkbox>
+            <van-checkbox name="职务类型">
+              <van-field
+                v-model="form.jobType"
+                label="职务类型"
+                placeholder="请选择"
+                readonly
+                @click="selectJobType"
+              />
+            </van-checkbox>
+            <van-checkbox name="年龄">
+              <van-field v-model="form.age" label="年龄" disabled />
+            </van-checkbox>
+            <van-checkbox name="岗位">
+              <van-field v-model="form.post" label="岗位" disabled />
+            </van-checkbox>
+            <van-checkbox name="司龄">
+              <van-field
+                v-model="form.entryAge"
+                label="司龄"
+                disabled 
+              />
+            </van-checkbox>
+          </van-checkbox-group>
+        
         <!-- <van-button type="info" size="mini" @click="confirmPick">确定</van-button> -->
       </div>
       <div class="close">
         <van-button
           type="primary"
-          size="small"
+          size="mini"
           color="#fc5f10"
           @click="moreReset"
-          style="width:30%"
+          style="width:16%"
           >重置</van-button
         >
         <van-button
           type="primary"
-          size="small"
+          size="mini"
+          color="#fc5f10"
+          @click="checkAll"
+          style="width:16%"
+          >全选</van-button
+        >
+        <van-button
+          type="primary"
+          size="mini"
           color="#fc5f10"
           @click="searchMore"
-          style="width:30%"
+          style="width:16%"
           >查询</van-button
         >
         <van-button
+          type="primary"
+          color="#fc5f10"
+          size="mini"
+          @click="handClickItem"
+          style="width:22%"
+          >确认多选</van-button
+        >
+        <van-button
           type="danger"
-          size="small"
+          size="mini"
           @click="closeSearch"
-          style="width:30%"
+          style="width:16%"
           >关闭</van-button
         >
       </div>
@@ -361,6 +447,21 @@
         :columns="column2"
         @confirm="onConfirm2"
         @cancel="onCancel2"
+      />
+    </van-popup>
+    <!-- 弹出时下拉选择职位类型 -->
+    <van-popup
+      v-model="showJobType"
+      position="bottom"
+      :style="{ height: '50%' }"
+      get-container="body"
+    >
+      <van-picker
+        title="标题"
+        show-toolbar
+        :columns="column13"
+        @confirm="onConfirm13"
+        @cancel="onCancel13"
       />
     </van-popup>
     <!-- 弹出时下拉选择编制类型 -->
@@ -508,6 +609,8 @@
       </van-checkbox-group>
       <van-button type="info" size="mini" @click="onConfirm11">确定</van-button>
     </van-popup>
+    <!-- 遮罩层（导出表格等待） -->
+    <loadingSpin ref="loadingSpin"></loadingSpin>
   </div>
 </template>
 <script>
@@ -520,16 +623,18 @@ import {
   queryRank,
   querySome,
   queryRoster,
-  exportExl
+  exportExl,
+  selectEmployeeLimit
 } from "./api";
 import { mapMutations } from "vuex";
 import pickDeptMore from "@/components/pickDeptMore.vue";
+import loadingSpin from "@/components/waitLoading.vue";
 import draggable from "vuedraggable";
 export default {
   data() {
     return {
+      resultMore: [], //直接选择条件查询的多选
       download: 1, //传给后台，导出的是否是默认的数据
-      allTableData: [], //所有的表格数据
       deptData: [],
       isLoading: true,
       intertimer: null, //定时器
@@ -568,7 +673,8 @@ export default {
         isCompete: "",
         company: "",
         zcName: "",
-        personType: ""
+        personType: "",
+        jobType: ""
       },
       deptData: [],
       showPick: false, //多选弹窗
@@ -586,6 +692,7 @@ export default {
       showFenlei2: false, //岗位分类2
       showZl: false, //职类
       showZj: false, //职级
+      showJobType: false, //职位类型
       showPx: false, //排序弹窗
       result: [], //多选框
       results: [], //多选框
@@ -604,11 +711,11 @@ export default {
       pageSize: 10,
       tableData: [],
       fenyeData: [],
-      dataIndex: 0, //假分页默认显示
+      dataIndex: 1, //分页页码
       columns: [
         {
           field: "custome",
-          width: 100,
+          width: 50,
           titleAlign: "center",
           columnAlign: "center",
           title: "序号",
@@ -620,7 +727,7 @@ export default {
         {
           field: "jobnumber",
           title: "工号",
-          width: 150,
+          width: 100,
           titleAlign: "center",
           columnAlign: "center",
           formatter: function(rowData, rowIndex, pagingIndex, field) {
@@ -632,7 +739,7 @@ export default {
         {
           field: "name",
           title: "姓名",
-          width: 150,
+          width: 100,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true
@@ -640,7 +747,39 @@ export default {
         {
           field: "department",
           title: "部门",
-          width: 300,
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "post",
+          title: "岗位",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "rank",
+          title: "职级",
+          width: 50,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "rsrq",
+          title: "入司日期",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "currentState",
+          title: "当前状态",
+          width: 100,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true
@@ -684,7 +823,12 @@ export default {
       column10: [], //岗位分类2
       column11: [], //职类
       column12: [], //职级
+      column13: [
+        { keyId: "01", text: "主职" },
+        { keyId: "02", text: "兼职" }
+      ],
       sex: "", //传后台性别值
+      jobType: "", //传后台职位类型值
       bianzhi: "", //传后台编制类型值
       schoolVal: "", //传后台院校性质值
       zhuanyeVal: "", //传后台专业线标签
@@ -712,7 +856,42 @@ export default {
       drag: false,
       currentDept: [], //页面进来时获取的部门名
       deptIds: [], //页面进来时获取的部门id
-      defaultCheckedKeys: []
+      defaultCheckedKeys: [],
+      //多选的条件
+      itemCheck: {
+        jobnumberAll: '',  //工号
+        nameAll: '',   //姓名
+        departmentAll: '',  //部门
+        postAll: '',   //岗位
+        rankAll: '',  //职级
+        currentStateAll: '',   //当前状态
+        personTypeAll: '',   //人员类别
+        sexAll: '',   //性别
+        ageAll: '',   //年龄
+        educationAll: '',   //最高学历
+        schoolPropAll: '',   //院校性质
+        schoolNameAll: '',   //毕业院校
+        walkAll: '',   //专业
+        bzlxAll: '',   //编制类型
+        categoryAll: '',   //职类
+        postOneAll: '',   //岗位分类一
+        postTwoAll: '',   //岗位分类二
+        entryAgeAll: '',   //司龄
+        zyxbqAll: '',   //专业线标签
+        isVeteranAll: '',   //是否为退伍军人
+        isPersonAll: '',   //是否在本公司有亲属关系
+        isTrainAll: '',   //是否签订培训协议
+        isCompeteAll: '',   //是否签订竞业协议
+        companyAll: '',   //工作单位
+        zcNameAll: '',   //职称名称
+        jobTypeAll: '',   //职务类型
+        entryStartTimeAll: '',   //入司开始日期
+        entryEndTimeAll: '',   //入司结束日期
+        syjsStartTimeAll: '',   //试用开始日期
+        syjsEndTimeAll: '',   //试用结束日期
+        sjzzStartTimeAll: '',   //实际转正开始日期
+        sjzzEndTimeAll: '',   //实际转正结束日期
+      }
     };
   },
   created() {
@@ -735,11 +914,22 @@ export default {
     //加载更多数据
     loadMore() {
       this.dataIndex++; //点击+1
-      if (this.dataIndex >= this.fenyeData.length) {
-        Notify({ type: "warning", message: "没有更多数据了哦~" });
-      } else {
-        this.tableData = this.tableData.concat(this.fenyeData[this.dataIndex]);
+      // if (this.dataIndex >= this.fenyeData.length) {
+      //   Notify({ type: "warning", message: "没有更多数据了哦~" });
+      // } else {
+      //   this.tableData = this.tableData.concat(this.fenyeData[this.dataIndex]);
+      // }
+      let queryData = {
+        jobnumber: localStorage.getItem('jobNum'),
+        page: this.dataIndex
       }
+      selectEmployeeLimit(queryData).then(res=>{
+        if(res.obj == ''){
+          Notify({ type: "warning", message: "没有更多数据了哦~" })
+        }else{
+          this.tableData = this.tableData.concat(res.obj)
+        }
+      })
     },
     //获取当前状态的值
     getState() {
@@ -755,50 +945,13 @@ export default {
     },
     //获取部门和部门id
     _queryDeptIdName() {
-        this._getOrz(); //获取部门
-        this._queryPerson(); //获取人员
-        let initColumns = [
-        {
-          field: "post",
-          title: "岗位",
-          width: 200,
-          titleAlign: "center",
-          columnAlign: "center",
-          isResize: true
-        },
-        {
-          field: "rank",
-          title: "职级",
-          width: 150,
-          titleAlign: "center",
-          columnAlign: "center",
-          isResize: true
-        },
-        {
-          field: "rsrq",
-          title: "入司日期",
-          width: 150,
-          titleAlign: "center",
-          columnAlign: "center",
-          isResize: true
-        },
-        {
-          field: "currentState",
-          title: "当前状态",
-          width: 150,
-          titleAlign: "center",
-          columnAlign: "center",
-          isResize: true
-        }
-      ]
-      for(let i in initColumns){
-        this.columns.push(initColumns[i])
-      }
+      this._getOrz(); //获取部门
+      this._queryPerson(); //获取人员
     },
     //获取组织下的部门
     _getOrz() {
       const departRes = JSON.parse(localStorage.getItem("departRes"));
-    //   console.log(departRes)
+      console.log(departRes)
       this.deptData.push(departRes);
       this.currentDept = departRes.currentDepartment;
       this.deptIds = departRes.deptIds;
@@ -810,14 +963,15 @@ export default {
         this.currentDept = currentDeptsRes
         this.deptIds = deptIdsRes
         let queryData = {
-            currentDepts: this.currentDept,
-            deptIds: this.deptIds
+          currentDepts: this.currentDept,
+          deptIds: this.deptIds,
+          jobnumber: localStorage.getItem('jobNum')
         }
       queryPerson(queryData).then(res => {
         this.tableData = res.obj;
-        this.allTableData = res.obj;
         this.isLoading = false;
-        this.pagePev(); //获取的表格数据分组
+        this.total = res.totalSize
+        // this.pagePev(); //获取的表格数据分组
       });
     },
     //重置
@@ -829,6 +983,60 @@ export default {
       this.deptVal = [];
       this.$refs.select.selectedDepartment = "";
       this.$refs.select.restFlag = true;
+
+      //更多条件置空
+      this.form.currentState = "",
+      this.form.sex = "",
+      this.form.age = "",
+      this.form.education = "",
+      this.form.schoolProp = "",
+      this.form.schoolName = "",
+      this.form.walk = "",
+      this.form.bzlx = "",
+      this.form.post = "",
+      this.form.category = "",
+      this.form.rank = "",
+      this.form.postOne = "",
+      this.form.postTwo = "",
+      this.form.entryStartTime = "",
+      this.form.entryEndTime = "",
+      this.form.entryAge = "",
+      this.form.syjsEndTime = "",
+      this.form.syjsStartTime = "",
+      this.form.sjzzStartTime = "",
+      this.form.sjzzEndTime = "",
+      this.form.zyxbq = "",
+      this.form.isVeteran = "",
+      this.form.isPerson = "",
+      this.form.isTrain = "",
+      this.form.isCompete = "",
+      this.form.company = "",
+      this.form.zcName = "",
+      this.form.personType = "";
+      //清空传给后台的值
+      this.stateVal = "",
+      this.sex = "",
+      this.jobType = "",
+      this.xueliVal = "",
+      this.schoolVal = "",
+      this.bianzhi = "",
+      this.zhileiVal = "",
+      this.zhijiVal = "",
+      this.fenlei1Val = "",
+      this.fenlei2Val = "",
+      this.zhuanyeVal = "",
+      this.junrenVal = "",
+      this.qinshuVal = "",
+      this.peixunVal = "",
+      this.jingyeVal = "",
+      this.leibieVal = "",
+      // this.currentDept = "",
+      // this.deptIds = "",
+      // this.deptVal = [],
+      //清空多选
+      this.resultMore = []
+      this.itemCheck = []
+      this.$refs.checkboxGroupMore.toggleAll(false)
     },
     //更多查询条件
     moreSearch() {
@@ -838,66 +1046,92 @@ export default {
     setMenu() {
       this.showPx = true;
     },
-    //搜索前初始化表格数据
-    initTableData(){
-      this.columns = [
-        {
-          field: "custome",
-          width: 100,
-          titleAlign: "center",
-          columnAlign: "center",
-          title: "序号",
-          formatter: function(rowData, index) {
-            return index + 1;
-          },
-          isResize: true
-        },
-        {
-          field: "jobnumber",
-          title: "工号",
-          width: 150,
-          titleAlign: "center",
-          columnAlign: "center",
-          formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span>${rowData[field]}</span>`;
-          },
-          isResize: true
-          // isFrozen: true,
-        },
-        {
-          field: "name",
-          title: "姓名",
-          width: 150,
-          titleAlign: "center",
-          columnAlign: "center",
-          isResize: true
-        },
-        {
-          field: "department",
-          title: "部门",
-          width: 300,
-          titleAlign: "center",
-          columnAlign: "center",
-          isResize: true
-        }
-      ]
-    },
     //查询添加表格
     search() {
-      this.initTableData()
       let queryData = {
-        jobnumber: this.form.jobnumber,
-        name: this.form.name,
+        // jobnumber: this.form.jobnumber,
+        // name: this.form.name,
+        // currentDept: this.currentDept,
+        // deptIds: this.deptIds,
+        // ids: this.deptVal,
+        // worknumber: localStorage.getItem('jobNum'),
+        //更多选择的条件
+        //输入选择的条件
+        currentState: this.stateVal,
+        sex: this.sex,
+        jobType: this.jobType,
+        education: this.xueliVal,
+        schoolProp: this.schoolVal,
+        bzlx: this.bianzhi,
+        category: this.zhileiVal,
+        rank: this.zhijiVal,
+        postOne: this.fenlei1Val,
+        postTwo: this.fenlei2Val,
+        zyxbq: this.zhuanyeVal,
+        isVeteran: this.junrenVal,
+        isPerson: this.qinshuVal,
+        isTrain: this.peixunVal,
+        isCompete: this.jingyeVal,
+        personType: this.leibieVal,
         currentDept: this.currentDept,
         deptIds: this.deptIds,
-        ids: this.deptVal
+        ids: this.deptVal,
+        jobnumber: this.form.jobnumber,
+        name: this.form.name,
+        age: this.form.age,
+        schoolName: this.form.schoolName,
+        walk: this.form.walk,
+        post: this.form.post,
+        entryStartTime: this.form.entryStartTime,
+        entryEndTime: this.form.entryEndTime,
+        entryAge: this.form.entryAge,
+        syjsEndTime: this.form.syjsEndTime,
+        syjsStartTime: this.form.syjsStartTime,
+        sjzzStartTime: this.form.sjzzStartTime,
+        sjzzEndTime: this.form.sjzzEndTime,
+        company: this.form.company,
+        zcName: this.form.zcName,
+        worknumber: localStorage.getItem('jobNum'),
+        //多选的条件
+        jobnumberAll: this.itemCheck.jobnumberAll, //工号
+        nameAll: this.itemCheck.nameAll,   //姓名
+        departmentAll: this.itemCheck.departmentAll,   //部门
+        postAll: this.itemCheck.postAll,   //岗位
+        rankAll: this.itemCheck.rankAll,   //职级
+        currentStateAll: this.itemCheck.currentStateAll,   //当前状态
+        personTypeAll: this.itemCheck.personTypeAll,   //人员类别
+        sexAll: this.itemCheck.sexAll,   //性别
+        ageAll: this.itemCheck.ageAll,   //年龄
+        educationAll: this.itemCheck.educationAll,   //最高学历
+        schoolPropAll: this.itemCheck.schoolPropAll,   //院校性质
+        schoolNameAll: this.itemCheck.schoolNameAll,   //毕业院校
+        walkAll: this.itemCheck.walkAll,   //专业
+        bzlxAll: this.itemCheck.bzlxAll,   //编制类型
+        categoryAll: this.itemCheck.categoryAll,   //职类
+        postOneAll: this.itemCheck.postOneAll,   //岗位分类一
+        postTwoAll: this.itemCheck.postTwoAll,   //岗位分类二
+        entryAgeAll: this.itemCheck.entryAgeAll,   //司龄
+        zyxbqAll: this.itemCheck.zyxbqAll,   //专业线标签
+        isVeteranAll: this.itemCheck.isVeteranAll,   //是否为退伍军人
+        isPersonAll: this.itemCheck.isPersonAll,   //是否在本公司有亲属关系
+        isTrainAll: this.itemCheck.isTrainAll,   //是否签订培训协议
+        isCompeteAll: this.itemCheck.isCompeteAll,   //是否签订竞业协议
+        companyAll: this.itemCheck.companyAll,   //工作单位
+        zcNameAll: this.itemCheck.zcNameAll,   //职称名称
+        jobTypeAll: this.itemCheck.jobTypeAll,   //职务类型
+        entryStartTimeAll: this.itemCheck.entryStartTimeAll,   //入司开始日期
+        entryEndTimeAll: this.itemCheck.entryEndTimeAll,   //入司结束日期
+        syjsStartTimeAll: this.itemCheck.syjsStartTimeAll,   //试用开始日期
+        syjsEndTimeAll: this.itemCheck.syjsEndTimeAll,   //试用结束日期
+        sjzzStartTimeAll: this.itemCheck.sjzzStartTimeAll,   //实际转正开始日期
+        sjzzEndTimeAll: this.itemCheck.sjzzEndTimeAll   //实际转正结束日期
       };
       querySome(queryData).then(res => {
         if(res.code == 1000){
           this.download = 2
           this.tableData = res.obj;
-          this.allTableData = res.obj;
-          this.pagePev(); //获取的表格数据分组
+          this.total = res.totalSize
+          // this.pagePev(); //获取的表格数据分组
         }else{
           Notify({ type: "warning", message: res.msg });
         }
@@ -906,68 +1140,92 @@ export default {
     },
     //全选
     checkAll() {
-      this.$refs.checkboxGroup.toggleAll(true);
+      this.$refs.checkboxGroupMore.toggleAll(true);
     },
     //重置更多选择条件
     moreReset() {
-      (this.form.currentState = ""),
-        (this.form.sex = ""),
-        (this.form.age = ""),
-        (this.form.education = ""),
-        (this.form.schoolProp = ""),
-        (this.form.schoolName = ""),
-        (this.form.walk = ""),
-        (this.form.bzlx = ""),
-        (this.form.post = ""),
-        (this.form.category = ""),
-        (this.form.rank = ""),
-        (this.form.postOne = ""),
-        (this.form.postTwo = ""),
-        (this.form.entryStartTime = ""),
-        (this.form.entryEndTime = ""),
-        (this.form.entryAge = ""),
-        (this.form.syjsEndTime = ""),
-        (this.form.syjsStartTime = ""),
-        (this.form.sjzzStartTime = ""),
-        (this.form.sjzzEndTime = ""),
-        (this.form.zyxbq = ""),
-        (this.form.isVeteran = ""),
-        (this.form.isPerson = ""),
-        (this.form.isTrain = ""),
-        (this.form.isCompete = ""),
-        (this.form.company = ""),
-        (this.form.zcName = ""),
-        (this.form.personType = "");
+      this.form.currentState = "",
+      this.form.sex = "",
+      this.form.age = "",
+      this.form.education = "",
+      this.form.schoolProp = "",
+      this.form.schoolName = "",
+      this.form.walk = "",
+      this.form.bzlx = "",
+      this.form.post = "",
+      this.form.category = "",
+      this.form.rank = "",
+      this.form.postOne = "",
+      this.form.postTwo = "",
+      this.form.entryStartTime = "",
+      this.form.entryEndTime = "",
+      this.form.entryAge = "",
+      this.form.syjsEndTime = "",
+      this.form.syjsStartTime = "",
+      this.form.sjzzStartTime = "",
+      this.form.sjzzEndTime = "",
+      this.form.zyxbq = "",
+      this.form.isVeteran = "",
+      this.form.isPerson = "",
+      this.form.isTrain = "",
+      this.form.isCompete = "",
+      this.form.company = "",
+      this.form.zcName = "",
+      this.form.personType = "";
+      //清空传给后台的值
+      this.stateVal = "",
+      this.sex = "",
+      this.jobType = "",
+      this.xueliVal = "",
+      this.schoolVal = "",
+      this.bianzhi = "",
+      this.zhileiVal = "",
+      this.zhijiVal = "",
+      this.fenlei1Val = "",
+      this.fenlei2Val = "",
+      this.zhuanyeVal = "",
+      this.junrenVal = "",
+      this.qinshuVal = "",
+      this.peixunVal = "",
+      this.jingyeVal = "",
+      this.leibieVal = "",
+      // this.currentDept = "",
+      // this.deptIds = "",
+      // this.deptVal = [],
+      //清空多选
+      this.resultMore = []
+      this.itemCheck = []
+      this.$refs.checkboxGroupMore.toggleAll(false)
     },
     //弹窗里条件的查询
     searchMore() {
       //初始化表格显示的数据
-      this.initTableData()
+      // this.initTableData()
       // console.log(this.form.post)
-      if(this.form.post !== ""){
-          let obj26 = {
-              field: 'post',title: '岗位',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
-          }
-          this.columns.push(obj26)
-      }
-      if(this.form.rank !== ""){
-          let obj27 = {
-              field: 'rank',title: '职级',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
-          }
-          this.columns.push(obj27)
-      }
-      if(this.form.entryStartTime !== "" || this.form.entryEndTime !== ""){
-          let obj28 = {
-              field: 'rsrq',title: '入司日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
-          }
-          this.columns.push(obj28)
-      }
-      if(this.form.currentState !== ""){
-          let obj1 = {
-              field: 'currentState',title: '当前状态',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
-          }
-          this.columns.push(obj1)
-      }
+      // if(this.form.post !== ""){
+      //     let obj26 = {
+      //         field: 'post',title: '岗位',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+      //     }
+      //     this.columns.push(obj26)
+      // }
+      // if(this.form.rank !== ""){
+      //     let obj27 = {
+      //         field: 'rank',title: '职级',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+      //     }
+      //     this.columns.push(obj27)
+      // }
+      // if(this.form.entryStartTime !== "" || this.form.entryEndTime !== ""){
+      //     let obj28 = {
+      //         field: 'rsrq',title: '入司日期',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+      //     }
+      //     this.columns.push(obj28)
+      // }
+      // if(this.form.currentState !== ""){
+      //     let obj1 = {
+      //         field: 'currentState',title: '当前状态',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
+      //     }
+      //     this.columns.push(obj1)
+      // }
       if (this.form.sex !== "") {
         let obj2 = {
           field: "sex",
@@ -1219,9 +1477,6 @@ export default {
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
-          // formatter: function(rowData, rowIndex, pagingIndex, field) {
-          //   return `<span>${rowData[field] == 1 ? "是" : "否"}</span>`;
-          // }
         };
         this.columns.push(obj22);
       }
@@ -1232,6 +1487,9 @@ export default {
           width: 150,
           titleAlign: "center",
           columnAlign: "center",
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<div class="overauto">${rowData[field]}</div>`
+          },
           isResize: true
         };
         this.columns.push(obj23);
@@ -1239,10 +1497,13 @@ export default {
       if (this.form.zcName !== "") {
         let obj24 = {
           field: "zcName",
-          title: "职级名称",
+          title: "职称名称",
           width: 150,
           titleAlign: "center",
           columnAlign: "center",
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<div class="overauto">${rowData[field]}</div>`
+          },
           isResize: true
         };
         this.columns.push(obj24);
@@ -1258,10 +1519,338 @@ export default {
         };
         this.columns.push(obj25);
       }
+      if (this.form.jobType !== "") {
+        let obj26 = {
+          field: "jobType",
+          title: "职务类型",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        };
+        this.columns.push(obj26);
+      }
+      //多选条件查询
+      for (var i in this.resultMore) {
+        // debugger
+        switch (this.resultMore[i]) {
+          case '当前状态':
+            this.itemCheck.currentStateAll = '当前状态'
+          break;
+          case '岗位':
+            this.itemCheck.postAll = '岗位'
+          break;
+          case '职级':
+            this.itemCheck.rankAll = '职级'
+          break;
+          case '人员类别':
+            this.itemCheck.personTypeAll = '人员类别'
+            let obj25 = {
+              field: "personType",
+              title: "人员类别",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj25);
+          break;
+          case '性别':
+            this.itemCheck.sexAll = '性别'
+            let obj2 = {
+              field: "sex",
+              title: "性别",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true,
+            };
+            this.columns.push(obj2);
+          break;
+          case '年龄':
+            this.itemCheck.ageAll = '年龄'
+            let obj3 = {
+              field: "age",
+              title: "年龄",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj3);
+          break;
+          case '最高学历':
+            this.itemCheck.educationAll = '最高学历'
+            let obj4 = {
+              field: "education",
+              title: "最高学历",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj4);
+          break;
+          case '院校性质':
+            this.itemCheck.schoolPropAll = '院校性质'
+            let obj5 = {
+              field: "schoolProp",
+              title: "院校性质",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj5);
+          break;
+          case '毕业院校':
+            this.itemCheck.schoolNameAll = '毕业院校'
+            let obj6 = {
+              field: "schoolName",
+              title: "毕业院校",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj6);
+          break;
+          case '专业':
+            this.itemCheck.walkAll = '专业'
+            let obj7 = {
+              field: "walk",
+              title: "专业",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj7);
+          break;
+          case '编制类型':
+            this.itemCheck.bzlxAll = '编制类型'
+            let obj8 = {
+              field: "bzlx",
+              title: "编制类型",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj8);
+          break;
+          case '职类':
+            this.itemCheck.categoryAll = '职类'
+            let obj10 = {
+              field: "category",
+              title: "职类",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj10);
+          break;
+          case '岗位分类一':
+            this.itemCheck.postOneAll = '岗位分类一'
+            let obj12 = {
+              field: "postOne",
+              title: "岗位分类一",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj12);
+          break;
+          case '岗位分类二':
+            this.itemCheck.postTwoAll = '岗位分类二'
+            let obj13 = {
+              field: "postTwo",
+              title: "岗位分类二",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj13);
+          break;
+          case '司龄':
+            this.itemCheck.entryAgeAll = '司龄'
+            let obj15 = {
+              field: "entryAge",
+              title: "司龄",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj15);
+          break;
+          case '专业线标签':
+            this.itemCheck.zyxbqAll = '专业线标签'
+            let obj18 = {
+              field: "zyxbq",
+              title: "专业线标签",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj18);
+          break;
+          case '是否为退伍军人':
+            this.itemCheck.isVeteranAll = '是否为退伍军人'
+            let obj19 = {
+              field: "isVeteran",
+              title: "是否为退伍军人",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true,
+            };
+            this.columns.push(obj19);
+          break;
+          case '是否在本公司有亲属关系':
+            this.itemCheck.isPersonAll = '是否在本公司有亲属关系'
+            let obj20 = {
+              field: "isPerson",
+              title: "是否在本公司有亲属关系",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true,
+            };
+            this.columns.push(obj20);
+          break;
+          case '是否签订培训协议':
+            this.itemCheck.isTrainAll = '是否签订培训协议'
+            let obj21 = {
+              field: "isTrain",
+              title: "是否签订培训协议",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true,
+            };
+            this.columns.push(obj21);
+          break;
+          case '是否签订竞业协议':
+            this.itemCheck.isCompeteAll = '是否签订竞业协议'
+            let obj22 = {
+              field: "isCompete",
+              title: "是否签订竞业协议",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true,
+            };
+            this.columns.push(obj22);
+          break;
+          case '工作单位':
+            this.itemCheck.companyAll = '工作单位'
+            let obj23 = {
+              field: "company",
+              title: "工作单位",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              formatter: function(rowData, rowIndex, pagingIndex, field) {
+                return `<div class="overauto">${rowData[field]}</div>`
+              },
+              isResize: true
+            };
+            this.columns.push(obj23);
+          break;
+          case '职称名称':
+            this.itemCheck.zcNameAll = '职称名称'
+            let obj24 = {
+              field: "zcName",
+              title: "职称名称",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              formatter: function(rowData, rowIndex, pagingIndex, field) {
+                return `<div class="overauto">${rowData[field]}</div>`
+              },
+              isResize: true
+            };
+            this.columns.push(obj24);
+          break;
+          case '职务类型':
+            this.itemCheck.jobTypeAll = '职务类型'
+            let obj26 = {
+              field: "jobType",
+              title: "职务类型",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+        this.columns.push(obj26);
+          break;
+          case '入司开始日期':
+            this.itemCheck.entryStartTimeAll = '入司开始日期'
+          break;
+          case '入司结束日期':
+            this.itemCheck.entryEndTimeAll = '入司结束日期'
+          break;
+          case '试用开始日期':
+            this.itemCheck.syjsStartTimeAll = '试用开始日期'
+            let obj16 = {
+              field: "syjsrq",
+              title: "试用结束日期",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj16);
+          break;
+          case '试用结束日期':
+            this.itemCheck.syjsEndTimeAll = '试用结束日期'
+            let obj30 = {
+              field: "syjsrq",
+              title: "试用结束日期",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj30);
+          break;
+          case '实际转正开始日期':
+            this.itemCheck.sjzzStartTimeAll = '实际转正开始日期'
+            let obj17 = {
+              field: "sjzzrq",
+              title: "实际转正日期",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj17);
+          break;
+          case '实际转正结束日期':
+            this.itemCheck.sjzzEndTimeAll = '实际转正结束日期'
+            let obj31 = {
+              field: "sjzzrq",
+              title: "实际转正日期",
+              width: 150,
+              titleAlign: "center",
+              columnAlign: "center",
+              isResize: true
+            };
+            this.columns.push(obj31);
+          break;
+        }
+      }
       //查询请求
       let queryData = {
+        //输入选择的条件
         currentState: this.stateVal,
         sex: this.sex,
+        jobType: this.jobType,
         education: this.xueliVal,
         schoolProp: this.schoolVal,
         bzlx: this.bianzhi,
@@ -1292,16 +1881,50 @@ export default {
         sjzzStartTime: this.form.sjzzStartTime,
         sjzzEndTime: this.form.sjzzEndTime,
         company: this.form.company,
-        zcName: this.form.zcName
+        zcName: this.form.zcName,
+        worknumber: localStorage.getItem('jobNum'),
+        //多选的条件
+        jobnumberAll: this.itemCheck.jobnumberAll, //工号
+        nameAll: this.itemCheck.nameAll,   //姓名
+        departmentAll: this.itemCheck.departmentAll,   //部门
+        postAll: this.itemCheck.postAll,   //岗位
+        rankAll: this.itemCheck.rankAll,   //职级
+        currentStateAll: this.itemCheck.currentStateAll,   //当前状态
+        personTypeAll: this.itemCheck.personTypeAll,   //人员类别
+        sexAll: this.itemCheck.sexAll,   //性别
+        ageAll: this.itemCheck.ageAll,   //年龄
+        educationAll: this.itemCheck.educationAll,   //最高学历
+        schoolPropAll: this.itemCheck.schoolPropAll,   //院校性质
+        schoolNameAll: this.itemCheck.schoolNameAll,   //毕业院校
+        walkAll: this.itemCheck.walkAll,   //专业
+        bzlxAll: this.itemCheck.bzlxAll,   //编制类型
+        categoryAll: this.itemCheck.categoryAll,   //职类
+        postOneAll: this.itemCheck.postOneAll,   //岗位分类一
+        postTwoAll: this.itemCheck.postTwoAll,   //岗位分类二
+        entryAgeAll: this.itemCheck.entryAgeAll,   //司龄
+        zyxbqAll: this.itemCheck.zyxbqAll,   //专业线标签
+        isVeteranAll: this.itemCheck.isVeteranAll,   //是否为退伍军人
+        isPersonAll: this.itemCheck.isPersonAll,   //是否在本公司有亲属关系
+        isTrainAll: this.itemCheck.isTrainAll,   //是否签订培训协议
+        isCompeteAll: this.itemCheck.isCompeteAll,   //是否签订竞业协议
+        companyAll: this.itemCheck.companyAll,   //工作单位
+        zcNameAll: this.itemCheck.zcNameAll,   //职称名称
+        jobTypeAll: this.itemCheck.jobTypeAll,   //职务类型
+        entryStartTimeAll: this.itemCheck.entryStartTimeAll,   //入司开始日期
+        entryEndTimeAll: this.itemCheck.entryEndTimeAll,   //入司结束日期
+        syjsStartTimeAll: this.itemCheck.syjsStartTimeAll,   //试用开始日期
+        syjsEndTimeAll: this.itemCheck.syjsEndTimeAll,   //试用结束日期
+        sjzzStartTimeAll: this.itemCheck.sjzzStartTimeAll,   //实际转正开始日期
+        sjzzEndTimeAll: this.itemCheck.sjzzEndTimeAll   //实际转正结束日期
       };
       // let queryData = this.form
       querySome(queryData).then(res => {
         if(res.code == 1000){
           //接受数据
           this.tableData = res.obj;
-          this.allTableData = res.obj;
           this.download = 2
-          this.pagePev(); //获取的表格数据分组
+          this.total = res.totalSize
+          // this.pagePev(); //获取的表格数据分组
         }else{
           Notify({ type: "warning", message: res.msg });
         }
@@ -1311,314 +1934,9 @@ export default {
       this.showPick = false;
     },
     //确定
-    confirmPick() {
-      console.log(this.results);
-      for (var i in this.results) {
-        // if(this.result[i] == 'zt'){
-        //     let obj1 = {value:'',label:'当前状态'}
-        //     this.formList.push(obj1)
-        // }
-        switch (this.results[i]) {
-          // case 'zt':
-          //     let obj1 = {
-          //         field: 'currentState',title: '当前状态',width: 150,titleAlign: 'center',columnAlign: 'center',isResize: true
-          //     }
-          //     this.columns.push(obj1)
-          //     this.false1 = true
-          // break;
-          case "xb":
-            let obj2 = {
-              field: "sex",
-              title: "性别",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj2);
-            this.false2 = true;
-            break;
-          case "nl":
-            let obj3 = {
-              field: "age",
-              title: "年龄",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj3);
-            this.false3 = true;
-            break;
-          case "zgxl":
-            let obj4 = {
-              field: "education",
-              title: "最高学历",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj4);
-            this.false4 = true;
-            break;
-          case "yxxz":
-            let obj5 = {
-              field: "schoolProp",
-              title: "院校性质",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj5);
-            this.false5 = true;
-            break;
-          case "byyx":
-            let obj6 = {
-              field: "schoolName",
-              title: "毕业院校",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj6);
-            this.false6 = true;
-            break;
-          case "zy":
-            let obj7 = {
-              field: "walk",
-              title: "专业",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj7);
-            this.false7 = true;
-            break;
-          case "bzlx":
-            let obj8 = {
-              field: "bzlx",
-              title: "编制类型",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj8);
-            this.false8 = true;
-            break;
-          case "gw":
-            let obj9 = {
-              field: "post",
-              title: "岗位",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj9);
-            this.false9 = true;
-            break;
-          case "gjzl":
-            let obj10 = {
-              field: "category",
-              title: "职类",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj10);
-            this.false10 = true;
-            break;
-          case "gjzj":
-            let obj11 = {
-              field: "rank",
-              title: "职级",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj11);
-            this.false11 = true;
-            break;
-          case "gwfly":
-            let obj12 = {
-              field: "postOne",
-              title: "岗位分类一",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj12);
-            this.false12 = true;
-            break;
-          case "gwfle":
-            let obj13 = {
-              field: "postTwo",
-              title: "岗位分类二",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj13);
-            this.false13 = true;
-            break;
-          case "entryStartTime":
-            let obj14 = {
-              field: "entryStartTime",
-              title: "入司开始日期",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj14);
-            this.false14 = true;
-            break;
-          case "sl":
-            let obj15 = {
-              field: "entryAge",
-              title: "司龄",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj15);
-            this.false15 = true;
-            break;
-          case "syjsrq":
-            let obj16 = {
-              field: "syjsrq",
-              title: "试用结束日期",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj16);
-            this.false16 = true;
-            break;
-          case "syzzrq":
-            let obj17 = {
-              field: "sjzzrq",
-              title: "试用转正日期",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj17);
-            this.false17 = true;
-            break;
-          case "zyxbq":
-            let obj18 = {
-              field: "zyxbq",
-              title: "专业线标签",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj18);
-            this.false18 = true;
-            break;
-          case "sfwtwjr":
-            let obj19 = {
-              field: "isVeteran",
-              title: "是否为退伍军人",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj19);
-            this.false19 = true;
-            break;
-          case "sfyqsgx":
-            let obj20 = {
-              field: "isPerson",
-              title: "是否在本公司有亲属关系",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj20);
-            this.false20 = true;
-            break;
-          case "sfqdpxxy":
-            let obj21 = {
-              field: "isTrain",
-              title: "是否签订培训协议",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj21);
-            this.false21 = true;
-            break;
-          case "sfqdjyxy":
-            let obj22 = {
-              field: "isCompete",
-              title: "是否签订竞业协议",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj22);
-            this.false22 = true;
-            break;
-          case "gzdw":
-            let obj23 = {
-              field: "company",
-              title: "工作单位",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj23);
-            this.false23 = true;
-            break;
-          case "zjmc":
-            let obj24 = {
-              field: "zcName",
-              title: "职级名称",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj24);
-            this.false24 = true;
-            break;
-          case "rylb":
-            let obj25 = {
-              field: "personType",
-              title: "人员类别",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true
-            };
-            this.columns.push(obj25);
-            this.false25 = true;
-            break;
-        }
-      }
-      this.results = [];
-      this.showPx = false;
-    },
+    // confirmPick() {
+    //   console.log(this.results);
+    // },
     //表格行点击事件
     rowClick(rowIndex, rowData, column) {
       // console.log(rowData)
@@ -1772,6 +2090,19 @@ export default {
     },
     onCancel2() {
       this.showSex = false;
+    },
+    //选择职位类型的下拉框选择
+    selectJobType(){
+      this.showJobType = true
+    },
+    onConfirm13(picker) {
+      // console.log(picker)
+      this.jobType = picker.keyId;
+      this.form.jobType = picker.text;
+      this.showJobType = false;
+    },
+    onCancel13() {
+      this.showJobType = false;
     },
     //选择编制类型
     selectBian() {
@@ -2098,18 +2429,30 @@ export default {
     },
     //导出表格
     _exportExl(){
+      // console.log(this.columns)
+      let arr = []
+      for(let i in this.columns){
+        arr.push(this.columns[i].field)
+      }
+      // console.log(arr)
       let queryData = {
         jobnumber: localStorage.getItem('jobNum'),
-        download:this.download,
-        employee:this.allTableData
+        nameArr: arr
       }
+      this.$refs.loadingSpin.showUp();
       exportExl(queryData).then(res=>{
         if(res.code == 1000){
+          this.$refs.loadingSpin.shutdown();
           Notify({ type: "success", message: res.msg });
         }else{
+          this.$refs.loadingSpin.shutdown();
           Notify({ type: "warning", message: res.msg });
         }
       })
+    },
+    //点击条件查询
+    handClickItem(){
+      console.log(this.resultMore)
     },
     ...mapMutations({
       save_jobNum: "save_jobNum",
@@ -2151,14 +2494,22 @@ export default {
   },
   components: {
     draggable,
-    pickdeptmore: pickDeptMore
+    pickdeptmore: pickDeptMore,
+    loadingSpin
   }
 };
 </script>
 <style>
-td {
-  vertical-align: bottom;
-}
+  td {
+    vertical-align: bottom;
+  }
+  .overauto{
+    width: 100%;
+    overflow: auto;
+  }
+  .van-button--mini{
+    min-width: 40px;
+  }
 </style>
 <style lang="stylus" scoped>
 .header {
@@ -2232,6 +2583,7 @@ td {
   width: 100%;
   background-color: #fff;
   padding: 5px;
-  text-align: center;
+  line-height 35px
+  // text-align: center;
 }
 </style>

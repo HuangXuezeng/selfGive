@@ -1,8 +1,7 @@
 <template>
   <div>
     <div class="box">
-      <div class="box_left" v-if="flag">
-        <!-- 左导航栏 -->
+      <!-- <div class="box_left" v-if="flag">
         <van-sidebar v-model="activeKey" @change="onChange" class="van-sidebar">
           <van-sidebar-item title="花名册" to="roster" />
           <van-sidebar-item title="流失率" to="retention" />
@@ -19,17 +18,32 @@
           <van-icon name="arrow" color="orange" />
         </span>
         <router-view />
-      </div>
+      </div> -->
+      <van-sticky>
+        <van-tabs 
+        v-model="activeKey"
+        type="card"
+        color="#fc5f10"
+        line-height="4px">
+          <van-tab title="花名册" to="roster"></van-tab>
+          <van-tab title="流失率" to="retention"></van-tab>
+          <van-tab title="人员结构" to="perStructure"></van-tab>
+          <van-tab title="人效分析" to="humanEffect"></van-tab>
+          <van-tab title="人员异动" to="changes"></van-tab>
+          <van-tab title="编制分析" to="organization"></van-tab>
+        </van-tabs>
+      </van-sticky>
+      <router-view />
     </div>
   </div>
 </template>
 <script>
-import { Sidebar, SidebarItem, Icon } from "vant";
+import { Sidebar, SidebarItem, Icon, Sticky } from "vant";
 import { mapState, mapMutations } from "vuex";
 export default {
   data() {
     return {
-      // activeKey: 0,
+      // active: 1,
       flag: true,
       hideleArr: true,
       showArr: false
@@ -79,6 +93,13 @@ export default {
     //     let top = document.getElementsByClassName("container")[0].scrollTop;    // 获取页面滚动高度
     //     console.log(top);
     // },
+    toRoster(){
+      alert('花名册')
+      this.$router.push({name:'roster'})
+    },
+    toChanges(){
+      this.$router.push({name:'changes'})
+    },
     ...mapMutations({
       save_type: "save_type",
       arr_flag: "arr_flag"
@@ -90,6 +111,20 @@ export default {
   }
 };
 </script>
+<style>
+  .van-tabs__nav--card{
+    margin: 0
+  }
+  .van-tab__text--ellipsis{
+    font-weight: 700;
+  }
+  .van-tabs__nav--card .van-tab.van-tab--active{
+    background-color: #fc5f10;
+  }
+  .van-tabs__nav--card{
+    border: 1px solid #fc5f10;
+  }
+</style>
 <style lang="stylus" scoped>
 .box {
   width: 100%;
@@ -125,6 +160,9 @@ export default {
       left: 22%;
       bottom: 50%;
     }
+  }
+  .van-tab-active {
+    background-color #ccc
   }
 }
 </style>

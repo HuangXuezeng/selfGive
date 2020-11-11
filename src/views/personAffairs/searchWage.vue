@@ -31,7 +31,7 @@
         @cancel="cancel">
             <van-field v-model="oldpsw" maxlength="6" type="password" label="新密码" placeholder="请输入6位数字密码"/>
             <van-field v-model="newpsw" maxlength="6" type="password" label="确认密码" placeholder="请确认密码"/>
-            <van-field v-model="checkMa" type="text" label="验证码" placeholder="请输入验证码"/>
+            <van-field v-model="checkMa" type="text" maxlength="6" label="验证码" placeholder="请输入验证码"/>
             <p class="send" @click="send" v-if="sendflag">点击发送验证码</p>
             <!-- 点击发送验证码后显示的等待内容 -->
             <p class="sends" v-if="!sendflag">验证码已发送~请稍等<span style="color:#f00">{{ times }}</span>秒</p>

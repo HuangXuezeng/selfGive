@@ -81,6 +81,7 @@
                 <v-table 
                 ref="table" 
                 is-horizontal-resize
+                :is-loading="isLoading1"
                 style="width:100%;font-size:14px"
                 columns-width-drag
                 title-bg-color="#e5ecf0"
@@ -105,11 +106,9 @@
         <!-- 表格弹窗 -->
         <van-popup
         v-model="showTable" 
-        closeable
-        close-icon-position="bottom-right"
         get-container="body"
         position="top" 
-        :style="{ height: '490px' }">
+        >
           <div class="table">
               <v-table 
               ref="pop_table"
@@ -128,7 +127,8 @@
           </div>
           <div class="more">
               <van-tag type="warning">总条数：{{total}}</van-tag>
-              <span style="float:right" @click="loadMore"><van-tag type="warning">下一页</van-tag></span>
+              <span style="float:right" @click="closePop"><van-tag type="danger">关闭</van-tag></span>
+              <span style="float:right;margin-right:10px" @click="loadMore"><van-tag type="warning">下一页</van-tag></span>
           </div>
         </van-popup> 
     </div>
@@ -145,7 +145,8 @@ components: {
   data () {
     return {
         qxFlag: false,
-        isLoading: true,
+        isLoading: true, //弹窗表格的加载
+        isLoading1: true, //查看详细表格的加载
         showTable: false, //表格弹窗
         selectTime: '',
         selectChangeTime: '', //传给后台的时间值
@@ -226,6 +227,10 @@ components: {
             this.popupTableData = this.popupTableData.concat(this.fenyeData[this.dataIndex])
         }
     },
+    //关闭弹窗
+    closePop(){
+        this.showTable = false
+    },
     //处理表格的分页方法
     pagePev(){
         this.total = this.popupTableData.length
@@ -289,6 +294,7 @@ components: {
         queryDeptDetailTeam(queryData).then(res=>{
             this.deptName = res.obj
             this.tableData = res.obj.details
+            this.isLoading1 = false
             this.columns = [
                 {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
                 {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
@@ -665,7 +671,11 @@ components: {
     　　myChart.setOption({
             xAxis: {
                 type: 'category',
-                data: ['25岁以下', '25-35岁', '35-45岁', '45-50岁', '50岁以上']
+                data: ['25岁以下', '25-35岁', '35-45岁', '45-50岁', '50岁以上'],
+                axisLabel: {
+                    interval:0,
+                    rotate:60
+                },
             },
             yAxis: {
                 type: 'value'
@@ -794,7 +804,7 @@ components: {
                     label: {
                         show: true,
                         position: 'inside',
-                        formatter: '{b}：{d}%'
+                        formatter: '{b}：{c}人 / {d}%'
                         // formatter:function(param){
                         //     return param.name+'\n'+'\n'+param.value+'%'
                         // }
@@ -1124,6 +1134,7 @@ components: {
     },
     //重置
     reset(){
+        // debugger
         this.selectTime = ''
         this.$refs.dept_content.restFlag = true
         this.$refs.dept_content.selectedDepartment = ''
@@ -1151,7 +1162,7 @@ components: {
     },
     //vuex
     ...mapMutations({
-        arr_flag:'arr_flag',
+        // arr_flag:'arr_flag',
         save_jobNum:'save_jobNum',
         from_page:'from_page',
     }),
@@ -1160,27 +1171,27 @@ components: {
     // this.$refs.pop_table.$el.children[0].children[1].addEventListener('scroll', this.scrool)
 　},
 watch:{
-    '$store.state.arrflag': function (newVal,oldVal) {
-    // console.log(this.$store.state.arrflag)
-        if(this.$store.state.arrflag == 1 || this.$store.state.arrflag == 2){
-            const myChart = this.$echarts.init(document.getElementById('chart'))
-            const myChart1 = this.$echarts.init(document.getElementById('chart1'))
-            const myChart2 = this.$echarts.init(document.getElementById('chart2'))
-            const myChart3 = this.$echarts.init(document.getElementById('chart3'))
-            const myChart4 = this.$echarts.init(document.getElementById('chart4'))
-            myChart.resize()
-            myChart1.resize()
-            myChart2.resize()
-            myChart3.resize()
-            myChart4.resize()
-            //查询部门详细
-            this.columns = [
-                {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
-                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
-                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
-            ]
-        }
-    },
+    // '$store.state.arrflag': function (newVal,oldVal) {
+    // // console.log(this.$store.state.arrflag)
+    //     if(this.$store.state.arrflag == 1 || this.$store.state.arrflag == 2){
+    //         const myChart = this.$echarts.init(document.getElementById('chart'))
+    //         const myChart1 = this.$echarts.init(document.getElementById('chart1'))
+    //         const myChart2 = this.$echarts.init(document.getElementById('chart2'))
+    //         const myChart3 = this.$echarts.init(document.getElementById('chart3'))
+    //         const myChart4 = this.$echarts.init(document.getElementById('chart4'))
+    //         myChart.resize()
+    //         myChart1.resize()
+    //         myChart2.resize()
+    //         myChart3.resize()
+    //         myChart4.resize()
+    //         //查询部门详细
+    //         this.columns = [
+    //             {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+    //             {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+    //             {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+    //         ]
+    //     }
+    // },
   }
 }
 </script>
