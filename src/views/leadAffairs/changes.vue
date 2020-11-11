@@ -74,23 +74,6 @@
         <!-- <van-button type="primary" color="#fc5f10" size="small" @click="ceshi">测试</van-button> -->
       </div>
     </div>
-    <!-- 选择部门弹出框 -->
-    <van-popup
-      v-model="showPickDept"
-      position="top"
-      :style="{ height: '70%' }"
-      get-container="body"
-      closeable
-    >
-      <el-tree
-        :data="deptData"
-        ref="tree"
-        @check-change="handleCheckChange"
-        node-key="deptId"
-        :props="props"
-        show-checkbox
-      ></el-tree>
-    </van-popup>
     <!-- 弹出选择时间 -->
     <van-popup
       get-container="body"
@@ -148,16 +131,20 @@
         >
       </div>
     </div>
+    <!-- 遮罩层（导出表格等待） -->
+    <loadingSpin ref="loadingSpin"></loadingSpin>
   </div>
 </template>
 <script>
 import { Field, Button, DatetimePicker, Popup, Notify, Dialog } from "vant";
 import pickDeptMore from "@/components/pickDeptMore.vue";
+import loadingSpin from "@/components/waitLoading.vue";
 import { mapMutations } from "vuex";
-import { queryChanges, getClassic, exportExcel } from "./api";
+import { queryChanges, getClassic, exportExcel,selectTurnoverLimit } from "./api";
 export default {
   components: {
-    pickdeptmore: pickDeptMore
+    pickdeptmore: pickDeptMore,
+    loadingSpin
   },
   data() {
     return {
@@ -170,14 +157,9 @@ export default {
         classic: "", //异动分类
         deptIdStr: "" //选择的部门id集合
       },
-      showPickDept: false, //选择部门弹出窗
       showClassic: false, //选择异动分类
       deptData: [], //部门数据
       columns1: [], //异动分类下拉值
-      props: {
-        label: "content",
-        children: "depts"
-      },
       showTime: false,
       timeFlag: "", //选择时间的标识
       minDate: new Date(2010, 0, 1),
@@ -188,8 +170,7 @@ export default {
       pageSize: 10,
       tableData: [],
       fenyeData: [],
-      allData: [], //所有的数据
-      dataIndex: 0, //假分页默认显示
+      dataIndex: 1, //假分页默认显示
       columns: [
         {
           field: "custome",
@@ -372,6 +353,7 @@ export default {
       //初始化部门数据
       const departRes = JSON.parse(localStorage.getItem("departRes"));
       this.deptData.push(departRes);
+      // console.log(this.deptData)
       //获取异动分类下拉选择值
       getClassic().then(res => {
         this.columns1 = res.obj;
@@ -379,20 +361,21 @@ export default {
     },
     //按条件查询
     search() {
-      if (this.$refs.select.selectedDepartment == "") {
-        Notify({ type: "warning", message: "请选择部门！" });
-      } else if (this.form.startTime == "") {
-        Notify({ type: "warning", message: "请选择开始时间！" });
-      } else if (this.form.endTime == "") {
+      if (this.form.startTime !== "" && this.form.endTime == "") {
         Notify({ type: "warning", message: "请选择结束时间！" });
+      } else if (this.form.endTime !== "" && this.form.startTime == "") {
+        Notify({ type: "warning", message: "请选择结束开始时间！" });
       } else {
+        // if()
         this.seeTable = true;
         let queryData = {};
+        this.form.deptIds = JSON.parse(localStorage.getItem("deptIdsRes"))
+        this.form.worknumber = localStorage.getItem("jobNum")
         queryData = this.form;
         queryChanges(queryData).then(res => {
           this.tableData = res.obj;
-          this.allData = res.obj;
-          this.pagePev(); //分页方法
+          this.total = res.totalSize
+          // this.pagePev(); //分页方法
         });
       }
     },
@@ -414,12 +397,14 @@ export default {
     //导出表格
     _exportExcel() {
       let queryData = {};
-      queryData.entity = this.allData
       queryData.jobnumber = localStorage.getItem('jobNum')
+      this.$refs.loadingSpin.showUp();
       exportExcel(queryData).then(res => {
         if(res.code == 1000){
+          this.$refs.loadingSpin.shutdown();
           Notify({ type: "success", message: res.msg });
         }else{
+          this.$refs.loadingSpin.shutdown();
           Notify({ type: "warning", message: res.msg });
         }
       });
@@ -432,29 +417,6 @@ export default {
       // document.body.appendChild(a);
       // a.click();
       // document.body.removeChild(a);
-    },
-    //选择部门
-    pickDept() {
-      this.showPickDept = true;
-    },
-    //选择时触发
-    handleCheckChange(data) {
-      let res = this.$refs.tree.getCheckedNodes();
-      this.defaultCheckedKeys = res;
-      let str = "";
-      let val = "";
-      for (let i in res) {
-        str += res[i].content + ",";
-        val += res[i].deptId + ",";
-      }
-      if (str.length > 0) {
-        str = str.substr(0, str.length - 1);
-        val = val.substr(0, str.length - 1);
-      }
-      // console.log(res)
-      // console.log(val)
-      this.form.department = str;
-      this.form.deptIdStr = val;
     },
     //打开时间选择器
     startTimeClick() {
@@ -477,6 +439,14 @@ export default {
         }
       } else {
         this.form.startTime = this.formatDate(val);
+        if(this.form.endTime !== ''){
+          let strStart = this.form.startTime.split("-").join("");
+          let strEnd = this.form.endTime.split("-").join("");
+          if (strStart > strEnd) {
+            Notify({ type: "warning", message: "开始时间不得大于结束时间！" });
+            this.form.startTime = "";
+          }
+        }
       }
       this.showTime = false;
     },
@@ -513,11 +483,22 @@ export default {
     loadMore() {
       // debugger
       this.dataIndex++; //点击+1
-      if (this.dataIndex >= this.fenyeData.length) {
-        Notify({ type: "warning", message: "没有更多数据了哦~" });
-      } else {
-        this.tableData = this.tableData.concat(this.fenyeData[this.dataIndex]);
+      // if (this.dataIndex >= this.fenyeData.length) {
+      //   Notify({ type: "warning", message: "没有更多数据了哦~" });
+      // } else {
+      //   this.tableData = this.tableData.concat(this.fenyeData[this.dataIndex]);
+      // }
+      let queryData = {
+        page: this.dataIndex,
+        jobnumber: localStorage.getItem('jobNum')
       }
+      selectTurnoverLimit(queryData).then(res=>{
+        if(res.obj == ''){
+          Notify({ type: "warning", message: "没有更多数据了哦~" })
+        }else{
+          this.tableData = this.tableData.concat(res.obj)
+        }
+      })
     },
     //处理表格的分页方法
     pagePev() {

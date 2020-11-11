@@ -104,6 +104,14 @@ export function exportExl (queryData) {
     data: JSON.stringify(queryData)
   })
 }
+//花名册表格下一页
+export function selectEmployeeLimit (queryData) {
+  return fetch({
+    url: `/kukacms/self/roster/selectEmployeeLimit`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
 
 //人员结构部分----------------------------------------------------------
 
@@ -210,9 +218,23 @@ export function getClassic (queryData) {
 export function exportExcel (queryData) {
   return fetch({
     url: `/kukacms/self/turnover/exportExcel`,
-    headers:{"content-type":"application/json"},
-    dataType: 'json',
     method: 'post',
-    data: JSON.stringify(queryData)
+    data: qs.stringify(queryData)
+  })
+}
+// 异动分类表格分页
+export function selectTurnoverLimit (queryData) {
+  return fetch({
+    url: `/kukacms/self/turnover/selectTurnoverLimit`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+// 编制分析部分--------------------------------------------------------------------------------------------
+export function getSelector (queryData) {
+  return fetch({
+    url: `/kukacms/self/bianzhi/getSelector`,
+    method: 'post',
+    data: qs.stringify(queryData)
   })
 }

@@ -13,11 +13,11 @@
       position="top"
       :style="{ height: '70%' }"
       get-container="body"
-      closeable
     >
       <el-tree
         :data="deptData"
         ref="tree"
+        style="padding-bottom:10%"
         node-key="deptId"
         @check-change="handleCheckChange"
         :props="props"
@@ -25,6 +25,11 @@
         :check-strictly="true"
         :default-expanded-keys="openlist"
       ></el-tree>
+      <div class="butnPosition">
+        <van-button type="primary" color="#fc5f10" size="small" @click="closeTree" style="width:100%"
+          >关闭</van-button
+        >
+      </div>
     </van-popup>
   </div>
 </template>
@@ -131,6 +136,7 @@ export default {
                   this.mechanismPath(assignData);
                   this.selectedDepartment = data.content
                   this.showPickDept = false;
+                  this.$refs.tree.setCheckedKeys([])
                   Notify({ type: 'success', message: '选择成功' });
 
               } else if (this.selectOrg.orgsid.length === 0 && checked) {
@@ -147,6 +153,7 @@ export default {
                 }else{
                   this.showPickDept = false;
                   this.onSelected=''
+                  this.$refs.tree.setCheckedKeys([])
                   Notify({ type: 'success', message: '选择成功' });
                 }
 
@@ -185,6 +192,10 @@ export default {
     //清空输入框
     showAlert1(){
       this.selectedDepartment = ''
+    },
+    //关闭弹窗
+    closeTree(){
+      this.showPickDept = false
     }
   },
   watch:{
@@ -199,5 +210,12 @@ export default {
 };
 </script>
 
-<style>
+<style lang="stylus">
+  .butnPosition {
+    position: fixed;
+    bottom: 30vh;
+    z-index: 99;
+    width: 100%;
+    box-sizing: content-box;
+  }
 </style>

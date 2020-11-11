@@ -92,6 +92,7 @@
         <v-table
           ref="table"
           is-horizontal-resize
+          :is-loading="isLoading1"
           style="width:100%;font-size:14px"
           columns-width-drag
           title-bg-color="#e5ecf0"
@@ -119,6 +120,7 @@
         <v-table
           ref="table"
           is-horizontal-resize
+          :is-loading="isLoading2"
           style="width:100%;font-size:14px"
           columns-width-drag
           title-bg-color="#e5ecf0"
@@ -175,15 +177,12 @@
     <van-popup
       v-model="showTable"
       get-container="body"
-      position="top"
-      closeable
-      close-icon-position="bottom-right"
-      :style="{ height: '490px' }"
-    >
+      position="top">
       <div class="table">
         <v-table
           ref="table"
           is-horizontal-resize
+          :is-loading="isLoading"
           style="width:100%;font-size:14px"
           columns-width-drag
           :height="400"
@@ -197,8 +196,8 @@
       </div>
       <div class="more">
         <van-tag type="warning">总条数：{{ total }}</van-tag>
-        <span style="float:right" @click="loadMore"
-          ><van-tag type="warning">下一页</van-tag></span
+        <span style="float:right" @click="closePop"><van-tag type="danger">关闭</van-tag></span>
+        <span style="float:right;margin-right:10px" @click="loadMore"><van-tag type="warning">下一页</van-tag></span
         >
       </div>
     </van-popup>
@@ -215,6 +214,9 @@ export default {
   },
   data() {
     return {
+      isLoading: true, //弹窗表格的加载
+      isLoading1: true, //每月明细表格的加载
+      isLoading2: true, //按职级表格的加载
       aa: "20%",
       showTable: false, //表格弹窗
       selectYear: "", //选择年
@@ -484,6 +486,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
+          this.isLoading = false
           this.pagePev(); //分页处理
         })
       } else if (column.field == "cadreRunoffSum") {
@@ -494,6 +497,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
+          this.isLoading = false
           this.pagePev(); //分页处理
         })
       } else if (column.field == "activeSum") {
@@ -504,6 +508,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
+          this.isLoading = false
           this.pagePev(); //分页处理
         })
       } else if (column.field == "passiveSum") {
@@ -514,6 +519,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
+          this.isLoading = false
           this.pagePev(); //分页处理
         })
       }
@@ -529,6 +535,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
+          this.isLoading = false
           this.pagePev(); //分页处理
         })
       } else if (column.field == "cadreRunoffSum") {
@@ -539,6 +546,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
+          this.isLoading = false
           this.pagePev(); //分页处理
         })
       } else if (column.field == "activeSum") {
@@ -549,6 +557,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
+          this.isLoading = false
           this.pagePev(); //分页处理
         })
       } else if (column.field == "passiveSum") {
@@ -559,6 +568,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
+          this.isLoading = false
           this.pagePev(); //分页处理
         })
       }
@@ -699,6 +709,7 @@ export default {
               }
               selectPerson(queryData).then(res=>{
                 that.popupTableData = res.obj;
+                that.isLoading = false
                 that.pagePev(); //分页处理
               })
               break;
@@ -713,6 +724,7 @@ export default {
               }
               selectPerson(queryData).then(res=>{
                 that.popupTableData = res.obj;
+                that.isLoading = false
                 that.pagePev(); //分页处理
               })
               break;
@@ -727,6 +739,7 @@ export default {
               }
               selectPerson(queryData).then(res=>{
                 that.popupTableData = res.obj;
+                that.isLoading = false
                 that.pagePev(); //分页处理
               })
               break;
@@ -741,6 +754,7 @@ export default {
               }
               selectPerson(queryData).then(res=>{
                 that.popupTableData = res.obj;
+                that.isLoading = false
                 that.pagePev(); //分页处理
               })
               break;
@@ -755,6 +769,7 @@ export default {
               }
               selectPerson(queryData).then(res=>{
                 that.popupTableData = res.obj;
+                that.isLoading = false
                 that.pagePev(); //分页处理
               })
               break;
@@ -876,37 +891,7 @@ export default {
       });
       window.onresize = myChart.resize;
       //点击事件
-      myChart.on("click", function(params) {
-        switch (params.name) {
-          case "初中":
-            console.log(params.name);
-            break;
-          case "高中中专":
-            console.log(params.name);
-            break;
-          case "本科":
-            console.log(params.name);
-            break;
-          case "大专":
-            console.log(params.name);
-            break;
-          case "小学":
-            console.log(params.name);
-            break;
-          case "硕士及以上":
-            console.log(params.name);
-            break;
-          case "MBA":
-            console.log(params.name);
-            break;
-          case "博士":
-            console.log(params.name);
-            break;
-
-          default:
-            break;
-        }
-      });
+      // myChart.on("click", function(params) {});
     },
     //选择年
     onConfirm(value, index) {
@@ -995,7 +980,9 @@ export default {
       };
       queryRunoff(queryData).then(res => {
         this.totalData = res.obj;
-        // console.log(this.totalData);
+        //请求到数据后表格加载结束
+        this.isLoading1 = false
+        this.isLoading2 = false
         this.tableData = res.obj.detail;
         this.tableData1 = res.obj.category;
         // 按每月情况取值
@@ -1022,6 +1009,7 @@ export default {
     //重置查询
     reset() {
       this.$refs.resetForm.selectedDepartment = "";
+      this.$refs.resetForm.restFlag = true
       this.deptId = "";
       this.selectYear = "";
       this.selectMonth = "";
@@ -1091,6 +1079,10 @@ export default {
         );
       }
     },
+    //关闭弹窗
+    closePop(){
+      this.showTable = false
+    },
     //处理表格的分页方法
     pagePev() {
       this.total = this.popupTableData.length;
@@ -1105,181 +1097,23 @@ export default {
     },
     ...mapMutations({
       save_type: "save_type",
-      arr_flag: "arr_flag",
+      // arr_flag: "arr_flag",
       save_jobNum: "save_jobNum",
       from_page: "from_page"
     })
   },
   mounted() {},
   watch: {
-    "$store.state.arrflag": function(newVal, oldVal) {
-      // console.log(this.$store.state.arrflag)
-      if (this.tableData == null) {
-        if (this.$store.state.arrflag == 1 || this.$store.state.arrflag == 2) {
-          const myChart = this.$echarts.init(document.getElementById("chart"));
-          myChart.resize();
-        }
-      } else {
-        if (this.$store.state.arrflag == 1 || this.$store.state.arrflag == 2) {
-          const myChart = this.$echarts.init(document.getElementById("chart"));
-          const myChart1 = this.$echarts.init(
-            document.getElementById("chart1")
-          );
-          myChart.resize();
-          myChart1.resize();
-          (this.columns = [
-            {
-              field: "time",
-              title: "月份",
-              width: 100,
-              titleAlign: "center",
-              columnAlign: "center"
-            },
-            {
-              field: "avgOnjob",
-              title: "平均在编",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true,
-              formatter: function(rowData, rowIndex, pagingIndex, field) {
-                return `<span class='cell-edit-color-a'>${rowData[field]}</span>`;
-              }
-            },
-            {
-              field: "realOnjob",
-              title: "实际在编",
-              width: 100,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true,
-              formatter: function(rowData, rowIndex, pagingIndex, field) {
-                return `<span class='cell-edit-color-b'>${rowData[field]}</span>`;
-              }
-            },
-            {
-              field: "runoffSum",
-              title: "流失人数",
-              width: 100,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true,
-              formatter: function(rowData, rowIndex, pagingIndex, field) {
-                return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
-              }
-            },
-            {
-              field: "cadreRunoffSum",
-              title: "干部流失人数",
-              width: 150,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true,
-              formatter: function(rowData, rowIndex, pagingIndex, field) {
-                return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
-              }
-            },
-            {
-              field: "runoffRate",
-              title: "流失率",
-              width: 100,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true,
-              formatter: function(rowData, rowIndex, pagingIndex, field) {
-                return `<span class='cell-edit-color-d'>${rowData[field]}</span>`;
-              }
-            },
-            {
-              field: "activeSum",
-              title: "主动",
-              width: 100,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true,
-              formatter: function(rowData, rowIndex, pagingIndex, field) {
-                return `<span class='cell-edit-color-e'>${rowData[field]}</span>`;
-              }
-            },
-            {
-              field: "passiveSum",
-              title: "被动",
-              width: 100,
-              titleAlign: "center",
-              columnAlign: "center",
-              isResize: true,
-              formatter: function(rowData, rowIndex, pagingIndex, field) {
-                return `<span class='cell-edit-color-f'>${rowData[field]}</span>`;
-              }
-            }
-          ]),
-            (this.columns1 = [
-              {
-                field: "name",
-                title: "职级",
-                width: 100,
-                titleAlign: "center",
-                columnAlign: "center"
-              },
-              {
-                field: "avgOnjob",
-                title: "平均在编",
-                width: 150,
-                titleAlign: "center",
-                columnAlign: "center",
-                isResize: true,
-                formatter: function(rowData, rowIndex, pagingIndex, field) {
-                  return `<span class='cell-edit-color-a'>${rowData[field]}</span>`;
-                }
-              },
-              {
-                field: "runoffSum",
-                title: "流失人数",
-                width: 100,
-                titleAlign: "center",
-                columnAlign: "center",
-                isResize: true,
-                formatter: function(rowData, rowIndex, pagingIndex, field) {
-                  return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
-                }
-              },
-              {
-                field: "runoffRate",
-                title: "流失率",
-                width: 100,
-                titleAlign: "center",
-                columnAlign: "center",
-                isResize: true,
-                formatter: function(rowData, rowIndex, pagingIndex, field) {
-                  return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
-                }
-              },
-              {
-                field: "activeSum",
-                title: "主动",
-                width: 100,
-                titleAlign: "center",
-                columnAlign: "center",
-                isResize: true,
-                formatter: function(rowData, rowIndex, pagingIndex, field) {
-                  return `<span class='cell-edit-color-e'>${rowData[field]}</span>`;
-                }
-              },
-              {
-                field: "passiveSum",
-                title: "被动",
-                width: 100,
-                titleAlign: "center",
-                columnAlign: "center",
-                isResize: true,
-                formatter: function(rowData, rowIndex, pagingIndex, field) {
-                  return `<span class='cell-edit-color-f'>${rowData[field]}</span>`;
-                }
-              }
-            ]);
-        }
-      }
-    }
+    // "$store.state.arrflag": function(newVal, oldVal) {
+    //   // console.log(this.$store.state.arrflag)
+    //   if (this.tableData == null) {
+    //     if (this.$store.state.arrflag == 1 || this.$store.state.arrflag == 2) {
+    //       const myChart = this.$echarts.init(document.getElementById("chart"));
+    //       myChart.resize();
+    //     }
+    //   } else {
+    //   }
+    // }
   }
 };
 </script>

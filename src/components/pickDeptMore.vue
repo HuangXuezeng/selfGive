@@ -18,7 +18,7 @@
       get-container="body"
       :closeable="closeableFlag"
     >
-      <div style="padding-bottom:12%">
+      <div style="padding-bottom:20%">
         <!-- <van-switch :value="isDownValue" @input="isDownMethods" /> -->
         <van-cell
           center
@@ -56,19 +56,12 @@
           >
             重置
           </div>
-          <!-- <div
+          <div
             class="buttonChoose"
             :style="selectAllstyle"
             @click="selctAllNodeMeth"
           >
             全选
-          </div> -->
-          <div
-            class="buttonChoose"
-            :style="selectAllstyle"
-            @click="closePicker"
-          >
-            关闭
           </div>
           <div
             class="buttonChoose"
@@ -76,6 +69,13 @@
             @click="confirmNodeMeth"
           >
             确认
+          </div>
+          <div
+            class="buttonChoose"
+            style="background-color:#cb3632"
+            @click="closePicker"
+          >
+            关闭
           </div>
         </div>
       </div>
@@ -148,7 +148,7 @@ export default {
       selectkeySet: null,
       beforeSelectName: "",
       SelectNameMap: null,
-      selectAllstyle: "background-color:Coral",
+      selectAllstyle: "background-color:#ccc",
       labelStyle: "",
       restFlag: false, //花名册清空勾选,
       autosize: { maxHeight: "25", minHeight: "20" }
@@ -195,9 +195,9 @@ export default {
         if (this.isSelctall && this.firstIn == 1) {
           this.deptData = this.faDeptData;
           this.openlist = [this.faDeptData[0].deptId];
-        //   if (!this.isFromRost) {
-        //     this.selctAllNodeMeth();
-        //   }
+          if (!this.isFromRost) {
+            this.selctAllNodeMeth();
+          }
           this.firstIn++;
         }
       });
@@ -269,20 +269,20 @@ export default {
     // }else{
     //     this.strictlyFlag = true;
     // }
-      let deptids = [];
-      deptids.push(checkedNodes.deptId);
-      const deptIdsRes = JSON.parse(localStorage.getItem("deptIdsRes"));
-      let queryData = {
-        ids: deptids,
-        deptIds: deptIdsRes
-      };
-      checkDept(queryData).then(res => {
-        if (res.code == 1001) {
-        //   this.strictlyFlag = true;
-          this.$refs.tree.setCheckedKeys([]);
-          Toast.fail(res.msg);
-          return;
-        } else {
+      // let deptids = [];
+      // deptids.push(checkedNodes.deptId);
+      // const deptIdsRes = JSON.parse(localStorage.getItem("deptIdsRes"));
+      // let queryData = {
+      //   ids: deptids,
+      //   deptIds: deptIdsRes
+      // };
+      // checkDept(queryData).then(res => {
+      //   if (res.code == 1001) {
+      //   //   this.strictlyFlag = true;
+      //     this.$refs.tree.setCheckedKeys([]);
+      //     Toast.fail(res.msg);
+      //     return;
+      //   } else {
           if (this.isDownValue) {
             // this.strictlyFlag = false
             this.selectkeySet.clear();
@@ -309,8 +309,8 @@ export default {
               this.$refs.tree.setChecked(item, true, false);
             }
           }
-        }
-      });
+      //   }
+      // });
     },
     //团队培育用的方法
     transferData(data) {
@@ -367,15 +367,16 @@ export default {
         this.showPickDept = false
     },
     //全选按钮
-    // selctAllNodeMeth() {
-    //   if (!this.isDownValue) {
-    //     return;
-    //   }
-    //   this.$refs.tree.setCheckedKeys([this.deptData[0].deptId], false);
-    //   this.selectkeySet.clear();
-    //   this.selectkeySet.add(this.deptData[0].deptId);
-    //   this.beforeSelectName = "全部";
-    // },
+    selctAllNodeMeth() {
+      if (!this.isDownValue) {
+        return;
+      }
+      // this.$refs.tree.setCheckedKeys(this.deptData, true);
+      // this.selectkeySet.clear();
+      // this.selectkeySet.add(this.deptData[0].deptId);
+      // this.beforeSelectName = "全部";
+      this.$refs.tree.setCheckedNodes(this.deptData);
+    },
     //开关按钮方法
     isDownMethods(isDownValue) {
       let isDownTip = "";
@@ -390,10 +391,10 @@ export default {
       }).then(() => {
         this.isDownValue = isDownValue;
         if (!isDownValue) {
-        //   this.selectAllstyle = "background-color:#ccc";
+          this.selectAllstyle = "background-color:#ccc";
           this.strictlyFlag = true;
         } else {
-        //   this.selectAllstyle = "background-color:Coral";
+          this.selectAllstyle = "background-color:Coral";
           this.strictlyFlag = false;
         }
       });
@@ -430,7 +431,7 @@ export default {
 
 .buttonChoose {
   display: inline-block;
-  width: 14vh;
+  width: 10vh;
   height: 4vh;
   text-align: center;
   line-height: 4vh;

@@ -106,5 +106,15 @@ export function findCadreAchieveInfo (queryData) {
     data: qs.stringify(queryData)
   })
 }
+//平均年薪
+export function download (queryData) {
+  return fetch({
+    url: `/kukacms/self/download`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}
 
 

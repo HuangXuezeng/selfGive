@@ -343,6 +343,15 @@ export default new Router({
             keepAlive: true
           }
         },
+        //编制分析
+        {
+          path: '/organization',
+          name: 'organization',
+          component: () => import('@/views/leadAffairs/organization'),
+          meta: {
+            keepAlive: true
+          }
+        },
       ],
     },
     /***
