@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="padding-bottom:15%">
     <div>
       <van-tabs v-model="active" scrollspy sticky type="card">
         <van-tab title="基本信息">
@@ -262,7 +262,9 @@
                   <template #title>
                     <div class="fontweig">
                       <van-tag mark type="primary" color="#fc5f10">{{
-                        item.startTime + " " + item.type
+                        item.startTime + " " + item.type == "无 无"
+                          ? "无"
+                          : item.startTime + " " + item.type
                       }}</van-tag>
                     </div>
                   </template>
@@ -398,7 +400,9 @@
                 <template #title>
                   <div class="fontweig">
                     <van-tag mark type="primary" color="#fc5f10">{{
-                      item.a812005 + " " + item.a812006
+                      item.a812005 + " " + item.a812006 == "无 无"
+                        ? "无"
+                        : item.a812005 + " " + item.a812006
                     }}</van-tag>
                   </div>
                 </template>
@@ -434,7 +438,7 @@
             <van-row type="flex" justify="center">
               <van-col>
                 <div style="font-size: 20px;font-weight: 700;;margin-top:20px">
-                  pbc详情
+                  PBC详情
                 </div></van-col
               >
             </van-row>
@@ -447,7 +451,7 @@
                 <template #title>
                   <div class="fontweig">
                     <van-tag mark type="primary" color="#fc5f10">{{
-                      item.a832005
+                      item.a832005 + "年"
                     }}</van-tag>
                   </div>
                 </template>
@@ -468,12 +472,16 @@
                   <span class="floatRight">{{ item.a832009 }}</span>
                 </p>
                 <p>
-                  <span>pbc链接</span>
+                  <span>PBC链接</span>
                   <a
                     class="floatRight"
                     :href="item.a832htmURL"
                     style="color:blue"
-                    >{{ item.a832005 + " " + item.contentone }}</a
+                    >{{
+                      item.a832005 + " " + item.contentone == "无 无"
+                        ? "无"
+                        : item.a832005 + " " + item.contentone
+                    }}</a
                   >
                 </p>
               </van-collapse-item>
@@ -570,13 +578,13 @@
                 <template #title>
                   <div class="fontweig">
                     <van-tag mark type="primary" color="#fc5f10">{{
-                      item.A8SRLMX005
+                      item.date
                     }}</van-tag>
                   </div>
                 </template>
-                <p v-if="item.A8SRLMX005">
+                <p v-if="item.date">
                   <span>日期:</span>
-                  <span class="floatRight">{{ item.A8SRLMX005 }}</span>
+                  <span class="floatRight">{{ item.date }}</span>
                 </p>
                 <p v-if="item.a8SRLMX006">
                   <span>排名:</span>
@@ -782,7 +790,63 @@
                   <span>团队规模：</span>
                   <span class="floatRight">{{ item.a8TDPYXX014 }}</span>
                 </p>
-                <div style="position:relative;">
+                <div style="border: 1px solid #ccc;">
+                  <div style="border-bottom: 1px solid #ccc;">
+                    <van-row type="flex" justify="space-between">
+                      <van-col span="9">
+                        <div>
+                          继任者：
+                        </div></van-col
+                      >
+                      <van-col span="5">
+                        <div class="floatright" style="border-left: 0.5px solid #ccc;">
+                          {{ item.a8TDPYXX015 }}
+                        </div>
+                      </van-col>
+                      <van-col span="5">
+                        <div class="floatright">
+                          {{ item.a8TDPYXX017 }}
+                        </div>
+                      </van-col>
+                      <van-col span="5">
+                        <div class="floatright">
+                          {{ item.a8TDPYXX019 }}
+                        </div>
+                      </van-col>
+                    </van-row>
+                  </div>
+
+                  <!-- <van-row >
+                      <van-col span="24">
+                        <span style=""></span>
+                      </van-col>
+                   </van-row> -->
+                  <!-- <span></span> -->
+                  <van-row type="flex" justify="space-between">
+                    <van-col span="9">
+                      <div>
+                        继任者成熟度：
+                      </div></van-col
+                    >
+                    <van-col span="5">
+                      <div class="floatright" style="border-left: 0.5px solid #ccc;">
+                        {{ item.a8TDPYXX016name }}
+                      </div>
+                    </van-col>
+                    <van-col span="5">
+                      <div class="floatright">
+                        {{ item.a8TDPYXX018name }}
+                      </div>
+                    </van-col>
+                    <van-col span="5">
+                      <div class="floatright">
+                        {{ item.a8TDPYXX020name }}
+                      </div>
+                    </van-col>
+                  </van-row>
+                </div>
+
+                <!-- <div style="position:relative;">
                   <div class="successorFull">
                     <div style="height: 14vh;text-align: center;">
                       <div style="height:7vh;line-height: 7vh;">
@@ -826,7 +890,7 @@
                     </div>
                     <span class="lineCCC"></span>
                   </div>
-                </div>
+                </div> -->
 
                 <!-- <p>
                   <span>继任者：</span>
@@ -868,15 +932,26 @@
               </div>
             </van-col>
           </van-row>
-          <div style="padding:0 10px">
-            <van-cell
-              title="职业倾向:"
-              :value="basicInfo.a01230"
-              :center="true"
-            />
+          <van-row type="flex" >
+            <van-col span="6">
+              <div style="margin-top: 2vh;margin-left: 3vh;font-size: 15px;color: rgb(150, 151, 153);">
+                职业倾向:
+              </div>
+            </van-col>
+            <van-col span="18">
+              <div
+            style="padding-top: 2vh;font-size: 15px;color: rgb(150, 151, 153);"
+          >
+            <div
+              v-html="professionalTendency"
+            ></div>
           </div>
+            </van-col>
+          </van-row>
+
         </van-tab>
       </van-tabs>
+      <!-- <img :src='picInfo' alt=""> -->
     </div>
     <loadingSpin ref="loadingSpin"></loadingSpin>
   </div>
@@ -955,7 +1030,12 @@ export default {
       showSocialListMore: true,
       showKeyEventsMore: true,
       showlistProjectMore: true,
-      showcadreAchieveInfoListMore: true
+      showcadreAchieveInfoListMore: true,
+      professionalTendency: "",
+      radarChart: "",
+      lastavgAbility:[],
+      avgAbility:[],
+      noPhotoFlag:false
     };
   },
   created() {
@@ -985,7 +1065,6 @@ export default {
       await this.queryfindCadreAbility();
       await this.queryfindCadreTrainInfo();
       await this.queryfindCadreAchieveInfo();
-      this.$refs.loadingSpin.shutdown();
     },
     //项目经历
     querylsitWorkInfoByJobnumber(data) {
@@ -1221,6 +1300,7 @@ export default {
     queryFindCadreBasicInfo() {
       findCadreBasicInfo({ jobnumber: this.itemjobnumber }).then(res => {
         this.basicInfo = res.obj;
+        var that = this;
         for (let key in this.basicInfo) {
           if (
             key == "a0111" ||
@@ -1246,13 +1326,12 @@ export default {
                 this.basicInfo[key] != "" &&
                 this.basicInfo[key] != undefined
               ) {
+                //在这里判断有无头像
+                this.noPhotoFlag = true
               } else {
+                //在这里判断有无头像
                 this.basicInfo[key] = require("@/assets/timg.jpg");
-              }
-            } else if (key == "a01230") {
-              // debugger;
-              if (!this.basicInfo[key]) {
-                this.basicInfo[key] = "无";
+                this.noPhotoFlag = false
               }
             } else if (key == "a01136") {
               if (this.basicInfo[key]) {
@@ -1270,6 +1349,17 @@ export default {
                 }
               } else {
               }
+            } else if (key == "a01230") {
+              // debugger;
+              if (this.basicInfo[key]) {
+                that.professionalTendency = this.basicInfo[key];
+                that.professionalTendency = that.professionalTendency.replace(
+                  /；/g,
+                  "<br>"
+                );
+              } else {
+                that.professionalTendency = "无";
+              }
             }
           }
         }
@@ -1278,8 +1368,8 @@ export default {
     queryfindCadreAbility() {
       findCadreAbility({ jobnumber: this.itemjobnumber }).then(res => {
         // debugger;
-        this.listAbility = res.obj;
-        if (res.obj.length == 0) {
+        this.listAbility = res.obj.abilityList;
+        if (res.obj.abilityList == 0) {
           this.listAbility.push({
             A8SRLMX005: "无",
             a8SRLMX006: "无",
@@ -1293,8 +1383,19 @@ export default {
           });
           this.echatsMethod("");
         } else {
-          this.listAbility = res.obj;
-          this.echatsMethod(res.obj[0]);
+          this.listAbility = res.obj.abilityList;
+          // debugger;
+          this.lastavgAbility = [
+            res.obj.a8SRLMX015AVG,
+            res.obj.a8SRLMX016AVG,
+            res.obj.a8SRLMX017AVG,
+            res.obj.a8SRLMX018AVG,
+            res.obj.a8SRLMX019AVG,
+            res.obj.a8SRLMX020AVG,
+            res.obj.a8SRLMX021AVG,
+            res.obj.a8SRLMX022AVG
+          ];
+          this.echatsMethod(res.obj.abilityList[0]);
         }
       });
     },
@@ -1353,12 +1454,14 @@ export default {
       });
     },
     echatsMethod(expanditem) {
+      // debugger;
       var myChart = this.$echarts.init(this.$refs.ppt);
       let ecartsData = [];
       let maxNum = 10;
       let minNum = 0;
-      if (expanditem == "" || expanditem.a8SRLMX015 == null) {
+      if (expanditem == "" || expanditem.a8SRLMX015 == undefined) {
         ecartsData = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.avgAbility = [0, 0, 0, 0, 0, 0, 0, 0]
       } else {
         ecartsData = [
           Number(expanditem.a8SRLMX015),
@@ -1370,12 +1473,19 @@ export default {
           Number(expanditem.a8SRLMX021),
           Number(expanditem.a8SRLMX022)
         ];
-        maxNum = Math.max.apply(Math, ecartsData);
-        minNum = Math.min.apply(Math, ecartsData);
+        // debugger
+        this.avgAbility  = this.lastavgAbility
+        let numlist = [...ecartsData, ...this.lastavgAbility];
+        maxNum = Math.max.apply(Math, numlist);
+        minNum = Math.min.apply(Math, numlist);
       }
-      // minNum = Math.trunc(minNum)
-      // maxNum = Math.ceil(maxNum)
+      minNum = Math.trunc(minNum);
+      maxNum = Math.ceil(maxNum);
+
       myChart.setOption({
+        legend: {
+          data: ["干部平均能力", "个人能力"]
+        },
         tooltip: {
           trigger: "axis"
         },
@@ -1395,22 +1505,81 @@ export default {
               { text: "业绩导向", max: maxNum, min: minNum }
             ],
             center: ["50%", "50%"],
-            radius: 80,
+            radius: 100,
+            startAngle: 60,
             splitNumber: 5,
-            scale: true
+            shape: "circle",
+            name: {
+              formatter: "【{value}】",
+              textStyle: {
+                color: "#72ACD1"
+              }
+            },
+            splitArea: {
+              areaStyle: {
+                // color: [
+                //   "rgba(114, 172, 209, 0.2)",
+                //   "rgba(114, 172, 209, 0.4)",
+                //   "rgba(114, 172, 209, 0.6)",
+                //   "rgba(114, 172, 209, 0.8)",
+                //   "rgba(114, 172, 209, 1)"
+                // ],
+                // shadowColor: "rgba(0, 0, 0, 0.3)",
+                shadowBlur: 10
+              }
+            },
+            axisLine: {
+              lineStyle: {
+                color: "rgba(255, 255, 255, 0.5)"
+              }
+            },
+            splitLine: {
+              lineStyle: {
+                color: "rgba(255, 255, 255, 0.5)"
+              }
+            }
           }
         ],
         series: [
           {
+            name: "雷达图",
             type: "radar",
-            tooltip: {
-              trigger: "item"
+            emphasis: {
+              lineStyle: {
+                width: 4
+              }
             },
-            areaStyle: {},
             data: [
               {
                 value: ecartsData,
                 name: "个人能力",
+                symbol: "rect",
+                symbolSize: 5,
+                tooltip: {
+                  trigger: "item"
+                },
+                areaStyle: {
+                  color: "#B94342"
+                },
+                label: {
+                  show: true,
+                  formatter: function(params) {
+                    return params.value;
+                  }
+                }
+              },
+              {
+                value: this.avgAbility,
+                name: "干部平均能力",
+                lineStyle: {
+                  type: "dashed"
+                },
+                areaStyle: {
+                  color: "rgba(255, 255, 255, 0.5)"
+                },
+                tooltip: {
+                  trigger: "item"
+                },
                 label: {
                   show: true,
                   formatter: function(params) {
@@ -1422,6 +1591,32 @@ export default {
           }
         ]
       });
+      var that = this;
+      myChart.on("finished", function() {
+        that.radarChart = myChart.getDataURL({
+          type: "png",
+          pixelRatio: 2,
+          backgroundColor: "#fff"
+        });
+        // that.radarChart.src = myChart.getDataURL({
+        //   // pixelRatio: 2,
+        //   backgroundColor: "#fff"
+        // });
+        that.$refs.loadingSpin.shutdown();
+      });
+      //无数据情况不会进入finished方法，这时强制结束
+      setTimeout(() => {
+        that.$refs.loadingSpin.shutdown();
+      }, 1000);
+      // this.$nextTick(() =>{
+      //   debugger
+      //   that.radarChart = myChart.getDataURL();
+
+      // })
+      // debugger
+      // var that = this
+      // setTimeout(() => {
+      // }, 3000);
     },
     //时间格式转化
     formatTime(time) {
@@ -1455,6 +1650,7 @@ export default {
       if (this.oldWine) {
         ImagePreviewList.push(this.oldWine);
       }
+      // ImagePreviewList.push(this.radarChart)
       ImagePreview(ImagePreviewList);
     },
     abilityClick(item) {
@@ -1462,7 +1658,7 @@ export default {
     },
     downCarde() {
       let queryData = {};
-      queryData.basic = this.basicInfo;
+      queryData.basic =  Object.assign({},this.basicInfo) ;
       queryData.kukaWork = this.cleearWU(this.KukaWorkList);
       queryData.work = this.cleearWU(this.socialList);
       queryData.keyEvents = this.cleearWU(this.KeyEvents);
@@ -1473,8 +1669,14 @@ export default {
       queryData.jx = this.cleearWU(this.cadreAchieveInfoList);
       queryData.jxPbc = this.cleearWU(this.pbcList);
       queryData.jobnumber = localStorage.getItem("jobNum");
+      queryData.radarChart = this.radarChart;
       this.concatMore(queryData);
       this.$refs.loadingSpin.showUp();
+
+      //这里判断头像有无
+      if(!this.noPhotoFlag){
+        queryData.basic.photo = ''
+      }
       download(queryData).then(res => {
         if (res.code == "1000") {
           Toast.success(res.msg);
@@ -1641,5 +1843,16 @@ export default {
 
 .ceterHeight {
   line-height: 7vh;
+}
+
+.abc {
+  width: 10vh;
+}
+
+.floatright {
+  // float: right;
+  border-right: 0.5px solid #ccc;
+  text-align:center
+  // width: 10vh;
 }
 </style>

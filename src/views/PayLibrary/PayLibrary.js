@@ -73,3 +73,33 @@ export function findPayrollInfoBySearch (queryData) {
     data: JSON.stringify(queryData)
   })
 }
+//分位值
+export function findFwValueInfo (queryData) {
+  return fetch({
+    url: `/kukacms/self/findFwValueInfo`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}
+//分位值查询职级
+export function findZjListInfo (queryData) {
+  return fetch({
+    url: `/kukacms/self/findZjListInfo`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}
+//分位值趋势图
+export function findFwDeatilsInfo (queryData) {
+  return fetch({
+    url: `/kukacms/self/findFwDeatilsInfo`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}

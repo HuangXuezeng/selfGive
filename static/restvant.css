@@ -98,3 +98,6 @@ input {
 .resetVant .van-col--12 {
   align-self: center;
 }
+.resetVant .van-tabs__nav--card{
+  margin: 0;
+}
