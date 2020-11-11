@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div style="padding-bottom:10%">
     <van-tree-select
       height="170vw"
       :items="deptList"

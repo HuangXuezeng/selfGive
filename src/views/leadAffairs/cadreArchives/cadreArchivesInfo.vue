@@ -790,7 +790,63 @@
                   <span>团队规模：</span>
                   <span class="floatRight">{{ item.a8TDPYXX014 }}</span>
                 </p>
-                <div style="position:relative;">
+                <div style="border: 1px solid #ccc;">
+                  <div style="border-bottom: 1px solid #ccc;">
+                    <van-row type="flex" justify="space-between">
+                      <van-col span="9">
+                        <div>
+                          继任者：
+                        </div></van-col
+                      >
+                      <van-col span="5">
+                        <div class="floatright" style="border-left: 0.5px solid #ccc;">
+                          {{ item.a8TDPYXX015 }}
+                        </div>
+                      </van-col>
+                      <van-col span="5">
+                        <div class="floatright">
+                          {{ item.a8TDPYXX017 }}
+                        </div>
+                      </van-col>
+                      <van-col span="5">
+                        <div class="floatright">
+                          {{ item.a8TDPYXX019 }}
+                        </div>
+                      </van-col>
+                    </van-row>
+                  </div>
+
+                  <!-- <van-row >
+                      <van-col span="24">
+                        <span style=""></span>
+                      </van-col>
+                   </van-row> -->
+                  <!-- <span></span> -->
+                  <van-row type="flex" justify="space-between">
+                    <van-col span="9">
+                      <div>
+                        继任者成熟度：
+                      </div></van-col
+                    >
+                    <van-col span="5">
+                      <div class="floatright" style="border-left: 0.5px solid #ccc;">
+                        {{ item.a8TDPYXX016name }}
+                      </div>
+                    </van-col>
+                    <van-col span="5">
+                      <div class="floatright">
+                        {{ item.a8TDPYXX018name }}
+                      </div>
+                    </van-col>
+                    <van-col span="5">
+                      <div class="floatright">
+                        {{ item.a8TDPYXX020name }}
+                      </div>
+                    </van-col>
+                  </van-row>
+                </div>
+
+                <!-- <div style="position:relative;">
                   <div class="successorFull">
                     <div style="height: 14vh;text-align: center;">
                       <div style="height:7vh;line-height: 7vh;">
@@ -834,7 +890,7 @@
                     </div>
                     <span class="lineCCC"></span>
                   </div>
-                </div>
+                </div> -->
 
                 <!-- <p>
                   <span>继任者：</span>
@@ -876,20 +932,23 @@
               </div>
             </van-col>
           </van-row>
-          <div style="padding: 2vh;font-size: 15px;color: rgb(150, 151, 153);margin-left:2vh">
-            <div style="float:left">
-              职业倾向:
-            </div>
+          <van-row type="flex" >
+            <van-col span="6">
+              <div style="margin-top: 2vh;margin-left: 3vh;font-size: 15px;color: rgb(150, 151, 153);">
+                职业倾向:
+              </div>
+            </van-col>
+            <van-col span="18">
+              <div
+            style="padding-top: 2vh;font-size: 15px;color: rgb(150, 151, 153);"
+          >
             <div
-              style="float:right;width:36vh"
               v-html="professionalTendency"
             ></div>
-            <!-- <van-cell title="职业倾向:" :center="true" value-class='abc'>
-              <template #default>
-                <span style="text" v-html="professionalTendency"></span>
-              </template>
-            </van-cell> -->
           </div>
+            </van-col>
+          </van-row>
+
         </van-tab>
       </van-tabs>
       <!-- <img :src='picInfo' alt=""> -->
@@ -972,8 +1031,11 @@ export default {
       showKeyEventsMore: true,
       showlistProjectMore: true,
       showcadreAchieveInfoListMore: true,
-      professionalTendency: ""
-      // picInfo:''
+      professionalTendency: "",
+      radarChart: "",
+      lastavgAbility:[],
+      avgAbility:[],
+      noPhotoFlag:false
     };
   },
   created() {
@@ -1003,7 +1065,6 @@ export default {
       await this.queryfindCadreAbility();
       await this.queryfindCadreTrainInfo();
       await this.queryfindCadreAchieveInfo();
-      this.$refs.loadingSpin.shutdown();
     },
     //项目经历
     querylsitWorkInfoByJobnumber(data) {
@@ -1265,8 +1326,12 @@ export default {
                 this.basicInfo[key] != "" &&
                 this.basicInfo[key] != undefined
               ) {
+                //在这里判断有无头像
+                this.noPhotoFlag = true
               } else {
+                //在这里判断有无头像
                 this.basicInfo[key] = require("@/assets/timg.jpg");
+                this.noPhotoFlag = false
               }
             } else if (key == "a01136") {
               if (this.basicInfo[key]) {
@@ -1285,15 +1350,15 @@ export default {
               } else {
               }
             } else if (key == "a01230") {
-              debugger;
+              // debugger;
               if (this.basicInfo[key]) {
                 that.professionalTendency = this.basicInfo[key];
                 that.professionalTendency = that.professionalTendency.replace(
                   /；/g,
                   "<br>"
                 );
-              }else{
-                that.professionalTendency = '无'
+              } else {
+                that.professionalTendency = "无";
               }
             }
           }
@@ -1320,7 +1385,7 @@ export default {
         } else {
           this.listAbility = res.obj.abilityList;
           // debugger;
-          this.avgAbility = [
+          this.lastavgAbility = [
             res.obj.a8SRLMX015AVG,
             res.obj.a8SRLMX016AVG,
             res.obj.a8SRLMX017AVG,
@@ -1396,6 +1461,7 @@ export default {
       let minNum = 0;
       if (expanditem == "" || expanditem.a8SRLMX015 == undefined) {
         ecartsData = [0, 0, 0, 0, 0, 0, 0, 0];
+        this.avgAbility = [0, 0, 0, 0, 0, 0, 0, 0]
       } else {
         ecartsData = [
           Number(expanditem.a8SRLMX015),
@@ -1408,62 +1474,14 @@ export default {
           Number(expanditem.a8SRLMX022)
         ];
         // debugger
-        let numlist = [...ecartsData, ...this.avgAbility];
+        this.avgAbility  = this.lastavgAbility
+        let numlist = [...ecartsData, ...this.lastavgAbility];
         maxNum = Math.max.apply(Math, numlist);
         minNum = Math.min.apply(Math, numlist);
-        // avgmaxNum = Math.max.apply(Math, this.avgAbility);
-        // avgminNum = Math.min.apply(Math, this.avgAbility);
-        // let numlist = [maxNum]
       }
       minNum = Math.trunc(minNum);
       maxNum = Math.ceil(maxNum);
-      // myChart.setOption({
-      //   tooltip: {
-      //     trigger: "axis"
-      //   },
-      //   axisTick: {
-      //     show: true
-      //   },
-      //   radar: [
-      //     {
-      //       indicator: [
-      //         { text: "坦诚正直", max: maxNum, min: minNum },
-      //         { text: "事业激情", max: maxNum, min: minNum },
-      //         { text: "团队领导", max: maxNum, min: minNum },
-      //         { text: "团结协作", max: maxNum, min: minNum },
-      //         { text: "战略决策", max: maxNum, min: minNum },
-      //         { text: "推动变革", max: maxNum, min: minNum },
-      //         { text: "用户中心", max: maxNum, min: minNum },
-      //         { text: "业绩导向", max: maxNum, min: minNum }
-      //       ],
-      //       center: ["50%", "50%"],
-      //       radius: 80,
-      //       splitNumber: 5,
-      //       scale: true
-      //     }
-      //   ],
-      //   series: [
-      //     {
-      //       type: "radar",
-      //       tooltip: {
-      //         trigger: "item"
-      //       },
-      //       areaStyle: {},
-      //       data: [
-      //         {
-      //           value: ecartsData,
-      //           name: "个人能力",
-      //           label: {
-      //             show: true,
-      //             formatter: function(params) {
-      //               return params.value;
-      //             }
-      //           }
-      //         }
-      //       ]
-      //     }
-      //   ]
-      // });
+
       myChart.setOption({
         legend: {
           data: ["干部平均能力", "个人能力"]
@@ -1573,12 +1591,31 @@ export default {
           }
         ]
       });
+      var that = this;
+      myChart.on("finished", function() {
+        that.radarChart = myChart.getDataURL({
+          type: "png",
+          pixelRatio: 2,
+          backgroundColor: "#fff"
+        });
+        // that.radarChart.src = myChart.getDataURL({
+        //   // pixelRatio: 2,
+        //   backgroundColor: "#fff"
+        // });
+        that.$refs.loadingSpin.shutdown();
+      });
+      //无数据情况不会进入finished方法，这时强制结束
+      setTimeout(() => {
+        that.$refs.loadingSpin.shutdown();
+      }, 1000);
+      // this.$nextTick(() =>{
+      //   debugger
+      //   that.radarChart = myChart.getDataURL();
 
+      // })
       // debugger
       // var that = this
       // setTimeout(() => {
-      // that.picInfo = myChart.getDataURL();
-
       // }, 3000);
     },
     //时间格式转化
@@ -1613,7 +1650,7 @@ export default {
       if (this.oldWine) {
         ImagePreviewList.push(this.oldWine);
       }
-      // ImagePreviewList.push(this.picInfo)
+      // ImagePreviewList.push(this.radarChart)
       ImagePreview(ImagePreviewList);
     },
     abilityClick(item) {
@@ -1621,7 +1658,7 @@ export default {
     },
     downCarde() {
       let queryData = {};
-      queryData.basic = this.basicInfo;
+      queryData.basic =  Object.assign({},this.basicInfo) ;
       queryData.kukaWork = this.cleearWU(this.KukaWorkList);
       queryData.work = this.cleearWU(this.socialList);
       queryData.keyEvents = this.cleearWU(this.KeyEvents);
@@ -1632,8 +1669,14 @@ export default {
       queryData.jx = this.cleearWU(this.cadreAchieveInfoList);
       queryData.jxPbc = this.cleearWU(this.pbcList);
       queryData.jobnumber = localStorage.getItem("jobNum");
+      queryData.radarChart = this.radarChart;
       this.concatMore(queryData);
       this.$refs.loadingSpin.showUp();
+
+      //这里判断头像有无
+      if(!this.noPhotoFlag){
+        queryData.basic.photo = ''
+      }
       download(queryData).then(res => {
         if (res.code == "1000") {
           Toast.success(res.msg);
@@ -1804,5 +1847,12 @@ export default {
 
 .abc {
   width: 10vh;
+}
+
+.floatright {
+  // float: right;
+  border-right: 0.5px solid #ccc;
+  text-align:center
+  // width: 10vh;
 }
 </style>

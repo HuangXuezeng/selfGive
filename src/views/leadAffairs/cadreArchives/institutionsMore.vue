@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="padding-bottom:10%">
     <!-- <transition name="van-slide-right"> -->
     <van-nav-bar
       title="子部门"
@@ -19,7 +19,7 @@
       </template>
     </van-nav-bar>
     <van-tree-select
-      height="150vw"
+      height="170vw"
       :items="deptList"
       :main-active-index.sync="activeIndex"
       @click-nav="leftClick"

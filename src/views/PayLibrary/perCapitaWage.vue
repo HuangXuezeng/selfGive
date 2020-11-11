@@ -7,55 +7,6 @@
       type="card"
       ref="vanTabs"
     >
-      <van-tab title="人均工资" name="人均工资">
-        <div class="shodowRewards">
-          <van-row type="flex" justify="left" style="margin-bottom:10px">
-            <van-col>
-              <div class="titleRewards">
-                <span class="honghe"></span>
-                人均工资
-              </div></van-col
-            >
-          </van-row>
-          <van-row type="flex">
-            <van-col span="24">
-              <van-field
-                readonly
-                clickable
-                label="年/月:"
-                label-class="labelStyle"
-                v-model="selectedyear"
-                placeholder="请选择年月"
-                @click="vanDateShow = true"
-              />
-              <van-action-sheet v-model="vanDateShow">
-                <van-datetime-picker
-                  v-model="currentDate"
-                  type="year-month"
-                  title="选择年月"
-                  :min-date="minDate"
-                  :max-date="maxDate"
-                  :formatter="formatter"
-                  @confirm="confirmYear"
-                />
-              </van-action-sheet>
-            </van-col>
-          </van-row>
-        </div>
-        <div class="resetVant">
-          <v-table
-            is-horizontal-resize
-            style="width:100%"
-            :columns="columns"
-            :table-data="tableData"
-            row-hover-color="#eee"
-            row-click-color="#edf7ff"
-            :cell-merge="cellMerge"
-            :is-loading="lodingFlag"
-            :column-cell-class-name="columnCellClass"
-          ></v-table>
-        </div>
-      </van-tab>
       <van-tab title="各职级平均工资" name="各职级平均工资">
         <div class="shodowRewards">
           <van-row type="flex" justify="left" style="margin-bottom:10px">
@@ -66,7 +17,8 @@
               </div></van-col
             >
           </van-row>
-          <van-row type="flex">
+          <chooseZJlist ref="chooseZJlistRef" :checkboxlist='checkboxlist' :selectZjNameMap='selectZjNameMap' @confirmZj='selctzjquery'></chooseZJlist>
+          <!-- <van-row type="flex">
             <van-col span="24">
               <van-field
                 readonly
@@ -82,7 +34,7 @@
                 position="right"
                 :overlay="true"
                 :lazy-render="true"
-                style="width: 40%; height: 100%;"
+                style="width: 50%; height: 100%;"
                 :get-container="getContainer"
               >
                 <div style="height: 90%;overflow: auto;z-index: 2049;">
@@ -142,20 +94,20 @@
                 </van-row>
               </van-popup>
             </van-col>
-          </van-row>
+          </van-row> -->
         </div>
         <div style="width:100%" v-if="!showNodata">
           <div ref="payEch" :style="{ width: '100%', height: '500px' }"></div>
         </div>
         <noData :showNodata="showNodata"></noData>
       </van-tab>
-      <van-tab title="人均年薪" name="人均年薪">
+      <van-tab title="各职类平均工资" name="各职类平均工资">
         <div class="shodowRewards">
           <van-row type="flex" justify="left" style="margin-bottom:10px">
             <van-col>
               <div class="titleRewards">
                 <span class="honghe"></span>
-                人均年薪
+                各职类平均工资
               </div></van-col
             >
           </van-row>
@@ -222,11 +174,13 @@ import {
 } from "@/views/PayLibrary/PayLibrary.js";
 import noData from "@/components/noData.vue";
 import chooseDepartment from "@/components/chooseDepartment.vue";
+import chooseZJlist from "@/components/PayLibrary/chooseZJlist.vue";
 export default {
   components: {
     payTab,
     noData,
-    choosedepartment: chooseDepartment
+    choosedepartment: chooseDepartment,
+    chooseZJlist
   },
   data() {
     return {
@@ -302,7 +256,7 @@ export default {
       olength: 1,
       lodingFlag: true,
       selectedyear: "",
-      currentDate: "",
+      // currentDate: "",
       minDate: new Date(2020, 0, 1),
       maxDate: null,
       currentDate: new Date(),
@@ -700,25 +654,25 @@ export default {
       this.lodingFlag = true;
       this.vanDateShow = false;
     },
-    selctzjquery() {
-      if (!this.selectZj.size) {
-        Toast.fail("请至少选择一项");
-        return;
-      }
-      this.selctzjqueryLoading = true;
-      let zjListArry = Array.from(this.selectZj);
-      this.selectzjName = "";
-      zjListArry.forEach(item => {
-        if (this.selectZjNameMap.has(item)) {
-          this.selectzjName =
-            this.selectzjName + "+" + this.selectZjNameMap.get(item);
-        }
-      });
-      this.selectzjName = this.selectzjName.slice(1);
+    selctzjquery(data) {
+      // if (!this.selectZj.size) {
+      //   Toast.fail("请至少选择一项");
+      //   return;
+      // }
+      // this.selctzjqueryLoading = true;
+      // let zjListArry = Array.from(this.selectZj);
+      // this.selectzjName = "";
+      // zjListArry.forEach(item => {
+      //   if (this.selectZjNameMap.has(item)) {
+      //     this.selectzjName =
+      //       this.selectzjName + "+" + this.selectZjNameMap.get(item);
+      //   }
+      // });
+      // this.selectzjName = this.selectzjName.slice(1);
       findPerGetDetailsInfo({
         jobnumber: this.ddJobNum,
         flag: "2",
-        zjList: zjListArry
+        zjList: data
       }).then(res => {
         if (res.code == 1000) {
           this.showNodata = false;
@@ -729,7 +683,8 @@ export default {
         } else {
           Toast.fail(res.msg);
         }
-        this.selctzjqueryLoading = false;
+        // this.selctzjqueryLoading = false;
+        this.$refs.chooseZJlistRef.shutDownLading()
       });
     },
     queryfindPayrollDept() {
@@ -756,7 +711,6 @@ export default {
         zjList: []
       }).then(res => {
         if (res.code == 1000) {
-          this.checkboxlist = res.obj.zlList;
           let zlList = res.obj.zlList;
           let indexNum = 0;
           for (let i in zlList) {
@@ -776,6 +730,7 @@ export default {
               }
             }
           }
+          this.checkboxlist = res.obj.zlList;
           this.showNodata = false;
           this.$nextTick(() => {
             this.payEachrts(res);

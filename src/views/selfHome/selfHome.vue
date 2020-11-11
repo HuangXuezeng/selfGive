@@ -217,6 +217,7 @@ export default {
     };
   },
   created(){
+    // debugger
     localStorage.setItem('jobNum',6006212)
     // localStorage.setItem('jobNum',9050104)
     // localStorage.setItem('jobNum',9107021)
@@ -235,7 +236,6 @@ export default {
       this.getPerson()
       this._getMenu() //获取首页显示的菜单
       this._getMenus() //获取弹窗要排序显示的菜单
-      this.SalaryDept()//薪酬模块按工号获取部门
       this.isManPowerJudge()//判断干部档案
       this._getOrz()
     },
@@ -521,7 +521,7 @@ export default {
                     localStorage.setItem('jobNum',res.jobNumber)
                     localStorage.setItem('telNum',res.mobile) //手机号
                     localStorage.setItem('userinfo',JSON.stringify(res)) //个人信息
-                    this.init()
+                    that.init()
                     // that.getPerson()
                     // that._getMenu() //获取首页显示的菜单
                     // that._getMenus() //获取弹窗要排序显示的菜单
@@ -554,7 +554,7 @@ export default {
                   // that.getPerson()
                   // that._getMenu() //获取首页显示的菜单
                   // that._getMenus() //获取弹窗要排序显示的菜单
-                  this.init()
+                  that.init()
                 })
               },
               onFail : function(err) {
@@ -580,12 +580,17 @@ export default {
       }
       if(userinfo != null){
         this.judgeLeadList = this.leadList
+        if(userinfo.isManPower == 'Y' || userinfo.isCadre == 'Y' ){
+            // this.SalaryDept()//薪酬模块按工号获取部门
+        }
       }
+      //正式需注释掉
       this.judgeLeadList = this.leadList
+
     },
     //确认排序
     updateConfirm(){
-      console.log(this.newList)
+      // console.log(this.newList)
       let queryData = {}
       queryData.obj = this.newList
       queryData.jobnumber = localStorage.getItem('jobNum')

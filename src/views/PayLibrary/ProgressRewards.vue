@@ -19,7 +19,7 @@
               readonly
               clickable
               label="部门/组织:"
-              label-class='labelStyle'
+              label-class="labelStyle"
               v-model="selectedOrg"
               placeholder="请选择部门/组织"
               @click="showPicker1 = true"/>
@@ -47,9 +47,9 @@
           <van-col>
             <div class="titleRewards">
               <span class="honghe"></span>
-              项目奖励进度
-            </div></van-col
-          >
+              各单位奖励发放进度
+            </div>
+          </van-col>
         </van-row>
         <van-dropdown-menu>
           <van-dropdown-item v-model="years" :options="yearList" />
@@ -60,7 +60,7 @@
               readonly
               clickable
               label="部门/组织:"
-              label-class='labelStyle'
+              label-class="labelStyle"
               v-model="selectRewardName"
               placeholder="请选择部门/组织"
               @click="showPicker2 = true"/>
@@ -83,7 +83,7 @@
               readonly
               clickable
               label="奖励类型:"
-              label-class='labelStyle'
+              label-class="labelStyle"
               v-model="RewardTypeName"
               placeholder="请选择奖励类型"
               @click="showPicker = true"/>
@@ -638,7 +638,11 @@ export default {
 .shodowRewards {
   box-shadow: rgba(100, 101, 102, 0.12) -9px 5px 60px -10px;
 }
-.titleRewards{
-  font-size: 18px;font-weight: 700;;margin-top:20px;color:red
+
+.titleRewards {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 20px;
+  color: red;
 }
 </style>
