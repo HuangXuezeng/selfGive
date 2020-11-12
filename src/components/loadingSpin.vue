@@ -1,5 +1,5 @@
 <template>
-  <van-overlay :show="show" @click="shutdown">
+  <van-overlay :show="cubeshow" @click="shutdown">
     <div class="wrapper" @click.stop>
       <van-loading type="spinner" color="#1989fa" />
     </div>
@@ -11,19 +11,25 @@ import { Overlay,Loading } from "vant";
 export default {
   name: "loadingSpin",
   props: {
-
+    show: {
+      type:Boolean,
+      default:true
+    }
   },
   data() {
     return {
-       show: true
+      cubeshow:true
     };
+  },
+  created(){
+    this.cubeshow = this.show
   },
   methods:{
     shutdown(){
-      this.show = false
+      this.cubeshow = false
     },
     showUp(){
-      this.show = true
+      this.cubeshow = true
     }
   }
 

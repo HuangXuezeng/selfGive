@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showNodata">
+  <div v-if="showNodata" :class="heightAuto">
     <van-empty
       class="custom-image"
       image="https://img.yzcdn.cn/vant/custom-empty-image.png"
@@ -18,6 +18,10 @@ export default {
     showNodata: {
       type: Boolean,
       default: false
+    },
+    heightAuto:{
+      type:String,
+      default: ''
     }
   },
   data() {
@@ -28,5 +32,8 @@ export default {
 };
 </script>
 
-<style>
+<style lang="stylus">
+.height500{
+  height: 500px;
+}
 </style>
