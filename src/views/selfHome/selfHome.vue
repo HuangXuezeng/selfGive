@@ -2,14 +2,14 @@
   <div>
     <div class="myContents">
       <div class="bgc"></div>
-      <div style="clear:both">
+      <div style="clear: both">
         <div class="headTop">
-          <div class="messageInfoos ">
+          <div class="messageInfoos">
             <span @click="uploadImg"
               ><img class="img" :src="personObj.photo" alt=""
             /></span>
-            <div style="padding-top:10px">
-              <span style="font-weight:700;font-size:16px">{{
+            <div style="padding-top: 10px">
+              <span style="font-weight: 700; font-size: 16px">{{
                 personObj.a0101
               }}</span>
             </div>
@@ -31,16 +31,21 @@
         </div>
       </div>
       <div class="contents">
-        <div @click="seePdf">
-          <span style="font-weight:700;font-size:14px"
-            ><i class="iconfont icon--_caozuo"></i>操作指引</span>
-          <span style="float:right;color:#767676;font-size:14px">查看</span>
+        <div>
+          <span style="font-weight: 700; font-size: 14px"
+            ><i class="iconfont icon--_caozuo"></i>操作指引</span
+          >
+          <span
+            style="float: right; color: #767676; font-size: 14px"
+            @click="seePdf"
+            >查看</span
+          >
         </div>
       </div>
       <div class="other">
         <div>
           <span class="border"></span>
-          <span style="font-weight:900">个人信息</span>
+          <span style="font-weight: 900">个人信息</span>
         </div>
         <div class="_items">
           <div
@@ -61,7 +66,7 @@
       <div class="other" v-if="judgeLeadList.length != 0">
         <div>
           <span class="border"></span>
-          <span style="font-weight:900">我的团队</span>
+          <span style="font-weight: 900">我的团队</span>
         </div>
         <div class="_items">
           <div
@@ -79,7 +84,7 @@
       <div class="other">
         <div>
           <span class="border"></span>
-          <span style="font-weight:900">其他应用</span>
+          <span style="font-weight: 900">其他应用</span>
         </div>
         <div class="_items">
           <div class="_item" @click="leadClick">
@@ -138,7 +143,7 @@
               </div>
           </div> -->
 
-      <div style="text-align:right;padding-right:10px">
+      <div style="text-align: right; padding-right: 10px">
         <span
           ><van-button type="primary" size="small" @click="updateConfirm"
             >确认修改</van-button
@@ -183,14 +188,13 @@ import { findPayrollDept } from "@/views/PayLibrary/PayLibrary.js";
 export default {
   data() {
     return {
-      // isBianzhi: false,
       personObj: {},
       zanPhoto: "", //暂存头像
       showImg: false, //上传头像的弹窗
       fileData: [], //上传头像的数据
       actions: {
         target: "",
-        checkSuccess: this.backRes
+        checkSuccess: this.backRes,
       },
       gerenList: [], //菜单项
       gerenLists: [], //弹窗获取全部
@@ -200,114 +204,114 @@ export default {
         {
           sortNum: 0,
           title: "花名册",
-          img: "http://192.168.249.18:7020/upload/menuImage/huaming.png"
+          img: "http://ehrfile.kukahome.com:7020/menuImage/huaming.png",
         },
         {
           sortNum: 1,
           title: "流失率",
-          img: "http://192.168.249.18:7020/upload/menuImage/liushi.png"
+          img: "http://ehrfile.kukahome.com:7020/menuImage/liushi.png",
         },
         {
           sortNum: 2,
           title: "人员结构",
-          img: "http://192.168.249.18:7020/upload/menuImage/jiegou.png"
+          img: "http://ehrfile.kukahome.com:7020/menuImage/jiegou.png",
         },
         {
           sortNum: 3,
           title: "人效分析",
-          img: "http://192.168.249.18:7020/upload/menuImage/renxiao.png"
+          img: "http://ehrfile.kukahome.com:7020/menuImage/renxiao.png",
         },
         {
           sortNum: 4,
           title: "人员异动",
-          img: "http://192.168.249.18:7020/upload/menuImage/yidong.png"
+          img: "http://ehrfile.kukahome.com:7020/menuImage/yidong.png",
         },
         {
           sortNum: 5,
           title: "编制分析",
-          img: "http://192.168.249.18:7020/upload/menuImage/bianzhi.png"
+          img: "http://ehrfile.kukahome.com:7020/menuImage/bianzhi.png",
         },
         {
           sortNum: 6,
           title: "干部档案",
-          img: "http://ehrfile.kukahome.com:7020/menuImage/ganbu.png"
+          img: "http://ehrfile.kukahome.com:7020/menuImage/ganbu.png",
         },
         {
           sortNum: 7,
           title: "薪资库",
-          img: "http://192.168.249.18:7020/upload/menuImage/xck.png"
+          img: "http://ehrfile.kukahome.com:7020/menuImage/xzk.png",
         },
         {
           sortNum: 8,
           title: "年薪分位值",
-          img: "http://192.168.249.18:7020/upload/menuImage/nxfw.png"
+          img: "http://ehrfile.kukahome.com:7020/menuImage/nxfwz.png",
         },
         {
           sortNum: 9,
           title: "人均年薪",
-          img: "http://192.168.249.18:7020/upload/menuImage/xck.png"
+          img: "http://ehrfile.kukahome.com:7020/menuImage/rjnx.png",
         },
         {
           sortNum: 10,
           title: "人均工资",
-          img: "http://192.168.249.18:7020/upload/menuImage/xck.png"
+          img: "http://ehrfile.kukahome.com:7020/menuImage/rjgz.png",
         },
         {
           sortNum: 11,
           title: "人工费用",
-          img: "http://192.168.249.18:7020/upload/menuImage/rgfy.png"
+          img: "http://ehrfile.kukahome.com:7020/menuImage/rgfy.png",
         },
         {
           sortNum: 12,
           title: "奖励进度",
-          img: "http://192.168.249.18:7020/upload/menuImage/jljd.png"
-        }
+          img: "http://ehrfile.kukahome.com:7020/menuImage/jljd.png",
+        },
+        {
+          sortNum: 12,
+          title: "自动提醒",
+          img: "http://ehrfile.kukahome.com:7020/menuImage/zdtx.png",
+        },
       ],
       colors: [
         {
-          text: "Aquamarine"
+          text: "Aquamarine",
         },
         {
-          text: "Hotpink"
+          text: "Hotpink",
         },
         {
-          text: "Gold"
+          text: "Gold",
         },
         {
-          text: "Crimson"
+          text: "Crimson",
         },
         {
-          text: "Blueviolet"
+          text: "Blueviolet",
         },
         {
-          text: "Lightblue"
+          text: "Lightblue",
         },
         {
-          text: "Cornflowerblue"
+          text: "Cornflowerblue",
         },
         {
-          text: "Skyblue"
+          text: "Skyblue",
         },
         {
-          text: "Burlywood"
-        }
+          text: "Burlywood",
+        },
       ],
       show: false,
-      drag: false
+      drag: false,
     };
   },
   created() {
-    // localStorage.setItem('jobNum',9107021)
-    // localStorage.setItem('jobNum',9039627)
+    // debugger
+    localStorage.setItem("jobNum", 6006212);
     // localStorage.setItem('jobNum',9050104)
     // localStorage.setItem('jobNum',9107021)
     // localStorage.setItem('jobNum',9078825)
-    // localStorage.setItem('jobNum',6006526)
-    localStorage.setItem("jobNum", 6005506)
-    // localStorage.setItem("jobNum", 6603302)
-    // localStorage.setItem("jobNum", 9039627)
-    // localStorage.setItem('jobNum',9015011)
-    // localStorage.setItem('jobNum',6004383)
+    // localStorage.setItem('jobNum',9025434)
     if (
       localStorage.getItem("jobNum") == "" ||
       localStorage.getItem("jobNum") == null ||
@@ -332,14 +336,17 @@ export default {
     //是否为领导
     _isLead() {
       let queryData = {
-        jobnumber: localStorage.getItem("jobNum")
+        jobnumber: localStorage.getItem("jobNum"),
       };
-      isLead(queryData).then(res => {
+      isLead(queryData).then((res) => {
         if (res.obj.isLeader == "Y") {
-          localStorage.setItem("currentDeptsRes",JSON.stringify(res.obj.currentDepts));
+          localStorage.setItem(
+            "currentDeptsRes",
+            JSON.stringify(res.obj.currentDepts)
+          );
           localStorage.setItem("deptIdsRes", JSON.stringify(res.obj.deptIds));
           let searchData = res.obj.currentDepts;
-          getOrz(searchData).then(res => {
+          getOrz(searchData).then((res) => {
             localStorage.setItem("departRes", JSON.stringify(res.obj));
             // console.log(localStorage.getItem('departRes'))
           });
@@ -360,17 +367,17 @@ export default {
           deptCode: "1",
           deptId: 1,
           grade: 1,
-          parentId: null
-        }
+          parentId: null,
+        },
       ];
-      getOrz(queryData).then(res => {
+      getOrz(queryData).then((res) => {
         localStorage.setItem("AlldepartRes", JSON.stringify(res));
         // localStorage.setItem()
       });
     },
     SalaryDept() {
       findPayrollDept({ jobnumber: localStorage.getItem("jobNum") }).then(
-        res => {
+        (res) => {
           localStorage.setItem("SalaryDeptRes", JSON.stringify(res));
         }
       );
@@ -378,9 +385,9 @@ export default {
     //获取用户基本信息
     getPerson() {
       let queryData = {
-        jobnumber: localStorage.getItem("jobNum")
+        jobnumber: localStorage.getItem("jobNum"),
       };
-      queryPerson(queryData).then(res => {
+      queryPerson(queryData).then((res) => {
         console.log(res.obj.photo);
         if (
           res.obj.photo == null ||
@@ -398,9 +405,9 @@ export default {
     _getMenu() {
       let queryData = {
         jobnumber: localStorage.getItem("jobNum"),
-        type: "out"
+        type: "out",
       };
-      getMenu(queryData).then(res => {
+      getMenu(queryData).then((res) => {
         let userinfo = JSON.parse(localStorage.getItem("userinfo"));
         if (userinfo != null && userinfo.isCadre != "Y") {
           for (let i in res.obj) {
@@ -416,9 +423,9 @@ export default {
     _getMenus() {
       let queryData = {
         jobnumber: localStorage.getItem("jobNum"),
-        type: "in"
+        type: "in",
       };
-      getMenu(queryData).then(res => {
+      getMenu(queryData).then((res) => {
         let userinfo = JSON.parse(localStorage.getItem("userinfo"));
         if (userinfo != null && userinfo.isCadre != "Y") {
           for (let i in res.obj) {
@@ -450,7 +457,7 @@ export default {
       var reader = new FileReader(); //创建一个文件读取读取对象
       // console.log('reader'+reader)
       reader.readAsDataURL(files); //使用readAsDataURL（）方法，读取已获取的文件，并返回数据
-      reader.onload = function() {
+      reader.onload = function () {
         //事件读取对象.onload 事件， onload事件 文件读取完成时触发
         //   that.src = reader.result;
         // for (var i in that.achlist){
@@ -582,7 +589,7 @@ export default {
     },
     ...mapMutations({
       save_type: "save_type",
-      to_Roster: "to_Roster"
+      to_Roster: "to_Roster",
     }),
     //编辑排序
     edit() {
@@ -607,7 +614,7 @@ export default {
     //获取钉钉个人信息
     getUser() {
       // 获取用户 id
-      setDDConfig().then(res => {
+      setDDConfig().then((res) => {
         var that = this;
         let data = res;
         var is_mobi =
@@ -622,27 +629,27 @@ export default {
           DingTalkPC.ready(() => {
             DingTalkPC.runtime.permission.requestAuthCode({
               corpId: data.corpId, //企业ID
-              onSuccess: function(result) {
+              onSuccess: function (result) {
                 let url =
                   "/kukacms/self/login/getDingUserInfo?code=" + result.code;
                 fetch({
                   url: url,
-                  method: "get"
-                }).then(res => {
+                  method: "get",
+                }).then((res) => {
                   console.log(res);
                   // that.save_userId(res.userId)
                   localStorage.setItem("jobNum", res.jobNumber);
                   localStorage.setItem("telNum", res.mobile); //手机号
                   localStorage.setItem("userinfo", JSON.stringify(res)); //个人信息
-                  this.init();
+                  that.init();
                   // that.getPerson()
                   // that._getMenu() //获取首页显示的菜单
                   // that._getMenus() //获取弹窗要排序显示的菜单
                 });
               },
-              onFail: function(err) {
+              onFail: function (err) {
                 // window.location.reload()
-              }
+              },
             });
           });
         } else {
@@ -652,13 +659,13 @@ export default {
             dd.ui.webViewBounce.disable();
             dd.runtime.permission.requestAuthCode({
               corpId: data.corpId,
-              onSuccess: function(result) {
+              onSuccess: function (result) {
                 let url =
                   "/kukacms/self/login/getDingUserInfo?code=" + result.code;
                 fetch({
                   url: url,
-                  method: "get"
-                }).then(res => {
+                  method: "get",
+                }).then((res) => {
                   console.log("这是首页的自动登录");
                   console.log(res);
                   // that.save_userId(res.userId)
@@ -668,13 +675,13 @@ export default {
                   // that.getPerson()
                   // that._getMenu() //获取首页显示的菜单
                   // that._getMenus() //获取弹窗要排序显示的菜单
-                  this.init();
+                  that.init();
                 });
               },
-              onFail: function(err) {
+              onFail: function (err) {
                 // window.location.reload()
                 alert(err);
-              }
+              },
             });
           });
         }
@@ -697,16 +704,20 @@ export default {
       }
       if (userinfo != null) {
         this.judgeLeadList = this.leadList;
+        if (userinfo.isManPower == "Y" || userinfo.isCadre == "Y") {
+          // this.SalaryDept()//薪酬模块按工号获取部门
+        }
       }
+      //正式需注释掉
       this.judgeLeadList = this.leadList;
     },
     //确认排序
     updateConfirm() {
-      console.log(this.newList);
+      // console.log(this.newList)
       let queryData = {};
       queryData.obj = this.newList;
       queryData.jobnumber = localStorage.getItem("jobNum");
-      setMenu(queryData).then(res => {
+      setMenu(queryData).then((res) => {
         if (res.code == 1000) {
           this._getMenu(); //获取首页显示的菜单
           Notify({ type: "success", message: "成功修改排序" });
@@ -747,7 +758,7 @@ export default {
           this.save_type(sortNum);
           this.$router.push({ name: "changes" });
           break;
-        case "编制分析":
+          case "编制分析":
           this.save_type(sortNum);
           this.$router.push({ name: "organization" });
           break;
@@ -759,14 +770,14 @@ export default {
           this.save_type(sortNum);
           this.$router.push({
             name: "perCapitaWage",
-            params: { salaryFlag: 1 }
+            params: { salaryFlag: 1 },
           });
           break;
         case "人均工资":
           this.save_type(sortNum);
           this.$router.push({
             name: "perCapitaWage",
-            params: { salaryFlag: 0 }
+            params: { salaryFlag: 0 },
           });
           break;
         case "薪资库":
@@ -777,21 +788,25 @@ export default {
           this.save_type(sortNum);
           this.$router.push({ name: "cadreArchives" });
           break;
+        case "年薪分位值":
+          this.save_type(sortNum);
+          this.$router.push({ name: "annualSalaryPercentile" });
+          break;
       }
-    }
+    },
   },
   mounted() {
     this.$dragging.$on("dragged", ({ value }) => {
       // console.log(value.item)
       // console.log(value.list);
-      // console.log(value.otherData)
       this.newList = value.list;
+      // console.log(value.otherData)
     });
     this.$dragging.$on("dragend", () => {});
   },
   components: {
-    draggable
-  }
+    draggable,
+  },
 };
 </script>
 <style lang="stylus" scoped>
