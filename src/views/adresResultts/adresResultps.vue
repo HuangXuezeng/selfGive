@@ -1,16 +1,6 @@
 <template>
   <div>
-    <div
-      class="resetVantfixed"
-      style="
-        position: fixed;
-        max-width: 400px;
-        right: 0;
-        left: 0;
-        z-index: 10;
-        margin: auto;
-      "
-    >
+    <div class="resetVantfixed resetVantfixcader fixedcontol" >
       <van-dropdown-menu>
         <van-dropdown-item
           v-model="selecYear"
@@ -21,7 +11,7 @@
       </van-dropdown-menu>
     </div>
     <div>
-      <div style="padding-top: 8%">
+      <div>
         <van-row type="flex" justify="left" style="margin-bottom: 10px">
           <van-col>
             <div class="titleRewards">
@@ -119,7 +109,7 @@
       </div>
     </div>
     <div>
-      <adresResultsTanbber/>
+      <adresResultsTanbber />
     </div>
   </div>
 </template>
@@ -789,5 +779,14 @@ export default {
 
 .colorFFF {
   color: #fff;
+}
+
+.fixedcontol {
+  position: fixed;
+  max-width: 400px;
+  right: 0;
+  left: 0;
+  z-index: 10;
+  margin: auto;
 }
 </style>

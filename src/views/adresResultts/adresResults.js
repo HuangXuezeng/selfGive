@@ -30,5 +30,24 @@ export function selectEmployeeByJobnumber (queryData) {
     data: JSON.stringify(queryData)
   })
 }
+export function findCadreReportWholeInfo (queryData) {
+  return fetch({
+    url: `/kukacms/self/findCadreReportWholeInfo`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}
+// 干部才报干部人数年度情况
+export function findCadreReportYearChangeInfo (queryData) {
+  return fetch({
+    url: `/kukacms/self/findCadreReportYearChangeInfo`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}
 
 

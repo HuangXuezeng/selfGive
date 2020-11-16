@@ -104,7 +104,7 @@
         </div>
       </div>
       </div>
-      
+
     </div>
     <!-- 编辑菜单顺序弹窗 -->
     <van-popup v-model="show" position="top" :style="{ height: '80%' }">
@@ -237,35 +237,35 @@ export default {
           title: "薪资库",
           img: "http://ehrfile.kukahome.com:7020/menuImage/xzk.png",
         },
+        // {
+        //   sortNum: 8,
+        //   title: "年薪分位值",
+        //   img: "http://ehrfile.kukahome.com:7020/menuImage/nxfwz.png",
+        // },
+        // {
+        //   sortNum: 9,
+        //   title: "人均年薪",
+        //   img: "http://ehrfile.kukahome.com:7020/menuImage/rjnx.png",
+        // },
+        // {
+        //   sortNum: 10,
+        //   title: "人均工资",
+        //   img: "http://ehrfile.kukahome.com:7020/menuImage/rjgz.png",
+        // },
+        // {
+        //   sortNum: 11,
+        //   title: "人工费用",
+        //   img: "http://ehrfile.kukahome.com:7020/menuImage/rgfy.png",
+        // },
+        // {
+        //   sortNum: 12,
+        //   title: "奖励进度",
+        //   img: "http://ehrfile.kukahome.com:7020/menuImage/jljd.png",
+        // },
         {
-          sortNum: 8,
-          title: "年薪分位值",
-          img: "http://ehrfile.kukahome.com:7020/menuImage/nxfwz.png",
-        },
-        {
-          sortNum: 9,
-          title: "人均年薪",
-          img: "http://ehrfile.kukahome.com:7020/menuImage/rjnx.png",
-        },
-        {
-          sortNum: 10,
-          title: "人均工资",
-          img: "http://ehrfile.kukahome.com:7020/menuImage/rjgz.png",
-        },
-        {
-          sortNum: 11,
-          title: "人工费用",
+          sortNum: 12,
+          title: "干部财报",
           img: "http://ehrfile.kukahome.com:7020/menuImage/rgfy.png",
-        },
-        {
-          sortNum: 12,
-          title: "奖励进度",
-          img: "http://ehrfile.kukahome.com:7020/menuImage/jljd.png",
-        },
-        {
-          sortNum: 12,
-          title: "自动提醒",
-          img: "http://ehrfile.kukahome.com:7020/menuImage/zdtx.png",
         },
       ],
       colors: [
@@ -307,13 +307,7 @@ export default {
     // localStorage.setItem('jobNum',9050104)
     // localStorage.setItem('jobNum',9107021)
     // localStorage.setItem('jobNum',9078825)
-    // localStorage.setItem('jobNum',6006526)
-    // localStorage.setItem("jobNum", 6005506)
-    // localStorage.setItem("jobNum", 6006212)
-    // localStorage.setItem("jobNum", 6603302)
-    // localStorage.setItem("jobNum", 9039627)
-    // localStorage.setItem('jobNum',9015011)
-    // localStorage.setItem('jobNum',9134361)
+    // localStorage.setItem('jobNum',9025434)
     if (
       localStorage.getItem("jobNum") == "" ||
       localStorage.getItem("jobNum") == null ||
@@ -765,24 +759,6 @@ export default {
           this.save_type(sortNum);
           this.$router.push({ name: "organization" });
           break;
-        case "奖励进度":
-          this.save_type(sortNum);
-          this.$router.push({ name: "ProgressRewards" });
-          break;
-        case "人均年薪":
-          this.save_type(sortNum);
-          this.$router.push({
-            name: "perCapitaWage",
-            params: { salaryFlag: 1 },
-          });
-          break;
-        case "人均工资":
-          this.save_type(sortNum);
-          this.$router.push({
-            name: "perCapitaWage",
-            params: { salaryFlag: 0 },
-          });
-          break;
         case "薪资库":
           this.save_type(sortNum);
           this.$router.push({ name: "SalaryLibrary" });
@@ -791,11 +767,7 @@ export default {
           this.save_type(sortNum);
           this.$router.push({ name: "cadreArchives" });
           break;
-        case "年薪分位值":
-          this.save_type(sortNum);
-          this.$router.push({ name: "annualSalaryPercentile" });
-          break;
-        case "自动提醒":
+        case "干部财报":
           this.save_type(sortNum);
           this.$router.push({ name: "adresResultps" });
           break;
@@ -967,6 +939,7 @@ i {
 
   .bgc {
     height: 120px;
+    // float left
     background-color: #db4c3e;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
@@ -976,9 +949,6 @@ i {
     width: 95%;
     height: 198px;
     display: flex;
-    // position: absolute;
-    // top: 20px;
-    // left: 2.4vw;
     margin 0 auto
     padding-bottom: 10px;
     background: #fff;

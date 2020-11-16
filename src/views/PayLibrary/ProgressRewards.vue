@@ -51,7 +51,7 @@
             </div>
           </van-col>
         </van-row>
-        <van-dropdown-menu>
+        <van-dropdown-menu class="resetVantfixed">
           <van-dropdown-item v-model="years" :options="yearList" />
         </van-dropdown-menu>
         <van-row type="flex">
