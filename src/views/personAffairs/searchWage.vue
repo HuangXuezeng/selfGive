@@ -18,7 +18,7 @@
             </div>
             <div class="forget"><span @click="forget">忘记密码？</span></div>
             <div class="bottom">
-                <van-button type="primary" class="btn" color="#fc5f10" size="small" style="width:100%;font-size:16px" @click="search">查 询</van-button>
+                <van-button type="primary" class="btn" color="#fc5f10" size="small" style="width:100%;font-size:16px;" @click="search">查 询</van-button>
             </div>
         </div>
         <!-- 忘记密码的弹窗 -->
@@ -34,11 +34,11 @@
             <van-field v-model="checkMa" type="text" maxlength="6" label="验证码" placeholder="请输入验证码"/>
             <p class="send" @click="send" v-if="sendflag">点击发送验证码</p>
             <!-- 点击发送验证码后显示的等待内容 -->
-            <p class="sends" v-if="!sendflag">验证码已发送~请稍等<span style="color:#f00">{{ times }}</span>秒</p>
+            <p class="sends" v-if="!sendflag"><span>验证码已发送~请稍等</span><span style="color:#f00;font-size:18px">{{ times }}</span><span>秒</span></p>
         </van-dialog>
         
         <!-- 新用户首次登陆注册的弹窗 -->
-        <van-dialog 
+        <!-- <van-dialog 
         get-container="body"
         :safe-area-inset-bottom="false"
         v-model="showNew" 
@@ -47,17 +47,39 @@
         @confirm="confirmNew"
         @cancel="cancelNew">
             <van-field size="large" v-model="newpassword" maxlength="6" type="password" label="新密码：" placeholder="请输入6位数字密码"/>
-            <!-- <p class="send" @click="sendNew">点击发送验证码</p> -->
-        </van-dialog>
+        </van-dialog> -->
+
+        <van-popup v-model="showpop" round position="bottom" @closed="closedpop" get-container="body" :style="{ height: '80%' }" >
+            <div style="padding-top:20px">
+                <van-password-input
+                :value="passValue"
+                info="密码为 6 位数字"
+                :focused="showKeyboard"
+                @focus="showKeyboard = true"
+                />
+                <div style="text-align:center;padding:20px 0 10px 0">
+                    <van-button type="primary" class="btn" color="#fc5f10" size="small" style="width:60%;font-size:16px" @click="setPassword">完成设置</van-button>
+                </div>
+                
+                <van-number-keyboard
+                v-model="passValue"
+                :show="showKeyboard"
+                @blur="showKeyboard = false"
+                />
+            </div>
+        </van-popup>
+        
     </div>
 </template>
 <script>
-import { Button,Field,Dialog,Notify } from 'vant'
-import { checkPwd,setPwd,login,resetPwd,sendCode,PasswordInput, NumberKeyboard } from './api.js'
+import { Button,Field,Dialog,Notify,PasswordInput,NumberKeyboard } from 'vant'
+import { checkPwd,setPwd,login,resetPwd,sendCode } from './api.js'
 import { queryPerson } from '../selfHome/api'
 export default {
   data () {
     return {
+        showpop: false,
+        passValue: '', //设置新密码弹窗值
         showKeyboard: true, //密码框
         value: '',
         personObj: {}, //人员基本信息获取
@@ -65,8 +87,8 @@ export default {
         type: 'password',
         maxlength:6,
         eye: {
-            open: true,
-            reverse: true
+            open: false,
+            reverse: false,
         },
         show: false,  //忘记密码弹窗
         showNew: false,  //新用户注册弹窗
@@ -105,7 +127,6 @@ export default {
     search(){
         var reg = new RegExp("^[0-9]*$");
         if(!reg.test(this.value)){
-            // Notify({ type: 'danger', message: '请输入数字密码！' });
             Dialog.alert({
                 title: '提示',
                 message: '请输入数字密码！',
@@ -121,7 +142,7 @@ export default {
                 if(res.code == 1000){
                     this.$router.push({name:'searchWageInfo',params:{'loginData':this.value}})
                 }else{
-                    Notify({ type: 'danger', message: '密码错误哦！' });
+                    Notify({ type: 'danger', message: res.msg });
                 }
             })
         }
@@ -166,9 +187,10 @@ export default {
             //定时器
             this.timer = setInterval(()=>{
                 this.times--
-                if(this.times===0){
+                if(this.times==0){
                 this.sendflag = true
                 clearInterval(this.timer)
+                this.times = 60
                 }
             },1000)
         }
@@ -208,7 +230,8 @@ export default {
                     title: '提示',
                     message: '您需要设置登陆密码哦！'
                     }).then(() => {
-                        this.showNew = true
+                        this.showpop = true
+                        // this.showNew = true
                     }).catch(() => {
                     // on cancel
                     this.$router.push({name:'selfHome'})
@@ -223,6 +246,30 @@ export default {
     onDelete() {
       this.value = this.value.slice(0, this.value.length - 1);
     },
+    //测试设置新密码
+    setPassword(){
+        console.log(this.passValue.length)
+        if(this.passValue.length >= 6){
+            let queryData = {
+                jobnumber:localStorage.getItem('jobNum'),
+                password:this.passValue
+            }
+            setPwd(queryData).then(res=>{
+                if(res.code == 1000){
+                    Notify({ type: 'success', message: res.msg });
+                    this.showpop = false
+                }else{
+                    Notify({ type: 'danger', message: res.msg });
+                }
+            })
+        }else{
+            Notify({ type: 'danger', message: '请输入6位数字密码！' })
+        }
+    },
+    //设置密码弹窗的关闭事件
+    closedpop(){
+        this.getPwd()
+    }
   }
 }
 </script>

@@ -2,6 +2,13 @@
     <div>
         <div class="tiaojian">
           <van-field v-model="selectYear" label="选择年：" placeholder="请选择" @click-input="showyear=true" readonly/>
+          <van-field
+            v-model="selectPost"
+            label="岗位分类一："
+            placeholder="请选择"
+            @click-input="showPost = true"
+            readonly
+          />
           <choosedepartment 
           ref="dept_content" 
           @transferFa="selctdept" 
@@ -83,6 +90,22 @@
             :default-index="50"
           />
         </van-popup> 
+        <!-- 选择岗位分类一的弹窗 -->
+      <van-popup
+        v-model="showPost"
+        get-container="body"
+        position="bottom"
+        :style="{ height: '50%' }"
+      >
+        <van-picker
+          title="请选择"
+          show-toolbar
+          :columns="columns"
+          @confirm="onConfirm1"
+          value-key="content"
+          @cancel="showPost = false"
+        />
+      </van-popup>
     </div>
 </template>
 <script>
@@ -96,12 +119,15 @@ export default {
   data () {
     return {
       selectYear: '', //选择年
+      selectPost: '', //选择岗位分类一
       showyear: false, //年弹窗
+      showPost: false, //年弹窗
       minDate: new Date(2010, 0,0),
       maxDate: new Date(2025, 0,0),
       currentDate: new Date(),
       columnTime: [], //年
       results: '', //部门截取过后
+      columns: [],
       tableData:[
         {name:'北美事业部',danwei:'一部门',fenlei:'分类一',target:'目标111',yuerenxiao:'20%',tongbi:'35%',counts:'4300',leiji:'20%',jindu:'10%',chayi:-0.2},
         {name:'北美事业部',danwei:'二部门',fenlei:'分类二',target:'目标111',yuerenxiao:'20%',tongbi:'35%',counts:'5600',leiji:'20%',jindu:'10%',chayi:0.22},
@@ -147,9 +173,9 @@ export default {
     },
     //单元格样式
     columnCellClass(rowIndex,columnName,rowData){
-      // if (rowIndex % 2 == 0){
-      //     return 'column-cell-class-name-test';
-      // }
+      if (rowIndex % 2 == 0){
+          return 'column-cell-class-name-test';
+      }
       if (rowData.chayi < 0 && columnName==='chayi'){
           return 'cell-edit-color-a';
       }
@@ -297,6 +323,10 @@ export default {
 　　},
     //重置查询
     reset(){},
+    //确认选择岗位分类一
+    onConfirm1(picker){
+      console.log(picker)
+    },
     ...mapMutations({
       save_type:'save_type',
       arr_flag:'arr_flag'

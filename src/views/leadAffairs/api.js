@@ -238,3 +238,29 @@ export function getSelector (queryData) {
     data: qs.stringify(queryData)
   })
 }
+// 编制分析查询
+export function selectBianzhi (queryData) {
+  return fetch({
+    url: `/kukacms/self/bianzhi/selectBianzhiCondition`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(queryData)
+  })
+}
+//根据部门查询岗位分类一
+export function getPostOne (queryData) {
+  return fetch({
+    url: `/kukacms/self/bianzhi/getPostOne`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}
+//图形展示接口
+export function selectDraw (selectData) {
+  return fetch({
+    url: `/kukacms/self/bianzhi/selectDraw`,
+    method: 'post',
+    data: qs.stringify(selectData)
+  })
+}

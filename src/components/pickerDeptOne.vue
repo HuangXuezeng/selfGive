@@ -50,7 +50,14 @@ export default {
     },
     selectName: {
       type: String
-    }
+    },
+    faDeptData: {
+      type: Array
+    },
+    workingNum: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -86,15 +93,19 @@ export default {
   mounted() {},
   methods: {
     //获取组织下的部门
-    _getOrz() {
-      // let queryData = {
-      //   jobnumber: 6006212
-      // };
-      // getOrz(queryData).then(res => {
-      // });
-      const departRes =  JSON.parse(localStorage.getItem('departRes'))
-      this.deptData.push(departRes);
+    // _getOrz() {
+    //   const departRes =  JSON.parse(localStorage.getItem('departRes'))
+    //   this.deptData.push(departRes);
 
+    // },
+    //获取组织下的部门
+    _getOrz() {
+      if (this.workingNum) {
+        this.deptData = this.faDeptData
+      } else {
+        const departRes = JSON.parse(localStorage.getItem("departRes"));
+        this.deptData.push(departRes);
+      }
     },
     //选择部门
     pickDept() {
@@ -133,7 +144,8 @@ export default {
                   this.selectOrg.orgsid = [];
                   this.selectOrg.orgsid.push(data);
                   let assignData = Object.assign({}, data);
-                  this.mechanismPath(assignData);
+                  this.transferData(assignData);
+                  // this.mechanismPath(assignData);
                   this.selectedDepartment = data.content
                   this.showPickDept = false;
                   this.$refs.tree.setCheckedKeys([])
@@ -144,9 +156,9 @@ export default {
                 // 防止数组有值，首先清空，再push
                 this.selectOrg.orgsid = [];
                 this.selectOrg.orgsid.push(data);
-                // this.selectedDepartment = data.content;
                 let assignData = Object.assign({}, data);
-                this.mechanismPath(assignData);
+                this.transferData(assignData);
+                // this.mechanismPath(assignData);
                 this.selectedDepartment = data.content
                 if(this.firstIn == 1&&this.selectName){
                   this.firstIn++

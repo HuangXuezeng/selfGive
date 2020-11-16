@@ -1,10 +1,10 @@
 <template>
     <div>
         <div class="contentbox">
-            <p><span>E-mail：{{jobData.email}}</span></p>
             <p><span>手机号码：{{jobData.a01274}}</span></p>
             <p><span>办公电话：{{jobData.a01093}}</span></p>
             <p><span>办公地点：{{jobData.a01195}}</span></p>
+            <p><span>E-mail：{{jobData.email}}</span></p>
             <!-- <p><span>工位：{{jobData.a01193}}</span></p> -->
             <p><span>现住址：{{jobData.a01311}}</span></p>
             <!-- <p><span>家庭住址：{{jobData.a01741}}</span></p> -->

@@ -39,9 +39,12 @@
               <van-sidebar-item 
               title="基本信息" 
               to="basicMsg"/>
+               <van-sidebar-item 
+              title="工作信息" 
+              to="workMsg"/>
               <van-sidebar-item 
-              title="学历信息" 
-              to="eduMsg"/>
+              title="联系信息" 
+              to="touchMsg"/>
               <van-sidebar-item 
               title="顾家履历" 
               to="kukaExp"/>
@@ -49,17 +52,14 @@
               title="社会履历" 
               to="socialExp"/>
               <van-sidebar-item 
-              title="工作信息" 
-              to="workMsg"/>
-              <van-sidebar-item 
-              title="职业资格" 
-              to="zhiyeMsg"/>
-              <van-sidebar-item 
-              title="联系信息" 
-              to="touchMsg"/>
+              title="学历信息" 
+              to="eduMsg"/>
               <van-sidebar-item 
               title="亲属关系" 
               to="relMsg"/>
+              <van-sidebar-item 
+              title="职业资格" 
+              to="zhiyeMsg"/>
               <!-- <van-sidebar-item 
               title="家庭成员" 
               to="memberMsg"/> -->

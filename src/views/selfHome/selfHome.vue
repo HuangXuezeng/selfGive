@@ -2,7 +2,7 @@
   <div>
     <div class="myContents">
       <div class="bgc"></div>
-      <div style="clear:both">
+      <div class="allmoulde">
         <div class="headTop">
           <div class="messageInfoos ">
             <span @click="uploadImg"
@@ -29,8 +29,7 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="contents">
+        <div class="contents">
         <div @click="seePdf">
           <span style="font-weight:700;font-size:14px"
             ><i class="iconfont icon--_caozuo"></i>操作指引</span>
@@ -104,6 +103,8 @@
           </div>
         </div>
       </div>
+      </div>
+      
     </div>
     <!-- 编辑菜单顺序弹窗 -->
     <van-popup v-model="show" position="top" :style="{ height: '80%' }">
@@ -303,11 +304,12 @@ export default {
     // localStorage.setItem('jobNum',9107021)
     // localStorage.setItem('jobNum',9078825)
     // localStorage.setItem('jobNum',6006526)
-    localStorage.setItem("jobNum", 6005506)
+    // localStorage.setItem("jobNum", 6005506)
+    localStorage.setItem("jobNum", 6006212)
     // localStorage.setItem("jobNum", 6603302)
     // localStorage.setItem("jobNum", 9039627)
     // localStorage.setItem('jobNum',9015011)
-    // localStorage.setItem('jobNum',6004383)
+    // localStorage.setItem('jobNum',9134361)
     if (
       localStorage.getItem("jobNum") == "" ||
       localStorage.getItem("jobNum") == null ||
@@ -347,6 +349,7 @@ export default {
         if(res.obj.isBianzhi == "Y"){
           //编制分析有权限的人的res
           localStorage.setItem("bianzhiOrganRes", JSON.stringify(res.obj.bianzhiOrgan));
+          localStorage.setItem("bianzhiCodeRes", JSON.stringify(res.obj.bianzhiCode));
         }else{
           this.$refs.hiddenBox[5].style.display = 'none'
         }
@@ -820,7 +823,7 @@ i {
   }
 
   .contents {
-    margin: 108px 10px 0 10px;
+    margin: 10px 10px 0 10px;
     border-radius: 6px;
     padding: 10px;
     background-color: #fff;
@@ -945,7 +948,6 @@ i {
 
   .bgc {
     height: 120px;
-    // float left
     background-color: #db4c3e;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
@@ -955,9 +957,10 @@ i {
     width: 95%;
     height: 198px;
     display: flex;
-    position: absolute;
-    top: 20px;
-    left: 2.4vw;
+    // position: absolute;
+    // top: 20px;
+    // left: 2.4vw;
+    margin 0 auto
     padding-bottom: 10px;
     background: #fff;
     border-radius: 8px;
@@ -983,6 +986,11 @@ i {
       padding: 10px 10px 10px 8%;
       line-height: 28px;
     }
+  }
+  .allmoulde{
+    position relative;
+    top: -90px;
+    left: 0
   }
 }
 

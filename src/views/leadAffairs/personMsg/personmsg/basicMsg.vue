@@ -13,21 +13,21 @@
             </div>
         </div>  -->
         <div class="message">
-            <p><span>工号：</span><span>{{personList.a0190}}</span></p>
             <p><span>当前状态：</span><span>{{personList.a01201}}</span></p>
+            <!-- <p><span>工号：</span><span>{{personList.a0190}}</span></p> -->
             <p><span>性别：</span><span>{{personList.a0107}}</span></p>
             <p><span>出生日期：</span><span>{{personList.A0111}}</span></p>
             <p><span>年龄：</span><span>{{personList.a01101}}</span></p>
             <p><span>民族：</span><span>{{personList.a0121}}</span></p>
             <p><span>籍贯：</span><span>{{personList.a01740}}</span></p>
             <p><span>国籍：</span><span>{{personList.a01188}}</span></p>
+            <p><span>婚姻状况：</span><span>{{personList.a0127}}</span></p>
+            <p><span>政治面貌：</span><span>{{personList.a01577}}</span></p>
             <p><span>最高学历：</span><span>{{personList.a01504}}</span></p>
             <p><span>院校性质：</span><span>{{personList.a01190}}</span></p>
             <p><span>毕业院校：</span><span>{{personList.a011901}}</span></p>
             <p><span>专业：</span><span>{{personList.a011971}}</span></p>
             <p><span>编制类型：</span><span>{{personList.a01165}}</span></p>
-            <p><span>婚姻状况：</span><span>{{personList.a0127}}</span></p>
-            <p><span>政治面貌：</span><span>{{personList.a01577}}</span></p>
             <p><span>参加工作时间：</span><span>{{personList.A0141}}</span></p>
             <p><span>银行名称：</span><span>{{personList.a01191}}</span></p>
             <p><span>开户行：</span><span>{{personList.a01113}}</span></p>

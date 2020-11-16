@@ -51,17 +51,17 @@
         <div class="butnPos">
           <div
             class="buttonChoose"
-            style="background-color:MediumAquamarine"
-            @click="RemoveNodeMeth"
-          >
-            重置
-          </div>
-          <div
-            class="buttonChoose"
             :style="selectAllstyle"
             @click="selctAllNodeMeth"
           >
             全选
+          </div>
+          <div
+            class="buttonChoose"
+            style="background-color:MediumAquamarine"
+            @click="RemoveNodeMeth"
+          >
+            重置
           </div>
           <div
             class="buttonChoose"
@@ -143,7 +143,7 @@ export default {
       onSelected: "",
       firstIn: 1,
       strictlyFlag: true,
-      isDownValue: false,
+      isDownValue: true,
       closeableFlag: true,
       selectkeySet: null,
       beforeSelectName: "",
@@ -166,7 +166,7 @@ export default {
   },
   mounted() {
     if (this.isSelctall) {
-    //   this.strictlyFlag = false;
+      this.strictlyFlag = false;
       if (this.isFromRost) {
         this.selectedDepartment = "";
         this.deptPlacehoder = "请选择部门";
@@ -259,6 +259,7 @@ export default {
     },
     //多选的主要逻辑
     judgeLowerLevel(checkedNodes, obj) {
+      console.log(checkedNodes)
     // console.log(checkedNodes.depts.length)
     
     // console.log(this.strictlyFlag)
@@ -284,7 +285,8 @@ export default {
       //     return;
       //   } else {
           if (this.isDownValue) {
-            // this.strictlyFlag = false
+            // debugger
+            this.strictlyFlag = false
             this.selectkeySet.clear();
             for (let k in obj.checkedKeys) {
               this.selectkeySet.add(obj.checkedKeys[k]);
@@ -295,7 +297,7 @@ export default {
             }
             this.setbeforeSelectName(obj);
           } else {
-            //   this.strictlyFlag = true
+            this.strictlyFlag = true
             this.$refs.tree.setCheckedKeys([]);
             this.SelectNameMap.set(checkedNodes.deptId, checkedNodes.content);
             if (this.selectkeySet.has(checkedNodes.deptId)) {
@@ -353,6 +355,7 @@ export default {
         });
         return;
       }
+      // debugger
       this.$emit("confirmNode", selctArray, isDown);
       this.showPickDept = false;
       Notify({ type: "success", message: "选择成功" });
@@ -392,9 +395,19 @@ export default {
         this.isDownValue = isDownValue;
         if (!isDownValue) {
           this.selectAllstyle = "background-color:#ccc";
+          this.$refs.tree.setCheckedKeys([]);
+          //清空set
+          this.selectkeySet.clear();
+          this.beforeSelectName = "";
+          this.selectedDepartment = "";
           this.strictlyFlag = true;
         } else {
           this.selectAllstyle = "background-color:Coral";
+          this.$refs.tree.setCheckedKeys([]);
+          //清空set
+          this.selectkeySet.clear();
+          this.beforeSelectName = "";
+          this.selectedDepartment = "";
           this.strictlyFlag = false;
         }
       });

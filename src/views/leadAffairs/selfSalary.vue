@@ -22,6 +22,7 @@
       <van-sticky>
         <van-tabs 
         v-model="activeKey"
+        :swipeable="true"
         type="card"
         color="#fc5f10"
         line-height="4px">

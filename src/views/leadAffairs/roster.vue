@@ -60,6 +60,7 @@
         row-hover-color="#eee"
         row-click-color="#edf7ff"
         :row-click="rowClick"
+        :column-cell-class-name="columnCellClass"
       ></v-table>
       <!-- <div style="padding:10px 10px 10px 0"><van-tag type="warning">总条数：{{total}}</van-tag></div> -->
     </div>
@@ -80,6 +81,11 @@
       get-container="body"
     >
       <div class="pick">
+        <div>
+          <el-tag type="warning">是否在报表内展示</el-tag>
+          <el-tag type="warning">查询条件</el-tag>
+          <el-tag type="warning">查询结果</el-tag>
+        </div>
          <van-checkbox-group v-model="resultMore" ref="checkboxGroupMore">
             <van-checkbox name="当前状态">
               <van-field
@@ -326,7 +332,7 @@
           size="mini"
           color="#fc5f10"
           @click="moreReset"
-          style="width:16%"
+          style="width:21.5%"
           >重置</van-button
         >
         <van-button
@@ -334,7 +340,7 @@
           size="mini"
           color="#fc5f10"
           @click="checkAll"
-          style="width:16%"
+          style="width:21.5%"
           >全选</van-button
         >
         <van-button
@@ -342,22 +348,22 @@
           size="mini"
           color="#fc5f10"
           @click="searchMore"
-          style="width:16%"
+          style="width:21.5%"
           >查询</van-button
         >
-        <van-button
+        <!-- <van-button
           type="primary"
           color="#fc5f10"
           size="mini"
           @click="handClickItem"
           style="width:22%"
           >确认多选</van-button
-        >
+        > -->
         <van-button
           type="danger"
           size="mini"
           @click="closeSearch"
-          style="width:16%"
+          style="width:21.5%"
           >关闭</van-button
         >
       </div>
@@ -742,7 +748,8 @@ export default {
           width: 100,
           titleAlign: "center",
           columnAlign: "center",
-          isResize: true
+          isResize: true,
+          // isFrozen: true
         },
         {
           field: "department",
@@ -2454,6 +2461,12 @@ export default {
     handClickItem(){
       console.log(this.resultMore)
     },
+    //单元格样式
+    columnCellClass(rowIndex, columnName, rowData) {
+      if (rowIndex % 2 == 0) {
+        return "column-cell-class-name-test";
+      }
+    },
     ...mapMutations({
       save_jobNum: "save_jobNum",
       scroll_top: "scroll_top",
@@ -2509,6 +2522,9 @@ export default {
   }
   .van-button--mini{
     min-width: 40px;
+  }
+  .column-cell-class-name-test {
+    background-color: #f6f6f8;
   }
 </style>
 <style lang="stylus" scoped>

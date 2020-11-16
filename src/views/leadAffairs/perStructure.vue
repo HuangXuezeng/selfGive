@@ -91,6 +91,7 @@
                 row-click-color="#edf7ff" 
                 :row-click="rowClick"	
                 :cell-merge="cellMerge"
+                :column-cell-class-name="columnCellClass"
                 ></v-table>	
             </div>
         </div>
@@ -1160,6 +1161,12 @@ components: {
         // console.log(this.$refs.pop_table.$el.children[0].children[1].scrollTop)
         // console.log(this.$refs.pop_table.$el.children[0].children[1].scrollHeight)
     },
+    //单元格样式
+    columnCellClass(rowIndex, columnName, rowData) {
+      if (rowIndex % 2 == 0) {
+        return "column-cell-class-name-test";
+      }
+    },
     //vuex
     ...mapMutations({
         // arr_flag:'arr_flag',
@@ -1198,6 +1205,9 @@ watch:{
 <style>
     td{
         vertical-align: bottom
+    }
+    .column-cell-class-name-test {
+      background-color: #f6f6f8;
     }
 </style>
 <style lang="stylus" scoped>
