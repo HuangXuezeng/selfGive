@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="header">
-      <van-sticky>
+      <van-sticky class="resetVantfixed">
         <!-- <div class="headbgc"> -->
           <van-row type="flex" justify="center" class="resetVant">
             <van-col span="24">

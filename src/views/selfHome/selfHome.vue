@@ -792,6 +792,10 @@ export default {
           this.save_type(sortNum);
           this.$router.push({ name: "annualSalaryPercentile" });
           break;
+        case "自动提醒":
+          this.save_type(sortNum);
+          this.$router.push({ name: "adresResultps" });
+          break;
       }
     },
   },

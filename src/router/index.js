@@ -409,6 +409,22 @@ export default new Router({
     /**
      * 薪酬结束
      */
+    /**
+     * 干部财报开始
+     */
+    {
+      path: '/adresResultps',
+      name: 'adresResultps',
+      component: () => import('@/views/adresResultts/adresResultps'),
+    },
+    {
+      path: '/cadresChange',
+      name: 'cadresChange',
+      component: () => import('@/views/adresResultts/cadresChange'),
+    },
+    /**
+     * 干部财报结束
+     */
     //查询员工信息
     {
       path: '/personHome',

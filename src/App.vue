@@ -95,7 +95,7 @@ export default {
 #app {
   width: 100%;
   height: 100vh;
-  /* max-width: 400px; */
+  max-width: 400px;
   margin: 0 auto;
   box-sizing: border-box;
   /* overflow-y: auto;

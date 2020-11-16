@@ -1,5 +1,5 @@
 <template>
-  <div style="padding-bottom: 25%;" class="my-container">
+  <div style="padding-bottom: 25%;" class="my-container resetVantfixed" >
     <van-tabs
       v-model="vanTabsActive"
       scrollspy
