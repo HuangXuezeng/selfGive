@@ -1,5 +1,5 @@
 <template>
-  <div style="padding-bottom: 25%;" class="my-container">
+  <div style="padding-bottom: 25%;" class="my-container resetVantfixed" >
     <van-tabs
       v-model="vanTabsActive"
       scrollspy
@@ -435,14 +435,14 @@ export default {
   },
   watch: {
     tableData: function() {
-      this.$nextTick(() => {
-        //判断由那个入口进来的 salaryFlag 0平均工资 1人均年薪
-        if (this.$route.params.salaryFlag == 1) {
-          this.$refs.vanTabs.scrollTo("人均年薪");
-        } else {
-          this.$refs.vanTabs.scrollTo("人均工资");
-        }
-      });
+      // this.$nextTick(() => {
+      //   //判断由那个入口进来的 salaryFlag 0平均工资 1人均年薪
+      //   if (this.$route.params.salaryFlag == 1) {
+      //     this.$refs.vanTabs.scrollTo("人均年薪");
+      //   } else {
+      //     this.$refs.vanTabs.scrollTo("人均工资");
+      //   }
+      // });
     }
   },
   created() {
@@ -1038,11 +1038,11 @@ export default {
             }
           }
           //第一次请求不需要重置位置
-          if (queryObj) {
-            this.$nextTick(() => {
-              this.$refs.vanTabs.scrollTo("人均年薪");
-            });
-          }
+          // if (queryObj) {
+          //   this.$nextTick(() => {
+          //     this.$refs.vanTabs.scrollTo("人均年薪");
+          //   });
+          // }
         } else {
           Toast.fail(res.msg);
         }

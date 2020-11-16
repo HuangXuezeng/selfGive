@@ -174,7 +174,6 @@ export default {
     //获取组织下的部门
     _getOrz() {
       if (this.workingNum) {
-
       } else {
         const departRes = JSON.parse(localStorage.getItem("AlldepartRes"));
         this.deptData = [departRes.obj];

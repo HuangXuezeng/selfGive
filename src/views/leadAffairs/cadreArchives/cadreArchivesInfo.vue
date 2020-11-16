@@ -1,7 +1,7 @@
 <template>
   <div style="padding-bottom:15%">
     <div>
-      <van-tabs v-model="active" scrollspy sticky type="card">
+      <van-tabs v-model="active" scrollspy sticky type="card" class="resetVantfixed">
         <van-tab title="基本信息">
           <van-card
             :desc="basicInfo.deptName ? basicInfo.deptName : ''"

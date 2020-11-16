@@ -270,16 +270,18 @@
             :selectZjNameMap="selectZjNameMap"
             @confirmZj="confirmZjMethod"
           ></chooseZJlist>
-          <div style="width:100%;">
+          <div style="width:100%;" v-if="!showNodata">
             <div
               ref="tantileEchart"
               :style="{ width: '100%', height: '500px' }"
             ></div>
           </div>
+          <noData :showNodata="showNodata" heightAuto='height500' ></noData>
         </div>
       </div>
     </div>
     <payTab></payTab>
+    <loadingSpin ref="loadingSpin" :show='false'></loadingSpin>
   </div>
 </template>
 <style>
@@ -326,14 +328,15 @@ import noData from "@/components/noData.vue";
 import chooseDepartment from "@/components/chooseDepartment.vue";
 import pagination from "@/components/PayLibrary/pagination.vue";
 import chooseZJlist from "@/components/PayLibrary/chooseZJlist.vue";
-
+import loadingSpin from '@/components/loadingSpin.vue';
 export default {
   components: {
     payTab,
     noData,
     pagination,
     choosedepartment: chooseDepartment,
-    chooseZJlist
+    chooseZJlist,
+    loadingSpin
   },
   data() {
     return {
@@ -978,7 +981,15 @@ export default {
       deptData: [],
       checkboxlist: [],
       selectZjNameMap: null,
-      selectZj: null
+      selectZj: null,
+      selectedDeptZj: {
+        zjList: [],
+        deptList: [],
+        isDown: "Y",
+        jobnumber: localStorage.getItem("jobNum")
+      },
+      showNodata: false,
+      selctzjqueryLoading: false,
     };
   },
   created() {
@@ -1434,285 +1445,197 @@ export default {
       }
     },
     tantileSelectdept(data, isdown) {
+      this.$refs.loadingSpin.showUp();
+
+      //记录变更dezjlist dept isdown
+      this.selectedDeptZj.deptList = data;
+      this.selectedDeptZj.isDown = isdown;
+
       let queryData = {
         deptList: data,
         isDown: isdown,
         jobnumber: this.ddJobNum
       };
-      findZjListInfo(queryData).then(res => {
-        if (res.code == 1000) {
-          let zlList = res.obj;
-          for (let p in zlList) {
-            zlList[p].zjList = zlList[p].zj;
-          }
-          let indexNum = 0;
-          for (let i in zlList) {
-            zlList[i].zlchecked = false;
-            zlList[i].zlNum = i;
-            zlList[i].zl = zlList[i].zlName;
-            if (zlList[i].zjList != null) {
-              for (let k in zlList[i].zjList) {
-                zlList[i].zjList[k].indexNumber = indexNum;
-                zlList[i].zjList[k].number = zlList[i].zjList[k].key;
-                zlList[i].zjList[k].zj = zlList[i].zjList[k].value;
-                // if (zlList[i].zjList[k].zj == "M3") {
-                this.selectZj.add(zlList[i].zjList[k].number);
-                // }
-                indexNum++;
-                this.selectZjNameMap.set(
-                  zlList[i].zjList[k].number,
-                  zlList[i].zjList[k].zj
-                );
-              }
-            }
-          }
-          this.checkboxlist = res.obj;
-        } else {
-          Toast.fail(res.msg);
-        }
-      });
-    },
-    queryFindZjListInfo() {
-      let queryData = { deptList: [], isDown: "Y", jobnumber: this.ddJobNum };
-      findZjListInfo(queryData).then(res => {
-        if (res.code == 1000) {
-          let zlList = res.obj;
-          for (let p in zlList) {
-            zlList[p].zjList = zlList[p].zj;
-          }
-          let indexNum = 0;
-          for (let i in zlList) {
-            zlList[i].zlchecked = false;
-            zlList[i].zlNum = i;
-            zlList[i].zl = zlList[i].zlName;
-            if (zlList[i].zjList != null) {
-              for (let k in zlList[i].zjList) {
-                zlList[i].zjList[k].indexNumber = indexNum;
-                zlList[i].zjList[k].number = zlList[i].zjList[k].key;
-                zlList[i].zjList[k].zj = zlList[i].zjList[k].value;
-                // if (zlList[i].zjList[k].zj == "M3") {
-                this.selectZj.add(zlList[i].zjList[k].number);
-                // }
-                indexNum++;
-                this.selectZjNameMap.set(
-                  zlList[i].zjList[k].number,
-                  zlList[i].zjList[k].zj
-                );
-              }
-            }
-          }
-          this.checkboxlist = res.obj;
-        } else {
-          Toast.fail(res.msg);
-        }
-      });
-    },
-    queryFindFwDeatilsInfo() {
-      findFwDeatilsInfo({
+
+      this.queryFindZjListInfo(queryData)
+      // findZjListInfo(queryData).then(res => {
+      //   if (res.code == 1000) {
+      //     let zlList = res.obj;
+      //     for (let p in zlList) {
+      //       zlList[p].zjList = zlList[p].zj;
+      //     }
+      //     let indexNum = 0;
+      //     for (let i in zlList) {
+      //       zlList[i].zlchecked = false;
+      //       zlList[i].zlNum = i;
+      //       zlList[i].zl = zlList[i].zlName;
+      //       if (zlList[i].zjList != null) {
+      //         for (let k in zlList[i].zjList) {
+      //           zlList[i].zjList[k].indexNumber = indexNum;
+      //           zlList[i].zjList[k].number = zlList[i].zjList[k].key;
+      //           zlList[i].zjList[k].zj = zlList[i].zjList[k].value;
+      //           // if (zlList[i].zjList[k].zj == "M3") {
+      //           this.selectZj.add(zlList[i].zjList[k].number);
+      //           // }
+      //           indexNum++;
+      //           this.selectZjNameMap.set(
+      //             zlList[i].zjList[k].number,
+      //             zlList[i].zjList[k].zj
+      //           );
+      //         }
+      //       }
+      //     }
+      //     this.checkboxlist = res.obj;
+      //   } else {
+      //     Toast.fail(res.msg);
+      //   }
+      // });
+      this.queryFindFwDeatilsInfo({
         jobnumber: this.ddJobNum,
         zjList: [],
-        deptList: [],
-        isDown: "Y"
-      }).then(res => {
-        debugger;
-        this.tantileEchart(res.obj);
+        deptList: data,
+        isDown: isdown
+      });
+    },
+    queryFindZjListInfo(obj) {
+      let queryData = {}
+      if(obj){
+        queryData = obj
+      }else{
+        queryData = { deptList: [], isDown: "Y", jobnumber: this.ddJobNum };
+      }
+      findZjListInfo(queryData).then(res => {
+        if (res.code == 1000) {
+          let zlList = res.obj;
+          if(zlList.length == 0){
+            this.$refs.chooseZJlistRef.SwitchDepart(1)
+          }else{
+            this.$refs.chooseZJlistRef.SwitchDepart()
+          }
+          for (let p in zlList) {
+            zlList[p].zjList = zlList[p].zj;
+          }
+          let indexNum = 0;
+          this.selectZjNameMap.clear()
+          for (let i in zlList) {
+            zlList[i].zlchecked = false;
+            zlList[i].zlNum = i;
+            zlList[i].zl = zlList[i].zlName;
+            if (zlList[i].zjList != null) {
+              for (let k in zlList[i].zjList) {
+                zlList[i].zjList[k].indexNumber = indexNum;
+                zlList[i].zjList[k].number = zlList[i].zjList[k].key;
+                zlList[i].zjList[k].zj = zlList[i].zjList[k].value;
+                // if (zlList[i].zjList[k].zj == "M3") {
+                this.selectZj.add(zlList[i].zjList[k].number);
+                // }
+                indexNum++;
+                this.selectZjNameMap.set(
+                  zlList[i].zjList[k].number,
+                  zlList[i].zjList[k].zj
+                );
+              }
+            }
+          }
+          // that.selectZjNameMap
+          // that.selectZj
+
+          this.checkboxlist = res.obj;
+        } else {
+          Toast.fail(res.msg);
+        }
+      });
+    },
+    queryFindFwDeatilsInfo(queryObj) {
+      let queryData = {};
+      if (queryObj) {
+        queryData = queryObj;
+      } else {
+        queryData = {
+          jobnumber: this.ddJobNum,
+          zjList: [],
+          deptList: [],
+          isDown: "Y"
+        };
+      }
+      findFwDeatilsInfo(queryData).then(res => {
+        if (res.code == 1000) {
+          this.tantileEchart(res.obj);
+        } else {
+          Toast.fail(res.msg);
+        }
       });
     },
     tantileEchart(data) {
-      debugger;
-      var myCharts = this.$echarts.init(this.$refs.tantileEchart);
-      let month = [];
-      let num25List = [];
-      let num50List = [];
-      let num75List = [];
-      let numAvgList = [];
-      let numMaxList = [];
-      let numMinList = [];
-      for (let i in data) {
-        month.push(data[i].month);
-        num25List.push(data[i].num25);
-        num50List.push(data[i].num50);
-        num75List.push(data[i].num75);
-        numAvgList.push(data[i].numAvg);
-        numMaxList.push(data[i].numMax);
-        numMinList.push(data[i].numMin);
+      this.$refs.loadingSpin.shutdown();
+      if (data.length == 0) {
+        this.showNodata = true;
+        Toast.fail('暂无数据');
+        return
+      } else {
+        this.showNodata = false;
       }
-      function isInteger(obj) {
-        return obj % 1 === 0;
-      }
-    //   title: {
-    //     text: '折线图堆叠'
-    // },
-    // tooltip: {
-    //     trigger: 'axis'
-    // },
-    // legend: {
-    //     data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
-    // },
-    // grid: {
-    //     left: '3%',
-    //     right: '4%',
-    //     bottom: '3%',
-    //     containLabel: true
-    // },
-    // toolbox: {
-    //     feature: {
-    //         saveAsImage: {}
-    //     }
-    // },
-    // xAxis: {
-    //     type: 'category',
-    //     boundaryGap: false,
-    //     data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
-    // },
-    // yAxis: {
-    //     type: 'value'
-    // },
-    // series: [
-    //     {
-    //         name: '邮件营销',
-    //         type: 'line',
-    //         stack: '总量',
-    //         data: [120, 132, 101, 134, 90, 230, 210]
-    //     },
-    //     {
-    //         name: '联盟广告',
-    //         type: 'line',
-    //         stack: '总量',
-    //         data: [220, 182, 191, 234, 290, 330, 310]
-    //     },
-    //     {
-    //         name: '视频广告',
-    //         type: 'line',
-    //         stack: '总量',
-    //         data: [150, 232, 201, 154, 190, 330, 410]
-    //     },
-    //     {
-    //         name: '直接访问',
-    //         type: 'line',
-    //         stack: '总量',
-    //         data: [320, 332, 301, 334, 390, 330, 320]
-    //     },
-    //     {
-    //         name: '搜索引擎',
-    //         type: 'line',
-    //         stack: '总量',
-    //         data: [820, 932, 901, 934, 1290, 1330, 1320]
-    //     }
-    // ]
-      myCharts.setOption({
-        // title: {
-        //   text: "堆叠区域图"
-        // },
-        // tooltip: {
-        //   trigger: "axis",
-        //   axisPointer: {
-        //     type: "cross",
-        //     label: {
-        //       // backgroundColor: "#6a7985"
-        //     }
-        //   }
-        // },
-        tooltip: {
-        trigger: 'axis',
-        axisPointer: {
-            type: 'cross',
-            label: {
-                backgroundColor: '#6a7985'
-            }
+      this.$nextTick(() => {
+        var myCharts = this.$echarts.init(this.$refs.tantileEchart);
+        let month = [];
+        let num25List = [];
+        let num50List = [];
+        let num75List = [];
+        let numAvgList = [];
+        let numMaxList = [];
+        let numMinList = [];
+        for (let i in data) {
+          month.push(data[i].month);
+          num25List.push(data[i].num25);
+          num50List.push(data[i].num50);
+          num75List.push(data[i].num75);
+          numAvgList.push(data[i].numAvg);
+          numMaxList.push(data[i].numMax);
+          numMinList.push(data[i].numMin);
         }
-        },
-        legend: {
-          data: [
-            "最小值",
-            "25分位值",
-            "50分位值",
-            "平均值",
-            "75分位值",
-            "最大值"
-          ]
-        },
-        // toolbox: {
-        //   feature: {
-        //     saveAsImage: {}
-        //   }
-        // },
-        grid: {
-          left: "3%",
-          right: "4%",
-          bottom: "3%",
-          containLabel: true
-        },
-        xAxis: [
-          {
-            type: "category",
-            boundaryGap: false,
-            data: month
-          }
-        ],
-        yAxis: [
-          {
-            type: "value",
-            axisLabel: {
-              show: true,
-              formatter: function(value, index) {
-                let text = "";
-                if (Math.abs(value) >= 10000) {
-                  let divisionNum = value / 10000;
-                  if (!isInteger(divisionNum)) {
-                    return (text = divisionNum.toFixed(2) + "万");
-                  } else {
-                    return (text = divisionNum + "万");
-                  }
-                } else if (Math.abs(value) >= 1000) {
-                  let divisionNum = value / 1000;
-                  if (!isInteger(divisionNum)) {
-                    return (text = divisionNum.toFixed(2) + "千");
-                  } else {
-                    return (text = divisionNum + "千");
-                  }
-                } else {
-                  return value;
-                }
+        function isInteger(obj) {
+          return obj % 1 === 0;
+        }
+
+        myCharts.setOption({
+          tooltip: {
+            trigger: "axis",
+            axisPointer: {
+              type: "cross",
+              label: {
+                backgroundColor: "#6a7985"
               }
             }
-          }
-        ],
-        series: [
-          {
-            name: "最小值",
-            type: "line",
-            data: numMinList
           },
-          {
-            name: "25分位值",
-            type: "line",
-            data: num25List
+          legend: {
+            data: [
+              "最小值",
+              "25分位值",
+              "50分位值",
+              "平均值",
+              "75分位值",
+              "最大值"
+            ]
           },
-          {
-            name: "50分位值",
-            type: "line",
-            data: num50List
+          grid: {
+            left: "3%",
+            right: "4%",
+            bottom: "3%",
+            containLabel: true
           },
-          {
-            name: "平均值",
-            type: "line",
-            data: numAvgList
-          },
-          {
-            name: "75分位值",
-            type: "line",
-            data: num75List
-          },
-          {
-            name: "最大值",
-            type: "line",
-            label: {
-              normal: {
+          xAxis: [
+            {
+              type: "category",
+              boundaryGap: false,
+              data: month
+            }
+          ],
+          yAxis: [
+            {
+              type: "value",
+              axisLabel: {
                 show: true,
-                position: "top",
-                formatter: function(item, index) {
-                  let value = item.value
+                formatter: function(value, index) {
                   let text = "";
                   if (Math.abs(value) >= 10000) {
                     let divisionNum = value / 10000;
@@ -1733,14 +1656,47 @@ export default {
                   }
                 }
               }
+            }
+          ],
+          series: [
+            {
+              name: "最小值",
+              type: "line",
+              data: numMinList
             },
-            data: numMaxList
-          }
-        ]
+            {
+              name: "25分位值",
+              type: "line",
+              data: num25List
+            },
+            {
+              name: "50分位值",
+              type: "line",
+              data: num50List
+            },
+            {
+              name: "平均值",
+              type: "line",
+              data: numAvgList
+            },
+            {
+              name: "75分位值",
+              type: "line",
+              data: num75List
+            },
+            {
+              name: "最大值",
+              type: "line",
+              data: numMaxList
+            }
+          ]
+        });
       });
     },
     confirmZjMethod(data) {
-      debugger;
+      this.selectedDeptZj.zjList = data;
+      this.queryFindFwDeatilsInfo(this.selectedDeptZj);
+      this.$refs.chooseZJlistRef.shutDownLading()
     }
   }
 };

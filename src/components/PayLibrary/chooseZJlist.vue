@@ -123,7 +123,9 @@ export default {
   methods: {
     //弹出右边职级选择框
     rightPopShow() {
-    this.checkboxlist
+      if(this.checkboxlist.length == 0){
+        return
+      }
       this.rightPop = true;
       if (!this.firstInflag) {
         this.firstInflag++;
@@ -138,6 +140,7 @@ export default {
     },
     //重置选择的职级(第一次进全选)
     restSelectZj(type) {
+      debugger
       for (let k in this.checkboxlist) {
         if (type == 1) {
           this.checkboxlist[k].zlchecked = true;
@@ -191,8 +194,8 @@ export default {
         }
       });
       this.selectzjName = this.selectzjName.slice(1);
-      this.$emit("confirmZj", zjListArry);
       this.selctzjqueryLoading = true;
+      this.$emit("confirmZj", zjListArry);
       // findPerGetDetailsInfo({
       //   jobnumber: this.ddJobNum,
       //   flag: "2",
@@ -213,6 +216,14 @@ export default {
     shutDownLading(){
       this.selctzjqueryLoading = false;
       this.rightPop = false
+    },
+    SwitchDepart(type){
+      if(type){
+        this.selectzjName = '暂无数据'
+      }else{
+        this.selectzjName = '全部'
+        this.firstInflag = 0
+      }
     }
   }
 };
