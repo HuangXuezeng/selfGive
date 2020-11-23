@@ -257,7 +257,7 @@ export default {
           // },
           isResize: true
         }
-      ], 
+      ],
       tableData1: [], //一级单位编制情况表格
       echartData1: [],
       echartData2: [],
@@ -699,7 +699,7 @@ export default {
     overflow-x: auto;
   }
   .postrank {
-    height: 400px;
+    // height: 400px;
     background-color: #f6f6f8;
 
     .pie {

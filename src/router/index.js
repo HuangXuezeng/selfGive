@@ -361,6 +361,7 @@ export default new Router({
       path: '/cadreArchives',
       name: 'cadreArchives',
       component: () => import('@/views/leadAffairs/cadreArchives/cadreArchives'),
+      meta: { keepAlive: true }
     },
     //机构展示
     {
@@ -421,6 +422,16 @@ export default new Router({
       path: '/cadresChange',
       name: 'cadresChange',
       component: () => import('@/views/adresResultts/cadresChange'),
+    },
+    {
+      path: '/cadreReserve',
+      name: 'cadreReserve',
+      component: () => import('@/views/adresResultts/cadreReserve'),
+    },
+    {
+      path: '/departselect',
+      name: 'departselect',
+      component: () => import('@/views/adresResultts/departselect'),
     },
     /**
      * 干部财报结束

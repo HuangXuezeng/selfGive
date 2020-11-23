@@ -140,7 +140,7 @@ export default {
     },
     //重置选择的职级(第一次进全选)
     restSelectZj(type) {
-      debugger
+      // debugger
       for (let k in this.checkboxlist) {
         if (type == 1) {
           this.checkboxlist[k].zlchecked = true;

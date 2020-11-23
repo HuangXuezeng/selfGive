@@ -264,7 +264,7 @@ export default {
         // },
         {
           sortNum: 12,
-          title: "干部财报",
+          title: "干部简报",
           img: "http://ehrfile.kukahome.com:7020/menuImage/rgfy.png",
         },
       ],
@@ -304,7 +304,7 @@ export default {
   created() {
     // debugger
     localStorage.setItem("jobNum", 6006212);
-    // localStorage.setItem('jobNum',9050104)
+    // localStorage.setItem('jobNum',9085360)
     // localStorage.setItem('jobNum',9107021)
     // localStorage.setItem('jobNum',9078825)
     // localStorage.setItem('jobNum',9025434)
@@ -767,9 +767,9 @@ export default {
           this.save_type(sortNum);
           this.$router.push({ name: "cadreArchives" });
           break;
-        case "干部财报":
+        case "干部简报":
           this.save_type(sortNum);
-          this.$router.push({ name: "adresResultps" });
+          this.$router.push({ name: "departselect" });
           break;
       }
     },

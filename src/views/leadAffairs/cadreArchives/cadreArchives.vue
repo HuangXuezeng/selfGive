@@ -112,10 +112,13 @@ export default {
     searchQuery(data) {
       findCadreRosterInfoByCondition(data).then(res => {
         if (res.code == "1000") {
-          this.searchList = res.obj;
+          if(res.obj != null){
+            this.searchList = res.obj;
+          }
           this.showFooter = true;
         } else {
           Toast.fail(res.msg);
+          this.loadFlag = true;
         }
       });
       this.$refs.loadingSpin.shutdown();
