@@ -333,7 +333,7 @@ components: {
                     position:'outer',
                     alignTo:'edge',
                     margin:10,
-                    formatter: '{c}人 {d}% \n\n',
+                    formatter: '{c}人 / {d}% \n\n',
                     padding: [0,50],
                     textStyle: {
                         color: "#f64971",
@@ -347,7 +347,7 @@ components: {
                 {name:'技术干部（P4/S4（主任）及以上）',value:this.gwcjObj.gwcjjishuCount},
                 {name:'基层干部（M1-M3）',value:this.gwcjObj.gwcjjicengCount},
                 {name:'中层干部（M4-M5）',value:this.gwcjObj.gwcjzhongcengCount},
-                {name:'核心干部（M及以上）',value:this.gwcjObj.gwcjhexinCount},
+                {name:'M6及以上',value:this.gwcjObj.gwcjhexinCount},
               ],
               itemStyle: {
                   normal: {
@@ -432,7 +432,7 @@ components: {
                     that.pagePev() //获取的表格数据分组
                 })
                 break;
-              case '核心干部（M及以上）':
+              case 'M6及以上':
                 that.dataIndex = 0
                 var queryData = {}
                 setTimeout(() => {
@@ -481,7 +481,7 @@ components: {
                 position: 'insideLeft',
                 offset: [10, 0],
                 textBorderWidth: 2,
-                formatter: '{c}人 {b}'
+                formatter: '{c}人 / {b}'
             }
         }
     　　// 绘制图表
@@ -679,7 +679,14 @@ components: {
                 },
             },
             yAxis: {
-                type: 'value'
+                type: 'value',
+                name: '单位（人）'
+            },
+            grid: {
+                left: '2%',
+                right: '3%',
+                bottom: '2%',
+                containLabel: true
             },
             series: [{
                 label: seriesLabel,
@@ -800,7 +807,7 @@ components: {
                 {
                     name: '访问来源',
                     type: 'pie',
-                    radius: ['50%', '60%'],
+                    // radius: ['50%', '60%'],
                     avoidLabelOverlap: false,
                     label: {
                         show: true,
@@ -905,7 +912,7 @@ components: {
                     position:'outer',
                     alignTo:'edge',
                     margin:10,
-                    formatter: '{c}人 {d}% \n\n',
+                    formatter: '{c}人 / {d}% \n\n',
                     padding: [0,0],
                     textStyle: {
                         color: "#f64971",
@@ -1032,8 +1039,8 @@ components: {
         // console.log(data)
         //截取部门
         let result = data.content.split( "-" )
-        this.results = result[1]
-        // console.log(result1)
+        this.results = result[0]
+        console.log(this.results)
         this.selectDeptContent = this.results
         this.selectDeptId = data.deptId
         this.selectDeptGrade = data.grade

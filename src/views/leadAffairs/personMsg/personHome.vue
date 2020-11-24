@@ -6,16 +6,16 @@
             <div class="sidebox">
               <div class="back" @click="backRoster" v-if="seeFlag == 0">
                 <!-- <i class="iconfont icon-fanhui"></i> 返回 -->
-                 <van-button type="primary" color="#fc5f10" size="mini" style="width:23.333%">返回</van-button>
+                 <van-button type="primary" color="#fc5f10" size="mini">返回</van-button>
               </div>
               <div class="back" @click="backChanges" v-if="seeFlag == 1">
-                <i class="iconfont icon-fanhui"></i> 返回
+                <van-button type="primary" color="#fc5f10" size="mini">返回</van-button>
               </div>
               <div class="back" @click="backperStr" v-if="seeFlag == 2">
-                <i class="iconfont icon-fanhui"></i> 返回
+                <van-button type="primary" color="#fc5f10" size="mini">返回</van-button>
               </div>
               <div class="back" @click="backRetStr" v-if="seeFlag == 3">
-                <i class="iconfont icon-fanhui"></i> 返回
+                <van-button type="primary" color="#fc5f10" size="mini">返回</van-button>
               </div>
                 <div class="contain">
                     <div>

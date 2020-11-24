@@ -360,6 +360,14 @@ export default {
         }else{
           this.$refs.hiddenBox[5].style.display = 'none'
         }
+        if(res.obj.isRenxiao == "Y"){
+          //人效分析有权限的人的res
+          localStorage.setItem("renxiaoOrganRes", JSON.stringify(res.obj.rxOgran));
+          localStorage.setItem("renxiaoCodeRes", JSON.stringify(res.obj.rxCode));
+        }else{
+          this.$refs.hiddenBox[3].style.display = 'none'
+          // console.log(this.$refs.hiddenBox)
+        }
       });
     },
     //获取组织下的部门
@@ -592,7 +600,6 @@ export default {
     },
     ...mapMutations({
       save_type: "save_type",
-      to_Roster: "to_Roster",
     }),
     //编辑排序
     edit() {
@@ -742,7 +749,6 @@ export default {
       switch (teamName) {
         case "花名册":
           this.save_type(sortNum);
-          this.to_Roster(0);
           this.$router.push({ name: "roster" });
           break;
         case "流失率":

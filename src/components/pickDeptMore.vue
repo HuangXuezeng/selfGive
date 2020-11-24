@@ -109,6 +109,11 @@ export default {
       type: Boolean,
       default: false
     },
+    //区分人效分析的组织取值
+    renxiaoNum: {
+      type: Boolean,
+      default: false
+    },
     //区别单选和多选的标志，与团队培育分开
     isSelctall: {
       type: Boolean,

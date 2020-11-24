@@ -29,11 +29,11 @@
             <p><span>专业：</span><span>{{personList.a011971}}</span></p>
             <p><span>编制类型：</span><span>{{personList.a01165}}</span></p>
             <p><span>参加工作时间：</span><span>{{personList.A0141}}</span></p>
-            <p><span>银行名称：</span><span>{{personList.a01191}}</span></p>
+            <!-- <p><span>银行名称：</span><span>{{personList.a01191}}</span></p>
             <p><span>开户行：</span><span>{{personList.a01113}}</span></p>
             <p><span>银行卡号：</span><span>{{personList.a01102}}</span></p>
             <p><span>公积金客户号：</span><span>{{personList.a01602}}</span></p>
-            <p><span>驻外医疗：</span><span>{{personList.a01600}}</span></p>
+            <p><span>驻外医疗：</span><span>{{personList.a01600}}</span></p> -->
             <p><span>是否为退伍军人：</span><span>{{personList.a01185}}</span></p>
             <!-- <p><span>身份证正面：</span><span @click="seePdf" style="border-bottom:1px solid #ccc;padding:2px">{{personList.idcardFileName1}}</span></p>
             <p><span>身份证反面：</span><span @click="seePdf1" style="border-bottom:1px solid #ccc;padding:2px">{{personList.idcardFileName2}}</span></p>

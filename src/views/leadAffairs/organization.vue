@@ -58,6 +58,7 @@
       <div class="table">
         <v-table
           ref="table"
+          :is-loading="isLoading"
           is-horizontal-resize
           :height="400"
           style="width:100%;font-size:14px"
@@ -98,10 +99,12 @@
         @click-input="showPost1 = true"
         readonly
       />
+      <div class="titlechart" v-if="showecharts">全员在编情况</div>
       <div class="postrank" v-if="showecharts">
         <div class="pie" ref="chart1" id="chart1"></div>
       </div>
-      <div class="postrank" style="margin-top:10px" v-if="showecharts">
+      <div class="titlechart" v-if="showecharts">干部在编情况</div>
+      <div class="postrank" v-if="showecharts">
         <div class="pie" ref="chart" id="chart"></div>
       </div>
     </div>
@@ -123,18 +126,18 @@
     <!-- 选择岗位分类一的弹窗 -->
     <van-popup
       v-model="showPost"
-      get-container="body"
       position="bottom"
       :style="{ height: '50%' }"
+      get-container="body"
     >
-      <van-picker
-        title="请选择"
-        show-toolbar
-        :columns="columns2"
-        @confirm="onConfirm1"
-        value-key="content"
-        @cancel="showPost = false"
-      />
+      <div class="fenlei">
+        <van-checkbox-group v-model="result1" ref="checkboxGroup">
+        <van-checkbox v-for="item in columns2" :key="item.code" :name="item" style="padding:10px;text-align:center">{{
+          item.content
+          }}</van-checkbox>
+        </van-checkbox-group>
+        <van-button type="info" size="mini" @click="onConfirm1" style="width:100%">确定</van-button>
+      </div>
     </van-popup>
     <!-- 选择岗位分类一的弹窗二 -->
     <van-popup
@@ -166,6 +169,9 @@ export default {
   },
   data() {
     return {
+      isLoading: true, //表格数据加载
+      result1: [],//岗位分类一
+      result2: [],//岗位分类一（二）
       showecharts: false,
       deptId: [],
       deptIdStr: '',
@@ -174,9 +180,9 @@ export default {
       showPost: false, //搜索选择岗位分类一弹窗
       showPost1: false, //图形选择岗位分类一弹窗
       selectPost: '', //岗位分类1
-      selectPostId: '', //岗位分类1传给后台值
+      selectPostId: [], //岗位分类1传给后台值
       selectPost1: '', //图形选择岗位分类1
-      selectPostId1: '', //图形选择岗位分类1传给后台值
+      selectPostId1: [], //图形选择岗位分类1传给后台值
       selectTime: "", //选择年值
       minDate: new Date(1980, 0, 1),
       maxDate: new Date(2030, 10, 1),
@@ -229,6 +235,19 @@ export default {
           isResize: true
         },
         {
+          field: "more",
+          title: "超编",
+          width: 100,
+          titleAlign: "center",
+          columnAlign: "center",
+          // formatter: function(rowData, rowIndex, pagingIndex, field) {
+          //   if(rowData[field] == '-3'){
+          //     return `<div class="overauto">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈</div>`
+          //   }
+          // },
+          isResize: true
+        },
+        {
           field: "cadreDingbian",
           title: "干部在编",
           width: 150,
@@ -244,19 +263,6 @@ export default {
           columnAlign: "center",
           isResize: true
         },
-        {
-          field: "more",
-          title: "超缺编",
-          width: 100,
-          titleAlign: "center",
-          columnAlign: "center",
-          // formatter: function(rowData, rowIndex, pagingIndex, field) {
-          //   if(rowData[field] == '-3'){
-          //     return `<div class="overauto">哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈啊哈哈哈哈</div>`
-          //   }
-          // },
-          isResize: true
-        }
       ], 
       tableData1: [], //一级单位编制情况表格
       echartData1: [],
@@ -284,10 +290,21 @@ export default {
       this.showTime = false;
     },
     //确认选择的岗位分类一
-    onConfirm1(picker) {
-        console.log(picker)
-      this.selectPost = picker.content;
-      this.selectPostId = picker.code;
+    onConfirm1() {
+      // console.log(this.result1)
+      let str = "";
+      let val = "";
+      for (let i in this.result1) {
+        str += this.result1[i].content + ",";
+        // val += this.result1[i].code + ",";
+        this.selectPostId.push(this.result1[i].code)
+      }
+      if (str.length > 0) {
+        str = str.substr(0, str.length - 1);
+        // val = val.substr(0, val.length - 1);
+      }
+      this.selectPost = str
+      this.result1 = [];
       this.showPost = false;
     },
     //确认图形选择的岗位分类一
@@ -300,16 +317,15 @@ export default {
         deptId: this.deptIdStr,
         year: this.selectTime,
         postOne: this.selectPostId1,
-        sign: 'postOne'
       }
       selectDraw(selectData).then(res=>{
         let monthArr1 = []
         let echartArr3 = []
         let echartArr4 = []
-        for(let i in res.obj){
-          monthArr1.push(res.obj[i].time)
-          echartArr3.push(res.obj[i].avgOnjob)
-          echartArr4.push(res.obj[i].dingbian)
+        for(let i in res.obj.postOne){
+          monthArr1.push(res.obj.postOne[i].time)
+          echartArr3.push(res.obj.postOne[i].avgOnjob)
+          echartArr4.push(res.obj.postOne[i].dingbian)
         }
         this.monthData1 = monthArr1
         this.echartData3 = echartArr3
@@ -341,11 +357,13 @@ export default {
       let queryData = {
         deptCode: JSON.parse(localStorage.getItem("bianzhiCodeRes")),
         year: '',
-        postOne: '',
+        postOne: [],
         ids: []
       }
       selectBianzhi(queryData).then(res=>{
         this.tableData1 = res.obj
+        //请求到数据之后停止加载
+        this.isLoading = false;
       })
     },
     //给value加字段名方法
@@ -379,6 +397,8 @@ export default {
       selectBianzhi(queryData).then(res=>{
         if(res.code == 1000){
           this.tableData1 = res.obj
+          //请求到数据之后停止加载
+          this.isLoading = false;
         }else{
           Toast.fail(res.msg)
         }
@@ -390,13 +410,14 @@ export default {
       this.$refs.select.select = "";
       this.deptId = [] //清空部门值
       this.$refs.select.restFlag = true;
-      this.selectPostId = ""; //岗位分类1
+      this.selectPostId = []; //岗位分类1
       this.selectPost = '' //岗位分类1
       this.selectTime = '' //选择年值
     },
     //在编情况
     initCharts() {
       let myChart = this.$echarts.init(this.$refs.chart);
+      let data3 = [this.echartData2[0]]
       let seriesLabel = {
         normal: {
           show: true,
@@ -407,7 +428,7 @@ export default {
       };
       let seriesLabel1 = {
         normal: {
-          show: true,
+          show: false,
           position: "inside", //在上方显示
           textBorderWidth: 2,
           formatter: `{c}人`
@@ -436,7 +457,7 @@ export default {
             show: true,
             realtime: true,
             start: 0,
-            end: 50
+            end: 100
           },
           {
             type: "inside",
@@ -460,16 +481,20 @@ export default {
         yAxis: [
           {
             type: "value",
-            name: "在编",
+            name: "干部全年定编（单位：人）",
             axisLabel: {
-              formatter: "{value}人"
+              formatter: "{value}"
+            },
+            nameTextStyle: {
+              padding: [0, 0, 0, 90]
             }
           },
           {
+            show:false,
             type: "value",
-            name: "定编",
+            name: "干部全年定编",
             axisLabel: {
-              formatter: "{value} 人"
+              formatter: "{value}"
             }
           }
         ],
@@ -477,15 +502,53 @@ export default {
           {
             label: seriesLabel,
             name: "人数",
-            type: "bar",
+            type: "line",
             data: this.echartData1
           },
+          // {
+          //   label: seriesLabel,
+          //   name: "人数",
+          //   type: "line",
+          //   data: this.echartData2,
+          // },
           {
-            label: seriesLabel1,
-            name: "定编",
-            type: "line",
-            yAxisIndex: 1,
-            data: this.echartData2
+            // label: seriesLabel,
+            name: '定编',
+            type: 'line',
+            data: data3,
+            markLine: {
+                // data: [{
+                //   type: 'average'
+                // }],
+                // label:{
+                //     position:"middle",         //将警示值放在哪个位置，三个值“start”,"middle","end"  开始  中点 结束
+                //     formatter: data3[0]+'人'
+                // },
+
+                // symbol: "none", //是否显示基准线的箭头
+              silent: true, // 鼠标移上是否有响应（线变粗）
+              data: [
+                {
+                  yAxis: data3[0],
+                  //type: "min/max/average" // 特殊的标注类型，用于标注最大值最小值等。
+                  lineStyle: { // 线的样式
+                    color: "#fc5f10",
+                    width: 1,
+                    opacity: 0.8
+                  },
+                  label: { // 文字的样式，默认是白色，有时候文字不显示，可能是颜色的问题
+                    color: "#fc5f10"
+                  }
+                },
+              ],
+              label: { // 样式也可以统一设置
+                padding: [-13, -40, 0, 0],
+                position:"middle",
+                formatter: function (params) {
+                  return `${params.value+'人'}`
+                }
+              }
+            },
           },
         ]
       });
@@ -495,6 +558,7 @@ export default {
     },
     initCharts1() {
       let myChart = this.$echarts.init(this.$refs.chart1);
+      let data3 = [this.echartData4[0]]
       let seriesLabel = {
         normal: {
           show: true,
@@ -534,7 +598,7 @@ export default {
             show: true,
             realtime: true,
             start: 0,
-            end: 50
+            end: 100
           },
           {
             type: "inside",
@@ -558,16 +622,20 @@ export default {
         yAxis: [
           {
             type: "value",
-            name: "人数",
+            name: "全年定编（单位：人）",
             axisLabel: {
-              formatter: "{value}人"
+              formatter: "{value}"
+            },
+            nameTextStyle: {
+              padding: [0, 0, 0, 70]
             }
           },
           {
+            show:false,
             type: "value",
-            name: "定编",
+            name: "全年定编",
             axisLabel: {
-              formatter: "{value} 人"
+              formatter: "{value}"
             }
           }
         ],
@@ -575,16 +643,47 @@ export default {
           {
             label: seriesLabel,
             name: "人数",
-            type: "bar",
+            type: "line",
             data: this.echartData3
           },
           {
-            label: seriesLabel1,
-            name: "定编",
-            type: "line",
-            yAxisIndex: 1,
-            data: this.echartData4
-          }
+            // label: seriesLabel,
+            name: '年度人效目标',
+            type: 'line',
+            data: data3,
+            markLine: {
+                // data: [{
+                //   type: 'average'
+                // }],
+                // label:{
+                //     position:"middle",         //将警示值放在哪个位置，三个值“start”,"middle","end"  开始  中点 结束
+                //     formatter: data3[0]+'人'
+                // },
+                // symbol: "none", //是否显示基准线的箭头
+                silent: true, // 鼠标移上是否有响应（线变粗）
+                data: [
+                  {
+                    yAxis: data3[0],
+                    //type: "min/max/average" // 特殊的标注类型，用于标注最大值最小值等。
+                    lineStyle: { // 线的样式
+                      color: "#fc5f10",
+                      width: 1,
+                      opacity: 0.8
+                    },
+                    label: { // 文字的样式，默认是白色，有时候文字不显示，可能是颜色的问题
+                      color: "#fc5f10"
+                    }
+                  },
+                ],
+                label: { // 样式也可以统一设置
+                  padding: [-13, -40, 0, 0],
+                  position:"middle",
+                  formatter: function (params) {
+                    return `${params.value+'人'}`
+                  }
+                }
+            },
+          },
         ]
       });
       window.onresize = myChart.resize;
@@ -609,40 +708,49 @@ export default {
         deptId: data.deptId,
         year: this.selectTime,
         postOne: this.selectPostId1,
-        sign: 'cadre'
       }
       //干部的数据
       selectDraw(selectData).then(res=>{
         let monthArr = []
         let echartArr1 = []
         let echartArr2 = []
-        for(let i in res.obj){
-          monthArr.push(res.obj[i].time)
-          echartArr1.push(res.obj[i].avgOnjob)
-          echartArr2.push(res.obj[i].dingbian)
+        let monthArr1 = []
+        let echartArr3 = []
+        let echartArr4 = []
+        for(let i in res.obj.cadre){
+          monthArr.push(res.obj.cadre[i].time)
+          echartArr1.push(res.obj.cadre[i].avgOnjob)
+          echartArr2.push(res.obj.cadre[i].dingbian)
         }
         this.monthData = monthArr
         this.echartData1 = echartArr1
         this.echartData2 = echartArr2
-        this.initCharts()
-        this.initCharts1()
-      })
-      //岗位分类一的数据
-      selectData.sign = 'postOne'
-      selectDraw(selectData).then(res=>{
-        let monthArr1 = []
-        let echartArr3 = []
-        let echartArr4 = []
-        for(let i in res.obj){
-          monthArr1.push(res.obj[i].time)
-          echartArr3.push(res.obj[i].avgOnjob)
-          echartArr4.push(res.obj[i].dingbian)
+        for(let i in res.obj.postOne){
+          monthArr1.push(res.obj.postOne[i].time)
+          echartArr3.push(res.obj.postOne[i].avgOnjob)
+          echartArr4.push(res.obj.postOne[i].dingbian)
         }
         this.monthData1 = monthArr1
         this.echartData3 = echartArr3
         this.echartData4 = echartArr4
+        this.initCharts()
         this.initCharts1()
       })
+      //岗位分类一的数据
+      // selectDraw(selectData).then(res=>{
+      //   let monthArr1 = []
+      //   let echartArr3 = []
+      //   let echartArr4 = []
+      //   for(let i in res.obj){
+      //     monthArr1.push(res.obj[i].time)
+      //     echartArr3.push(res.obj[i].avgOnjob)
+      //     echartArr4.push(res.obj[i].dingbian)
+      //   }
+      //   this.monthData1 = monthArr1
+      //   this.echartData3 = echartArr3
+      //   this.echartData4 = echartArr4
+      //   this.initCharts1()
+      // })
     },
     //单元格样式
     columnCellClass(rowIndex, columnName, rowData) {
@@ -707,5 +815,16 @@ export default {
       height: 100%;
     }
   }
+  .titlechart{
+    padding 10px 10px 10px 10px
+    text-align center
+    font-weight 700
+    color #f39f57
+    background-color: #ffdab9;
+  }
+}
+.fenlei{
+  padding 10px
+  text-align center
 }
 </style>

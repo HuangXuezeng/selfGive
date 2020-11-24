@@ -18,7 +18,9 @@
       <choosedepartment
         ref="resetForm"
         @transferFa="selctdept"
+        @getIsdownVal="getIsdownVal"
         :Farequired="true"
+        :showSwitchFlag="true"
       ></choosedepartment>
       <div class="btns">
         <van-button
@@ -51,18 +53,18 @@
           <p>{{ totalData.realOnjob }}</p>
         </div>
       </div>
-      <div class="count">
+       <div class="count">
         <div class="count_left">
           <p>流失人数</p>
           <p @click="runoffClick">{{ totalData.runoffSum }}</p>
-          <p>干部流失人数</p>
-          <p @click="cadreClick">{{ totalData.cadreRunoffSum }}</p>
+          <!-- <p>干部流失人数</p>
+          <p @click="cadreClick">{{ totalData.cadreRunoffSum }}</p> -->
         </div>
         <div class="count_right">
           <p>流失率</p>
           <p>{{ totalData.runoffRate }}</p>
-          <p>干部流失率</p>
-          <p>{{ totalData.cadreRunoffRate }}</p>
+          <!-- <p>干部流失率</p>
+          <p>{{ totalData.cadreRunoffRate }}</p> -->
         </div>
       </div>
       <div class="flex">
@@ -81,6 +83,16 @@
         <div class="flexfore">
           <p>被动流失率</p>
           <p>{{ totalData.passiveRunoffRate }}</p>
+        </div>
+      </div>
+      <div class="count">
+        <div class="count_left">
+          <p>干部流失人数</p>
+          <p @click="cadreClick">{{ totalData.cadreRunoffSum }}</p>
+        </div>
+        <div class="count_right">
+          <p>干部流失率</p>
+          <p>{{ totalData.cadreRunoffRate }}</p>
         </div>
       </div>
     </div>
@@ -136,9 +148,15 @@
     </div>
     <!-- 按每月情况 -->
     <div class="onedept" v-if="tableData !== null">
-      <p class="titlea"><span class="borleft"></span> 按每月情况</p>
+      <p class="titlea"><span class="borleft"></span> 按人员每月情况</p>
       <div class="postrank">
         <div class="pie" ref="chart1" id="chart1"></div>
+      </div>
+    </div>
+    <div class="onedept" v-if="tableData !== null">
+      <p class="titlea"><span class="borleft"></span> 按干部每月情况</p>
+      <div class="postrank">
+        <div class="pie" ref="chart2" id="chart2"></div>
       </div>
     </div>
     <!-- 选择年弹窗 -->
@@ -214,6 +232,7 @@ export default {
   },
   data() {
     return {
+      isDown: 'Y', //默认传给后台的（自动包含下级）值
       isLoading: true, //弹窗表格的加载
       isLoading1: true, //每月明细表格的加载
       isLoading2: true, //按职级表格的加载
@@ -293,17 +312,6 @@ export default {
           }
         },
         {
-          field: "cadreRunoffSum",
-          title: "干部流失人数",
-          width: 150,
-          titleAlign: "center",
-          columnAlign: "center",
-          isResize: true,
-          formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
-          }
-        },
-        {
           field: "runoffRate",
           title: "流失率",
           width: 100,
@@ -334,6 +342,28 @@ export default {
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
             return `<span class='cell-edit-color-f'>${rowData[field]}</span>`;
+          }
+        },
+        {
+          field: "cadreRunoffSum",
+          title: "干部流失人数",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
+          }
+        },
+        {
+          field: "cadreRunoffRate",
+          title: "干部流失率",
+          width: 100,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
           }
         }
       ],
@@ -588,21 +618,21 @@ export default {
     },
     //按岗位分类一
     initCharts() {
-      console.log(this.totalData.postMap.yxl.runoffRate);
+      // console.log(this.totalData.postMap.yxl.runoffRate);
       let myChart = this.$echarts.init(this.$refs.chart);
       let seriesLabel = {
         normal: {
           show: true,
           position: "insideLeft", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}人 {b}`
+          formatter: `{c}人 / {b}`
         }
       };
       let data1 = [
-        {
-          name: this.totalData.postMap.gd.runoffRate,
-          value: this.totalData.postMap.gd.runoffSum
-        },
+        // {
+        //   name: this.totalData.postMap.gd.runoffRate,
+        //   value: this.totalData.postMap.gd.runoffSum
+        // },
         {
           name: this.totalData.postMap.zjl.runoffRate,
           value: this.totalData.postMap.zjl.runoffSum
@@ -621,7 +651,7 @@ export default {
         }
       ];
       let data2 = [
-        { name: "股东" },
+        // { name: "股东" },
         { name: "直接类" },
         { name: "营销类" },
         { name: "技术类" },
@@ -653,7 +683,7 @@ export default {
         },
         yAxis: {
           type: "category",
-          data: ["股东", "直接类", "营销类", "技术类", "职能类"]
+          data: ["直接类", "营销类", "技术类", "职能类"]
         },
         series: [
           {
@@ -670,7 +700,6 @@ export default {
                 color: function(params) {
                   //自定义颜色
                   var colorList = [
-                    "#eb8b51",
                     "#ad1c3a",
                     "#ccd2c1",
                     "#61a455",
@@ -697,23 +726,24 @@ export default {
           )[1];
           // console.log(data1[xIndex])
           switch (data2[xIndex].name) {
-            case "股东":
-              that.dataIndex = 0
-              setTimeout(() => {
-                that.showTable = true;
-              }, 500);
-              // console.log(data2[xIndex].name);
-              var queryData = {
-                key: that.totalData.postMap.gd.runoffPerson,
-                jobnumber: localStorage.getItem('jobNum')
-              }
-              selectPerson(queryData).then(res=>{
-                that.popupTableData = res.obj;
-                that.isLoading = false
-                that.pagePev(); //分页处理
-              })
-              break;
+            // case "股东":
+            //   that.dataIndex = 0
+            //   setTimeout(() => {
+            //     that.showTable = true;
+            //   }, 500);
+            //   // console.log(data2[xIndex].name);
+            //   var queryData = {
+            //     key: that.totalData.postMap.gd.runoffPerson,
+            //     jobnumber: localStorage.getItem('jobNum')
+            //   }
+            //   selectPerson(queryData).then(res=>{
+            //     that.popupTableData = res.obj;
+            //     that.isLoading = false
+            //     that.pagePev(); //分页处理
+            //   })
+            //   break;
             case "直接类":
+              console.log(data2[xIndex].name)
               that.dataIndex = 0
               setTimeout(() => {
                 that.showTable = true;
@@ -729,6 +759,7 @@ export default {
               })
               break;
             case "营销类":
+              console.log(data2[xIndex].name)
               that.dataIndex = 0
               setTimeout(() => {
                 that.showTable = true;
@@ -744,6 +775,7 @@ export default {
               })
               break;
             case "技术类":
+              console.log(data2[xIndex].name)
               that.dataIndex = 0
               setTimeout(() => {
                 that.showTable = true;
@@ -759,6 +791,7 @@ export default {
               })
               break;
             case "职能类":
+              console.log(data2[xIndex].name)
               that.dataIndex = 0
               setTimeout(() => {
                 that.showTable = true;
@@ -780,7 +813,7 @@ export default {
         }
       });
     },
-    //每月情况
+    //人员每月情况
     initCharts1() {
       let myChart = this.$echarts.init(this.$refs.chart1);
       let seriesLabel = {
@@ -812,9 +845,7 @@ export default {
             // console.log(params);
             return params[0].name+'<br>'
             +'<div class="runoff" style="background-color:#c23531"></div>'+'流失人数：'+params[0].data+'<br>'
-            +'<div class="runoff" style="background-color:#2f4554"></div>'+'干部流失人数：'+params[1].data+'<br>'
-            +'<div class="runoff" style="background-color:#61a0a8"></div>'+'流失率：'+params[2].data+'%<br>'
-            +'<div class="runoff" style="background-color:#d48265"></div>'+'干部流失率：'+params[3].data+'%<br>'
+            +'<div class="runoff" style="background-color:#61a0a8"></div>'+'流失率：'+params[1].data+'%<br>'
           }
         },
         dataZoom: [
@@ -822,7 +853,7 @@ export default {
             show: true,
             realtime: true,
             start: 0,
-            end: 50
+            end: 100
           },
           {
             type: "inside",
@@ -833,6 +864,12 @@ export default {
         ],
         legend: {
           data: ["蒸发量", "降水量", "平均温度"]
+        },
+        grid: {
+            left: '3%',
+            right: '3%',
+            bottom: '10%',
+            containLabel: true
         },
         xAxis: [
           {
@@ -847,16 +884,23 @@ export default {
         yAxis: [
           {
             type: "value",
-            name: "流失人数",
+            name: "流失人数（单位：人）",
             axisLabel: {
-              formatter: "{value}人"
+              formatter: "{value}"
+            },
+            nameTextStyle: {
+              // align: 'verticalAlign',
+              padding: [0, 0, 0, 40]
             }
           },
           {
             type: "value",
-            name: "流失率",
+            name: "流失率（单位：%）",
             axisLabel: {
-              formatter: "{value} %"
+              formatter: "{value}"
+            },
+            nameTextStyle: {
+              padding: [0, 50, 0, 0]
             }
           }
         ],
@@ -868,17 +912,115 @@ export default {
             data: this.runArr
           },
           {
-            label: seriesLabel,
-            name: "干部流失人数",
-            type: "bar",
-            data: this.runGbArr
-          },
-          {
             label: seriesLabel1,
             name: "流失率",
             type: "line",
             yAxisIndex: 1,
             data: this.runLvArr
+          }
+        ]
+      });
+      window.onresize = myChart.resize;
+      //点击事件
+      // myChart.on("click", function(params) {});
+    },
+    //干部每月情况
+    initCharts2() {
+      let myChart = this.$echarts.init(this.$refs.chart2);
+      let seriesLabel = {
+        normal: {
+          show: true,
+          position: "inside", //在上方显示
+          textBorderWidth: 2,
+          formatter: `{c}人`
+        }
+      };
+      let seriesLabel1 = {
+        normal: {
+          show: true,
+          position: "inside", //在上方显示
+          textBorderWidth: 2,
+          formatter: `{c}%`
+        }
+      }; // 绘制图表
+      myChart.setOption({
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "cross",
+            crossStyle: {
+              color: "#999"
+            }
+          },
+          formatter: function(params) {
+            // console.log(params);
+            return params[0].name+'<br>'
+            +'<div class="runoff" style="background-color:#2f4554"></div>'+'干部流失人数：'+params[0].data+'<br>'
+            +'<div class="runoff" style="background-color:#d48265"></div>'+'干部流失率：'+params[1].data+'%<br>'
+          }
+        },
+        dataZoom: [
+          {
+            show: true,
+            realtime: true,
+            start: 0,
+            end: 100
+          },
+          {
+            type: "inside",
+            realtime: true,
+            start: 0,
+            end: 50
+          }
+        ],
+        legend: {
+          data: ["蒸发量", "降水量", "平均温度"]
+        },
+        grid: {
+            left: '3%',
+            right: '3%',
+            bottom: '10%',
+            containLabel: true
+        },
+        xAxis: [
+          {
+            type: "category",
+            // data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月'],
+            data: this.runTime,
+            axisPointer: {
+              type: "shadow"
+            }
+          }
+        ],
+        yAxis: [
+          {
+            type: "value",
+            name: "干部流失人数（单位：人）",
+            axisLabel: {
+              formatter: "{value}"
+            },
+            nameTextStyle: {
+              // align: 'verticalAlign',
+              padding: [0, 0, 0, 110]
+            }
+          },
+          {
+            type: "value",
+            name: "干部流失率（单位：%）",
+            axisLabel: {
+              formatter: "{value}"
+            },
+            nameTextStyle: {
+              padding: [0, 50, 0, 0]
+            }
+          }
+        ],
+        series: [
+          {
+            label: seriesLabel,
+            name: "干部流失人数",
+            type: "bar",
+            data: this.runGbArr
           },
           {
             label: seriesLabel1,
@@ -937,8 +1079,18 @@ export default {
       // console.log(data)
       this.deptId = data.deptId;
     },
+    // 是否包含下级部门的事件
+    getIsdownVal(data){
+      // console.log(data)
+      if(data){
+        this.isDown = 'Y'
+      }else{
+        this.isDown = 'N'
+      }
+    },
     //查询
     search() {
+      this.runTime = [] //时间置空，防止图表中的时间重复
       if (this.selectYear == "") {
         Notify({ type: "warning", message: "需要先选择年份才能进行查询！" });
       } else {
@@ -947,6 +1099,7 @@ export default {
           month: this.selectMonth,
           deptId: this.deptId,
           deptIds: this.deptIds,
+          isDown: this.isDown,
           jobnumber: localStorage.getItem('jobNum')
         };
         queryRunoff(queryData).then(res => {
@@ -963,6 +1116,7 @@ export default {
           }
           this.initCharts();
           this.initCharts1();
+          this.initCharts2();
         });
       }
     },
@@ -976,6 +1130,7 @@ export default {
         month: this.selectMonth,
         deptId: this.deptId,
         deptIds: this.deptIds,
+        isDown: this.isDown,
         jobnumber: localStorage.getItem('jobNum')
       };
       queryRunoff(queryData).then(res => {
@@ -995,6 +1150,7 @@ export default {
         }
         this.initCharts();
         this.initCharts1();
+        this.initCharts2();
       });
     },
     //转换时间戳
@@ -1095,6 +1251,7 @@ export default {
       this.popupTableData = result[0]; //默认显示100条
       this.fenyeData = result;
     },
+    // ceshi(){},
     ...mapMutations({
       save_type: "save_type",
       // arr_flag: "arr_flag",

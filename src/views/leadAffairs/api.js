@@ -264,3 +264,49 @@ export function selectDraw (selectData) {
     data: qs.stringify(selectData)
   })
 }
+
+//人效分析部分—————————————————————————————————————————————————————————————————————
+//获取下拉框的值
+export function querySelectVal (selectData) {
+  return fetch({
+    url: `/kukacms/self/analysis/getSelector`,
+    method: 'post',
+    data: qs.stringify(selectData)
+  })
+}
+//查询人效
+export function selectAnalysisCondition (selectData) {
+  return fetch({
+    url: `/kukacms/self/analysis/selectAnalysisCondition`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(selectData)
+  })
+}
+//下一页
+export function nextPage (selectData) {
+  return fetch({
+    url: `/kukacms/self/analysis/nextPage`,
+    method: 'post',
+    data: qs.stringify(selectData)
+  })
+}
+//获取图形单选部门数据
+export function getDrawDept (drawDatas) {
+  return fetch({
+    url: `/kukacms/self/analysis/getDrawDept`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    method: 'post',
+    data: JSON.stringify(drawDatas)
+  })
+}
+//查询图形数据
+export function selectDrawInfo (queryData) {
+  return fetch({
+    url: `/kukacms/self/analysis/selectDrawInfo`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}

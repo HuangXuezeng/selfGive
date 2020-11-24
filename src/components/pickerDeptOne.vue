@@ -14,6 +14,22 @@
       :style="{ height: '70%' }"
       get-container="body"
     >
+      <van-cell
+        center
+        title="是否自动包含下级部门"
+        title-style="color:red"
+        icon="setting"
+        v-if="showSwitch"
+      >
+        <template #right-icon>
+          <van-switch
+            size="15px"
+            :value="isDownValue"
+            @input="isDownMethods"
+            ref="isDown"
+          />
+        </template>
+      </van-cell>
       <el-tree
         :data="deptData"
         ref="tree"
@@ -58,9 +74,15 @@ export default {
       type: Boolean,
       default: false
     },
+    showSwitchFlag: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
+      showSwitch: false, //默认不显示是否包含下级，只有流失率页面可以显示
+      isDownValue: true, //默认包含下级部门
       deptData: [],
       selectedDepartment: "",
       showPickDept: false,
@@ -83,6 +105,9 @@ export default {
   },
   created() {
     this._getOrz();
+    if(this.showSwitchFlag){
+      this.showSwitch = true
+    }
     // if (this.Farequired) {
     //   this.reqireRule = [{ required: true, message: "请选择部门" }];
     //   this.deptPlacehoder = "必填";
@@ -208,6 +233,15 @@ export default {
     //关闭弹窗
     closeTree(){
       this.showPickDept = false
+    },
+    //默认包含下级部门事件
+    isDownMethods(){
+      if(this.isDownValue){
+        this.isDownValue = false
+      }else{
+        this.isDownValue = true
+      }
+      this.$emit('getIsdownVal',this.isDownValue)
     }
   },
   watch:{

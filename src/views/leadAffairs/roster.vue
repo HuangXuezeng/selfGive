@@ -918,7 +918,7 @@ export default {
       this.tableData = result[0]; //默认显示100条
       this.fenyeData = result;
     },
-    //加载更多数据
+    //下一页
     loadMore() {
       this.dataIndex++; //点击+1
       // if (this.dataIndex >= this.fenyeData.length) {
@@ -960,6 +960,7 @@ export default {
       const departRes = JSON.parse(localStorage.getItem("departRes"));
       console.log(departRes)
       this.deptData.push(departRes);
+      console.log(this.deptData)
       this.currentDept = departRes.currentDepartment;
       this.deptIds = departRes.deptIds;
     },
@@ -976,6 +977,7 @@ export default {
         }
       queryPerson(queryData).then(res => {
         this.tableData = res.obj;
+        //请求到数据之后停止加载
         this.isLoading = false;
         this.total = res.totalSize
         // this.pagePev(); //获取的表格数据分组
@@ -1931,7 +1933,7 @@ export default {
           this.tableData = res.obj;
           this.download = 2
           this.total = res.totalSize
-          // this.pagePev(); //获取的表格数据分组
+          // this.pagePev(); //获��的表格数据分组
         }else{
           Notify({ type: "warning", message: res.msg });
         }

@@ -9,11 +9,21 @@
             @click-input="showPost = true"
             readonly
           />
-          <choosedepartment 
+          <!-- <choosedepartment 
           ref="dept_content" 
           @transferFa="selctdept" 
           :Farequired="true">
-          </choosedepartment>
+          </choosedepartment> -->
+          <pickdeptmore
+          ref="select"
+          @confirmNode="selctdept"
+          :Farequired="true"
+          labelTitle="部门："
+          :workingNum="true"
+          :isSelctall="true"
+          :isFromRost="true"
+          :faDeptData="deptData"
+        ></pickdeptmore>
           <div class="btns">
               <van-button type="primary" size="small" color="#fc5f10" @click="search" style="width:45%;font-size:15px">查询</van-button>
               <van-button type="primary" size="small" color="#fc5f10" @click="reset" style="width:45%;font-size:15px">重置</van-button>
@@ -30,6 +40,7 @@
               <v-table 
               ref="table"
               :height="400" 
+              :is-loading="isLoading"
               style="font-size:14px"
               title-bg-color="#e5ecf0"
               :columns="columns1"
@@ -40,6 +51,12 @@
               :row-click="rowClick"	
               :column-cell-class-name="columnCellClass"
               ></v-table>	
+          </div>
+          <div class="more">
+            <van-tag type="warning">总条数：{{ total }}</van-tag>
+            <span style="float:right" @click="loadMore"
+              ><van-tag type="warning">下一页</van-tag></span
+            >
           </div>
         </div>
         <!-- 累计完成情况 -->
@@ -67,11 +84,27 @@
         </div> -->
         <!-- 每月收入 -->
         <div class="title">
+          <!-- 单选单位 -->
+          <choosedepartment
+            ref="resetForm"
+            @transferFa="selctdept1"
+            :workingNum="true"
+            :faDeptData="deptData"
+            :Farequired="true"
+          ></choosedepartment>
+          <!-- 选择岗位分类 -->
+          <van-field
+            v-model="selectPost1"
+            label="岗位分类一："
+            placeholder="请选择"
+            @click-input="showPost1 = true"
+            readonly
+          />
           <p class="titlea">
             <span class="borleft">每月收入</span>
             <span>（<span style="color:#ee0a24;font-weight:700">单位：万</span>）</span>
           </p>
-          <div class="charts">
+          <div class="charts" v-if="showecharts">
             <div class="pie" ref="chart" id="chart"></div>
           </div>
         </div>
@@ -97,13 +130,29 @@
         position="bottom"
         :style="{ height: '50%' }"
       >
+        <div class="fenlei">
+          <van-checkbox-group v-model="result1" ref="checkboxGroup">
+          <van-checkbox v-for="item in columns" :key="item.code" :name="item" style="padding:10px;text-align:center">{{
+            item.content
+            }}</van-checkbox>
+          </van-checkbox-group>
+          <van-button type="info" size="mini" @click="onConfirm1" style="width:100%">确定</van-button>
+        </div>
+      </van-popup>
+      <!-- 选择岗位分类一的弹窗二 -->
+      <van-popup
+        v-model="showPost1"
+        get-container="body"
+        position="bottom"
+        :style="{ height: '50%' }"
+      >
         <van-picker
           title="请选择"
           show-toolbar
           :columns="columns"
-          @confirm="onConfirm1"
+          @confirm="onConfirm2"
           value-key="content"
-          @cancel="showPost = false"
+          @cancel="showPost1 = false"
         />
       </van-popup>
     </div>
@@ -111,15 +160,30 @@
 <script>
 import { Notify } from 'vant';
 import { mapMutations } from 'vuex'
+import { querySelectVal,selectAnalysisCondition,nextPage,selectDrawInfo } from './api'
 import chooseDepartment from "@/components/pickerDeptOne.vue";
+import pickDeptMore from "@/components/pickDeptMore.vue";
 export default {
   components: {
-    choosedepartment: chooseDepartment
+    choosedepartment: chooseDepartment,
+    pickdeptmore: pickDeptMore
   },
   data () {
     return {
+      isLoading: true, //表格数据加载
+      showecharts: false, //显示异常图形
+      deptCodeStr: '', //单选的部门值
+      showPost1: false, //图形选择岗位分类一弹窗
+      selectPost1: '', //图形选择岗位分类1
+      selectPostId1: [], //图形选择岗位分类1传给后台值
+      dataIndex: 1, //分页页码
+      total: '', //总条数
+      deptData: [], //部门数据
+      depts: [], //部门选择值
+      result1: [], //选择岗位分类的checkbox
       selectYear: '', //选择年
       selectPost: '', //选择岗位分类一
+      selectPostId: [], //传给后台岗位分类一的值
       showyear: false, //年弹窗
       showPost: false, //年弹窗
       minDate: new Date(2010, 0,0),
@@ -127,13 +191,8 @@ export default {
       currentDate: new Date(),
       columnTime: [], //年
       results: '', //部门截取过后
-      columns: [],
-      tableData:[
-        {name:'北美事业部',danwei:'一部门',fenlei:'分类一',target:'目标111',yuerenxiao:'20%',tongbi:'35%',counts:'4300',leiji:'20%',jindu:'10%',chayi:-0.2},
-        {name:'北美事业部',danwei:'二部门',fenlei:'分类二',target:'目标111',yuerenxiao:'20%',tongbi:'35%',counts:'5600',leiji:'20%',jindu:'10%',chayi:0.22},
-        {name:'北美事业部',danwei:'三部门',fenlei:'分类三',target:'目标111',yuerenxiao:'20%',tongbi:'35%',counts:'300',leiji:'20%',jindu:'10%',chayi:3.3},
-        {name:'北美事业部',danwei:'四部门',fenlei:'分类四',target:'目标111',yuerenxiao:'20%',tongbi:'35%',counts:'400',leiji:'20%',jindu:'10%',chayi:-3.3}
-      ],
+      columns: [], //岗位分类
+      tableData:[],
       columns1:[
         {
           field: 'custome', width: 50, titleAlign: 'center', columnAlign: 'center',title: '序号',
@@ -141,30 +200,36 @@ export default {
               return index + 1
           }, isResize:true,
         },
-        {field: 'name', title: '一级单位', width: 150, titleAlign: 'center',columnAlign:'center'},
-        {field: 'danwei', title: '二级部门', width: 150, titleAlign: 'center',columnAlign:'center'},
-        {field: 'fenlei', title: '岗位分类', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'target', title: '年度人效目标', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'yuerenxiao', title: '月度人效', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'tongbi', title: '同比', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'counts', title: '累计人效', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'leiji', title: '累计同比', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'jindu', title: '人效进度', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'chayi', title: '进度差异', width: 150, titleAlign: 'center',columnAlign:'center',
-          // formatter: function (rowData,rowIndex,pagingIndex,field) {
-          //   // console.log(rowData[field]<0)
-          //   // if(rowData.chayi < 0){
-          //   //   return `<span class='cell-edit-color-a'>${rowData[field]}</span>`;
-          //   // }
-          // },
+        {field: 'time', title: '时间', width: 150, titleAlign: 'center',columnAlign:'center'},
+        {field: 'deptOne', title: '一级单位', width: 150, titleAlign: 'center',columnAlign:'center'},
+        {field: 'deptTwo', title: '二级部门', width: 150, titleAlign: 'center',columnAlign:'center'},
+        {field: 'postOne', title: '岗位分类一', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'rxUnit', title: '人效单位', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'rxTarget', title: '年度人效目标', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'monthRx', title: '月度人效', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'diff', title: '同比', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'cumulRx', title: '累计人效', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'cumulDiff', title: '累计同比', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'rxProgress', title: '人效进度', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'progressDiff', title: '进度差异', width: 150, titleAlign: 'center',columnAlign:'center',
+          formatter: function (rowData,rowIndex,pagingIndex,field) {
+            // console.log(rowData[field]<0)
+            if(rowData.chayi < 0){
+              return `<span class='cell-edit-color-a'>${rowData[field]}</span>`;
+            }else if(rowData.chayi >= 0){
+              return `<span>${rowData[field]}</span>`;
+            }
+          },
         },
-      ]
+      ],
+      timeData: [],
+      monthData: [],
+      ljData: [],
+      targetData: [],
     };
   },
   created(){
-    this.pickerYear() //初始化选择年
-    this.$store.state.arrflag = '' //清空标识
-    console.log(this.tableData)
+    this.initData() //初始化选择年
   },
   methods:{
       //表格行点击事件
@@ -176,9 +241,9 @@ export default {
       if (rowIndex % 2 == 0){
           return 'column-cell-class-name-test';
       }
-      if (rowData.chayi < 0 && columnName==='chayi'){
-          return 'cell-edit-color-a';
-      }
+      // if (rowData.chayi < 0 && columnName==='chayi'){
+      //     return 'cell-edit-color-a';select
+      // }
     },
     //选择年
     onConfirm(value, index) {
@@ -208,27 +273,106 @@ export default {
       }
       })
     },
+    initData(){
+      const renxiaoOrganRes = JSON.parse(localStorage.getItem("renxiaoOrganRes"))
+      const renxiaoCode = JSON.parse(localStorage.getItem("renxiaoCodeRes"))
+      // console.log(renxiaoCode)
+      this.deptData = renxiaoOrganRes
+      // this.pickerYear() //初始化选择年
+      this.$store.state.arrflag = '' //清空标识
+      //获取下拉选择值
+      querySelectVal().then(res=>{
+        this.columnTime = res.obj.year
+        this.columns = res.obj.postOne
+      })
+      //默认查询的人效
+      let selectData = {
+        year: this.selectYear,
+        ids: this.depts,
+        postOne: this.selectPostId,
+        deptCode: renxiaoCode,
+        jobnumber: localStorage.getItem('jobNum'),
+      }
+      selectAnalysisCondition(selectData).then(res=>{
+        this.total = res.totalSize
+        this.tableData = res.obj
+        //请求到数据之后停止加载
+        this.isLoading = false;
+      })
+    },
     //查询
     search(){
-      
+      const renxiaoCode = JSON.parse(localStorage.getItem("renxiaoCodeRes"))
+      let selectData = {
+        year: this.selectYear,
+        ids: this.depts,
+        postOne: this.selectPostId,
+        deptCode: renxiaoCode
+      }
+      selectAnalysisCondition(selectData).then(res=>{
+        this.tableData = res.obj
+        //请求到数据之后停止加载
+        this.isLoading = false;
+      })
     },
     //选择部门
     selctdept(data) {
-        console.log(data)
-        //截取部门
-        // let result = data.content.split( "-" )
-        // this.results = result[1]
-        // console.log(this.results)
-
-        // this.selectDeptContent = this.results
-        // this.selectDeptId = data.deptId
-        // this.selectDeptGrade = data.grade
+      console.log(data)
+      this.depts = data
+    },
+    //选择单位
+    selctdept1(data) {
+      // console.log(data)
+      this.showecharts = true
+      this.deptCodeStr = data.deptCode
+    },
+    //下一页
+    loadMore() {
+      this.dataIndex++; //点击+1
+      let queryData = {
+        jobnumber: localStorage.getItem('jobNum'),
+        page: this.dataIndex
+      }
+      nextPage(queryData).then(res=>{
+        if(res.obj == ''){
+          Notify({ type: "warning", message: "没有更多数据了哦~" })
+        }else{
+          this.tableData = this.tableData.concat(res.obj)
+        }
+      })
+    },
+    //确认图形选择的岗位分类一
+    onConfirm2(picker) {
+      console.log(picker)
+      if(this.deptCodeStr == ''){
+        Notify({ type: "warning", message: "请选择部门！" })
+        this.showPost1 = false;
+        return
+      }
+      this.selectPost1 = picker.content;
+      this.selectPostId1 = picker.code;
+      // 图形获取数据
+      let queryData = {
+        deptCode: this.deptCodeStr,
+        year: this.selectYear,
+        postOne: this.selectPostId1,
+      }
+      selectDrawInfo(queryData).then(res=>{
+        for(let i in res.obj){
+          this.timeData.push(res.obj[i].time)
+          this.monthData.push(res.obj[i].monthRx)
+          this.ljData.push(res.obj[i].cumulRx)
+          this.targetData.push(res.obj[i].rxTarget)
+        }
+        this.initCharts()
+      })
+      this.showPost1 = false;
     },
     initCharts () {
     　　let myChart = this.$echarts.init(this.$refs.chart);
-        let data1 = [6.8,8.3,13.7,17.5,22.5,28.6,34.1,41.0,0,0,0];
-        let data2 = [1.5,5.4,3.8,4.9,6.1,5.6,6.9,7.0,7.6,8.0,8.5,0];
-        let data3 = [30];
+        let data1 = this.ljData
+        let data2 = this.monthData
+        let data3 = this.targetData
         let seriesLabel = {
             normal: {
                 show: true,
@@ -244,7 +388,7 @@ export default {
     　　myChart.setOption({
               xAxis: {
                 type: 'category',
-                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月','8月','9月','10月','11月','12月']
+                data: this.timeData
               },
               yAxis: {
                   type: 'value'
@@ -263,14 +407,41 @@ export default {
                     data: data2,
                 },
                 {
-                  label: seriesLabel,
+                  // label: seriesLabel,
                   name: '年度人效目标',
                   type: 'line',
                   data: data3,
                   markLine: {
-                      data: [{
-                          type: 'average'
-                      }]
+                      // data: [{
+                      //   type: 'average'
+                      // }],
+                      // label:{
+                      //     position:"middle",         //将警示值放在哪个位置，三个值“start”,"middle","end"  开始  中点 结束
+                      //     formatter: data3[0]+'人'
+                      // },
+                      // symbol: "none", //是否显示基准线的箭头
+                      silent: true, // 鼠标移上是否有响应（线变粗）
+                      data: [
+                        {
+                          yAxis: data3[0],
+                          //type: "min/max/average" // 特殊的标注类型，用于标注最大值最小值等。
+                          lineStyle: { // 线的样式
+                            color: "#fc5f10",
+                            width: 1,
+                            opacity: 0.8
+                          },
+                          label: { // 文字的样式，默认是白色，有时候文字不显示，可能是颜色的问题
+                            color: "#fc5f10"
+                          }
+                        },
+                      ],
+                      label: { // 样式也可以统一设置
+                        padding: [-13, -40, 0, 0],
+                        position:"middle",
+                        formatter: function (params) {
+                          return `${params.value+'人'}`
+                        }
+                      }
                   },
                 },
             ],
@@ -279,7 +450,7 @@ export default {
                   show: true,
                   realtime: true,
                   start: 0,
-                  end: 60
+                  end: 100
               },
               {
                   type: 'inside',
@@ -322,10 +493,29 @@ export default {
         // });
 　　},
     //重置查询
-    reset(){},
+    reset(){
+      this.selectPost = ''
+      this.selectYear = ''
+      this.$refs.dept_content.restFlag = true
+      this.$refs.dept_content.selectedDepartment = ''
+    },
     //确认选择岗位分类一
-    onConfirm1(picker){
-      console.log(picker)
+    onConfirm1(){
+      // console.log(picker)
+      let str = "";
+      let val = "";
+      for (let i in this.result1) {
+        str += this.result1[i].content + ",";
+        // val += this.result1[i].code + ",";
+        this.selectPostId.push(this.result1[i].code)
+      }
+      if (str.length > 0) {
+        str = str.substr(0, str.length - 1);
+        // val = val.substr(0, val.length - 1);
+      }
+      this.selectPost = str
+      this.result1 = [];
+      this.showPost = false;
     },
     ...mapMutations({
       save_type:'save_type',
@@ -334,7 +524,6 @@ export default {
   },
   mounted(){
     // const departRes =  JSON.parse(localStorage.getItem('departRes'))
-    this.initCharts()
   },
   watch:{
     '$store.state.arrflag': function (newVal,oldVal) {
@@ -461,5 +650,13 @@ export default {
           height 100%
       }
     }
+  }
+  .fenlei{
+    padding 10px
+    text-align center
+  }
+  .more {
+    font-size: 14px;
+    padding: 10px;
   }
 </style>
