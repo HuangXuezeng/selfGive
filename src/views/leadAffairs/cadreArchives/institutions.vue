@@ -59,6 +59,7 @@ export default {
           this.nextDeptlist = this.deptList[0]
         } else {
           Toast.fail(res.msg);
+          this.$router.push({name:'cadreArchives'})
         }
         this.$refs.loadingSpin.shutdown();
       });

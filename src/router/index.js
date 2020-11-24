@@ -361,6 +361,7 @@ export default new Router({
       path: '/cadreArchives',
       name: 'cadreArchives',
       component: () => import('@/views/leadAffairs/cadreArchives/cadreArchives'),
+      meta: { keepAlive: true }
     },
     //机构展示
     {
@@ -410,7 +411,7 @@ export default new Router({
      * 薪酬结束
      */
     /**
-     * 干部财报开始
+     * 干部简报开始
      */
     {
       path: '/adresResultps',
@@ -422,8 +423,23 @@ export default new Router({
       name: 'cadresChange',
       component: () => import('@/views/adresResultts/cadresChange'),
     },
+    {
+      path: '/cadreReserve',
+      name: 'cadreReserve',
+      component: () => import('@/views/adresResultts/cadreReserve'),
+    },
+    {
+      path: '/departselect',
+      name: 'departselect',
+      component: () => import('@/views/adresResultts/departselect'),
+    },
+    {
+      path: '/cadresInventory',
+      name: 'cadresInventory',
+      component: () => import('@/views/adresResultts/cadresInventory'),
+    },
     /**
-     * 干部财报结束
+     * 干部简报结束
      */
     //查询员工信息
     {

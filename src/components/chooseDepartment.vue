@@ -144,7 +144,8 @@ export default {
       selectAllstyle: "background-color:Coral",
       labelStyle: "",
       restFlag: false, //花名册清空勾选,
-      autosize: { maxHeight: '25', minHeight: '20' }
+      autosize: { maxHeight: '25', minHeight: '20' },
+      screeningOnelist:[]
     };
   },
   created() {
@@ -263,6 +264,7 @@ export default {
             obj.checkedNodes[k].content
           );
         }
+        this.screeningOne(obj.checkedNodes)
         this.setbeforeSelectName(obj);
       } else {
         this.$refs.tree.setCheckedKeys([]);
@@ -276,6 +278,16 @@ export default {
         }
         for (let item of this.selectkeySet) {
           this.$refs.tree.setChecked(item, true, false);
+        }
+        this.screeningOne(obj.checkedNodes)
+      }
+    },
+    //干部财报需筛选一级单位deptid
+    screeningOne(list){
+      this.screeningOnelist = []
+      for(let i in list){
+        if(list[i].grade == 2){
+          this.screeningOnelist.push(list[i].deptId)
         }
       }
     },
@@ -320,7 +332,7 @@ export default {
         });
         return;
       }
-      this.$emit("confirmNode", selctArray, isDown);
+      this.$emit("confirmNode", selctArray, isDown,this.screeningOnelist);
       this.showPickDept = false;
       Notify({ type: "success", message: "选择成功" });
       if (this.beforeSelectName.split(",").length != 1) {

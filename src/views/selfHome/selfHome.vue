@@ -104,7 +104,7 @@
         </div>
       </div>
       </div>
-      
+
     </div>
     <!-- 编辑菜单顺序弹窗 -->
     <van-popup v-model="show" position="top" :style="{ height: '80%' }">
@@ -237,35 +237,35 @@ export default {
           title: "薪资库",
           img: "http://ehrfile.kukahome.com:7020/menuImage/xzk.png",
         },
+        // {
+        //   sortNum: 8,
+        //   title: "年薪分位值",
+        //   img: "http://ehrfile.kukahome.com:7020/menuImage/nxfwz.png",
+        // },
+        // {
+        //   sortNum: 9,
+        //   title: "人均年薪",
+        //   img: "http://ehrfile.kukahome.com:7020/menuImage/rjnx.png",
+        // },
+        // {
+        //   sortNum: 10,
+        //   title: "人均工资",
+        //   img: "http://ehrfile.kukahome.com:7020/menuImage/rjgz.png",
+        // },
+        // {
+        //   sortNum: 11,
+        //   title: "人工费用",
+        //   img: "http://ehrfile.kukahome.com:7020/menuImage/rgfy.png",
+        // },
+        // {
+        //   sortNum: 12,
+        //   title: "奖励进度",
+        //   img: "http://ehrfile.kukahome.com:7020/menuImage/jljd.png",
+        // },
         {
-          sortNum: 8,
-          title: "年薪分位值",
-          img: "http://ehrfile.kukahome.com:7020/menuImage/nxfwz.png",
-        },
-        {
-          sortNum: 9,
-          title: "人均年薪",
-          img: "http://ehrfile.kukahome.com:7020/menuImage/rjnx.png",
-        },
-        {
-          sortNum: 10,
-          title: "人均工资",
-          img: "http://ehrfile.kukahome.com:7020/menuImage/rjgz.png",
-        },
-        {
-          sortNum: 11,
-          title: "人工费用",
+          sortNum: 12,
+          title: "干部简报",
           img: "http://ehrfile.kukahome.com:7020/menuImage/rgfy.png",
-        },
-        {
-          sortNum: 12,
-          title: "奖励进度",
-          img: "http://ehrfile.kukahome.com:7020/menuImage/jljd.png",
-        },
-        {
-          sortNum: 12,
-          title: "自动提醒",
-          img: "http://ehrfile.kukahome.com:7020/menuImage/zdtx.png",
         },
       ],
       colors: [
@@ -304,16 +304,10 @@ export default {
   created() {
     // debugger
     localStorage.setItem("jobNum", 6006212);
-    // localStorage.setItem('jobNum',9050104)
+    // localStorage.setItem('jobNum',9085360)
     // localStorage.setItem('jobNum',9107021)
     // localStorage.setItem('jobNum',9078825)
-    // localStorage.setItem('jobNum',6006526)
-    // localStorage.setItem("jobNum", 6005506)
-    // localStorage.setItem("jobNum", 6006212)
-    // localStorage.setItem("jobNum", 6603302)
-    // localStorage.setItem("jobNum", 9039627)
-    // localStorage.setItem('jobNum',9015011)
-    // localStorage.setItem('jobNum',9134361)
+    // localStorage.setItem('jobNum',9025434)
     if (
       localStorage.getItem("jobNum") == "" ||
       localStorage.getItem("jobNum") == null ||
@@ -332,7 +326,7 @@ export default {
       this._getMenu(); //获取首页显示的菜单
       this._getMenus(); //获取弹窗要排序显示的菜单
       this.SalaryDept(); //薪酬模块按工号获取部门
-      this.isManPowerJudge(); //判断干部档案
+      this.isManPowerJudge(); //判断干部档案/薪资库权限
       this._getOrz();
     },
     //是否为领导
@@ -600,6 +594,7 @@ export default {
     },
     ...mapMutations({
       save_type: "save_type",
+      to_Roster: "to_Roster",
     }),
     //编辑排序
     edit() {
@@ -700,6 +695,7 @@ export default {
     //判断干部档案能否显示
     isManPowerJudge() {
       let userinfo = JSON.parse(localStorage.getItem("userinfo"));
+      // 判断干部档案
       if (
         userinfo != null &&
         userinfo.isManPower == "N" &&
@@ -712,15 +708,28 @@ export default {
           }
         }
       }
+      // 判断薪资库
+      if (
+        userinfo != null &&
+        userinfo.isSalaryPower == "N"
+      ) {
+        for (let i in this.leadList) {
+          if (this.leadList[i].title == "薪资库") {
+            this.leadList.splice(i, 1);
+            break;
+          }
+        }
+      }
       if (userinfo != null) {
         this.judgeLeadList = this.leadList;
         if (userinfo.isManPower == "Y" || userinfo.isCadre == "Y") {
-          // this.SalaryDept()//薪酬模块按工号获取部门
+          this.SalaryDept()//薪酬模块按工号获取部门
         }
       }
       //正式需注释掉
       this.judgeLeadList = this.leadList;
     },
+
     //确认排序
     updateConfirm() {
       // console.log(this.newList)
@@ -749,6 +758,7 @@ export default {
       switch (teamName) {
         case "花名册":
           this.save_type(sortNum);
+          this.to_Roster(0);
           this.$router.push({ name: "roster" });
           break;
         case "流失率":
@@ -771,24 +781,6 @@ export default {
           this.save_type(sortNum);
           this.$router.push({ name: "organization" });
           break;
-        case "奖励进度":
-          this.save_type(sortNum);
-          this.$router.push({ name: "ProgressRewards" });
-          break;
-        case "人均年薪":
-          this.save_type(sortNum);
-          this.$router.push({
-            name: "perCapitaWage",
-            params: { salaryFlag: 1 },
-          });
-          break;
-        case "人均工资":
-          this.save_type(sortNum);
-          this.$router.push({
-            name: "perCapitaWage",
-            params: { salaryFlag: 0 },
-          });
-          break;
         case "薪资库":
           this.save_type(sortNum);
           this.$router.push({ name: "SalaryLibrary" });
@@ -797,13 +789,9 @@ export default {
           this.save_type(sortNum);
           this.$router.push({ name: "cadreArchives" });
           break;
-        case "年薪分位值":
+        case "干部简报":
           this.save_type(sortNum);
-          this.$router.push({ name: "annualSalaryPercentile" });
-          break;
-        case "自动提醒":
-          this.save_type(sortNum);
-          this.$router.push({ name: "adresResultps" });
+          this.$router.push({ name: "departselect" });
           break;
       }
     },
@@ -973,6 +961,7 @@ i {
 
   .bgc {
     height: 120px;
+    // float left
     background-color: #db4c3e;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
@@ -982,9 +971,6 @@ i {
     width: 95%;
     height: 198px;
     display: flex;
-    // position: absolute;
-    // top: 20px;
-    // left: 2.4vw;
     margin 0 auto
     padding-bottom: 10px;
     background: #fff;

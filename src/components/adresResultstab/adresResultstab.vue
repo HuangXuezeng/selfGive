@@ -1,33 +1,67 @@
 <template>
   <div>
-    <router-view />
-    <div class="resetVantfixed">
-      <van-tabbar v-model="active" @change="onChange" route :placeholder='true'>
-        <van-tabbar-item icon="coupon-o" replace to="/adresResultps"
-          >干部分布</van-tabbar-item
+    <van-sticky>
+      <van-tabs
+        v-model="active"
+        ref="adresResultstab"
+        type="card"
+        sticky
+        animated
+      >
+      <van-tab
+          title="整体情况"
+          replace
+          to="/cadresChange"
+          name="cadresChange"
         >
-        <van-tabbar-item icon="cluster" replace to="/cadresChange"
-          >干部变化</van-tabbar-item
+          </van-tab
         >
-        <!-- <van-tabbar-item icon="friends-o">标签3</van-tabbar-item>
-    <van-tabbar-item icon="setting-o">标签4</van-tabbar-item> -->
-      </van-tabbar>
-    </div>
+        <van-tab
+          title="干部结构"
+          replace
+          to="/adresResultps"
+          name="adresResultps"
+        >
+          </van-tab
+        >
+
+
+         <van-tab
+          title="干部保留"
+          replace
+          to="/cadreReserve"
+          name="cadreReserve"
+        >
+          </van-tab
+        >
+        <van-tab
+          title="干部盘点"
+          replace
+          to="/cadresInventory"
+          name="cadresInventory"
+        >
+          </van-tab
+        >
+      </van-tabs>
+    </van-sticky>
   </div>
 </template>
 <script>
-import { Tabbar, TabbarItem } from "vant";
+import { Tab, Tabs, Sticky } from "vant";
 export default {
   name: "adresResultsTanbber",
   data() {
     return {
-      active: 0
+      active: "",
     };
   },
   methods: {
-    onChange(index) {
-    }
-  }
+    changtab(tab) {
+      this.active = tab;
+      localStorage.setItem('activeTab',this.active)
+      this.$refs.adresResultstab.resize();
+    },
+  },
 };
 </script>
 
