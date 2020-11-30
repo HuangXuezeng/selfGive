@@ -99,7 +99,7 @@
     <!-- 按一级单位查看 -->
     <div class="onedept" v-if="tableData !== null">
       <!-- <p class="detail">按一级单位查看</p> -->
-      <p class="titlea"><span class="borleft"></span> 每月明细</p>
+      <p class="titlea"><span class="borleft"></span> 每月流失情况</p>
       <div class="table">
         <v-table
           ref="table"
@@ -200,7 +200,6 @@
         <v-table
           ref="table"
           is-horizontal-resize
-          :is-loading="isLoading"
           style="width:100%;font-size:14px"
           columns-width-drag
           :height="400"
@@ -222,7 +221,7 @@
   </div>
 </template>
 <script>
-import { Notify } from "vant";
+import { Notify, Toast } from "vant";
 import { queryRunoff,selectPerson } from "./api";
 import chooseDepartment from "@/components/pickerDeptOne.vue";
 import { mapMutations } from "vuex";
@@ -270,6 +269,8 @@ export default {
       runGbArr: [], //干部流失人数
       runGblvArr: [], //干部流失率
       runTime: [], //时间值
+      baseLine: '', //月均基准线
+      cadreBaseLine: '', //干部月均基准线
       columns: [
         {
           field: "time",
@@ -342,6 +343,28 @@ export default {
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
             return `<span class='cell-edit-color-f'>${rowData[field]}</span>`;
+          }
+        },
+        {
+          field: "cadreAvgOnjob",
+          title: "干部平均在编",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<span class='cell-edit-color-a'>${rowData[field]}</span>`;
+          }
+        },
+        {
+          field: "cadreRealOnjob",
+          title: "干部实际在编",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<span class='cell-edit-color-b'>${rowData[field]}</span>`;
           }
         },
         {
@@ -516,7 +539,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
-          this.isLoading = false
+          // this.isLoading = false
           this.pagePev(); //分页处理
         })
       } else if (column.field == "cadreRunoffSum") {
@@ -527,7 +550,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
-          this.isLoading = false
+          // this.isLoading = false
           this.pagePev(); //分页处理
         })
       } else if (column.field == "activeSum") {
@@ -538,7 +561,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
-          this.isLoading = false
+          // this.isLoading = false
           this.pagePev(); //分页处理
         })
       } else if (column.field == "passiveSum") {
@@ -549,7 +572,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
-          this.isLoading = false
+          // this.isLoading = false
           this.pagePev(); //分页处理
         })
       }
@@ -565,7 +588,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
-          this.isLoading = false
+          // this.isLoading = false
           this.pagePev(); //分页处理
         })
       } else if (column.field == "cadreRunoffSum") {
@@ -576,7 +599,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
-          this.isLoading = false
+          // this.isLoading = false
           this.pagePev(); //分页处理
         })
       } else if (column.field == "activeSum") {
@@ -587,7 +610,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
-          this.isLoading = false
+          // this.isLoading = false
           this.pagePev(); //分页处理
         })
       } else if (column.field == "passiveSum") {
@@ -598,7 +621,7 @@ export default {
         this.showTable = true;
         selectPerson(queryData).then(res=>{
           this.popupTableData = res.obj;
-          this.isLoading = false
+          // this.isLoading = false
           this.pagePev(); //分页处理
         })
       }
@@ -754,7 +777,7 @@ export default {
               }
               selectPerson(queryData).then(res=>{
                 that.popupTableData = res.obj;
-                that.isLoading = false
+                // that.isLoading = false
                 that.pagePev(); //分页处理
               })
               break;
@@ -770,7 +793,7 @@ export default {
               }
               selectPerson(queryData).then(res=>{
                 that.popupTableData = res.obj;
-                that.isLoading = false
+                // that.isLoading = false
                 that.pagePev(); //分页处理
               })
               break;
@@ -786,7 +809,7 @@ export default {
               }
               selectPerson(queryData).then(res=>{
                 that.popupTableData = res.obj;
-                that.isLoading = false
+                // that.isLoading = false
                 that.pagePev(); //分页处理
               })
               break;
@@ -802,7 +825,7 @@ export default {
               }
               selectPerson(queryData).then(res=>{
                 that.popupTableData = res.obj;
-                that.isLoading = false
+                // that.isLoading = false
                 that.pagePev(); //分页处理
               })
               break;
@@ -917,6 +940,39 @@ export default {
             type: "line",
             yAxisIndex: 1,
             data: this.runLvArr
+          },
+          {
+            label: seriesLabel1,
+            name: "月均流失率",
+            type: "line",
+            yAxisIndex: 1,
+            data: this.baseLine,
+            markLine: {
+                // symbol: "none", //是否显示基准线的箭头
+                silent: true, // 鼠标移上是否有响应（线变粗）
+                data: [
+                  {
+                    yAxis: this.baseLine,
+                    //type: "min/max/average" // 特殊的标注类型，用于标注最大值最小值等。
+                    lineStyle: { // 线的样式
+                      color: "#fc5f10",
+                      width: 1,
+                      opacity: 0.8
+                    },
+                    label: { // 文字的样式，默认是白色，有时候文字不显示，可能是颜色的问题
+                      color: "#f39f57"
+                    }
+                  },
+                ],
+                label: { // 样式也可以统一设置
+                  padding: [-13, -40, 0, 0],
+                  position:"middle",
+                  formatter: function (params) {
+                    console.log(params)
+                    return `${params.value+'人'}`
+                  }
+                }
+            },
           }
         ]
       });
@@ -1028,6 +1084,39 @@ export default {
             type: "line",
             yAxisIndex: 1,
             data: this.runGblvArr
+          },
+          {
+            label: seriesLabel1,
+            name: "月均流失率",
+            type: "line",
+            yAxisIndex: 1,
+            data: this.cadreBaseLine,
+            markLine: {
+                // symbol: "none", //是否显示基准线的箭头
+                silent: true, // 鼠标移上是否有响应（线变粗）
+                data: [
+                  {
+                    yAxis: this.cadreBaseLine,
+                    //type: "min/max/average" // 特殊的标注类型，用于标注最大值最小值等。
+                    lineStyle: { // 线的样式
+                      color: "#fc5f10",
+                      width: 1,
+                      opacity: 0.8
+                    },
+                    label: { // 文字的样式，默认是白色，有时候文字不显示，可能是颜色的问题
+                      color: "#f39f57"
+                    }
+                  },
+                ],
+                label: { // 样式也可以统一设置
+                  padding: [-13, -40, 0, 0],
+                  position:"middle",
+                  formatter: function (params) {
+                    console.log(params)
+                    return `${params.value+'人'}`
+                  }
+                }
+            },
           }
         ]
       });
@@ -1104,8 +1193,10 @@ export default {
         };
         queryRunoff(queryData).then(res => {
           this.totalData = res.obj;
-          this.tableData = res.obj.detail;
-          this.tableData1 = res.obj.category;
+          this.tableData = res.obj.detail
+          this.tableData1 = res.obj.category
+          this.baseLine = res.obj.detail[0].avgBaseline
+          this.cadreBaseLine = res.obj.detail[0].cadreAvgBaseline
           // 按每月情况取值
           for (let i in res.obj.detail) {
             this.runArr.push(res.obj.detail[i].runoffSum);
@@ -1140,6 +1231,8 @@ export default {
         this.isLoading2 = false
         this.tableData = res.obj.detail;
         this.tableData1 = res.obj.category;
+        this.baseLine = res.obj.detail[0].avgBaseline
+        this.cadreBaseLine = res.obj.detail[0].cadreAvgBaseline
         // 按每月情况取值
         for (let i in res.obj.detail) {
           this.runArr.push(res.obj.detail[i].runoffSum);
@@ -1233,6 +1326,7 @@ export default {
         this.popupTableData = this.popupTableData.concat(
           this.fenyeData[this.dataIndex]
         );
+        Toast('加载成功，请滑动表格查看')
       }
     },
     //关闭弹窗

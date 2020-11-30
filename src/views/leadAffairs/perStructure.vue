@@ -13,7 +13,7 @@
                 <!-- <van-button type="primary" color="#fc5f10" size="small" @click="_isHaveQx">测试</van-button> -->
             </div>
         </div>
-        <div class="total">
+        <div class="total" @click="searchAllCount">
             <p>{{gwObj.allCount}}人</p>
             <p>总人数</p>
         </div>
@@ -226,6 +226,7 @@ components: {
             Notify({ type: "warning", message: "没有更多数据了哦~" });
         }else{
             this.popupTableData = this.popupTableData.concat(this.fenyeData[this.dataIndex])
+            Toast('加载成功，请滑动表格查看')
         }
     },
     //关闭弹窗
@@ -1085,6 +1086,18 @@ components: {
         this.dataIndex = 0
         let queryData = {}
         queryData.jobnumbers = this.gwObj.gwzhiJieJobnumber
+        queryRoster(queryData).then(res=>{
+            this.popupTableData = res.obj
+            this.isLoading = false
+            this.pagePev() //获取的表格数据分组
+        })
+    },
+    //查询全部人员
+    searchAllCount(){
+        this.showTable = true
+        this.dataIndex = 0
+        let queryData = {}
+        queryData.jobnumbers = this.gwObj.allCountJobnumber
         queryRoster(queryData).then(res=>{
             this.popupTableData = res.obj
             this.isLoading = false

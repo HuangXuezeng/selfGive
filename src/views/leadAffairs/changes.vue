@@ -7,6 +7,12 @@
                 </template>
             </van-field> -->
       <!-- 选择部门 -->
+      <van-field
+        v-model="form.jobnumber"
+        label="工号"
+        placeholder="请输入工号"
+      />
+      <van-field v-model="form.name" label="姓名" placeholder="请输入姓名" />
       <div style="border-bottom:1px solid #ebedf0">
         <pickdeptmore
           ref="select"
@@ -20,32 +26,26 @@
         ></pickdeptmore>
       </div>
       <van-field
-        v-model="form.jobnumber"
-        label="工号"
-        placeholder="请输入工号"
-      />
-      <van-field v-model="form.name" label="姓名" placeholder="请输入姓名" />
-      <van-field
         v-model="form.startTime"
         label="开始时间"
         @click="startTimeClick"
         readonly
-        placeholder="请选择(必填)"
+        placeholder="请选择"
       />
       <van-field
         v-model="form.endTime"
         label="结束时间"
         @click="endTimeClick"
         readonly
-        placeholder="请选择(必填)"
+        placeholder="请选择"
       />
-      <van-field
+      <!-- <van-field
         v-model="form.classic"
         @click="showClassic = true"
         label="异动分类"
         placeholder="请选择"
         readonly
-      />
+      /> -->
       <div class="btn">
         <van-button
           type="primary"
@@ -71,6 +71,10 @@
           style="width:30%"
           >导出</van-button
         >
+          <!-- 下载 -->
+          <!-- <span style="color: blue" @click="_exportExcel">
+            <van-icon name="printer" size="22" color="blue"></van-icon> 导出
+          </span> -->
         <!-- <van-button type="primary" color="#fc5f10" size="small" @click="ceshi">测试</van-button> -->
       </div>
     </div>
@@ -112,9 +116,10 @@
       <div class="table">
         <v-table
           ref="table"
-          columns-width-drag
+          is-horizontal-resize
+          column-width-drag
           :height="400"
-          style="font-size:14px"
+          style="font-size:14px;width:100%"
           title-bg-color="#e5ecf0"
           :columns="columns"
           :table-data="tableData"
@@ -136,7 +141,7 @@
   </div>
 </template>
 <script>
-import { Field, Button, DatetimePicker, Popup, Notify, Dialog } from "vant";
+import { Field, Button, DatetimePicker, Popup, Notify, Dialog, Toast } from "vant";
 import pickDeptMore from "@/components/pickDeptMore.vue";
 import loadingSpin from "@/components/waitLoading.vue";
 import { mapMutations } from "vuex";
@@ -154,7 +159,7 @@ export default {
         name: "", //姓名
         startTime: "", //开始日期
         endTime: "", //结束日期
-        classic: "", //异动分类
+        // classic: "", //异动分类
         deptIdStr: "" //选择的部门id集合
       },
       showClassic: false, //选择异动分类
@@ -222,9 +227,12 @@ export default {
         {
           field: "beforeDept",
           title: "异动前部门路径",
-          width: 300,
+          width: 200,
           titleAlign: "center",
           columnAlign: "center",
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<div class="overauto">${rowData[field]}</div>`
+          },
           isResize: true
         },
         {
@@ -278,9 +286,12 @@ export default {
         {
           field: "afterDept",
           title: "异动后部门路径",
-          width: 300,
+          width: 200,
           titleAlign: "center",
           columnAlign: "center",
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<div class="overauto">${rowData[field]}</div>`
+          },
           isResize: true
         },
         {
@@ -387,7 +398,7 @@ export default {
         name: "", //姓名
         startTime: "", //开始日期
         endTime: "", //结束日期
-        classic: "" //异动分类
+        // classic: "" //异动分类
       };
       // //清空tree
       // this.$refs.tree.setCheckedKeys([]);
@@ -497,6 +508,7 @@ export default {
           Notify({ type: "warning", message: "没有更多数据了哦~" })
         }else{
           this.tableData = this.tableData.concat(res.obj)
+          Toast('加载成功，请滑动表格查看')
         }
       })
     },

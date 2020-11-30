@@ -23,8 +23,12 @@
                         <span> 工号：{{personObj.a0190}}</span>
                     </div>
                     <div>
-                        <span> 岗位：</span><span>{{personObj.post}}</span><br>
-                        <span> 部门：</span>{{personObj.dept}}<span></span>
+                        <van-tag class="vantag" plain type="primary" text-color="red">{{personObj.a01516}}</van-tag>
+                        <van-tag class="vantag" plain type="primary" text-color="red">{{personObj.post}}</van-tag>
+                        <van-tag class="vantag" plain type="primary" text-color="red">{{personObj.a01504}}</van-tag>
+                        <van-tag class="vantag" plain type="primary" text-color="red">{{personObj.a01740}}</van-tag>
+                        <!-- <span> 岗位：</span><span>{{personObj.post}}</span><br>
+                        <span> 部门：</span>{{personObj.dept}}<span></span> -->
                     </div>
                 </div>
             </div> 
@@ -261,5 +265,8 @@ export default {
       width 60px
       height 60px
       border-radius 50%
+    }
+    .vantag{
+      line-height 16px
     }
 </style>

@@ -6,10 +6,10 @@
                     <template #title>
                         <div class="fontweig"><van-tag mark type="primary" color="#fc5f10">学历信息{{index+1}}</van-tag></div>
                     </template>
+                    <p><span>学校名称：{{item.a86007}}</span></p>
                     <p><span>院校性质：{{item.a86014}}</span></p>
                     <p><span>入学时间：{{item.A86005}}</span></p>
                     <p><span>毕业（肄业）时间：{{item.A86006}}</span></p>
-                    <p><span>学校名称：{{item.a86007}}</span></p>
                     <p><span>专业：{{item.a86008}}</span></p>
                     <p><span>学习方式：{{item.a86009}}</span></p>
                     <p><span>学历：{{item.a86010}}</span></p>

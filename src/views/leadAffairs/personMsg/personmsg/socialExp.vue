@@ -11,9 +11,9 @@
                     <p><span>工作单位：{{item.workUnit}}</span></p>
                     <p><span>任职部门：{{item.department}}</span></p>
                     <p><span>任职岗位：{{item.station}}</span></p>
+                    <p><span>工作描述：{{item.description}}</span></p>
                     <p><span>证明人及联系方式：{{item.witness}}</span></p>
                     <p><span>备注：{{item.remarks}}</span></p>
-                    <p><span>工作描述：{{item.description}}</span></p>
                     <!-- <p><span>离职证明：<a :href="item.filePath">离职证明</a></span></p> -->
                     <p><span @click="seePdf(item)">离职证明：<span style="border-bottom:1px solid #ccc;padding:2px">{{item.pathName}}</span></span></p>
                 </van-collapse-item>

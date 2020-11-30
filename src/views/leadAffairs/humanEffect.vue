@@ -2,13 +2,6 @@
     <div>
         <div class="tiaojian">
           <van-field v-model="selectYear" label="选择年：" placeholder="请选择" @click-input="showyear=true" readonly/>
-          <van-field
-            v-model="selectPost"
-            label="岗位分类一："
-            placeholder="请选择"
-            @click-input="showPost = true"
-            readonly
-          />
           <!-- <choosedepartment 
           ref="dept_content" 
           @transferFa="selctdept" 
@@ -24,6 +17,13 @@
           :isFromRost="true"
           :faDeptData="deptData"
         ></pickdeptmore>
+        <van-field
+            v-model="selectPost"
+            label="岗位分类一："
+            placeholder="请选择"
+            @click-input="showPost = true"
+            readonly
+          />
           <div class="btns">
               <van-button type="primary" size="small" color="#fc5f10" @click="search" style="width:45%;font-size:15px">查询</van-button>
               <van-button type="primary" size="small" color="#fc5f10" @click="reset" style="width:45%;font-size:15px">重置</van-button>
@@ -32,8 +32,8 @@
         </div>
         <div class="title">
           <p class="titlea">
-            <span class="borleft">累计指标计划</span>
-            <span>（<span style="color:#ee0a24;font-weight:700">单位：万</span>）</span>
+            <span class="borleft">人效情况</span>
+            <!-- <span>（<span style="color:#ee0a24;font-weight:700">单位：万</span>）</span> -->
           </p>
           <!-- 累计指标计划表格 -->
           <div class="table">
@@ -101,10 +101,10 @@
             readonly
           />
           <p class="titlea">
-            <span class="borleft">每月收入</span>
-            <span>（<span style="color:#ee0a24;font-weight:700">单位：万</span>）</span>
+            <span class="borleft">累计完成人效</span>
+            <!-- <span>（<span style="color:#ee0a24;font-weight:700">单位：万</span>）</span> -->
           </p>
-          <div class="charts" v-if="showecharts">
+          <div class="charts">
             <div class="pie" ref="chart" id="chart"></div>
           </div>
         </div>
@@ -158,7 +158,7 @@
     </div>
 </template>
 <script>
-import { Notify } from 'vant';
+import { Notify,Toast } from 'vant';
 import { mapMutations } from 'vuex'
 import { querySelectVal,selectAnalysisCondition,nextPage,selectDrawInfo } from './api'
 import chooseDepartment from "@/components/pickerDeptOne.vue";
@@ -171,7 +171,7 @@ export default {
   data () {
     return {
       isLoading: true, //表格数据加载
-      showecharts: false, //显示异常图形
+      // showecharts: false, //显示异常图形
       deptCodeStr: '', //单选的部门值
       showPost1: false, //图形选择岗位分类一弹窗
       selectPost1: '', //图形选择岗位分类1
@@ -207,19 +207,19 @@ export default {
         {field: 'rxUnit', title: '人效单位', width: 150, titleAlign: 'center',columnAlign:'center',},
         {field: 'rxTarget', title: '年度人效目标', width: 150, titleAlign: 'center',columnAlign:'center',},
         {field: 'monthRx', title: '月度人效', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'diff', title: '同比', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'cumulRx', title: '累计人效', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'diff', title: '月度人效同比', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'cumulRx', title: '累计人效同比', width: 150, titleAlign: 'center',columnAlign:'center',},
         {field: 'cumulDiff', title: '累计同比', width: 150, titleAlign: 'center',columnAlign:'center',},
         {field: 'rxProgress', title: '人效进度', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'progressDiff', title: '进度差异', width: 150, titleAlign: 'center',columnAlign:'center',
-          formatter: function (rowData,rowIndex,pagingIndex,field) {
-            // console.log(rowData[field]<0)
-            if(rowData.chayi < 0){
-              return `<span class='cell-edit-color-a'>${rowData[field]}</span>`;
-            }else if(rowData.chayi >= 0){
-              return `<span>${rowData[field]}</span>`;
-            }
-          },
+        {field: 'progressDiff', title: '对比销售收入的进度差异', width: 170, titleAlign: 'center',columnAlign:'center',
+          // formatter: function (rowData,rowIndex,pagingIndex,field) {
+          //   // console.log(rowData[field]<0)
+          //   if(rowData.chayi < 0){
+          //     return `<span class='cell-edit-color-a'>${rowData[field]}</span>`;
+          //   }else if(rowData.chayi >= 0){
+          //     return `<span>${rowData[field]}</span>`;
+          //   }
+          // },
         },
       ],
       timeData: [],
@@ -299,6 +299,19 @@ export default {
         //请求到数据之后停止加载
         this.isLoading = false;
       })
+      // 图形获取数据
+      let queryData = {
+        jobnumber: localStorage.getItem('jobNum')
+      }
+      selectDrawInfo(queryData).then(res=>{
+        for(let i in res.obj){
+          this.timeData.push(res.obj[i].time)
+          this.monthData.push(res.obj[i].monthRx)
+          this.ljData.push(res.obj[i].cumulRx)
+          this.targetData.push(res.obj[i].rxTarget)
+        }
+        this.initCharts()
+      })
     },
     //查询
     search(){
@@ -323,7 +336,6 @@ export default {
     //选择单位
     selctdept1(data) {
       // console.log(data)
-      this.showecharts = true
       this.deptCodeStr = data.deptCode
     },
     //下一页
@@ -338,6 +350,7 @@ export default {
           Notify({ type: "warning", message: "没有更多数据了哦~" })
         }else{
           this.tableData = this.tableData.concat(res.obj)
+          Toast('加载成功，请滑动表格查看')
         }
       })
     },
@@ -349,6 +362,7 @@ export default {
         this.showPost1 = false;
         return
       }
+      
       this.selectPost1 = picker.content;
       this.selectPostId1 = picker.code;
       // 图形获取数据
@@ -397,7 +411,7 @@ export default {
                 {
                     label: seriesLabel,
                     name: '累计人数',
-                    type: 'line',
+                    type: 'bar',
                     data: data1,
                 },
                 {
@@ -496,8 +510,8 @@ export default {
     reset(){
       this.selectPost = ''
       this.selectYear = ''
-      this.$refs.dept_content.restFlag = true
-      this.$refs.dept_content.selectedDepartment = ''
+      this.$refs.select.restFlag = true
+      this.$refs.select.selectedDepartment = ''
     },
     //确认选择岗位分类一
     onConfirm1(){

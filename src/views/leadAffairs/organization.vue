@@ -99,12 +99,22 @@
         @click-input="showPost1 = true"
         readonly
       />
-      <div class="titlechart" v-if="showecharts">全员在编情况</div>
-      <div class="postrank" v-if="showecharts">
+      <div class="titlechart">全员在编情况</div>
+      <div class="postrank">
         <div class="pie" ref="chart1" id="chart1"></div>
       </div>
-      <div class="titlechart" v-if="showecharts">干部在编情况</div>
-      <div class="postrank" v-if="showecharts">
+      <div class="titlechart">干部在编情况</div>
+      <!-- 单选单位 -->
+        <div style="padding:5px 0 5px 0">
+          <choosedepartment
+            ref="resetForm"
+            @transferFa="selctdept2"
+            :workingNum="true"
+            :faDeptData="deptData"
+            :Farequired="true"
+          ></choosedepartment>
+        </div>
+      <div class="postrank">
         <div class="pie" ref="chart" id="chart"></div>
       </div>
     </div>
@@ -172,7 +182,7 @@ export default {
       isLoading: true, //表格数据加载
       result1: [],//岗位分类一
       result2: [],//岗位分类一（二）
-      showecharts: false,
+      // showecharts: false,
       deptId: [],
       deptIdStr: '',
       deptData: [], //部门数据
@@ -227,6 +237,14 @@ export default {
           isResize: true
         },
         {
+          field: "realOnjob",
+          title: "当前在编",
+          width: 100,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
           field: "avgOnjob",
           title: "平均在编",
           width: 150,
@@ -249,7 +267,15 @@ export default {
         },
         {
           field: "cadreDingbian",
-          title: "干部在编",
+          title: "干部定编",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "cadreRealOnjob",
+          title: "当前干部在编",
           width: 150,
           titleAlign: "center",
           columnAlign: "center",
@@ -269,6 +295,8 @@ export default {
       echartData2: [],
       echartData3: [],
       echartData4: [],
+      echartData5: [],
+      echartData6: [],
       monthData: [],
       monthData1: [],
       deptValue: '0', //图形选择部门名称
@@ -322,14 +350,17 @@ export default {
         let monthArr1 = []
         let echartArr3 = []
         let echartArr4 = []
+        let echartArr6 = []
         for(let i in res.obj.postOne){
           monthArr1.push(res.obj.postOne[i].time)
           echartArr3.push(res.obj.postOne[i].avgOnjob)
           echartArr4.push(res.obj.postOne[i].dingbian)
+          echartArr5.push(res.obj.postOne[i].realOnjob)
         }
         this.monthData1 = monthArr1
         this.echartData3 = echartArr3
         this.echartData4 = echartArr4
+        this.echartData6 = echartArr6
         this.initCharts1()
       })
       this.showPost1 = false;
@@ -364,6 +395,42 @@ export default {
         this.tableData1 = res.obj
         //请求到数据之后停止加载
         this.isLoading = false;
+      })
+      //获取默认图形数据
+      let selectData = {
+        jobnumber: JSON.parse(localStorage.getItem("jobNum"))
+      }
+      selectDraw(selectData).then(res=>{
+        let monthArr = []
+        let echartArr1 = []
+        let echartArr2 = []
+        let monthArr1 = []
+        let echartArr3 = []
+        let echartArr4 = []
+        let echartArr5 = []
+        let echartArr6 = []
+        for(let i in res.obj.cadre){
+          monthArr.push(res.obj.cadre[i].time)
+          echartArr1.push(res.obj.cadre[i].avgOnjob)
+          echartArr2.push(res.obj.cadre[i].dingbian)
+          echartArr5.push(res.obj.cadre[i].realOnjob)
+        }
+        this.monthData = monthArr
+        this.echartData1 = echartArr1
+        this.echartData2 = echartArr2
+        this.echartData5 = echartArr5
+        for(let i in res.obj.postOne){
+          monthArr1.push(res.obj.postOne[i].time)
+          echartArr3.push(res.obj.postOne[i].avgOnjob)
+          echartArr4.push(res.obj.postOne[i].dingbian)
+          echartArr6.push(res.obj.postOne[i].realOnjob)
+        }
+        this.monthData1 = monthArr1
+        this.echartData3 = echartArr3
+        this.echartData4 = echartArr4
+        this.echartData6 = echartArr6
+        this.initCharts()
+        this.initCharts1()
       })
     },
     //给value加字段名方法
@@ -503,14 +570,21 @@ export default {
             label: seriesLabel,
             name: "人数",
             type: "line",
-            data: this.echartData1
+            data: this.echartData1,
+            itemStyle : {  
+                normal : {  
+                    lineStyle:{  
+                        color:'#00c853'  
+                    }  
+                }  
+            },
           },
-          // {
-          //   label: seriesLabel,
-          //   name: "人数",
-          //   type: "line",
-          //   data: this.echartData2,
-          // },
+          {
+            label: seriesLabel,
+            name: "人数",
+            type: "bar",
+            data: this.echartData5,
+          },
           {
             // label: seriesLabel,
             name: '定编',
@@ -545,7 +619,7 @@ export default {
                 padding: [-13, -40, 0, 0],
                 position:"middle",
                 formatter: function (params) {
-                  return `${params.value+'人'}`
+                  return `${'定编'+params.value+'人'}`
                 }
               }
             },
@@ -647,6 +721,12 @@ export default {
             data: this.echartData3
           },
           {
+            label: seriesLabel,
+            name: "月末在编人数",
+            type: "bar",
+            data: this.echartData6
+          },
+          {
             // label: seriesLabel,
             name: '年度人效目标',
             type: 'line',
@@ -679,7 +759,7 @@ export default {
                   padding: [-13, -40, 0, 0],
                   position:"middle",
                   formatter: function (params) {
-                    return `${params.value+'人'}`
+                    return `${'定编'+params.value+'人'}`
                   }
                 }
             },
@@ -693,7 +773,6 @@ export default {
     //选择单位
     selctdept1(data) {
       console.log(data)
-      this.showecharts = true
       this.deptIdStr = data.deptId;
       // 根据部门查询岗位分类一
       let queryData = {
@@ -717,40 +796,64 @@ export default {
         let monthArr1 = []
         let echartArr3 = []
         let echartArr4 = []
+        let echartArr5 = []
+        let echartArr6 = []
         for(let i in res.obj.cadre){
           monthArr.push(res.obj.cadre[i].time)
           echartArr1.push(res.obj.cadre[i].avgOnjob)
           echartArr2.push(res.obj.cadre[i].dingbian)
+          echartArr5.push(res.obj.cadre[i].realOnjob)
         }
         this.monthData = monthArr
         this.echartData1 = echartArr1
         this.echartData2 = echartArr2
+        this.echartData5 = echartArr5
         for(let i in res.obj.postOne){
           monthArr1.push(res.obj.postOne[i].time)
           echartArr3.push(res.obj.postOne[i].avgOnjob)
           echartArr4.push(res.obj.postOne[i].dingbian)
+          echartArr6.push(res.obj.postOne[i].realOnjob)
         }
         this.monthData1 = monthArr1
         this.echartData3 = echartArr3
         this.echartData4 = echartArr4
+        this.echartData6 = echartArr6
         this.initCharts()
         this.initCharts1()
       })
-      //岗位分类一的数据
-      // selectDraw(selectData).then(res=>{
-      //   let monthArr1 = []
-      //   let echartArr3 = []
-      //   let echartArr4 = []
-      //   for(let i in res.obj){
-      //     monthArr1.push(res.obj[i].time)
-      //     echartArr3.push(res.obj[i].avgOnjob)
-      //     echartArr4.push(res.obj[i].dingbian)
-      //   }
-      //   this.monthData1 = monthArr1
-      //   this.echartData3 = echartArr3
-      //   this.echartData4 = echartArr4
-      //   this.initCharts1()
-      // })
+    },
+    //选择单位(单独)
+    selctdept2(data) {
+      // console.log(data)
+      this.deptIdStr = data.deptId;
+      // 图形获取数据
+      let selectData = {
+        deptId: data.deptId,
+        year: this.selectTime,
+        postOne: this.selectPostId1,
+      }
+      //干部的数据
+      selectDraw(selectData).then(res=>{
+        let monthArr = []
+        let echartArr1 = []
+        let echartArr2 = []
+        let monthArr1 = []
+        let echartArr3 = []
+        let echartArr4 = []
+        let echartArr5 = []
+        let echartArr6 = []
+        for(let i in res.obj.cadre){
+          monthArr.push(res.obj.cadre[i].time)
+          echartArr1.push(res.obj.cadre[i].avgOnjob)
+          echartArr2.push(res.obj.cadre[i].dingbian)
+          echartArr5.push(res.obj.cadre[i].realOnjob)
+        }
+        this.monthData = monthArr
+        this.echartData1 = echartArr1
+        this.echartData2 = echartArr2
+        this.echartData5 = echartArr5
+        this.initCharts()
+      })
     },
     //单元格样式
     columnCellClass(rowIndex, columnName, rowData) {

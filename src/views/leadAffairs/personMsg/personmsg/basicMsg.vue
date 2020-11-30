@@ -29,6 +29,7 @@
             <p><span>专业：</span><span>{{personList.a011971}}</span></p>
             <p><span>编制类型：</span><span>{{personList.a01165}}</span></p>
             <p><span>参加工作时间：</span><span>{{personList.A0141}}</span></p>
+            <p><span>在本单位是否存在亲属关系：</span><span>{{personList.a01186}}</span></p>
             <!-- <p><span>银行名称：</span><span>{{personList.a01191}}</span></p>
             <p><span>开户行：</span><span>{{personList.a01113}}</span></p>
             <p><span>银行卡号：</span><span>{{personList.a01102}}</span></p>

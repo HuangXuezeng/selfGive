@@ -104,6 +104,16 @@ export function exportExl (queryData) {
     data: JSON.stringify(queryData)
   })
 }
+//花名册图形查询
+export function personalRatio (queryData) {
+  return fetch({
+    url: `/kukacms/self/roster/personalRatio`,
+    method: 'post',
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
+    data: JSON.stringify(queryData)
+  })
+}
 //花名册表格下一页
 export function selectEmployeeLimit (queryData) {
   return fetch({

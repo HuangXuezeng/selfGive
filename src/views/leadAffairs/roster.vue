@@ -13,6 +13,7 @@
           :isSelctall="true"
           :isFromRost="true"
           :faDeptData="deptData"
+          :key="refresh"
         ></pickdeptmore>
       </div>
       <van-field
@@ -22,26 +23,33 @@
       />
       <van-field v-model="form.name" label="姓名" placeholder="请输入姓名" />
       <div class="btn">
-        <van-button type="primary" color="#fc5f10" size="mini" @click="search" style="width:16%"
+        <van-button type="primary" color="#fc5f10" size="mini" @click="search" style="width:18%"
           >查询</van-button
         >
-        <van-button type="primary" color="#fc5f10" size="mini" @click="reset" style="width:16%"
+        <van-button type="primary" color="#fc5f10" size="mini" @click="reset" style="width:18%"
           >重置</van-button
         >
-        <van-button type="primary" color="#fc5f10" size="mini" @click="setMenu" style="width:16%"
+        <van-button type="primary" color="#fc5f10" size="mini" @click="setMenu" style="width:18%"
           >排序</van-button
-        >
-        <van-button type="primary" color="#fc5f10" size="mini" @click="_exportExl" style="width:16%"
-          >导出</van-button
         >
         <van-button
           type="primary"
           color="#fc5f10"
           size="mini"
-          style="width:23.333%"
+          style="width:26.333%"
           @click="moreSearch"
-          >更多条件</van-button
+          >更多查询条件</van-button
         >
+        <i @click="showAlert"><van-icon name="question-o" color="red"/></i>
+        <van-button type="primary" color="#fc5f10" size="mini" @click="_exportExl" style="width:18%"
+          >导出</van-button
+        >
+        <!-- 下载 -->
+        <!-- <div @click="_exportExl" style="text-align:center">
+          <span style="color: blue">
+            <van-icon name="printer" size="22" color="blue"></van-icon> 导出
+          </span>
+        </div> -->
         <!-- <van-button type="primary" color="#fc5f10" size="small" @click="ceshi">测试</van-button> -->
       </div>
     </div>
@@ -70,6 +78,33 @@
         ><van-tag type="warning">下一页</van-tag></span
       >
     </div>
+    <div class="titlea"><span class="borleft"></span> 人员类别分类情况</div>
+    <!-- 选择部门 -->
+      <div style="border-bottom:1px solid #ebedf0">
+        <pickdeptmore
+          ref="select"
+          @confirmNode="selctdept1"
+          :Farequired="true"
+          labelTitle="部门"
+          :workingNum="true"
+          :isSelctall="true"
+          :isFromRost="true"
+          :faDeptData="deptData"
+          :key="refresh"
+        ></pickdeptmore>
+      </div>
+      <!-- 选择人员类别 -->
+      <van-field
+        v-model="perType"
+        label="人员类别"
+        placeholder="请选择"
+        readonly
+        @click="showLb = true"
+      />
+      <!-- 按每月情况 -->
+      <div class="postrank">
+        <div class="pie" ref="chart" id="chart"></div>
+      </div>
     <!-- <div class="mt20 mb20 bold" style="margin-top:10px;">
             <v-pagination @page-change="pageChange" @page-size-change="pageSizeChange" :total="total" size='small' :page-size="pageSize" :layout="['total', 'prev', 'pager', 'next']" :showPagingCount="2"></v-pagination>
         </div>    -->
@@ -84,7 +119,7 @@
         <div>
           <el-tag type="warning">是否在报表内展示</el-tag>
           <el-tag type="warning">查询条件</el-tag>
-          <el-tag type="warning">查询结果</el-tag>
+          <!-- <el-tag type="warning">查询结果</el-tag> -->
         </div>
          <van-checkbox-group v-model="resultMore" ref="checkboxGroupMore">
             <van-checkbox name="当前状态">
@@ -277,14 +312,14 @@
                 @click-input="selectJyxy"
               />
             </van-checkbox>
-            <van-checkbox name="工作单位">
+            <van-checkbox name="工作单位" disabled>
               <van-field
                 v-model="form.company"
                 label="工作单位"
                 placeholder="请输入工作单位"
               />
             </van-checkbox>
-            <van-checkbox name="职称名称">
+            <van-checkbox name="职称名称" disabled>
               <van-field
                 v-model="form.zcName"
                 label="职称名称"
@@ -376,6 +411,9 @@
       get-container="body"
     >
       <div class="pick">
+        <div class="draging">
+          <van-tag plain round  type="primary" text-color="red">请拖动进行排序</van-tag>
+        </div>
         <!-- 排序 -->
         <transition-group
           type="transition"
@@ -492,12 +530,14 @@
       :style="{ height: '50%' }"
       get-container="body"
     >
-      <van-checkbox-group v-model="result3" ref="checkboxGroup">
-        <van-checkbox v-for="item in column4" :key="item.code" :name="item">{{
-          item.content
-        }}</van-checkbox>
-      </van-checkbox-group>
-      <van-button type="info" size="mini" @click="onConfirm4">确定</van-button>
+      <div class="condition">
+        <van-checkbox-group v-model="result3" ref="checkboxGroup">
+          <van-checkbox v-for="item in column4" :key="item.code" :name="item" class="conditionbox">{{
+            item.content
+          }}</van-checkbox>
+        </van-checkbox-group>
+        <van-button type="info" size="mini" @click="onConfirm4" style="width:100%">确定</van-button>
+      </div>
     </van-popup>
     <!-- 弹出时下拉选择学历 -->
     <van-popup
@@ -506,12 +546,14 @@
       :style="{ height: '50%' }"
       get-container="body"
     >
-      <van-checkbox-group v-model="result4" ref="checkboxGroup">
-        <van-checkbox v-for="item in column8" :key="item.code" :name="item">{{
-          item.content
-        }}</van-checkbox>
-      </van-checkbox-group>
-      <van-button type="info" size="mini" @click="onConfirm8">确定</van-button>
+      <div class="condition">
+        <van-checkbox-group v-model="result4" ref="checkboxGroup">
+          <van-checkbox v-for="item in column8" :key="item.code" :name="item" class="conditionbox">{{
+            item.content
+          }}</van-checkbox>
+        </van-checkbox-group>
+        <van-button type="info" size="mini" @click="onConfirm8" style="width:100%">确定</van-button>
+      </div>
     </van-popup>
     <!-- 弹出时下拉选择专业线标签 -->
     <van-popup
@@ -520,12 +562,14 @@
       :style="{ height: '50%' }"
       get-container="body"
     >
-      <van-checkbox-group v-model="result5" ref="checkboxGroup">
-        <van-checkbox v-for="item in column5" :key="item.code" :name="item">{{
-          item.content
-        }}</van-checkbox>
-      </van-checkbox-group>
-      <van-button type="info" size="mini" @click="onConfirm5">确定</van-button>
+      <div class="condition">
+        <van-checkbox-group v-model="result5" ref="checkboxGroup">
+          <van-checkbox v-for="item in column5" :key="item.code" :name="item" class="conditionbox">{{
+            item.content
+          }}</van-checkbox>
+        </van-checkbox-group>
+        <van-button type="info" size="mini" @click="onConfirm5" style="width:100%">确定</van-button>
+      </div>
     </van-popup>
     <!-- 弹出时下拉选择当前状态 -->
     <van-popup
@@ -534,12 +578,14 @@
       :style="{ height: '50%' }"
       get-container="body"
     >
-      <van-checkbox-group v-model="result6" ref="checkboxGroup">
-        <van-checkbox v-for="item in column6" :key="item.code" :name="item">{{
-          item.content
-        }}</van-checkbox>
-      </van-checkbox-group>
-      <van-button type="info" size="mini" @click="onConfirm6">确定</van-button>
+      <div class="condition">
+        <van-checkbox-group v-model="result6" ref="checkboxGroup">
+        <van-checkbox v-for="item in column6" :key="item.code" :name="item" class="conditionbox">{{
+            item.content
+          }}</van-checkbox>
+        </van-checkbox-group>
+        <van-button type="info" size="mini" @click="onConfirm6" style="width:100%">确定</van-button>
+      </div>
     </van-popup>
     <!-- 弹出时下拉选择人员类别 -->
     <van-popup
@@ -548,12 +594,14 @@
       :style="{ height: '50%' }"
       get-container="body"
     >
-      <van-checkbox-group v-model="result7" ref="checkboxGroup">
-        <van-checkbox v-for="item in column7" :key="item.code" :name="item">{{
-          item.content
-        }}</van-checkbox>
-      </van-checkbox-group>
-      <van-button type="info" size="mini" @click="onConfirm7">确定</van-button>
+      <div class="condition">
+        <van-checkbox-group v-model="result7" ref="checkboxGroup">
+        <van-checkbox v-for="item in column7" :key="item.code" :name="item" class="conditionbox">{{
+            item.content
+          }}</van-checkbox>
+        </van-checkbox-group>
+        <van-button type="info" size="mini" @click="onConfirm7" style="width:100%">确定</van-button>
+      </div>
     </van-popup>
     <!-- 弹出时下拉选择岗位分类1 -->
     <van-popup
@@ -562,12 +610,14 @@
       :style="{ height: '50%' }"
       get-container="body"
     >
-      <van-checkbox-group v-model="result2" ref="checkboxGroup">
-        <van-checkbox v-for="item in column9" :key="item.code" :name="item">{{
-          item.content
-        }}</van-checkbox>
-      </van-checkbox-group>
-      <van-button type="info" size="mini" @click="onConfirm9">确定</van-button>
+      <div class="condition">
+        <van-checkbox-group v-model="result2" ref="checkboxGroup">
+        <van-checkbox v-for="item in column9" :key="item.code" :name="item" class="conditionbox">{{
+            item.content
+          }}</van-checkbox>
+        </van-checkbox-group>
+        <van-button type="info" size="mini" @click="onConfirm9" style="width:100%">确定</van-button>
+      </div>
     </van-popup>
     <!-- 弹出时下拉选择岗位分类2 -->
     <van-popup
@@ -576,16 +626,19 @@
       :style="{ height: '50%' }"
       get-container="body"
     >
-      <van-checkbox-group v-model="result1" ref="checkboxGroup">
-        <van-checkbox
-          v-model="checkFl1"
-          v-for="item in column10"
-          :key="item.code"
-          :name="item"
-          >{{ item.content }}</van-checkbox
-        >
-      </van-checkbox-group>
-      <van-button type="info" size="mini" @click="confirmFl2">确定</van-button>
+      <div class="condition">
+        <van-checkbox-group v-model="result1" ref="checkboxGroup">
+          <van-checkbox
+            v-model="checkFl1"
+            v-for="item in column10"
+            :key="item.code"
+            :name="item"
+            class="conditionbox"
+            >{{ item.content }}</van-checkbox
+          >
+        </van-checkbox-group>
+        <van-button type="info" size="mini" @click="confirmFl2" style="width:100%">确定</van-button>
+      </div>
     </van-popup>
     <!-- 职类 -->
     <van-popup
@@ -594,12 +647,14 @@
       :style="{ height: '50%' }"
       get-container="body"
     >
-      <van-checkbox-group v-model="result8" ref="checkboxGroup">
-        <van-checkbox v-for="item in column11" :key="item.code" :name="item">{{
-          item.content
-        }}</van-checkbox>
-      </van-checkbox-group>
-      <van-button type="info" size="mini" @click="onConfirm10">确定</van-button>
+      <div class="condition">
+        <van-checkbox-group v-model="result8" ref="checkboxGroup">
+          <van-checkbox v-for="item in column11" :key="item.code" :name="item" class="conditionbox">{{
+            item.content
+          }}</van-checkbox>
+        </van-checkbox-group>
+        <van-button type="info" size="mini" @click="onConfirm10" style="width:100%">确定</van-button>
+      </div>
     </van-popup>
     <!-- 职级 -->
     <van-popup
@@ -608,19 +663,46 @@
       :style="{ height: '50%' }"
       get-container="body"
     >
-      <van-checkbox-group v-model="result9" ref="checkboxGroup">
-        <van-checkbox v-for="item in column12" :key="item.code" :name="item">{{
-          item.content
-        }}</van-checkbox>
-      </van-checkbox-group>
-      <van-button type="info" size="mini" @click="onConfirm11">确定</van-button>
+      <div class="condition">
+        <van-checkbox-group v-model="result9" ref="checkboxGroup">
+          <van-checkbox v-for="item in column12" :key="item.code" :name="item" class="conditionbox">{{
+            item.content
+          }}</van-checkbox>
+        </van-checkbox-group>
+        <van-button type="info" size="mini" @click="onConfirm11" style="width:100%">确定</van-button>
+      </div>
+    </van-popup>
+    <!-- 图形人员类别下拉框 -->
+    <van-popup
+      v-model="showLb"
+      position="bottom"
+      :style="{ height: '50%' }"
+      get-container="body"
+    >
+      <!-- <van-picker
+        title="标题"
+        show-toolbar
+        :columns="column7"
+        value-key="content"
+        @confirm="onConfirmLb"
+        @cancel="showLb = false"
+      /> -->
+      <div class="condition">
+        <van-checkbox-group v-model="result10" ref="checkboxGroup">
+        <van-checkbox v-for="item in column7" :key="item.code" :name="item" class="conditionbox">{{
+            item.content
+          }}</van-checkbox>
+        </van-checkbox-group>
+        <van-button type="info" size="mini" @click="onConfirmLb" style="width:100%">确定</van-button>
+      </div>
     </van-popup>
     <!-- 遮罩层（导出表格等待） -->
     <loadingSpin ref="loadingSpin"></loadingSpin>
   </div>
 </template>
 <script>
-import { Popup, Checkbox, CheckboxGroup, List, Notify } from "vant";
+import { Popup, Checkbox, CheckboxGroup, List, Notify, Toast } from "vant";
+import '../../components/comstyle/style.css'
 import {
   queryDept,
   getSelectVal,
@@ -630,7 +712,8 @@ import {
   querySome,
   queryRoster,
   exportExl,
-  selectEmployeeLimit
+  selectEmployeeLimit,
+  personalRatio
 } from "./api";
 import { mapMutations } from "vuex";
 import pickDeptMore from "@/components/pickDeptMore.vue";
@@ -639,6 +722,14 @@ import draggable from "vuedraggable";
 export default {
   data() {
     return {
+      deIds: [],
+      sum: [], //图形人员人数
+      ratio: [], //图形人员占比
+      perName: [], //图形人员占比
+      perType: '', //图形下拉选择人员类别值
+      perTypeCode: '', //图形下拉选择人员类别传给后台的值
+      showLb: false, //图形下拉选择人员类别
+      refresh: false,
       resultMore: [], //直接选择条件查询的多选
       download: 1, //传给后台，导出的是否是默认的数据
       deptData: [],
@@ -711,6 +802,7 @@ export default {
       result7: [], //人员类别
       result8: [], //职类
       result9: [], //职级
+      result10: [], //图形人员类别
       pickFalse: "",
       total: 0,
       pageIndex: 1,
@@ -757,6 +849,9 @@ export default {
           width: 150,
           titleAlign: "center",
           columnAlign: "center",
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<div class="overauto">${rowData[field]}</div>`
+          },
           isResize: true
         },
         {
@@ -935,6 +1030,7 @@ export default {
           Notify({ type: "warning", message: "没有更多数据了哦~" })
         }else{
           this.tableData = this.tableData.concat(res.obj)
+          Toast('加载成功，请滑动表格查看')
         }
       })
     },
@@ -949,6 +1045,20 @@ export default {
         this.column9 = res.obj.gwfl;
         this.column11 = res.obj.zl;
       });
+      //查询人员类别图形数据
+      let queryData = {
+        deptIds: JSON.parse(localStorage.getItem('deptIdsRes')),
+        ids: this.deIds,
+        personType: this.perTypeCode
+      }
+      personalRatio(queryData).then(res=>{
+        for(let i in res.obj){
+          this.sum.push(res.obj[i].sum)
+          this.ratio.push(res.obj[i].ratio0)
+          this.perName.push(res.obj[i].name)
+        }
+        this.initCharts()
+      })
     },
     //获取部门和部门id
     _queryDeptIdName() {
@@ -958,9 +1068,8 @@ export default {
     //获取组织下的部门
     _getOrz() {
       const departRes = JSON.parse(localStorage.getItem("departRes"));
-      console.log(departRes)
+      // console.log(departRes)
       this.deptData.push(departRes);
-      console.log(this.deptData)
       this.currentDept = departRes.currentDepartment;
       this.deptIds = departRes.deptIds;
     },
@@ -992,6 +1101,12 @@ export default {
       this.deptVal = [];
       this.$refs.select.selectedDepartment = "";
       this.$refs.select.restFlag = true;
+      // console.log(this.$refs.select)
+      // this.$refs.select.openlist = this.$refs.select.faDeptData[0].deptId
+      this.refresh = true
+      this.$nextTick(()=>{
+        this.refresh = false
+      })
 
       //更多条件置空
       this.form.currentState = "",
@@ -1042,10 +1157,93 @@ export default {
       // this.currentDept = "",
       // this.deptIds = "",
       // this.deptVal = [],
+
+      //重置表格的初始值
+      this.columns = [
+        {
+          field: "custome",
+          width: 50,
+          titleAlign: "center",
+          columnAlign: "center",
+          title: "序号",
+          formatter: function(rowData, index) {
+            return index + 1;
+          },
+          isResize: true
+        },
+        {
+          field: "jobnumber",
+          title: "工号",
+          width: 100,
+          titleAlign: "center",
+          columnAlign: "center",
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<span>${rowData[field]}</span>`;
+          },
+          isResize: true
+          // isFrozen: true,
+        },
+        {
+          field: "name",
+          title: "姓名",
+          width: 100,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          // isFrozen: true
+        },
+        {
+          field: "department",
+          title: "部门",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<div class="overauto">${rowData[field]}</div>`
+          },
+          isResize: true
+        },
+        {
+          field: "post",
+          title: "岗位",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "rank",
+          title: "职级",
+          width: 50,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "rsrq",
+          title: "入司日期",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "currentState",
+          title: "当前状态",
+          width: 100,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        }
+      ]
       //清空多选
-      this.resultMore = []
-      this.itemCheck = []
-      this.$refs.checkboxGroupMore.toggleAll(false)
+      if(this.resultMore == ''){
+        return
+      }else{
+        this.resultMore = []
+        this.itemCheck = []
+        this.$refs.checkboxGroupMore.toggleAll(false)
+      }
     },
     //更多查询条件
     moreSearch() {
@@ -1150,6 +1348,11 @@ export default {
     //全选
     checkAll() {
       this.$refs.checkboxGroupMore.toggleAll(true);
+      let res = this.resultMore.filter((item,index,array) => {
+          //元素值，元素的索引，原数组。
+          return (item !== '工作单位' && item !== '职称名称');
+      });
+      this.resultMore = res
     },
     //重置更多选择条件
     moreReset() {
@@ -1201,10 +1404,92 @@ export default {
       // this.currentDept = "",
       // this.deptIds = "",
       // this.deptVal = [],
+      //重置表格的初始值
+      this.columns = [
+        {
+          field: "custome",
+          width: 50,
+          titleAlign: "center",
+          columnAlign: "center",
+          title: "序号",
+          formatter: function(rowData, index) {
+            return index + 1;
+          },
+          isResize: true
+        },
+        {
+          field: "jobnumber",
+          title: "工号",
+          width: 100,
+          titleAlign: "center",
+          columnAlign: "center",
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<span>${rowData[field]}</span>`;
+          },
+          isResize: true
+          // isFrozen: true,
+        },
+        {
+          field: "name",
+          title: "姓名",
+          width: 100,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true,
+          // isFrozen: true
+        },
+        {
+          field: "department",
+          title: "部门",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            return `<div class="overauto">${rowData[field]}</div>`
+          },
+          isResize: true
+        },
+        {
+          field: "post",
+          title: "岗位",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "rank",
+          title: "职级",
+          width: 50,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "rsrq",
+          title: "入司日期",
+          width: 150,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        },
+        {
+          field: "currentState",
+          title: "当前状态",
+          width: 100,
+          titleAlign: "center",
+          columnAlign: "center",
+          isResize: true
+        }
+      ]
       //清空多选
-      this.resultMore = []
-      this.itemCheck = []
-      this.$refs.checkboxGroupMore.toggleAll(false)
+      if(this.resultMore == ''){
+        return
+      }else{
+        this.resultMore = []
+        this.itemCheck = []
+        this.$refs.checkboxGroupMore.toggleAll(false)
+      }
     },
     //弹窗里条件的查询
     searchMore() {
@@ -2422,8 +2707,35 @@ export default {
       //   console.log(data)
       this.deptVal = data;
     },
+    //图形选择部门
+    selctdept1(data) {
+      this.sum = []
+      this.ratio = []
+      this.perName = []
+      console.log(data)
+      this.deIds = data
+      let queryData = {
+        deptIds: JSON.parse(localStorage.getItem('deptIdsRes')),
+        ids: data,
+        personType: this.perTypeCode
+      }
+      personalRatio(queryData).then(res=>{
+        for(let i in res.obj){
+          this.sum.push(res.obj[i].sum)
+          this.ratio.push(res.obj[i].ratio0)
+          this.perName.push(res.obj[i].name)
+        }
+        this.initCharts()
+      })
+      // this.deptVal = data;
+    },
     // ceshi() {
-    //   this.download = 2
+    //   console.log(this.resultMore)
+    //   let res = this.resultMore.filter((item,index,array) => {
+    //       //元素值，元素的索引，原数组。
+    //       return (item !== '工作单位' && item !== '职称名称');
+    //   });
+    //   console.log(res)
     // },
     // ceshi2() {
     //   console.log(this.download)
@@ -2469,6 +2781,166 @@ export default {
         return "column-cell-class-name-test";
       }
     },
+    showAlert() {
+      this.$createDialog({
+        type: 'alert',
+        title: '提示',
+        content: '可设置花名册字段及更多查询条件',
+        icon: 'cubeic-alert'
+      }).show()
+    },
+    //图形下拉人员类别
+    // onConfirmLb(picker){
+    //   // console.log(picker)
+    //   this.perType = picker.content
+    //   this.perTypeCode = picker.code
+    //   this.showLb = false
+    // },
+    onConfirmLb() {
+      let str = "";
+      let val = "";
+      for (let i in this.result10) {
+        str += this.result10[i].content + ",";
+        val += this.result10[i].code + ",";
+      }
+      if (str.length > 0) {
+        str = str.substr(0, str.length - 1);
+        val = val.substr(0, val.length - 1);
+      }
+      this.perTypeCode = val;
+      this.perType = str;
+      this.showLb = false;
+      this.result10 = [];
+      //查询人员类别图形数据
+      this.sum = []
+      this.ratio = []
+      this.perName = []
+      let queryData = {
+        deptIds: JSON.parse(localStorage.getItem('deptIdsRes')),
+        ids: this.deIds,
+        personType: this.perTypeCode
+      }
+      personalRatio(queryData).then(res=>{
+        for(let i in res.obj){
+          this.sum.push(res.obj[i].sum)
+          this.ratio.push(res.obj[i].ratio0)
+          this.perName.push(res.obj[i].name)
+        }
+        this.initCharts()
+      })
+    },
+    //人员每月情况
+    initCharts() {
+      let myChart = this.$echarts.init(this.$refs.chart);
+      let seriesLabel = {
+        normal: {
+          show: true,
+          position: "inside", //在上方显示
+          textBorderWidth: 2,
+          formatter: `{c}人`
+        }
+      };
+      let seriesLabel1 = {
+        normal: {
+          show: true,
+          position: "inside", //在上方显示
+          textBorderWidth: 2,
+          formatter: `{c}%`
+        }
+      }; // 绘制图表
+      myChart.setOption({
+        tooltip: {
+          trigger: "axis",
+          axisPointer: {
+            type: "cross",
+            crossStyle: {
+              color: "#999"
+            }
+          },
+          formatter: function(params) {
+            // console.log(params);
+            return params[0].name+'<br>'
+            +'<div class="runoff" style="background-color:#c23531"></div>'+'流失人数：'+params[0].data+'<br>'
+            +'<div class="runoff" style="background-color:#61a0a8"></div>'+'流失率：'+params[1].data+'%<br>'
+          }
+        },
+        dataZoom: [
+          {
+            show: true,
+            realtime: true,
+            start: 0,
+            end: 100
+          },
+          {
+            type: "inside",
+            realtime: true,
+            start: 0,
+            end: 50
+          }
+        ],
+        grid: {
+            left: '3%',
+            right: '3%',
+            bottom: '10%',
+            containLabel: true
+        },
+        xAxis: [
+          {
+            type: "category",
+            data: this.perName,
+            // data: this.runTime,
+            axisPointer: {
+              type: "shadow"
+            },
+            axisLabel: {
+              interval:0,
+              rotate:40
+            },
+          }
+        ],
+        yAxis: [
+          {
+            type: "value",
+            name: "人员人数（单位：人）",
+            axisLabel: {
+              formatter: "{value}"
+            },
+            nameTextStyle: {
+              // align: 'verticalAlign',
+              padding: [0, 0, 0, 40]
+            }
+          },
+          {
+            type: "value",
+            name: "占比（单位：%）",
+            axisLabel: {
+              formatter: "{value}"
+            },
+            nameTextStyle: {
+              padding: [0, 50, 0, 0]
+            }
+          }
+        ],
+        series: [
+          {
+            label: seriesLabel,
+            name: "人员人数",
+            type: "bar",
+            data: this.sum
+          },
+          {
+            label: seriesLabel1,
+            name: "占比",
+            type: "line",
+            yAxisIndex: 1,
+            data: this.ratio
+          }
+        ]
+      });
+      window.onresize = myChart.resize;
+      //点击事件
+      // myChart.on("click", function(params) {});
+    },
     ...mapMutations({
       save_jobNum: "save_jobNum",
       scroll_top: "scroll_top",
@@ -2477,6 +2949,7 @@ export default {
     })
   },
   mounted() {
+    this.initCharts()
     this.$dragging.$on("dragged", ({ value }) => {
       // console.log(value.item)
       console.log(value.list);
@@ -2558,6 +3031,9 @@ export default {
     text-align center
     color orange
   }
+  .draging{
+    text-align center
+  }
 }
 
 .van-checkbox {
@@ -2603,5 +3079,36 @@ export default {
   padding: 5px;
   line-height 35px
   // text-align: center;
+}
+.condition{
+  padding 10px
+  text-align center
+  .conditionbox{
+    padding 10px
+    text-align center
+  }
+}
+.titlea {
+  height: 40px;
+  line-height: 40px;
+  color: #f39f57;
+  font-size: 15px;
+  font-weight: 700;
+  box-shadow: 0 2px 3px -1px #eee;
+  margin-bottom: 8px;
+
+  .borleft {
+    border-left: 4px solid #f39f57;
+    padding-right: 6px;
+  }
+}
+.postrank {
+  height: 400px;
+  background-color: #f6f6f8;
+
+  .pie {
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>

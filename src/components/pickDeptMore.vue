@@ -18,7 +18,7 @@
       get-container="body"
       :closeable="closeableFlag"
     >
-      <div style="padding-bottom:20%">
+      <div style="padding-bottom:20%" v-if="isReload">
         <!-- <van-switch :value="isDownValue" @input="isDownMethods" /> -->
         <van-cell
           center
@@ -129,6 +129,7 @@ export default {
   },
   data() {
     return {
+      isReload: true,
       idFlag: "",
       deptData: [],
       selectedDepartment: "",
@@ -153,7 +154,7 @@ export default {
       selectkeySet: null,
       beforeSelectName: "",
       SelectNameMap: null,
-      selectAllstyle: "background-color:#ccc",
+      selectAllstyle: "background-color:Coral",
       labelStyle: "",
       restFlag: false, //花名册清空勾选,
       autosize: { maxHeight: "25", minHeight: "20" }
@@ -425,7 +426,7 @@ export default {
         this.$refs.tree.setCheckedKeys([]);
         this.restFlag = false;
       }
-    }
+    },
   }
 };
 </script>
