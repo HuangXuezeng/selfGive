@@ -48,7 +48,23 @@
                 </van-col>
             </van-row>
             <!-- <chooseDepartment @confirmNode="ManagementrangeDepart" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData"></chooseDepartment> -->
-            <v-table is-horizontal-resize style="width: 100%" :columns="columnsManagementrange" :table-data="tableDataManagementrange" row-hover-color="#eee" row-click-color="#edf7ff" :is-loading="lodingFlagManagementrange"></v-table>
+            <v-table is-horizontal-resize style="width: 100%" :columns="columnsManagementrange" :table-data="tableDataManagementrange" row-hover-color="#eee" row-click-color="#edf7ff" :is-loading="lodingFlagManagementrange" :column-cell-class-name="columnCellClassTrangeChange"></v-table>
+        </div>
+        <div>
+            <van-row type="flex" justify="left" style="margin-bottom: 10px">
+                <van-col>
+                    <div class="titleRewards">
+                        <span class="honghe"></span>
+                        团队氛围
+                    </div>
+                </van-col>
+            </van-row>
+            <div>
+                <div style="width: 100%; height: 250px" v-if='!showNodatas'>
+                    <div ref="teamAtmosphereEchart" :style="{ width: '100%', height: '300px' }"></div>
+                </div>
+            </div>
+            <noData :showNodata="showNodatas"></noData>
         </div>
     </div>
 </template>
@@ -77,16 +93,20 @@
         findCadreReportWholeInfo,
         findCadreReportYearChangeInfo,
         findCadreRepotrRangeInfo,
+        findCadreTeamFwInfo
     } from "@/views/adresResultts/adresResults.js";
     import adresNavbar from "@/components/adresResultstab/adresResultsNavbar.vue";
+    import noData from "@/components/noData.vue";
     export default {
         components: {
             adresResultsTanbber,
             chooseDepartment,
-            adresNavbar
+            adresNavbar,
+            noData
         },
         data() {
             return {
+                showNodatas: false,
                 deptData: [],
                 columnsCadresChange: [{
                         field: "type",
@@ -100,7 +120,7 @@
                     {
                         field: "gbbz",
                         title: "干部编制",
-                        width: 80,
+                        width: 40,
                         titleAlign: "center",
                         columnAlign: "center",
                         isResize: true,
@@ -217,7 +237,7 @@
                     {
                         field: "avg",
                         title: "平均在编",
-                        width: 100,
+                        width: 80,
                         titleAlign: "center",
                         columnAlign: "center",
                         isResize: true,
@@ -225,7 +245,7 @@
                     },
                     {
                         field: "gqb",
-                        title: "干群比",
+                        title: "管理幅度",
                         width: 80,
                         titleAlign: "center",
                         columnAlign: "center",
@@ -245,7 +265,7 @@
                     {
                         field: "count",
                         title: "人数",
-                        width: 80,
+                        width: 40,
                         titleAlign: "center",
                         columnAlign: "center",
                         isResize: true,
@@ -253,7 +273,7 @@
                     },
                     {
                         field: "magRange",
-                        title: "管理幅度",
+                        title: "干群比",
                         width: 80,
                         titleAlign: "center",
                         columnAlign: "center",
@@ -307,7 +327,10 @@
                     deptList: [],
                     isDown: "Y",
                 },
-                readySelectDept: []
+                readySelectDept: [],
+                findCadreTeamFwInfoData: {
+                    deptList: []
+                }
             };
         },
         created() {
@@ -316,6 +339,7 @@
         },
         mounted() {
             this.$refs.adresResultsTanbber.changtab("cadresChange");
+            // this.initteamAtmosphereEchart()
         },
         methods: {
             //数据初始化
@@ -329,6 +353,7 @@
                 // this.queryFindCadreReportWholeInfo();
                 this.queryFindCadreReportYearChangeInfo();
                 this.queryfindCadreRepotrRangeInfo();
+                this.queryfindCadreTeamFwInfo()
             },
             yearChange(year) {
                 this.selecYear = year
@@ -420,7 +445,7 @@
                 }
                 // selectObj.field = selectObj.value;
                 selectObj.title = selectObj.text;
-                selectObj.width = 80;
+                selectObj.width = 40;
                 selectObj.titleAlign = "center";
                 selectObj.columnAlign = "center";
                 selectObj.titleCellClassName = "titleclass";
@@ -526,15 +551,35 @@
                 if (rowData.type == "M6及以上") {
                     return "sClass";
                 }
-                if (rowData.type == "P4/S4-P5S5") {
-                    return "oClass";
+                if (rowData.type == "P4/S4-P5/S5") {
+                    return "mClass";
                 }
                 if (rowData.type == "P6/S6及以上") {
-                    return "heClass";
+                    return "pClass";
                 }
                 if (rowData.type == "整体") {
                     return "oClass";
                 }
+            },
+            columnCellClassTrangeChange(rowIndex, columnName, rowData){
+              if (rowData.type == "M1-M3") {
+                    return "mClass";
+                }
+                if (rowData.type == "M4及以上") {
+                    return "pClass";
+                }
+                // if (rowData.type == "M6及以上") {
+                //     return "sClass";
+                // }
+                // if (rowData.type == "P4/S4-P5/S5") {
+                //     return "mClass";
+                // }
+                // if (rowData.type == "P6/S6及以上") {
+                //     return "pClass";
+                // }
+                // if (rowData.type == "整体") {
+                //     return "oClass";
+                // }
             },
             queryFindCadreReportYearChangeInfo(obj) {
                 let queryData = {};
@@ -603,6 +648,7 @@
                     },
                     yAxis: {
                         type: "value",
+                        scale: true
                     },
                     series: [{
                             name: "平均在编",
@@ -635,6 +681,123 @@
                 this.queryYearManagementrange.isDown = isDown;
                 this.queryfindCadreRepotrRangeInfo();
             },
+            queryfindCadreTeamFwInfo() {
+                this.findCadreTeamFwInfoData.deptList = this.readySelectDept
+                findCadreTeamFwInfo(this.findCadreTeamFwInfoData).then(res => {
+                    if (res.code == "1000") {
+                        this.showNodatas = false
+                        this.$nextTick(() => {
+                            this.initteamAtmosphereEchart(res.obj)
+                        })
+                    } else {
+                        Toast.fail(res.msg);
+                        this.showNodatas = true
+                    }
+                })
+            },
+            initteamAtmosphereEchart(obj) {
+                var myChart = this.$echarts.init(this.$refs.teamAtmosphereEchart);
+                let chartData = []
+                if (obj == '雷雨') {
+                    let objt = {
+                        value: 10,
+                        name: obj
+                    }
+                    chartData.push(objt)
+                } else if (obj == '雨天') {
+                    let objt = {
+                        value: 30,
+                        name: obj
+                    }
+                    chartData.push(objt)
+                } else if (obj == '阴天') {
+                    let objt = {
+                        value: 50,
+                        name: obj
+                    }
+                    chartData.push(objt)
+                } else if (obj == '多云') {
+                    let objt = {
+                        value: 70,
+                        name: obj
+                    }
+                    chartData.push(objt)
+                } else if (obj == '晴天') {
+                    let objt = {
+                        value: 90,
+                        name: obj
+                    }
+                    chartData.push(objt)
+                }
+                myChart.setOption({
+                    tooltip: {
+                        formatter: '{a} <br/>{b} : {c}%'
+                    },
+
+                    series: [{
+                        // name: '团队氛围',
+                        type: 'gauge',
+                        startAngle: 200, //开始角度
+                        endAngle: -20, //结束角度
+                        radius: "80%", //仪表大小
+                        axisLine: {
+                            show: true,
+                            lineStyle: { // 属性lineStyle控制线条样式
+                                color: [ //表盘颜色
+                                    [0.2, "#DC143C"], //0-50%处的颜色
+                                    [0.4, "#FF8C00"], //51%-70%处的颜色
+                                    [0.6, "#DDA0DD"], //70%-90%处的颜色
+                                    [0.8, "#87CEFA"], //90%-100%处的颜色
+                                    [1, "#32CD32"] //90%-100%处的颜色
+
+                                ],
+                                width: 8 //表盘宽度
+                            }
+                        },
+                        axisTick: { // 坐标轴小标记
+                            show: false
+                        },
+                        axisLabel: {
+                            formatter: function(v) {
+                                if (v == 0) {
+                                    return '';
+                                } else if (v < 20) {
+                                    return '雷雨';
+                                } else if (v > 20 && v < 40) {
+                                    return '雨天';
+                                } else if (v > 40 && v < 60) {
+                                    return '阴天';
+                                } else if (v > 60 && v < 80) {
+                                    return '多云';
+                                } else if (v > 80 && v < 100) {
+                                    return '晴天';
+                                }
+                            }
+                        },
+                        title: {
+                            color: 'red',
+                            offsetCenter: [0, '28%'], // x, y，单位px
+                            rich: {
+                                formatter: function(v) {
+                                    debugger
+                                }
+                            }
+
+                        },
+                        pointer: { //指针样式
+                            //  length: '45%'
+                            width: 3,
+                            color: '#FFD700',
+                            shadowBlur: 5
+                        },
+                        detail: {
+                            show: false
+                        },
+                        data: chartData
+                    }]
+                })
+
+            }
         },
     };
 </script>
@@ -650,26 +813,32 @@
     .titleclass {
         background-color: #dc7272;
         color: #ffffff;
+        font-size 12px;
     }
 
     .mClass {
         background-color: #FFEBCD;
+        font-size 12px;
     }
 
     .pClass {
         background-color: #FFDEAD;
+        font-size 12px;
     }
 
     .sClass {
         background-color: #FFEBCD;
+        font-size 12px;
     }
 
     .oClass {
         background-color: #FFDEAD;
+        font-size 12px;
     }
 
     .heClass {
         background-color: #FFEBCD;
+        font-size 12px;
     }
 
     .bluejunpColor {

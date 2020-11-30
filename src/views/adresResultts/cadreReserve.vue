@@ -9,6 +9,23 @@
                     <van-col>
                         <div class="titleRewards">
                             <span class="honghe"></span>
+                            干部流失率
+                        </div>
+                    </van-col>
+                </van-row>
+                <selctYearcurrent @yearChangeItem='yearChange' :startYear='2018' :allPage='0'></selctYearcurrent>
+                <!-- <chooseDepartment @confirmNode="cadreReserveDepart" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData"></chooseDepartment> -->
+                <div>
+                    <div style="width: 100%; height: 400px">
+                        <div ref="findCadresLossInfoEchart" :style="{ width: '100%', height: '400px' }"></div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <van-row type="flex" justify="left" style="margin-bottom: 10px">
+                    <van-col>
+                        <div class="titleRewards">
+                            <span class="honghe"></span>
                             干部储备准备度
                         </div>
                     </van-col>
@@ -71,7 +88,8 @@
     import {
         findCadreReportReserveInfo,
         findCadreChartInfo,
-        findCadreChartDownDeptInfo
+        findCadreChartDownDeptInfo,
+        findCadresLossInfo
     } from "@/views/adresResultts/adresResults.js";
     import selctYearcurrent from "@/components/adresResultstab/selctYearcurrent.vue";
     import noData from "@/components/noData.vue";
@@ -103,7 +121,13 @@
                 },
                 showNodatas: false,
                 downDeptlist: [],
-                selectDownDept: ''
+                selectDownDept: '',
+                findCadresLossInfoData: {
+                    jobnumber: '',
+                    deptList: [],
+                    isDown: 'Y',
+                    year: ''
+                }
             };
         },
         //监听属性 类似于data概念
@@ -114,13 +138,22 @@
         methods: {
             //数据初始化
             init() {
+                // debugger
                 // this.queryfindPayrollDept();
                 this.readySelectDept = [JSON.parse(localStorage.getItem("adresResultDept")).deptId];
                 this.readySelectDeptObj = JSON.parse(localStorage.getItem("adresResultDept"))
                 this.findCadreChartInfoUeryData.deptList = this.readySelectDept
                 this.queryfindCadreReportReserveInfo()
+                this.queryfindCadresLossInfo()
                 // this.queryfindCadreChartInfo()
                 // this.queryfindCadreChartDownDeptInfo()
+            },
+            //查询流失率
+            queryfindCadresLossInfo() {
+                this.findCadresLossInfoData.deptList = this.readySelectDept
+                findCadresLossInfo(this.findCadresLossInfoData).then(res => {
+                    this.initfindCadresLossInfoEchart(res.obj)
+                })
             },
             //查询部门
             queryfindPayrollDept() {
@@ -156,6 +189,79 @@
 
                     // debugger
                 });
+            },
+            initfindCadresLossInfoEchart(list) {
+                // debugger
+                var that = this
+                var myChart = this.$echarts.init(this.$refs.findCadresLossInfoEchart);
+                let monthMap = new Map();
+                let monthData = []
+                let monthList = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"]
+                for (let i in monthList) {
+                    monthMap.set(monthList[i], '')
+                }
+                for (let item of list) {
+                    monthMap.set(item.month, item.loss.split('%')[0])
+                }
+                const arr = [...monthMap];
+                for (let item of arr) {
+                    let [a, b] = item
+                    monthData.push(b)
+                }
+
+                myChart.setOption({
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'line',
+                            label: {
+                                backgroundColor: '#6a7985'
+                            }
+                        },
+                        formatter: " <br/>{b}:{c}%"
+                    },
+                    legend: {
+                        data: [that.readySelectDeptObj.text]
+                    },
+                    toolbox: {
+                        // feature: {
+                        //     saveAsImage: {}
+                        // }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [{
+                        type: 'category',
+                        boundaryGap: false,
+                        data: monthList
+                    }],
+                    yAxis: [{
+                        type: 'value',
+
+                        axisLabel: {
+                            formatter: '{value}%'
+                        },
+
+                    }],
+                    series: [{
+                            name: that.readySelectDeptObj.text,
+                            type: 'line',
+                            data: monthData,
+                            label: {
+                            normal: {
+                                show: true,
+                                position: 'top',
+                                formatter: "{c}%"
+                            }
+                        },
+                        },
+
+                    ]
+                })
             },
             // 干部准备度统计图
             initcadreReserveEchart(list) {
@@ -360,8 +466,9 @@
                 })
             },
             yearChange(item) {
-                this.findCadreChartInfoUeryData.year = item
-                this.queryfindCadreChartInfo()
+                this.findCadresLossInfoData.year = item
+                this.queryfindCadresLossInfo()
+                // this.queryfindCadreChartInfo()
             },
             // 干部准备雷达图
             initfindCadreChartInfoEchart(list) {

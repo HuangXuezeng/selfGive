@@ -256,7 +256,7 @@
                                     <van-collapse-item v-if="index == socialList.length - 1" v-show="showSocialListMore" name="000">
                                         <template #title>
                                             <div class="fontweig">
-                                                <van-tag mark type="primary" color="#fc5f10">...更多顾家社会履历</van-tag>
+                                                <van-tag mark type="primary" color="#fc5f10">...更多社会履历</van-tag>
                                             </div>
                                         </template>
                                     </van-collapse-item>

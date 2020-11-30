@@ -23,8 +23,8 @@
                     </van-col>
                 </van-row>
                 <div>
-                    <div style="width: 100%; height: 600px">
-                        <div ref="distribution" :style="{ width: '100%', height: '600px' }"></div>
+                    <div style="width: 100%; height: 300px">
+                        <div ref="distribution" :style="{ width: '100%', height: '300px' }"></div>
                     </div>
                 </div>
             </div>
@@ -38,8 +38,8 @@
                     </van-col>
                 </van-row>
                 <div>
-                    <div style="width: 100%; height: 600px">
-                        <div ref="AgeDistribution" :style="{ width: '100%', height: '600px' }"></div>
+                    <div style="width: 100%; height: 300px">
+                        <div ref="AgeDistribution" :style="{ width: '100%', height: '300px' }"></div>
                     </div>
                 </div>
             </div>
@@ -53,8 +53,38 @@
                     </van-col>
                 </van-row>
                 <div>
-                    <div style="width: 100%; height: 600px">
-                        <div ref="yongDistribution" :style="{ width: '100%', height: '600px' }"></div>
+                    <div style="width: 100%; height: 300px">
+                        <div ref="yongDistribution" :style="{ width: '100%', height: '300px' }"></div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <van-row type="flex" justify="left" style="margin-bottom: 10px">
+                    <van-col>
+                        <div class="titleRewards">
+                            <span class="honghe"></span>
+                            学历分布
+                        </div>
+                    </van-col>
+                </van-row>
+                <div>
+                    <div style="width: 100%; height: 300px">
+                        <div ref="educationDistribution" :style="{ width: '100%', height: '300px' }"></div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <van-row type="flex" justify="left" style="margin-bottom: 10px">
+                    <van-col>
+                        <div class="titleRewards">
+                            <span class="honghe"></span>
+                            职级分布
+                        </div>
+                    </van-col>
+                </van-row>
+                <div>
+                    <div style="width: 100%; height: 500px">
+                        <div ref="countDistribution" :style="{ width: '100%', height: '500px' }"></div>
                     </div>
                 </div>
             </div>
@@ -129,6 +159,8 @@
                 jobAgeListRes: [],
                 ageListRes: [],
                 yongListRes: [],
+                educationListRes: [],
+                countListRes: [],
                 popupColumns: [{
                         field: "custome",
                         width: 50,
@@ -291,6 +323,9 @@
                         this.distributionMethod(res.obj.jobAge);
                         this.AgeDistributionMeth(res.obj.age);
                         this.yongDistributionMeth(res.obj.young);
+                        this.educationDistributionMeth(res.obj.edu);
+                        this.countDistributionMeth(res.obj.count);
+
                     } else {
                         Toast.fail(res.msg);
                     }
@@ -318,16 +353,17 @@
                 let a10yearCountList = [];
                 for (let i in list) {
                     zlList.push(list[i].type);
-                    a3to5yearCountList.push(list[i].a3to5yearCount);
-                    a3yearCountList.push(list[i].a3yearCount);
-                    a5to10yearCountList.push(list[i].a5to10yearCount);
-                    a10yearCountList.push(list[i].a10yearCount);
+                    a3to5yearCountList.push(list[i].a3to5yearCount || '');
+                    a3yearCountList.push(list[i].a3yearCount || '');
+                    a5to10yearCountList.push(list[i].a5to10yearCount || '');
+                    a10yearCountList.push(list[i].a10yearCount || '');
                 }
 
                 myChart.setOption({
                     legend: {
                         data: ["3年以内", "3-5年", "5-10年", "10年以上"],
                     },
+                    color: ['#6495ED', '#FF8C00', '#A9A9A9', '#FFD700'],
                     grid: {
                         left: "3%",
                         right: "4%",
@@ -339,7 +375,9 @@
                         data: zlList,
                         axisLabel: {
                             interval: 0,
-                            rotate: 40
+                            // rotate: 10,
+                            fontSize: 8,
+
                         },
                     }, ],
                     yAxis: [{
@@ -358,8 +396,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 10,
                                         },
                                     },
                                 },
@@ -377,8 +415,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 10,
                                         },
                                     },
                                 },
@@ -396,8 +434,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 10,
                                         },
                                     },
                                 },
@@ -415,8 +453,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 10,
                                         },
                                     },
                                 },
@@ -427,6 +465,133 @@
                 myChart.on("click", function(params) {
                     // debugger;
                     that.RightInfo(params, 1);
+                });
+            },
+            //学历柱图
+            educationDistributionMeth(list) {
+                var that = this;
+                this.educationListRes = list;
+                var myChart = this.$echarts.init(this.$refs.educationDistribution);
+                let zlList = [];
+                let gaozhongCountList = [];
+                let dazhuangCountList = [];
+                let benkeCountList = [];
+                let shuoshiCountList = [];
+                for (let i in list) {
+                    zlList.push(list[i].type);
+                    gaozhongCountList.push(list[i].gaozhongCount || '');
+                    dazhuangCountList.push(list[i].dazhuangCount || '');
+                    benkeCountList.push(list[i].benkeCount || '');
+                    shuoshiCountList.push(list[i].shuoshiCount || '');
+                }
+
+                myChart.setOption({
+                    legend: {
+                        data: ["高中及以下", "大专", "本科", "硕士及以上"],
+                    },
+                    color: ['#6495ED', '#FF8C00', '#A9A9A9', '#FFD700'],
+                    grid: {
+                        left: "3%",
+                        right: "4%",
+                        bottom: "3%",
+                        containLabel: true,
+                    },
+                    xAxis: [{
+                        type: "category",
+                        data: zlList,
+                        axisLabel: {
+                            interval: 0,
+                            // rotate: 40
+                            fontSize: 8,
+
+                        },
+                    }, ],
+                    yAxis: [{
+                        type: "value",
+                    }, ],
+                    series: [{
+                            name: "高中及以下",
+                            type: "bar",
+                            stack: "学历",
+                            barWidth: 25,
+                            data: gaozhongCountList,
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true, //开启显示
+                                        position: "inside", //在上方显示
+                                        textStyle: {
+                                            //数值样式
+                                            color: "#000",
+                                            fontSize: 10,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        {
+                            name: "大专",
+                            type: "bar",
+                            stack: "学历",
+                            data: dazhuangCountList,
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true, //开启显示
+                                        position: "inside", //在上方显示
+                                        textStyle: {
+                                            //数值样式
+                                            color: "#000",
+                                            fontSize: 10,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        {
+                            name: "本科",
+                            type: "bar",
+                            stack: "学历",
+                            data: benkeCountList,
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true, //开启显示
+                                        position: "inside", //在上方显示
+                                        textStyle: {
+                                            //数值样式
+                                            color: "#000",
+                                            fontSize: 10,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        {
+                            name: "硕士及以上",
+                            type: "bar",
+                            stack: "学历",
+                            data: shuoshiCountList,
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true, //开启显示
+                                        position: "inside", //在上方显示
+                                        textStyle: {
+                                            //数值样式
+                                            color: "#000",
+                                            fontSize: 10,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                });
+                myChart.on("click", function(params) {
+                    // debugger;
+                    that.RightInfo(params, 4);
+                    // console.log(params);
                 });
             },
             //年龄柱图
@@ -441,16 +606,17 @@
                 let a50countList = [];
                 for (let i in list) {
                     zlList.push(list[i].type);
-                    a30countList.push(list[i].a30count);
-                    a30to39countList.push(list[i].a30to39count);
-                    a40to49countList.push(list[i].a40to49count);
-                    a50countList.push(list[i].a50count);
+                    a30countList.push(list[i].a30count || '');
+                    a30to39countList.push(list[i].a30to39count || '');
+                    a40to49countList.push(list[i].a40to49count || '');
+                    a50countList.push(list[i].a50count || '');
                 }
 
                 myChart.setOption({
                     legend: {
                         data: ["30以下", "30-39", "40-49", "50以上"],
                     },
+                    color: ['#6495ED', '#FF8C00', '#A9A9A9', '#FFD700'],
                     grid: {
                         left: "3%",
                         right: "4%",
@@ -462,7 +628,9 @@
                         data: zlList,
                         axisLabel: {
                             interval: 0,
-                            rotate: 40
+                            // rotate: 40
+                            fontSize: 8,
+
                         },
                     }, ],
                     yAxis: [{
@@ -481,8 +649,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 10,
                                         },
                                     },
                                 },
@@ -500,8 +668,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 10,
                                         },
                                     },
                                 },
@@ -519,8 +687,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 10,
                                         },
                                     },
                                 },
@@ -538,8 +706,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 10,
                                         },
                                     },
                                 },
@@ -563,13 +731,14 @@
                 let notYoungCountList = [];
                 for (let i in list) {
                     zlList.push(list[i].type);
-                    isYoungCountList.push(list[i].isYoungCount);
-                    notYoungCountList.push(list[i].notYoungCount);
+                    isYoungCountList.push(list[i].isYoungCount || '');
+                    notYoungCountList.push(list[i].notYoungCount || '');
                 }
                 myChart.setOption({
                     legend: {
-                        data: ["青苗干部人数", "群体人数"],
+                        data: ["青苗干部人数", "非青苗干部人数"],
                     },
+                    color: ['#6495ED', '#FF8C00'],
                     grid: {
                         left: "3%",
                         right: "4%",
@@ -581,7 +750,9 @@
                         data: zlList,
                         axisLabel: {
                             interval: 0,
-                            rotate: 40
+                            // rotate: 40
+                            fontSize: 8,
+
                         },
                     }, ],
                     yAxis: [{
@@ -600,15 +771,15 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 10,
                                         },
                                     },
                                 },
                             },
                         },
                         {
-                            name: "群体人数",
+                            name: "非青苗干部人数",
                             type: "bar",
                             stack: "青苗",
                             data: notYoungCountList,
@@ -619,8 +790,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 10,
                                         },
                                     },
                                 },
@@ -631,6 +802,75 @@
                 myChart.on("click", function(params) {
                     // debugger;
                     that.RightInfo(params, 3);
+                    // console.log(params);
+                });
+            },
+            //职级柱图
+            countDistributionMeth(list) {
+                var that = this;
+                this.countListRes = list;
+                var myChart = this.$echarts.init(this.$refs.countDistribution);
+                let zlList = [];
+                let echartsData = []
+                for (let i in list) {
+                    zlList.push(list[i].type);
+                    echartsData.push(list[i].count || '')
+                }
+
+                myChart.setOption({
+                    color: '#FFD700',
+                    grid: {
+                        left: "3%",
+                        right: "4%",
+                        // bottom: "3%",
+                        containLabel: true,
+                    },
+                    xAxis: [{
+                        type: "value",
+                        position: 'top', //x 轴的位置【top bottom】
+                        nameRotate: -90, //坐标轴名字旋转，角度值。
+                        axisLabel: { //坐标轴刻度标签的相关设置。
+                            // rotate: 90 //刻度标签旋转的角度，
+                        },
+                    }, ],
+                    yAxis: [{
+                        type: "category",
+                        data: zlList,
+                        // axisLabel: {
+                        //     interval: 0,
+                        //     rotate: 40
+                        // },
+                        inverse: 'true', //是否是反向坐标轴。
+                        // axisLabel: {
+                        //     rotate: -90
+                        // },
+                    }, ],
+
+
+                    series: [{
+                            type: "bar",
+                            barWidth: 25,
+                            data: echartsData,
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true, //开启显示
+                                        position: "inside", //在上方显示
+                                        textStyle: {
+                                            //数值样式
+                                            color: "#000",
+                                            fontSize: 10,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+
+                    ],
+                });
+                myChart.on("click", function(params) {
+                    // debugger;
+                    that.RightInfo(params, 5);
                     // console.log(params);
                 });
             },
@@ -719,7 +959,7 @@
                                             jobList: item.isYoungJobnumbers,
                                         },
                                         {
-                                            title: "群体人数",
+                                            title: "非青苗干部人数",
                                             value: item.notYoungCount,
                                             direction: "",
                                             jobList: item.notYoungJobnumbers,
@@ -728,6 +968,55 @@
                                     this.vancellListTouch(this.vancellList[0]);
                                 }
                             }
+                        } else if (type == 4) {
+                            for (let item of this.educationListRes) {
+                                if (item.type == obj.name) {
+                                    // data: ["高中及以下", "大专", "本科", "硕士及以上"],
+
+                                    this.titleRight = obj.name;
+                                    this.vancellList = [{
+                                            title: "高中及以下",
+                                            value: item.gaozhongCount,
+                                            direction: "down",
+                                            jobList: item.gaozhongJobumbers,
+                                        },
+                                        {
+                                            title: "大专",
+                                            value: item.dazhuangCount,
+                                            direction: "",
+                                            jobList: item.dazhuangJobumbers,
+                                        },
+                                        {
+                                            title: "本科",
+                                            value: item.benkeCount,
+                                            direction: "",
+                                            jobList: item.benkeJobumbers,
+                                        },
+                                        {
+                                            title: "硕士及以上",
+                                            value: item.shuoshiCount,
+                                            direction: "",
+                                            jobList: item.shuoshiJobumbers,
+                                        },
+                                    ];
+                                    this.vancellListTouch(this.vancellList[0]);
+                                }
+                            }
+                        } else if (type == 5) {
+                            this.vancellList = []
+                            for (let item of this.countListRes) {
+                                this.vancellList.push({
+                                    title: item.type,
+                                    value: item.count,
+                                    direction: "",
+                                    jobList: item.countJobnumber
+                                })
+                                if (item.type == obj.name) {
+                                    this.titleRight = obj.name;
+                                }
+                            }
+                            this.vancellList[0].direction = 'down'
+                            this.vancellListTouch(this.vancellList[0]);
                         }
                     }, 60);
                 });

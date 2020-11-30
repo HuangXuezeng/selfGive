@@ -1,13 +1,18 @@
 <!--  -->
 <template>
     <div class=''>
-        <van-sticky offset-top='29.6px'>
+        <van-sticky offset-top='29.6px' v-if="allPage">
             <div class="resetVantfixed resetVantfixcader">
                 <van-dropdown-menu>
                     <van-dropdown-item v-model="selecYear" :options="yearlist" @change="yearChange" title-class="colorFFF" />
                 </van-dropdown-menu>
             </div>
         </van-sticky>
+        <div class="resetVantfixed resetVantfixcader" v-if="!allPage">
+                <van-dropdown-menu>
+                    <van-dropdown-item v-model="selecYear" :options="yearlist" @change="yearChange" title-class="colorFFF" />
+                </van-dropdown-menu>
+          </div>
     </div>
 </template>
 
@@ -27,6 +32,10 @@
             startYear: {
                 type: Number,
                 default: 2018
+            },
+            allPage: {
+                type: Number,
+                default: 1
             }
         },
         data() {

@@ -438,6 +438,11 @@ export default new Router({
       name: 'cadresInventory',
       component: () => import('@/views/adresResultts/cadresInventory'),
     },
+    {
+      path: '/careerPath',
+      name: 'careerPath',
+      component: () => import('@/views/adresResultts/careerPath'),
+    },
     /**
      * 干部简报结束
      */

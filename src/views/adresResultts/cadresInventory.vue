@@ -13,7 +13,7 @@
                         </div>
                     </van-col>
                 </van-row>
-                <selctYearcurrent @yearChangeItem='yearChange' :startYear='2019'></selctYearcurrent>
+                <selctYearcurrent @yearChangeItem='yearChange' :startYear='2019' :allPage='0'></selctYearcurrent>
                 <van-dropdown-menu>
                     <van-dropdown-item v-model="selectDownDept" :options="downDeptlist" @change='confirmDept' />
                 </van-dropdown-menu>
@@ -277,7 +277,7 @@
                         radarIndex: 1,
                         data: [{
                                 value: LevelList,
-                                name: list[0].deptName,
+                                name: list[1].deptName,
                                 label: {
                                     show: true,
                                     formatter: function(params) {
@@ -293,7 +293,7 @@
                             },
                             {
                                 value: upLevelList,
-                                name: list[1].deptName,
+                                name: list[0].deptName,
                                 label: {
                                     show: true,
                                     formatter: function(params) {
@@ -311,12 +311,15 @@
             queryfindCadreJGGinfo() {
                 this.findCadreJGGinfoData.deptList = this.readySelectDept
                 findCadreJGGinfo(this.findCadreJGGinfoData).then(res => {
-                    let aa =  this.setRandomTree(1, 99,3)
-                    this.initfindCadreJGGinfoEchart(res.obj)
+                    // let aa = this.setRandomTree(1, 99, 3)
+                    if (res.code == "1000") {
+                        this.initfindCadreJGGinfoEchart(res.obj)
+                    } else {
+                        Toast.fail(res.msg);
+                    }
                 })
             },
-            setRandomTree(minNum, maxNum,decimalNum) {
-                debugger
+            setRandomTree(minNum, maxNum, decimalNum) {
                 var max = 0,
                     min = 0;
                 minNum <= maxNum ? (min = minNum, max = maxNum) : (min = maxNum, max = minNum);
@@ -336,6 +339,7 @@
                 }
             },
             initfindCadreJGGinfoEchart(obj) {
+                var that = this
                 var myChart = this.$echarts.init(this.$refs.findCadreJGGinfoEchart);
                 let onelist = []
                 let twolist = []
@@ -348,7 +352,81 @@
                 let ninelist = []
                 for (let key in obj) {
                     if (key == 'one') {
+                        for (let i in obj[key]) {
+                            obj[key][i].x = that.setRandomTree(0, 30, 3)
+                            obj[key][i].y = that.setRandomTree(0, 30, 3)
+                            onelist.push([obj[key][i].x, obj[key][i].y])
+                        }
+                    }
+                    if (key == 'two') {
+                        for (let i in obj[key]) {
+                            obj[key][i].x = that.setRandomTree(30, 60, 3)
+                            obj[key][i].y = that.setRandomTree(0, 30, 3)
+                            twolist.push([obj[key][i].x, obj[key][i].y])
 
+                        }
+                    }
+                    if (key == 'three') {
+                        for (let i in obj[key]) {
+                            obj[key][i].x = that.setRandomTree(0, 30, 3)
+                            obj[key][i].y = that.setRandomTree(30, 60, 3)
+                            threelist.push([obj[key][i].x, obj[key][i].y])
+
+                        }
+                    }
+                    if (key == 'four') {
+                        for (let i in obj[key]) {
+                            obj[key][i].x = that.setRandomTree(60, 90, 3)
+                            obj[key][i].y = that.setRandomTree(0, 30, 3)
+                            fourlist.push([obj[key][i].x, obj[key][i].y])
+
+                        }
+                    }
+                    if (key == 'five') {
+                        for (let i in obj[key]) {
+                            obj[key][i].x = that.setRandomTree(30, 60, 3)
+                            obj[key][i].y = that.setRandomTree(30, 60, 3)
+                            fivelist.push([obj[key][i].x, obj[key][i].y])
+
+                        }
+                    }
+                    if (key == 'six') {
+                        for (let i in obj[key]) {
+                            obj[key][i].x = that.setRandomTree(0, 30, 3)
+                            obj[key][i].y = that.setRandomTree(60, 90, 3)
+                            sixlist.push([obj[key][i].x, obj[key][i].y])
+
+                        }
+                    }
+                    if (key == 'seven') {
+                        for (let i in obj[key]) {
+                            obj[key][i].x = that.setRandomTree(60, 90, 3)
+                            obj[key][i].y = that.setRandomTree(30, 60, 3)
+                            sevenlist.push([obj[key][i].x, obj[key][i].y])
+
+                        }
+                    }
+                    // if (key == 'seven') {
+                    //   for(let i in obj[key]){
+                    //     obj[key][i].x = that.setRandomTree(60,90,3)
+                    //     obj[key][i].y = that.setRandomTree(30,60,3)
+                    //     sevenlist.push([obj[key][i].x,obj[key][i].y])
+
+                    //   }
+                    // }
+                    if (key == 'eight') {
+                        for (let i in obj[key]) {
+                            obj[key][i].x = that.setRandomTree(30, 60, 3)
+                            obj[key][i].y = that.setRandomTree(60, 90, 3)
+                            eightlist.push([obj[key][i].x, obj[key][i].y])
+                        }
+                    }
+                    if (key == 'nine') {
+                        for (let i in obj[key]) {
+                            obj[key][i].x = that.setRandomTree(60, 90, 3)
+                            obj[key][i].y = that.setRandomTree(60, 90, 3)
+                            ninelist.push([obj[key][i].x, obj[key][i].y])
+                        }
                     }
                 }
                 myChart.setOption({
@@ -364,20 +442,90 @@
                     },
                     tooltip: {
                         // trigger: 'axis',
+                        // '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'
                         showDelay: 0,
-                        formatter: function(params) {
-                            if (params.value.length > 1) {
-                                return params.seriesName + ' :<br/>' +
-                                    params.value[0] + 'cm ' +
-                                    params.value[1] + 'kg ';
-                            } else {
-                                return params.seriesName + ' :<br/>' +
-                                    params.name + ' : ' +
-                                    params.value + 'kg ';
+                        formatter: function(params, ticket) {
+                            var str = ''
+                            switch (params.seriesName) {
+                                case '①':
+                                    for (let i in obj.one) {
+                                        if (obj.one[i].x == params.value[0] && obj.one[i].y == params.value[1]) {
+                                            str = `姓名：${obj.one[i].name}<br/>年龄：${obj.one[i].age}<br/>职级：${obj.one[i].zj}<br/>`
+                                            break
+                                        }
+                                    }
+                                    break;
+                                case '②':
+                                    for (let i in obj.two) {
+                                        if (obj.two[i].x == params.value[0] && obj.two[i].y == params.value[1]) {
+                                            str = `姓名：${obj.two[i].name}<br/>年龄：${obj.two[i].age}<br/>职级：${obj.two[i].zj}<br/>`
+                                            break
+                                        }
+                                    }
+                                    break;
+                                case '③':
+                                    for (let i in obj.three) {
+                                        if (obj.three[i].x == params.value[0] && obj.three[i].y == params.value[1]) {
+                                            str = `姓名：${obj.three[i].name}<br/>年龄：${obj.three[i].age}<br/>职级：${obj.three[i].zj}<br/>`
+                                            break
+                                        }
+                                    }
+                                    break;
+                                case '④':
+                                    for (let i in obj.four) {
+                                        if (obj.four[i].x == params.value[0] && obj.four[i].y == params.value[1]) {
+                                            str = `姓名：${obj.four[i].name}<br/>年龄：${obj.four[i].age}<br/>职级：${obj.four[i].zj}<br/>`
+                                            break
+                                        }
+                                    }
+                                    break;
+                                case '⑤':
+                                    for (let i in obj.five) {
+                                        if (obj.five[i].x == params.value[0] && obj.five[i].y == params.value[1]) {
+                                            str = `姓名：${obj.five[i].name}<br/>年龄：${obj.five[i].age}<br/>职级：${obj.five[i].zj}<br/>`
+                                            break
+                                        }
+                                    }
+                                    break;
+                                case '⑥':
+                                    for (let i in obj.six) {
+                                        if (obj.six[i].x == params.value[0] && obj.six[i].y == params.value[1]) {
+                                            str = `姓名：${obj.six[i].name}<br/>年龄：${obj.six[i].age}<br/>职级：${obj.six[i].zj}<br/>`
+                                            break
+                                        }
+                                    }
+                                    break;
+                                case '⑦':
+                                    for (let i in obj.seven) {
+                                        if (obj.seven[i].x == params.value[0] && obj.seven[i].y == params.value[1]) {
+                                            str = `姓名：${obj.seven[i].name}<br/>年龄：${obj.seven[i].age}<br/>职级：${obj.seven[i].zj}<br/>`
+                                            break
+                                        }
+                                    }
+                                    break;
+                                case '⑧':
+                                    for (let i in obj.eight) {
+                                        if (obj.eight[i].x == params.value[0] && obj.eight[i].y == params.value[1]) {
+                                            str = `姓名：${obj.eight[i].name}<br/>年龄：${obj.eight[i].age}<br/>职级：${obj.eight[i].zj}<br/>`
+                                            break
+                                        }
+                                    }
+                                    break;
+                                case '⑨':
+                                    for (let i in obj.nine) {
+                                        if (obj.nine[i].x == params.value[0] && obj.nine[i].y == params.value[1]) {
+                                            str = `姓名：${obj.nine[i].name}<br/>年龄：${obj.nine[i].age}<br/>职级：${obj.nine[i].zj}<br/>`
+                                            break
+                                        }
+                                    }
+                                    break;
+                                default:
+                                    break;
                             }
+                            return str
                         },
                         axisPointer: {
-                            show: true,
+                            show: false,
                             type: 'cross',
                             lineStyle: {
                                 type: 'dashed',
@@ -389,43 +537,67 @@
                         type: 'inside'
                     },
 
-                    // toolbox: {
-                    //     feature: {
-                    //         dataZoom: {},
-                    //         brush: {
-                    //             type: ['rect', 'polygon', 'clear']
-                    //         }
-                    //     }
-                    // },
+                    toolbox: {
+                        show: false,
+                        // feature: {
+                        //     dataZoom: {},
+                        //     brush: {
+                        //         type: ['rect', 'polygon', 'clear']
+                        //     }
+                        // }
+                    },
                     brush: {},
                     legend: {
-                        data: ['第一象限', '第二象限', '第三象限', '第四象限', '第五象限', '第六象限', '第七象限', '第八象限', '第九象限'],
+                        data: ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'],
                         left: 'center'
                     },
                     xAxis: [{
                         type: 'value',
-                        scale: true,
+                        max: 90,
+                        min: 0,
+                        splitNumber: 3,
                         axisLabel: {
-                            formatter: '{value} cm'
+                            // formatter: '{value} cm'
+                            formatter: function(value) {
+                                var texts = [];
+                                if (value <= 30) {
+                                    texts.push('低能力(后10%)');
+                                } else if (value <= 60) {
+                                    texts.push('中能力(中70%)');
+                                } else if (value <= 90) {
+                                    texts.push('高能力(前20%)');
+                                }
+                                return texts;
+
+                            }
                         },
-                        splitLine: {
-                            show: false
-                        }
                     }],
                     yAxis: [{
                         type: 'value',
-                        scale: true,
+                        splitNumber: 3,
+                        max: 90,
+                        min: 0,
                         axisLabel: {
-                            formatter: '{value} kg'
+                            // formatter: '{value} kg'
+                            formatter: function(value) {
+                                var texts = [];
+                                if (value <= 30) {
+                                    texts.push('低绩效C/D');
+                                } else if (value <= 60) {
+                                    texts.push('中绩效B+/B');
+                                } else if (value <= 90) {
+                                    texts.push('高绩效S/A');
+                                }
+                                return texts;
+
+                            }
                         },
-                        splitLine: {
-                            show: false
-                        }
+
                     }],
                     series: [{
-                            name: '第一象限',
+                            name: '①',
                             type: 'scatter',
-                            data: [],
+                            data: onelist,
                             markArea: {
                                 silent: true,
                                 itemStyle: {
@@ -435,7 +607,7 @@
                                 },
                                 data: [
                                     [{
-                                        name: '第一象限分布区间',
+                                        name: '①',
                                         xAxis: 'min',
                                         yAxis: 'min'
                                     }, {
@@ -444,35 +616,12 @@
                                     }]
                                 ]
                             },
-                            markPoint: {
-                                data: [{
-                                        type: 'max',
-                                        name: '最大值'
-                                    },
-                                    {
-                                        type: 'min',
-                                        name: '最小值'
-                                    }
-                                ]
-                            },
-                            // markLine: {
-                            //     lineStyle: {
-                            //         type: 'solid'
-                            //     },
-                            //     data: [{
-                            //             type: 'average',
-                            //             name: '平均值'
-                            //         },
-                            //         {
-                            //             xAxis: 160
-                            //         }
-                            //     ]
-                            // }
+
                         },
                         {
-                            name: '第二象限',
+                            name: '②',
                             type: 'scatter',
-                            data: [],
+                            data: twolist,
                             markArea: {
                                 silent: true,
                                 itemStyle: {
@@ -482,7 +631,7 @@
                                 },
                                 data: [
                                     [{
-                                        name: '第二象限分布区间',
+                                        name: '②',
                                         xAxis: 'min',
                                         yAxis: 'min'
                                     }, {
@@ -491,31 +640,257 @@
                                     }]
                                 ]
                             },
-                            markPoint: {
-                                data: [{
-                                        type: 'max',
-                                        name: '最大值'
-                                    },
-                                    {
-                                        type: 'min',
-                                        name: '最小值'
-                                    }
-                                ]
-                            },
-                            // markLine: {
-                            //     lineStyle: {
-                            //         type: 'solid'
-                            //     },
+                            // markPoint: {
                             //     data: [{
-                            //             type: 'average',
-                            //             name: '平均值'
+                            //             type: 'max',
+                            //             name: '最大值'
                             //         },
                             //         {
-                            //             xAxis: 170
+                            //             type: 'min',
+                            //             name: '最小值'
                             //         }
                             //     ]
-                            // }
+                            // },
                         },
+                        {
+                            name: '③',
+                            type: 'scatter',
+                            data: threelist,
+                            markArea: {
+                                silent: true,
+                                itemStyle: {
+                                    color: 'transparent',
+                                    borderWidth: 1,
+                                    borderType: 'dashed'
+                                },
+                                data: [
+                                    [{
+                                        name: '③',
+                                        xAxis: 'min',
+                                        yAxis: 'min'
+                                    }, {
+                                        xAxis: 'max',
+                                        yAxis: 'max'
+                                    }]
+                                ]
+                            },
+                            // markPoint: {
+                            //     data: [{
+                            //             type: 'max',
+                            //             name: '最大值'
+                            //         },
+                            //         {
+                            //             type: 'min',
+                            //             name: '最小值'
+                            //         }
+                            //     ]
+                            // },
+                        },
+                        {
+                            name: '④',
+                            type: 'scatter',
+                            data: fourlist,
+                            markArea: {
+                                silent: true,
+                                itemStyle: {
+                                    color: 'transparent',
+                                    borderWidth: 1,
+                                    borderType: 'dashed'
+                                },
+                                data: [
+                                    [{
+                                        name: '④',
+                                        xAxis: 'min',
+                                        yAxis: 'min'
+                                    }, {
+                                        xAxis: 'max',
+                                        yAxis: 'max'
+                                    }]
+                                ]
+                            },
+                            // markPoint: {
+                            //     data: [{
+                            //             type: 'max',
+                            //             name: '最大值'
+                            //         },
+                            //         {
+                            //             type: 'min',
+                            //             name: '最小值'
+                            //         }
+                            //     ]
+                            // },
+                        },
+                        {
+                            name: '⑤',
+                            type: 'scatter',
+                            data: fivelist,
+                            markArea: {
+                                silent: true,
+                                itemStyle: {
+                                    color: 'transparent',
+                                    borderWidth: 1,
+                                    borderType: 'dashed'
+                                },
+                                data: [
+                                    [{
+                                        name: '⑤',
+                                        xAxis: 'min',
+                                        yAxis: 'min'
+                                    }, {
+                                        xAxis: 'max',
+                                        yAxis: 'max'
+                                    }]
+                                ]
+                            },
+                            // markPoint: {
+                            //     data: [{
+                            //             type: 'max',
+                            //             name: '最大值'
+                            //         },
+                            //         {
+                            //             type: 'min',
+                            //             name: '最小值'
+                            //         }
+                            //     ]
+                            // },
+                        },
+                        {
+                            name: '⑥',
+                            type: 'scatter',
+                            data: sixlist,
+                            markArea: {
+                                silent: true,
+                                itemStyle: {
+                                    color: 'transparent',
+                                    borderWidth: 1,
+                                    borderType: 'dashed'
+                                },
+                                data: [
+                                    [{
+                                        name: '⑥',
+                                        xAxis: 'min',
+                                        yAxis: 'min'
+                                    }, {
+                                        xAxis: 'max',
+                                        yAxis: 'max'
+                                    }]
+                                ]
+                            },
+                            // markPoint: {
+                            //     data: [{
+                            //             type: 'max',
+                            //             name: '最大值'
+                            //         },
+                            //         {
+                            //             type: 'min',
+                            //             name: '最小值'
+                            //         }
+                            //     ]
+                            // },
+                        },
+                        {
+                            name: '⑦',
+                            type: 'scatter',
+                            data: sevenlist,
+                            markArea: {
+                                silent: true,
+                                itemStyle: {
+                                    color: 'transparent',
+                                    borderWidth: 1,
+                                    borderType: 'dashed'
+                                },
+                                data: [
+                                    [{
+                                        name: '⑦',
+                                        xAxis: 'min',
+                                        yAxis: 'min'
+                                    }, {
+                                        xAxis: 'max',
+                                        yAxis: 'max'
+                                    }]
+                                ]
+                            },
+                            // markPoint: {
+                            //     data: [{
+                            //             type: 'max',
+                            //             name: '最大值'
+                            //         },
+                            //         {
+                            //             type: 'min',
+                            //             name: '最小值'
+                            //         }
+                            //     ]
+                            // },
+                        },
+                        {
+                            name: '⑧',
+                            type: 'scatter',
+                            data: eightlist,
+                            markArea: {
+                                silent: true,
+                                itemStyle: {
+                                    color: 'transparent',
+                                    borderWidth: 1,
+                                    borderType: 'dashed'
+                                },
+                                data: [
+                                    [{
+                                        name: '⑧',
+                                        xAxis: 'min',
+                                        yAxis: 'min'
+                                    }, {
+                                        xAxis: 'max',
+                                        yAxis: 'max'
+                                    }]
+                                ]
+                            },
+                            // markPoint: {
+                            //     data: [{
+                            //             type: 'max',
+                            //             name: '最大值'
+                            //         },
+                            //         {
+                            //             type: 'min',
+                            //             name: '最小值'
+                            //         }
+                            //     ]
+                            // },
+                        },
+                        {
+                            name: '⑨',
+                            type: 'scatter',
+                            data: ninelist,
+                            markArea: {
+                                silent: true,
+                                itemStyle: {
+                                    color: 'transparent',
+                                    borderWidth: 1,
+                                    borderType: 'dashed'
+                                },
+                                data: [
+                                    [{
+                                        name: '⑨',
+                                        xAxis: 'min',
+                                        yAxis: 'min'
+                                    }, {
+                                        xAxis: 'max',
+                                        yAxis: 'max'
+                                    }]
+                                ]
+                            },
+                            // markPoint: {
+                            //     data: [{
+                            //             type: 'max',
+                            //             name: '最大值'
+                            //         },
+                            //         {
+                            //             type: 'min',
+                            //             name: '最小值'
+                            //         }
+                            //     ]
+                            // },
+                        },
+
 
 
                     ]

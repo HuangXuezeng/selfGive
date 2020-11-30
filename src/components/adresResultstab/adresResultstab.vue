@@ -7,6 +7,7 @@
         type="card"
         sticky
         animated
+        :swipeable='true'
       >
       <van-tab
           title="整体情况"
@@ -39,6 +40,14 @@
           replace
           to="/cadresInventory"
           name="cadresInventory"
+        >
+          </van-tab
+        >
+        <van-tab
+          title="职业发展路径"
+          replace
+          to="/careerPath"
+          name="careerPath"
         >
           </van-tab
         >

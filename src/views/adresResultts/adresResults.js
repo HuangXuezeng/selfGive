@@ -119,10 +119,58 @@ export function findCadreChartDownDeptInfo(queryData) {
       data: JSON.stringify(queryData)
   })
 }
-// /kukacms/self/findCadreJGGinfo
+// 干部九宫格 /kukacms/self/findCadreJGGinfo
 export function findCadreJGGinfo(queryData) {
   return fetch({
       url: `/kukacms/self/findCadreJGGinfo`,
+      headers: {
+          "content-type": "application/json"
+      },
+      dataType: 'json',
+      method: 'post',
+      data: JSON.stringify(queryData)
+  })
+}
+// 干部职业路径图 /kukacms/self/findCadreJGGinfo
+export function findCadreGrowInfo(queryData) {
+  return fetch({
+      url: `/kukacms/self/findCadreGrowInfo`,
+      headers: {
+          "content-type": "application/json"
+      },
+      dataType: 'json',
+      method: 'post',
+      data: JSON.stringify(queryData)
+  })
+}
+// 部门底下查看部门干部 /kukacms/self/findThisDeptWorkerInfo
+export function findThisDeptWorkerInfo(queryData) {
+  return fetch({
+      url: `/kukacms/self/findThisDeptWorkerInfo`,
+      headers: {
+          "content-type": "application/json"
+      },
+      dataType: 'json',
+      method: 'post',
+      data: JSON.stringify(queryData)
+  })
+}
+// 流失率 /kukacms/self/findThisDeptWorkerInfo
+export function findCadresLossInfo(queryData) {
+  return fetch({
+      url: `/kukacms/self/findCadresLossInfo`,
+      headers: {
+          "content-type": "application/json"
+      },
+      dataType: 'json',
+      method: 'post',
+      data: JSON.stringify(queryData)
+  })
+}
+// 仪表盘 /kukacms/self/findThisDeptWorkerInfo
+export function findCadreTeamFwInfo(queryData) {
+  return fetch({
+      url: `/kukacms/self/findCadreTeamFwInfo`,
       headers: {
           "content-type": "application/json"
       },
