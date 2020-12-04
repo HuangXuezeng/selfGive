@@ -73,7 +73,7 @@
                     </div>
                 </div>
             </div>
-            <div>
+            <!-- <div>
                 <van-row type="flex" justify="left" style="margin-bottom: 10px">
                     <van-col>
                         <div class="titleRewards">
@@ -87,7 +87,7 @@
                         <div ref="countDistribution" :style="{ width: '100%', height: '500px' }"></div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <!-- 左边弹出详情页 -->
             <div>
                 <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '80%' }" get-container="body">
@@ -236,7 +236,8 @@
                 ],
                 isLoading: false,
                 rightInfoData: [],
-                readySelectDept: []
+                readySelectDept: [],
+
             };
         },
         created() {
@@ -324,7 +325,7 @@
                         this.AgeDistributionMeth(res.obj.age);
                         this.yongDistributionMeth(res.obj.young);
                         this.educationDistributionMeth(res.obj.edu);
-                        this.countDistributionMeth(res.obj.count);
+                        // this.countDistributionMeth(res.obj.count);
 
                     } else {
                         Toast.fail(res.msg);
@@ -362,6 +363,7 @@
                 myChart.setOption({
                     legend: {
                         data: ["3年以内", "3-5年", "5-10年", "10年以上"],
+                        top: '3%'
                     },
                     color: ['#6495ED', '#FF8C00', '#A9A9A9', '#FFD700'],
                     grid: {
@@ -488,6 +490,7 @@
                 myChart.setOption({
                     legend: {
                         data: ["高中及以下", "大专", "本科", "硕士及以上"],
+                        top: '3%'
                     },
                     color: ['#6495ED', '#FF8C00', '#A9A9A9', '#FFD700'],
                     grid: {
@@ -615,6 +618,7 @@
                 myChart.setOption({
                     legend: {
                         data: ["30以下", "30-39", "40-49", "50以上"],
+                        top: '3%'
                     },
                     color: ['#6495ED', '#FF8C00', '#A9A9A9', '#FFD700'],
                     grid: {
@@ -737,6 +741,7 @@
                 myChart.setOption({
                     legend: {
                         data: ["青苗干部人数", "非青苗干部人数"],
+                        top: '3%'
                     },
                     color: ['#6495ED', '#FF8C00'],
                     grid: {
@@ -806,74 +811,74 @@
                 });
             },
             //职级柱图
-            countDistributionMeth(list) {
-                var that = this;
-                this.countListRes = list;
-                var myChart = this.$echarts.init(this.$refs.countDistribution);
-                let zlList = [];
-                let echartsData = []
-                for (let i in list) {
-                    zlList.push(list[i].type);
-                    echartsData.push(list[i].count || '')
-                }
+            // countDistributionMeth(list) {
+            //     var that = this;
+            //     this.countListRes = list;
+            //     var myChart = this.$echarts.init(this.$refs.countDistribution);
+            //     let zlList = [];
+            //     let echartsData = []
+            //     for (let i in list) {
+            //         zlList.push(list[i].type);
+            //         echartsData.push(list[i].count || '')
+            //     }
 
-                myChart.setOption({
-                    color: '#FFD700',
-                    grid: {
-                        left: "3%",
-                        right: "4%",
-                        // bottom: "3%",
-                        containLabel: true,
-                    },
-                    xAxis: [{
-                        type: "value",
-                        position: 'top', //x 轴的位置【top bottom】
-                        nameRotate: -90, //坐标轴名字旋转，角度值。
-                        axisLabel: { //坐标轴刻度标签的相关设置。
-                            // rotate: 90 //刻度标签旋转的角度，
-                        },
-                    }, ],
-                    yAxis: [{
-                        type: "category",
-                        data: zlList,
-                        // axisLabel: {
-                        //     interval: 0,
-                        //     rotate: 40
-                        // },
-                        inverse: 'true', //是否是反向坐标轴。
-                        // axisLabel: {
-                        //     rotate: -90
-                        // },
-                    }, ],
+            //     myChart.setOption({
+            //         color: '#FFD700',
+            //         grid: {
+            //             left: "3%",
+            //             right: "4%",
+            //             // bottom: "3%",
+            //             containLabel: true,
+            //         },
+            //         xAxis: [{
+            //             type: "value",
+            //             position: 'top', //x 轴的位置【top bottom】
+            //             nameRotate: -90, //坐标轴名字旋转，角度值。
+            //             axisLabel: { //坐标轴刻度标签的相关设置。
+            //                 // rotate: 90 //刻度标签旋转的角度，
+            //             },
+            //         }, ],
+            //         yAxis: [{
+            //             type: "category",
+            //             data: zlList,
+            //             // axisLabel: {
+            //             //     interval: 0,
+            //             //     rotate: 40
+            //             // },
+            //             inverse: 'true', //是否是反向坐标轴。
+            //             // axisLabel: {
+            //             //     rotate: -90
+            //             // },
+            //         }, ],
 
 
-                    series: [{
-                            type: "bar",
-                            barWidth: 25,
-                            data: echartsData,
-                            itemStyle: {
-                                normal: {
-                                    label: {
-                                        show: true, //开启显示
-                                        position: "inside", //在上方显示
-                                        textStyle: {
-                                            //数值样式
-                                            color: "#000",
-                                            fontSize: 10,
-                                        },
-                                    },
-                                },
-                            },
-                        },
+            //         series: [{
+            //                 type: "bar",
+            //                 barWidth: 25,
+            //                 data: echartsData,
+            //                 itemStyle: {
+            //                     normal: {
+            //                         label: {
+            //                             show: true, //开启显示
+            //                             position: "inside", //在上方显示
+            //                             textStyle: {
+            //                                 //数值样式
+            //                                 color: "#000",
+            //                                 fontSize: 10,
+            //                             },
+            //                         },
+            //                     },
+            //                 },
+            //             },
 
-                    ],
-                });
-                myChart.on("click", function(params) {
-                    // debugger;
-                    that.RightInfo(params, 5);
-                    // console.log(params);
-                });
-            },
+            //         ],
+            //     });
+            //     myChart.on("click", function(params) {
+            //         // debugger;
+            //         that.RightInfo(params, 5);
+            //         // console.log(params);
+            //     });
+            // },
             RightInfo(obj, type) {
                 // debugger;
                 var that = this;
@@ -1034,7 +1039,8 @@
             querySelectEmployeeByJobnumber(list) {
                 this.isLoading = true;
                 selectEmployeeByJobnumber({
-                    jobnumbers: list
+                    jobnumbers: list,
+                    type:'2'
                 }).then((res) => {
                     if (res.code == "1000") {
                         this.rightInfoData = res.obj;

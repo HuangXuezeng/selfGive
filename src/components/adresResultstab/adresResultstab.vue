@@ -44,10 +44,18 @@
           </van-tab
         >
         <van-tab
-          title="职业发展路径"
+          title="职业路径"
           replace
           to="/careerPath"
           name="careerPath"
+        >
+          </van-tab
+        >
+        <van-tab
+          title="团队氛围"
+          replace
+          to="/teamAtmosphere"
+          name="teamAtmosphere"
         >
           </van-tab
         >

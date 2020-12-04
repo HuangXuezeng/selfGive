@@ -8,7 +8,7 @@
                 <van-col>
                     <div class="titleRewards">
                         <span class="honghe"></span>
-                        职业发展路径
+                        职业路径
                     </div>
                 </van-col>
             </van-row>

@@ -25,6 +25,7 @@
             </van-tree-select>
 
         </div>
+        <loadingSpin ref="loadingSpin"></loadingSpin>
 
     </div>
 </template>
@@ -40,9 +41,15 @@
     import {
         findIsHaveCadreInDept
     } from "@/views/adresResultts/adresResults.js";
+    import {
+        findPayrollDept,
+    } from "@/views/PayLibrary/PayLibrary.js";
+    import loadingSpin from "@/components/loadingSpin.vue";
     export default {
         //import引入的组件需要注入到对象中才能使用
-        components: {},
+        components: {
+            loadingSpin
+        },
         data() {
             //这里存放数据
             return {
@@ -76,40 +83,46 @@
                     this.reselectHistory()
                 } else {
                     this.queryfindPayrollDept();
-
                 }
             },
-            reselectHistory() {
+            // initSalaryDeptRes() {
 
+            // },
+            reselectHistory() {
                 let adresResultHistoryList = JSON.parse(localStorage.getItem("adresResultHistory"))
-                this.deptData = adresResultHistoryList[0].deptData[0];
+                if (adresResultHistoryList.length) {
+                    this.deptData = adresResultHistoryList[0].deptData[0];
+                }
                 this.processingField(this.deptData)
                 this.historyList = adresResultHistoryList
-
+                // this.$refs.loadingSpin.shutdown();
             },
             //查询部门
             queryfindPayrollDept() {
-
                 if (
                     localStorage.getItem("SalaryDeptRes") == "" ||
                     localStorage.getItem("SalaryDeptRes") == null ||
                     localStorage.getItem("SalaryDeptRes") == "underfined" ||
                     JSON.parse(localStorage.getItem("SalaryDeptRes")).code != "1000"
                 ) {
+                    // this.$refs.loadingSpin.showUp();
                     findPayrollDept({
                         jobnumber: localStorage.getItem("jobNum")
                     }).then(
                         (res) => {
-                            this.deptData = res.obj.depts;
+                            // this.deptData = res.obj.depts;
+                            localStorage.setItem("SalaryDeptRes", JSON.stringify(res));
+                            this.init()
                         }
                     );
                 } else {
-
                     let SalaryDeptRes = JSON.parse(localStorage.getItem("SalaryDeptRes"));
                     SalaryDeptRes = JSON.parse(JSON.stringify(SalaryDeptRes).replace(/depts/g, 'children'))
                     SalaryDeptRes = JSON.parse(JSON.stringify(SalaryDeptRes).replace(/content/g, 'text'))
                     this.deptData = SalaryDeptRes.obj.children;
                     this.processingField(this.deptData, 1)
+                    this.reselectHistory()
+
                 }
             },
             //处理字段名合乎组件要求
@@ -150,6 +163,8 @@
                     })
                     this.setHistoryList()
                 }
+                this.$refs.loadingSpin.shutdown();
+
             },
             //记录选择路径
             setHistoryList() {
@@ -191,11 +206,12 @@
                         let activeTab = localStorage.getItem("activeTab") || 'cadresChange'
                         localStorage.setItem('adresResultDept', JSON.stringify(item))
                         localStorage.setItem('adresResultHistory', JSON.stringify(this.historyList))
+
                         this.$router.push({
                             name: activeTab,
                         })
                     } else {
-                      Toast.fail('该部门无干部');
+                        Toast.fail('该部门无干部');
                     }
                 })
 
@@ -214,10 +230,12 @@
         //生命周期 - 创建完成（可以访问当前this实例）
         created() {
             this.reselect = this.$route.params.reselect || 0;
-            this.init()
+
         },
         //生命周期 - 挂载完成（可以访问DOM元素）
-        mounted() {},
+        mounted() {
+            this.init()
+        },
         beforeCreate() {}, //生命周期 - 创建之前
         beforeMount() {}, //生命周期 - 挂载之前
         beforeUpdate() {}, //生命周期 - 更新之前

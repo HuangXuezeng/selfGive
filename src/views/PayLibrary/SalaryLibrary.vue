@@ -120,7 +120,7 @@
                     </van-row>
                 </div>
                 <div class="resetVant">
-                    <v-table is-horizontal-resize style="width:100%" :columns="SalaryLibraryColumns" :table-data="SalaryLibrarytableData" row-hover-color="#eee" row-click-color="#edf7ff" :cell-merge="SalaryLibrarycellMerge" :is-loading="SalaryLibrarylodingFlag" :column-cell-class-name="columnCellClass"></v-table>
+                    <v-table is-horizontal-resize style="width:100%" :columns="SalaryLibraryColumns" :table-data="SalaryLibrarytableData" row-hover-color="#eee" row-click-color="#edf7ff" :cell-merge="MidSalaryLibrarycellMerge" :is-loading="SalaryLibrarylodingFlag" :column-cell-class-name="MidcolumnCellClass"></v-table>
                 </div>
             </div>
             <div>
@@ -829,6 +829,10 @@
                 plength: 0,
                 slength: 0,
                 olength: 0,
+                Midmlength: 0,
+                Midplength: 0,
+                Midslength: 0,
+                Midolength: 0,
                 searchObj: {
                     deptList: [],
                     isDown: "",
@@ -933,6 +937,23 @@
                     return "sClass";
                 }
                 if (this.slength <= rowIndex && rowData.zl == "O类") {
+                    return "oClass";
+                }
+                if (rowData.zl == "合计") {
+                    return "heClass";
+                }
+            },
+            MidcolumnCellClass(rowIndex, columnName, rowData) {
+                if (rowIndex < this.Midmlength) {
+                    return "mClass";
+                }
+                if (this.Midmlength <= rowIndex && rowData.zl == "P类") {
+                    return "pClass";
+                }
+                if (this.Midplength <= rowIndex && rowData.zl == "S类") {
+                    return "sClass";
+                }
+                if (this.Midslength <= rowIndex && rowData.zl == "O类") {
                     return "oClass";
                 }
                 if (rowData.zl == "合计") {
@@ -1174,7 +1195,7 @@
                 if (field === "zl" && rowData[field] === "M类") {
                     return {
                         colSpan: 1,
-                        rowSpan: this.mlength,
+                        rowSpan: this.Midmlength,
                         content: '<span style="color:red">M类</span>',
                         componentName: ""
                     };
@@ -1182,7 +1203,7 @@
                 if (field === "zl" && rowData[field] === "P类") {
                     return {
                         colSpan: 1,
-                        rowSpan: this.plength,
+                        rowSpan: this.Midplength,
                         content: '<span style="color:red">P类</span>',
                         componentName: ""
                     };
@@ -1190,7 +1211,7 @@
                 if (field === "zl" && rowData[field] === "S类") {
                     return {
                         colSpan: 1,
-                        rowSpan: this.slength,
+                        rowSpan: this.Midslength,
                         content: '<span style="color:red">S类</span>',
                         componentName: ""
                     };
@@ -1198,7 +1219,49 @@
                 if (field === "zl" && rowData[field] === "O类") {
                     return {
                         colSpan: 1,
-                        rowSpan: this.olength,
+                        rowSpan: this.Midolength,
+                        content: '<span style="color:red">O类</span>',
+                        componentName: ""
+                    };
+                }
+                if (field === "zl" && rowData[field] === "合计") {
+                    return {
+                        colSpan: 2,
+                        rowSpan: 1,
+                        content: '<span style="color:red">合计</span>',
+                        componentName: ""
+                    };
+                }
+            },
+            MidSalaryLibrarycellMerge(rowIndex, rowData, field) {
+                if (field === "zl" && rowData[field] === "M类") {
+                    return {
+                        colSpan: 1,
+                        rowSpan: this.Midmlength,
+                        content: '<span style="color:red">M类</span>',
+                        componentName: ""
+                    };
+                }
+                if (field === "zl" && rowData[field] === "P类") {
+                    return {
+                        colSpan: 1,
+                        rowSpan: this.Midplength,
+                        content: '<span style="color:red">P类</span>',
+                        componentName: ""
+                    };
+                }
+                if (field === "zl" && rowData[field] === "S类") {
+                    return {
+                        colSpan: 1,
+                        rowSpan: this.Midslength,
+                        content: '<span style="color:red">S类</span>',
+                        componentName: ""
+                    };
+                }
+                if (field === "zl" && rowData[field] === "O类") {
+                    return {
+                        colSpan: 1,
+                        rowSpan: this.Midolength,
                         content: '<span style="color:red">O类</span>',
                         componentName: ""
                     };
@@ -1266,16 +1329,16 @@
                             }
                         }
                         if (mlist.length) {
-                            this.mlength = mlist.length;
+                            this.Midmlength = mlist.length;
                         }
                         if (plist.length) {
-                            this.plength = plist.length;
+                            this.Midplength = plist.length;
                         }
                         if (slist.length) {
-                            this.slength = slist.length;
+                            this.Midslength = slist.length;
                         }
                         if (olist.length) {
-                            this.olength = olist.length;
+                            this.Midolength = olist.length;
                         }
                         this.SalaryLibrarytableData = res.obj;
                     } else {
@@ -1651,5 +1714,9 @@
 
     .labelStyle {
         color: red;
+    }
+    .titleclass {
+        background-color: #dc7272;
+        color: #ffffff;
     }
 </style>

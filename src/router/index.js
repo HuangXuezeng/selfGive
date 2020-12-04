@@ -443,6 +443,11 @@ export default new Router({
       name: 'careerPath',
       component: () => import('@/views/adresResultts/careerPath'),
     },
+    {
+      path: '/teamAtmosphere',
+      name: 'teamAtmosphere',
+      component: () => import('@/views/adresResultts/teamAtmosphere'),
+    },
     /**
      * 干部简报结束
      */

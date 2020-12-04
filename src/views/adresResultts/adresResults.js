@@ -179,3 +179,15 @@ export function findCadreTeamFwInfo(queryData) {
       data: JSON.stringify(queryData)
   })
 }
+// 职级分布图 /kukacms/self/findCadreReportZJFbInfo
+export function findCadreReportZJFbInfo(queryData) {
+  return fetch({
+      url: `/kukacms/self/findCadreReportZJFbInfo`,
+      headers: {
+          "content-type": "application/json"
+      },
+      dataType: 'json',
+      method: 'post',
+      data: JSON.stringify(queryData)
+  })
+}
