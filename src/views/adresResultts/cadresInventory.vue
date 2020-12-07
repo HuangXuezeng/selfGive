@@ -95,7 +95,10 @@
                     isDown: 'Y',
                     year: '2018',
                     type: '1'
-                }
+                },
+                //坐标x值，y值
+                normX: 0,
+                normY: 0
             };
         },
         //监听属性 类似于data概念
@@ -319,7 +322,40 @@
                     }
                 })
             },
-            setRandomTree(minNum, maxNum, decimalNum) {
+            setRandomTree(minNum, maxNum, len, type) {
+                // debugger
+                // if (len) {
+                //     if (type == 'x') {
+                //         if (this.normX == maxNum) {
+                //             this.normX = minNum
+                //             return this.normX
+                //         } else {
+                //             if (len > 90) {
+                //                 this.normX = this.normX + 1
+                //             } else {
+                //                 this.normX = this.normX + 0.5
+                //             }
+                //             return this.normX
+                //         }
+                //     } else {
+                //         if (this.normY == minNum) {
+                //             this.normY = minNum
+                //             return this.normY
+                //         } else {
+                //             if (this.normX == maxNum) {
+                //                 this.normY = this.normY - 8
+                //                 return this.normY
+                //             } else {
+                //                 return this.normY
+                //             }
+                //         }
+                //     }
+                // }
+                if(this.normX == maxNum){
+                  this.normX = minNum
+                }else{
+
+                }
                 var max = 0,
                     min = 0;
                 minNum <= maxNum ? (min = minNum, max = maxNum) : (min = maxNum, max = minNum);
@@ -331,12 +367,20 @@
                         return Math.floor(Math.random() * (max - min + 1) + min);
                         break;
                     case 3:
-                        return (Math.random() * (max - min) + min).toFixed(decimalNum);
+                        return (Math.random() * (max - min) + min).toFixed(len);
                         break;
                     default:
                         return Math.random();
                         break;
                 }
+            },
+            PointlistSet(listitem) {
+                let obj = {}
+                obj.name = `姓名：${ listitem.name}<br/>年龄：${listitem.age}<br/>职级：${listitem.zj}<br/>象限：${listitem.jgg}<br/>`
+                obj.value = listitem.name
+                obj.xAxis = listitem.x
+                obj.yAxis = listitem.y
+                return obj
             },
             initfindCadreJGGinfoEchart(obj) {
                 var that = this
@@ -350,85 +394,153 @@
                 let sevenlist = []
                 let eightlist = []
                 let ninelist = []
-                for (let key in obj) {
+                let onePointlist = []
+                let twoPointlist = []
+                let threePointlist = []
+                let fourPointlist = []
+                let fivePointlist = []
+                let sixPointlist = []
+                let sevenPointlist = []
+                let eightPointlist = []
+                let ninePointlist = []
+                Object.keys(obj).forEach((key) => {
+                    console.log(key, obj[key]);
+                    // debugger
                     if (key == 'one') {
-                        for (let i in obj[key]) {
-                            obj[key][i].x = that.setRandomTree(0, 30, 3)
-                            obj[key][i].y = that.setRandomTree(0, 30, 3)
-                            onelist.push([obj[key][i].x, obj[key][i].y])
+                        that.normX = 0
+                        that.normY = 30
+                        let oneobjList = obj[key]
+                        for (let i in oneobjList) {
+                            // oneobjList[i].x = that.setRandomTree(0, 30, oneobjList.length, 'x')
+                            // oneobjList[i].y = that.setRandomTree(0, 30, oneobjList.length, 'y')
+                            oneobjList[i].x = that.setRandomTree(0, 30, 2)
+                            oneobjList[i].y = that.setRandomTree(0, 30, 2)
+                            onelist.push([oneobjList[i].x, oneobjList[i].y])
+                            onePointlist.push(that.PointlistSet(oneobjList[i]))
                         }
                     }
                     if (key == 'two') {
-                        for (let i in obj[key]) {
-                            obj[key][i].x = that.setRandomTree(30, 60, 3)
-                            obj[key][i].y = that.setRandomTree(0, 30, 3)
-                            twolist.push([obj[key][i].x, obj[key][i].y])
+                        that.normX = 30
+                        that.normY = 30
+                        let twoobjList = obj[key]
+                        for (let i in twoobjList) {
+                            // twoobjList[i].x = that.setRandomTree(30, 60, twoobjList.length, 'x')
+                            // twoobjList[i].y = that.setRandomTree(0, 30, twoobjList.length, 'y')
+                            twoobjList[i].y = that.setRandomTree(0, 30, 2)
+                            twoobjList[i].x = that.setRandomTree(30, 60, 2)
 
+                            twolist.push([twoobjList[i].x, twoobjList[i].y])
+                            twoPointlist.push(that.PointlistSet(twoobjList[i]))
                         }
                     }
                     if (key == 'three') {
-                        for (let i in obj[key]) {
-                            obj[key][i].x = that.setRandomTree(0, 30, 3)
-                            obj[key][i].y = that.setRandomTree(30, 60, 3)
-                            threelist.push([obj[key][i].x, obj[key][i].y])
+                        that.normX = 0
+                        that.normY = 60
+                        let threeobjList = obj[key]
+                        for (let i in threeobjList) {
+                            // threeobjList[i].x = that.setRandomTree(0, 30, threeobjList.length, 'x')
 
+                            // threeobjList[i].y = that.setRandomTree(30, 60, threeobjList.length, 'y')
+                            threeobjList[i].y = that.setRandomTree(30, 60, 2)
+                            threeobjList[i].x = that.setRandomTree(0, 30, 2)
+
+                            threelist.push([threeobjList[i].x, threeobjList[i].y])
+                            threePointlist.push(that.PointlistSet(threeobjList[i]))
                         }
                     }
                     if (key == 'four') {
-                        for (let i in obj[key]) {
-                            obj[key][i].x = that.setRandomTree(60, 90, 3)
-                            obj[key][i].y = that.setRandomTree(0, 30, 3)
-                            fourlist.push([obj[key][i].x, obj[key][i].y])
+                        that.normX = 60
+                        that.normY = 30
+                        let fourobjList = obj[key]
+                        for (let i in fourobjList) {
+                            // fourobjList[i].x = that.setRandomTree(60, 90, fourobjList.length, 'x')
 
+                            // fourobjList[i].y = that.setRandomTree(0, 30, fourobjList.length, 'y')
+                            fourobjList[i].y = that.setRandomTree(0, 30, 2)
+                            fourobjList[i].x = that.setRandomTree(60, 90, 2)
+
+                            fourlist.push([fourobjList[i].x, fourobjList[i].y])
+                            fourPointlist.push(that.PointlistSet(fourobjList[i]))
                         }
                     }
                     if (key == 'five') {
-                        for (let i in obj[key]) {
-                            obj[key][i].x = that.setRandomTree(30, 60, 3)
-                            obj[key][i].y = that.setRandomTree(30, 60, 3)
-                            fivelist.push([obj[key][i].x, obj[key][i].y])
+                        that.normX = 30
+                        that.normY = 60
+                        // debugger
+                        let fiveobjList = obj[key]
+                        for (let i in fiveobjList) {
+                            // fiveobjList[i].x = that.setRandomTree(30, 60, fiveobjList.length, 'x')
 
+                            // fiveobjList[i].y = that.setRandomTree(30, 60, fiveobjList.length, 'y')
+                            fiveobjList[i].y = that.setRandomTree(30, 60, 2)
+                            fiveobjList[i].x = that.setRandomTree(30, 60, 2)
+
+                            fivelist.push([fiveobjList[i].x, fiveobjList[i].y])
+                            fivePointlist.push(that.PointlistSet(fiveobjList[i]))
                         }
                     }
                     if (key == 'six') {
-                        for (let i in obj[key]) {
-                            obj[key][i].x = that.setRandomTree(0, 30, 3)
-                            obj[key][i].y = that.setRandomTree(60, 90, 3)
-                            sixlist.push([obj[key][i].x, obj[key][i].y])
+                        that.normX = 0
+                        that.normY = 90
+                        let sixobjList = obj[key]
+                        for (let i in sixobjList) {
+                            // sixobjList[i].x = that.setRandomTree(0, 30, sixobjList.length, 'x')
 
+                            // sixobjList[i].y = that.setRandomTree(60, 90, sixobjList.length, 'y')
+                            sixobjList[i].y = that.setRandomTree(60, 90,2)
+                            sixobjList[i].x = that.setRandomTree(0, 30, 2)
+
+                            sixlist.push([sixobjList[i].x, sixobjList[i].y])
+                            sixPointlist.push(that.PointlistSet(sixobjList[i]))
                         }
                     }
                     if (key == 'seven') {
-                        for (let i in obj[key]) {
-                            obj[key][i].x = that.setRandomTree(60, 90, 3)
-                            obj[key][i].y = that.setRandomTree(30, 60, 3)
-                            sevenlist.push([obj[key][i].x, obj[key][i].y])
+                        that.normX = 60
+                        that.normY = 60
+                        let sevenobjList = obj[key]
+                        for (let i in sevenobjList) {
+                            // sevenobjList[i].x = that.setRandomTree(60, 90, sevenobjList.length, 'x')
 
+                            // sevenobjList[i].y = that.setRandomTree(30, 60, sevenobjList.length, 'y')
+                            sevenobjList[i].y = that.setRandomTree(30, 60, 2)
+                            sevenobjList[i].x = that.setRandomTree(60, 90, 2)
+
+                            sevenlist.push([sevenobjList[i].x, sevenobjList[i].y])
+                            sevenPointlist.push(that.PointlistSet(sevenobjList[i]))
                         }
                     }
-                    // if (key == 'seven') {
-                    //   for(let i in obj[key]){
-                    //     obj[key][i].x = that.setRandomTree(60,90,3)
-                    //     obj[key][i].y = that.setRandomTree(30,60,3)
-                    //     sevenlist.push([obj[key][i].x,obj[key][i].y])
-
-                    //   }
-                    // }
                     if (key == 'eight') {
-                        for (let i in obj[key]) {
-                            obj[key][i].x = that.setRandomTree(30, 60, 3)
-                            obj[key][i].y = that.setRandomTree(60, 90, 3)
-                            eightlist.push([obj[key][i].x, obj[key][i].y])
+                        that.normX = 30
+                        that.normY = 90
+                        let eightobjList = obj[key]
+                        for (let i in eightobjList) {
+                            // eightobjList[i].x = that.setRandomTree(30, 60, eightobjList.length, 'x')
+
+                            // eightobjList[i].y = that.setRandomTree(60, 90, eightobjList.length, 'y')
+                            eightobjList[i].y = that.setRandomTree(60, 90, 2)
+                            eightobjList[i].x = that.setRandomTree(30, 60, 2)
+
+                            eightlist.push([eightobjList[i].x, eightobjList[i].y])
+                            eightPointlist.push(that.PointlistSet(eightobjList[i]))
                         }
                     }
                     if (key == 'nine') {
-                        for (let i in obj[key]) {
-                            obj[key][i].x = that.setRandomTree(60, 90, 3)
-                            obj[key][i].y = that.setRandomTree(60, 90, 3)
-                            ninelist.push([obj[key][i].x, obj[key][i].y])
+                        that.normX = 60
+                        that.normY = 90
+                        let nineobjList = obj[key]
+                        for (let i in nineobjList) {
+                            // nineobjList[i].x = that.setRandomTree(60, 90, nineobjList.length, 'x')
+
+                            // nineobjList[i].y = that.setRandomTree(60, 90, nineobjList.length, 'y')
+                            nineobjList[i].y = that.setRandomTree(60, 90,2)
+                            nineobjList[i].x = that.setRandomTree(60, 90, 2)
+
+                            ninelist.push([nineobjList[i].x, nineobjList[i].y])
+                            ninePointlist.push(that.PointlistSet(nineobjList[i]))
                         }
                     }
-                }
+
+                })
                 myChart.setOption({
                     // title: {
                     //     text: '男性女性身高体重分布',
@@ -442,7 +554,7 @@
                     },
                     tooltip: {
                         // trigger: 'axis',
-                        // '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'
+                        // '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'jgg
                         showDelay: 0,
                         formatter: function(params, ticket) {
                             var str = ''
@@ -450,7 +562,7 @@
                                 case '①':
                                     for (let i in obj.one) {
                                         if (obj.one[i].x == params.value[0] && obj.one[i].y == params.value[1]) {
-                                            str = `姓名：${obj.one[i].name}<br/>年龄：${obj.one[i].age}<br/>职级：${obj.one[i].zj}<br/>`
+                                            str = `姓名：${obj.one[i].name}<br/>年龄：${obj.one[i].age}<br/>职级：${obj.one[i].zj}<br/>象限：${obj.one[i].jgg}<br/>`
                                             break
                                         }
                                     }
@@ -458,7 +570,7 @@
                                 case '②':
                                     for (let i in obj.two) {
                                         if (obj.two[i].x == params.value[0] && obj.two[i].y == params.value[1]) {
-                                            str = `姓名：${obj.two[i].name}<br/>年龄：${obj.two[i].age}<br/>职级：${obj.two[i].zj}<br/>`
+                                            str = `姓名：${obj.two[i].name}<br/>年龄：${obj.two[i].age}<br/>职级：${obj.two[i].zj}<br/>象限：${obj.one[i].jgg}<br/>`
                                             break
                                         }
                                     }
@@ -466,7 +578,7 @@
                                 case '③':
                                     for (let i in obj.three) {
                                         if (obj.three[i].x == params.value[0] && obj.three[i].y == params.value[1]) {
-                                            str = `姓名：${obj.three[i].name}<br/>年龄：${obj.three[i].age}<br/>职级：${obj.three[i].zj}<br/>`
+                                            str = `姓名：${obj.three[i].name}<br/>年龄：${obj.three[i].age}<br/>职级：${obj.three[i].zj}<br/>象限：${obj.one[i].jgg}<br/>`
                                             break
                                         }
                                     }
@@ -474,7 +586,7 @@
                                 case '④':
                                     for (let i in obj.four) {
                                         if (obj.four[i].x == params.value[0] && obj.four[i].y == params.value[1]) {
-                                            str = `姓名：${obj.four[i].name}<br/>年龄：${obj.four[i].age}<br/>职级：${obj.four[i].zj}<br/>`
+                                            str = `姓名：${obj.four[i].name}<br/>年龄：${obj.four[i].age}<br/>职级：${obj.four[i].zj}<br/>象限：${obj.one[i].jgg}<br/>`
                                             break
                                         }
                                     }
@@ -482,7 +594,7 @@
                                 case '⑤':
                                     for (let i in obj.five) {
                                         if (obj.five[i].x == params.value[0] && obj.five[i].y == params.value[1]) {
-                                            str = `姓名：${obj.five[i].name}<br/>年龄：${obj.five[i].age}<br/>职级：${obj.five[i].zj}<br/>`
+                                            str = `姓名：${obj.five[i].name}<br/>年龄：${obj.five[i].age}<br/>职级：${obj.five[i].zj}<br/>象限：${obj.one[i].jgg}<br/>`
                                             break
                                         }
                                     }
@@ -490,7 +602,7 @@
                                 case '⑥':
                                     for (let i in obj.six) {
                                         if (obj.six[i].x == params.value[0] && obj.six[i].y == params.value[1]) {
-                                            str = `姓名：${obj.six[i].name}<br/>年龄：${obj.six[i].age}<br/>职级：${obj.six[i].zj}<br/>`
+                                            str = `姓名：${obj.six[i].name}<br/>年龄：${obj.six[i].age}<br/>职级：${obj.six[i].zj}<br/>象限：${obj.one[i].jgg}<br/>`
                                             break
                                         }
                                     }
@@ -498,7 +610,7 @@
                                 case '⑦':
                                     for (let i in obj.seven) {
                                         if (obj.seven[i].x == params.value[0] && obj.seven[i].y == params.value[1]) {
-                                            str = `姓名：${obj.seven[i].name}<br/>年龄：${obj.seven[i].age}<br/>职级：${obj.seven[i].zj}<br/>`
+                                            str = `姓名：${obj.seven[i].name}<br/>年龄：${obj.seven[i].age}<br/>职级：${obj.seven[i].zj}<br/>象限：${obj.one[i].jgg}<br/>`
                                             break
                                         }
                                     }
@@ -506,7 +618,7 @@
                                 case '⑧':
                                     for (let i in obj.eight) {
                                         if (obj.eight[i].x == params.value[0] && obj.eight[i].y == params.value[1]) {
-                                            str = `姓名：${obj.eight[i].name}<br/>年龄：${obj.eight[i].age}<br/>职级：${obj.eight[i].zj}<br/>`
+                                            str = `姓名：${obj.eight[i].name}<br/>年龄：${obj.eight[i].age}<br/>职级：${obj.eight[i].zj}<br/>象限：${obj.one[i].jgg}<br/>`
                                             break
                                         }
                                     }
@@ -514,7 +626,7 @@
                                 case '⑨':
                                     for (let i in obj.nine) {
                                         if (obj.nine[i].x == params.value[0] && obj.nine[i].y == params.value[1]) {
-                                            str = `姓名：${obj.nine[i].name}<br/>年龄：${obj.nine[i].age}<br/>职级：${obj.nine[i].zj}<br/>`
+                                            str = `姓名：${obj.nine[i].name}<br/>年龄：${obj.nine[i].age}<br/>职级：${obj.nine[i].zj}<br/>象限：${obj.one[i].jgg}<br/>`
                                             break
                                         }
                                     }
@@ -524,14 +636,14 @@
                             }
                             return str
                         },
-                        axisPointer: {
-                            show: false,
-                            type: 'cross',
-                            lineStyle: {
-                                type: 'dashed',
-                                width: 1
-                            }
-                        }
+                        // axisPointer: {
+                        //     show: false,
+                        //     type: 'cross',
+                        //     lineStyle: {
+                        //         type: 'dashed',
+                        //         width: 1
+                        //     }
+                        // }
                     },
                     dataZoom: {
                         type: 'inside'
@@ -560,7 +672,9 @@
                             // formatter: '{value} cm'
                             formatter: function(value) {
                                 var texts = [];
-                                if (value <= 30) {
+                                if (value == 0) {
+                                    texts.push("");
+                                } else if (value <= 30) {
                                     texts.push('低能力(后10%)');
                                 } else if (value <= 60) {
                                     texts.push('中能力(中70%)');
@@ -581,7 +695,9 @@
                             // formatter: '{value} kg'
                             formatter: function(value) {
                                 var texts = [];
-                                if (value <= 30) {
+                                if (value == 0) {
+                                    texts.push("");
+                                } else if (value <= 30) {
                                     texts.push('低绩效C/D');
                                 } else if (value <= 60) {
                                     texts.push('中绩效B+/B');
@@ -598,6 +714,16 @@
                             name: '①',
                             type: 'scatter',
                             data: onelist,
+                            markPoint: { // markLine 也是同理
+                                data: onePointlist,
+                                tooltip: {
+                                    trigger: 'item',
+                                    position: 'top',
+                                    formatter: function(param) {
+                                        return param.name;
+                                    }
+                                }
+                            },
                             markArea: {
                                 silent: true,
                                 itemStyle: {
@@ -605,6 +731,7 @@
                                     borderWidth: 1,
                                     borderType: 'dashed'
                                 },
+
                                 data: [
                                     [{
                                         name: '①',
@@ -622,6 +749,16 @@
                             name: '②',
                             type: 'scatter',
                             data: twolist,
+                            markPoint: { // markLine 也是同理
+                                data: twoPointlist,
+                                tooltip: {
+                                    trigger: 'item',
+                                    position: 'top',
+                                    formatter: function(param) {
+                                        return param.name;
+                                    }
+                                }
+                            },
                             markArea: {
                                 silent: true,
                                 itemStyle: {
@@ -656,6 +793,16 @@
                             name: '③',
                             type: 'scatter',
                             data: threelist,
+                            markPoint: { // markLine 也是同理
+                                data: threePointlist,
+                                tooltip: {
+                                    trigger: 'item',
+                                    position: 'top',
+                                    formatter: function(param) {
+                                        return param.name;
+                                    }
+                                }
+                            },
                             markArea: {
                                 silent: true,
                                 itemStyle: {
@@ -690,6 +837,16 @@
                             name: '④',
                             type: 'scatter',
                             data: fourlist,
+                            markPoint: { // markLine 也是同理
+                                data: fourPointlist,
+                                tooltip: {
+                                    trigger: 'item',
+                                    position: 'top',
+                                    formatter: function(param) {
+                                        return param.name;
+                                    }
+                                }
+                            },
                             markArea: {
                                 silent: true,
                                 itemStyle: {
@@ -724,6 +881,16 @@
                             name: '⑤',
                             type: 'scatter',
                             data: fivelist,
+                            markPoint: { // markLine 也是同理
+                                data: fivePointlist,
+                                tooltip: {
+                                    trigger: 'item',
+                                    position: 'top',
+                                    formatter: function(param) {
+                                        return param.name;
+                                    }
+                                }
+                            },
                             markArea: {
                                 silent: true,
                                 itemStyle: {
@@ -758,6 +925,16 @@
                             name: '⑥',
                             type: 'scatter',
                             data: sixlist,
+                            markPoint: { // markLine 也是同理
+                                data: sixPointlist,
+                                tooltip: {
+                                    trigger: 'item',
+                                    position: 'top',
+                                    formatter: function(param) {
+                                        return param.name;
+                                    }
+                                }
+                            },
                             markArea: {
                                 silent: true,
                                 itemStyle: {
@@ -792,6 +969,16 @@
                             name: '⑦',
                             type: 'scatter',
                             data: sevenlist,
+                            markPoint: { // markLine 也是同理
+                                data: sevenPointlist,
+                                tooltip: {
+                                    trigger: 'item',
+                                    position: 'top',
+                                    formatter: function(param) {
+                                        return param.name;
+                                    }
+                                }
+                            },
                             markArea: {
                                 silent: true,
                                 itemStyle: {
@@ -826,6 +1013,16 @@
                             name: '⑧',
                             type: 'scatter',
                             data: eightlist,
+                            markPoint: { // markLine 也是同理
+                                data: eightPointlist,
+                                tooltip: {
+                                    trigger: 'item',
+                                    position: 'top',
+                                    formatter: function(param) {
+                                        return param.name;
+                                    }
+                                }
+                            },
                             markArea: {
                                 silent: true,
                                 itemStyle: {
@@ -860,6 +1057,16 @@
                             name: '⑨',
                             type: 'scatter',
                             data: ninelist,
+                            markPoint: { // markLine 也是同理
+                                data: ninePointlist,
+                                tooltip: {
+                                    trigger: 'item',
+                                    position: 'top',
+                                    formatter: function(param) {
+                                        return param.name;
+                                    }
+                                }
+                            },
                             markArea: {
                                 silent: true,
                                 itemStyle: {

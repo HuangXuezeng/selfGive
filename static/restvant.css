@@ -1,10 +1,10 @@
 .resetVant .van-search {
-  padding: 35px 12px;
-  /* margin-top: 5%; */
+    padding: 35px 12px;
+    /* margin-top: 5%; */
 }
 
 .resetVant .van-cell__value {
-  text-align: center;
+    text-align: center;
 }
 
 .resetVant html,
@@ -88,21 +88,23 @@ mark,
 audio,
 video,
 input {
-  vertical-align: middle;
+    vertical-align: middle;
 }
 
 .resetVant .van-cell {
-  padding: 5px 17px;
+    padding: 5px 17px;
 }
 
 .resetVant .van-col--12 {
-  align-self: center;
+    align-self: center;
 }
-.resetVant .van-tabs__nav--card{
-  margin: 0;
+
+.resetVant .van-tabs__nav--card {
+    margin: 0;
 }
-.resetVantfixed .van-sticky--fixed{
-  position: fixed;
+
+.resetVantfixed .van-sticky--fixed {
+    position: fixed;
     z-index: 99;
     /* max-width: 400px; */
     top: unset;
@@ -110,24 +112,42 @@ input {
     left: 0;
     margin: auto;
 }
+
 .resetVantfixed .van-tabbar--fixed {
-  position: fixed;
-  bottom: 0;
-  /* max-width: 400px; */
-  top: unset;
-  right: 0;
-  left: 0;
-  margin: auto;
+    position: fixed;
+    bottom: 0;
+    /* max-width: 400px; */
+    top: unset;
+    right: 0;
+    left: 0;
+    margin: auto;
 }
+
 .resetVantfixed .van-dropdown-item {
-  position: fixed;
-  /* max-width: 400px; */
-  right: 0;
-  left: 0;
-  z-index: 10;
-  overflow: hidden;
-  margin: auto;
+    position: fixed;
+    /* max-width: 400px; */
+    right: 0;
+    left: 0;
+    z-index: 10;
+    overflow: hidden;
+    margin: auto;
 }
-.resetVantfixcader .van-dropdown-menu__bar{
-  background-color: IndianRed;
+
+.resetVantfixcader .van-dropdown-menu__bar {
+    background-color: IndianRed;
+}
+
+.resetVantGrid .van-grid-item__content--center {
+    background-color: #FF8C00;
+    color: #fff;
+}
+.resetVantGrid .van-grid-item__text{
+  color: #fff;
+}
+.resetVantGridAct .van-grid-item__content--center {
+  background-color:#00BFFF;
+  color: #fff;
+}
+.resetVantGridAct .van-grid-item__text {
+  color: #fff;
 }

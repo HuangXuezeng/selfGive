@@ -9,24 +9,7 @@
                     <van-col>
                         <div class="titleRewards">
                             <span class="honghe"></span>
-                            干部流失率
-                        </div>
-                    </van-col>
-                </van-row>
-                <selctYearcurrent @yearChangeItem='yearChange' :startYear='2018' :allPage='0'></selctYearcurrent>
-                <!-- <chooseDepartment @confirmNode="cadreReserveDepart" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData"></chooseDepartment> -->
-                <div>
-                    <div style="width: 100%; height: 400px">
-                        <div ref="findCadresLossInfoEchart" :style="{ width: '100%', height: '400px' }"></div>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <van-row type="flex" justify="left" style="margin-bottom: 10px">
-                    <van-col>
-                        <div class="titleRewards">
-                            <span class="honghe"></span>
-                            干部储备准备度
+                            干部储备
                         </div>
                     </van-col>
                 </van-row>
@@ -37,6 +20,25 @@
                     </div>
                 </div>
             </div>
+            <div>
+                <van-row type="flex" justify="left" style="margin-bottom: 10px">
+                    <van-col>
+                        <div class="titleRewards">
+                            <span class="honghe"></span>
+                            干部流失率
+                        </div>
+                    </van-col>
+                </van-row>
+                <selctYearcurrent @yearChangeItem='yearChange' :startYear='2018' :allPage='0'></selctYearcurrent>
+                <!-- <chooseDepartment @confirmNode="cadreReserveDepart" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData"></chooseDepartment> -->
+                <div v-show="!showNodatas">
+                    <div style="width: 100%; height: 400px">
+                        <div ref="findCadresLossInfoEchart" :style="{ width: '100%', height: '400px' }"></div>
+                    </div>
+                </div>
+                <noData :showNodata="showNodatas"></noData>
+            </div>
+
         </div>
         <!-- <div>
             <div>
@@ -152,7 +154,11 @@
             queryfindCadresLossInfo() {
                 this.findCadresLossInfoData.deptList = this.readySelectDept
                 findCadresLossInfo(this.findCadresLossInfoData).then(res => {
-                    this.initfindCadresLossInfoEchart(res.obj)
+                    if (res.code == "1000") {
+                        this.initfindCadresLossInfoEchart(res.obj)
+                    } else {
+                        Toast.fail(res.msg);
+                    }
                 })
             },
             //查询部门
@@ -191,7 +197,6 @@
                 });
             },
             initfindCadresLossInfoEchart(list) {
-                // debugger
                 var that = this
                 var myChart = this.$echarts.init(this.$refs.findCadresLossInfoEchart);
                 let monthMap = new Map();
@@ -208,7 +213,16 @@
                     let [a, b] = item
                     monthData.push(b)
                 }
-
+                let labelflag = false
+                // debugger
+                // this.showNodatas = true
+                // 判断要不要显示折线图
+                for (let item of monthData) {
+                    if (item != 0.00 && item != 0.0 && item != 0) {
+                        labelflag = true
+                        break
+                    }
+                }
                 myChart.setOption({
                     tooltip: {
                         trigger: 'axis',
@@ -252,12 +266,12 @@
                             type: 'line',
                             data: monthData,
                             label: {
-                            normal: {
-                                show: true,
-                                position: 'top',
-                                formatter: "{c}%"
-                            }
-                        },
+                                normal: {
+                                    show: labelflag,
+                                    position: 'top',
+                                    formatter: "{c}%"
+                                }
+                            },
                         },
 
                     ]
@@ -278,14 +292,17 @@
                     xAxisList.push(list[i].type)
                     nowList.push(list[i].now)
                     // console.log(list[i].cbl.spilt('%'))
-                    if (list[i].cbl != null) {
+                    if (list[i].cbl != null && list[i].cbl != 0 && list[i].cbl != 0.0 && list[i].cbl != 0.00) {
                         cblList.push(list[i].cbl.split('%')[0])
+                    } else {
+                        cblList.push('')
                     }
                     oneYearList.push(list[i].oneYear)
                     threeYearList.push(list[i].threeYear)
                     twoYearList.push(list[i].twoYear)
                 }
                 myChart.setOption({
+                    color: ['#6495ED', '#FF8C00', '#A9A9A9', '#FFD700'],
                     tooltip: {
                         trigger: "axis",
                         axisPointer: {
@@ -353,6 +370,7 @@
                             // max: 480,
                             interval: 80,
                             axisLabel: {
+                                show: false,
                                 formatter: "{value}",
                             },
                         },
@@ -360,7 +378,7 @@
                             type: "value",
                             // name: "百分比",
                             min: 0,
-                            max: 120,
+                            max: 100,
                             interval: 20,
                             axisLabel: {
                                 formatter: "{value} %",
@@ -380,8 +398,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 8,
                                         },
                                     },
                                 },
@@ -399,8 +417,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 8,
                                         },
                                     },
                                 },
@@ -417,8 +435,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 8,
                                         },
                                     },
                                 },
@@ -435,8 +453,8 @@
                                         position: "inside", //在上方显示
                                         textStyle: {
                                             //数值样式
-                                            color: "cyan",
-                                            fontSize: 16,
+                                            color: "#000",
+                                            fontSize: 8,
                                         },
                                     },
                                 },

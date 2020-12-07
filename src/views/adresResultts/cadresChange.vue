@@ -27,7 +27,28 @@
                 <van-col>
                     <div class="titleRewards">
                         <span class="honghe"></span>
-                        干部才报干部人数年度情况
+                        职级分布
+                    </div>
+                </van-col>
+            </van-row>
+            <div class="resetVantfixed resetVantfixcader">
+                <van-dropdown-menu>
+                    <van-dropdown-item v-model="zjselecYear" :options="yearlist" @change="zjyearChange" title-class="colorFFF" />
+                    <van-dropdown-item v-model="zjselecMoth" :options="mothlist" @change="zjmothChange" title-class="colorFFF" />
+                </van-dropdown-menu>
+            </div>
+            <div>
+                <div style="width: 100%; height: 450px">
+                    <div ref="countDistribution" :style="{ width: '100%', height: '500px' }"></div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <van-row type="flex" justify="left" style="margin-bottom: 10px">
+                <van-col>
+                    <div class="titleRewards">
+                        <span class="honghe"></span>
+                        干部编制变化图
                     </div>
                 </van-col>
             </van-row>
@@ -50,7 +71,7 @@
             <!-- <chooseDepartment @confirmNode="ManagementrangeDepart" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData"></chooseDepartment> -->
             <v-table is-horizontal-resize style="width: 100%" :columns="columnsManagementrange" :table-data="tableDataManagementrange" row-hover-color="#eee" row-click-color="#edf7ff" :is-loading="lodingFlagManagementrange" :column-cell-class-name="columnCellClassTrangeChange"></v-table>
         </div>
-        <div>
+        <!-- <div>
             <van-row type="flex" justify="left" style="margin-bottom: 10px">
                 <van-col>
                     <div class="titleRewards">
@@ -60,11 +81,31 @@
                 </van-col>
             </van-row>
             <div>
-                <div style="width: 100%; height: 250px" v-if='!showNodatas'>
+                <div style="width: 100%; height: 80px" v-if='!showNodatas'>
                     <div ref="teamAtmosphereEchart" :style="{ width: '100%', height: '300px' }"></div>
                 </div>
             </div>
             <noData :showNodata="showNodatas"></noData>
+        </div> -->
+        <div>
+            <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '80%' }" get-container="body">
+                <div style="padding-bottom: 30px;">
+                    <van-row type="flex" justify="center" style="margin-bottom: 10px">
+                        <van-col>
+                            <div class="titleRightInfo">
+                                <!-- <span class="honghe"></span> -->
+                                <!-- 司龄分布 -->
+                                {{ titleRight }}
+                            </div>
+                        </van-col>
+                    </van-row>
+                    <div v-for="(item, index) in vancellList" :key="index">
+                        <van-cell :title="item.title" is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)" />
+                    </div>
+                    <v-table ref="rightInfoTable" is-horizontal-resize :is-loading="isLoading" columns-width-drag :height="400" style="width: 100%; font-size: 14px" title-bg-color="#ccc" :columns="popupColumns" :table-data="rightInfoData" row-hover-color="#eee" row-click-color="#edf7ff"></v-table>
+                </div>
+                <!-- <van-cell title="M1-M4" is-link arrow-direction="" value="10" /> -->
+            </van-popup>
         </div>
     </div>
 </template>
@@ -93,16 +134,20 @@
         findCadreReportWholeInfo,
         findCadreReportYearChangeInfo,
         findCadreRepotrRangeInfo,
-        findCadreTeamFwInfo
+        findCadreTeamFwInfo,
+        findCadreReportZJFbInfo,
+        selectEmployeeByJobnumber
     } from "@/views/adresResultts/adresResults.js";
     import adresNavbar from "@/components/adresResultstab/adresResultsNavbar.vue";
     import noData from "@/components/noData.vue";
+    import selctYearcurrent from "@/components/adresResultstab/selctYearcurrent.vue";
     export default {
         components: {
             adresResultsTanbber,
             chooseDepartment,
             adresNavbar,
-            noData
+            noData,
+            selctYearcurrent
         },
         data() {
             return {
@@ -120,7 +165,7 @@
                     {
                         field: "gbbz",
                         title: "干部编制",
-                        width: 40,
+                        width: 60,
                         titleAlign: "center",
                         columnAlign: "center",
                         isResize: true,
@@ -307,6 +352,8 @@
                 yearlist: [],
                 tableDataManagementrange: [],
                 selecMoth: "",
+                zjselecYear: "",
+                zjselecMoth: "",
                 mothlist: [],
                 queryYear: '',
                 queryObj: {
@@ -330,7 +377,96 @@
                 readySelectDept: [],
                 findCadreTeamFwInfoData: {
                     deptList: []
-                }
+                },
+                readyOneSelectDept: [],
+                findCadreReportZJFbInfoData: {
+                    deptList: [],
+                    isDown: 'Y',
+                    year: ''
+                },
+
+                showRightInfo: false,
+                vancellList: [],
+                rightSList: [],
+                rightPList: [],
+                rightMList: [],
+                titleRight: '',
+                rightInfoData: [],
+                isLoading: false,
+                popupColumns: [{
+                        field: "custome",
+                        width: 50,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        title: "序号",
+                        formatter: function(rowData, index) {
+                            return index + 1;
+                        },
+                        isResize: true,
+                        isFrozen: true,
+                    },
+                    {
+                        field: "jobnumber",
+                        title: "工号",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        formatter: function(rowData, rowIndex, pagingIndex, field) {
+                            return `<span>${rowData[field]}</span>`;
+                        },
+                        isResize: true,
+                    },
+                    {
+                        field: "name",
+                        title: "姓名",
+                        width: 60,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                        isFrozen: true,
+                    },
+                    {
+                        field: "department",
+                        title: "部门",
+                        width: 150,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                    {
+                        field: "post",
+                        title: "岗位",
+                        width: 150,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                    {
+                        field: "rank",
+                        title: "职级",
+                        width: 50,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                    {
+                        field: "rsrq",
+                        title: "入司日期",
+                        width: 100,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                    {
+                        field: "currentState",
+                        title: "当前状态",
+                        width: 70,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                ],
+
             };
         },
         created() {
@@ -345,6 +481,12 @@
             //数据初始化
             init() {
                 this.readySelectDept = [JSON.parse(localStorage.getItem("adresResultDept")).deptId];
+                if (this.readySelectDept.length != 0) {
+                    let adresResultDeptobj = JSON.parse(localStorage.getItem("adresResultDept"))
+                    if (adresResultDeptobj.grade == 2 || adresResultDeptobj.grade == 1) {
+                        this.readyOneSelectDept = this.readySelectDept
+                    }
+                }
                 //设定月份
                 this.getMoth();
                 //获取最新年份
@@ -353,12 +495,18 @@
                 // this.queryFindCadreReportWholeInfo();
                 this.queryFindCadreReportYearChangeInfo();
                 this.queryfindCadreRepotrRangeInfo();
-                this.queryfindCadreTeamFwInfo()
+                this.queryfindCadreReportZJFbInfo()
+                // this.queryfindCadreTeamFwInfo()
             },
             yearChange(year) {
                 this.selecYear = year
                 this.queryObj.year = this.selecYear + this.selecMoth;
                 this.queryFindCadreReportWholeInfo(this.queryObj);
+            },
+            zjyearChange(year) {
+                this.zjselecYear = year
+                this.findCadreReportZJFbInfoData.year = this.zjselecYear + this.zjselecMoth;
+                this.queryfindCadreReportZJFbInfo(this.findCadreReportZJFbInfoData);
             },
             getMoth() {
                 this.mothlist = [{
@@ -459,6 +607,11 @@
                 this.queryObj.year = this.selecYear + this.selecMoth;
                 this.queryFindCadreReportWholeInfo(this.queryObj);
             },
+            zjmothChange(value) {
+                this.zjselecMoth = value
+                this.findCadreReportZJFbInfoData.year = this.zjselecYear + this.zjselecMoth;
+                this.queryfindCadreReportZJFbInfo(this.findCadreReportZJFbInfoData);
+            },
             //设定年月
             getNewYear() {
                 let myDate = new Date();
@@ -469,9 +622,11 @@
                 for (let i = 0; i < 100; i++) {
                     if (tYear - i == 2018) {
                         this.selecYear = this.yearlist[0].value;
+                        this.zjselecYear = this.yearlist[0].value;
                         for (let k in this.mothlist) {
                             if (this.mothlist[k].commomIndex == tmouth) {
                                 this.selecMoth = this.mothlist[k].value;
+                                this.zjselecMoth = this.mothlist[k].value;
                                 this.mothChange(this.mothlist[k].value);
                                 break
                             }
@@ -502,10 +657,18 @@
                     };
                 }
                 queryData.deptList = this.readySelectDept
+                queryData.oneDeptList = this.readyOneSelectDept
                 findCadreReportWholeInfo(queryData).then((res) => {
                     if (res.code == "1000") {
                         this.lodingFlagcadresChange = false;
+                        res.obj[0].gbbz = res.obj[res.obj.length - 1].gbbz
+                        for (let i in res.obj) {
+                            if (i > 0) {
+                                delete res.obj[i].gbbz
+                            }
+                        }
                         this.tableData = res.obj;
+                        // debugger
                     } else {
                         Toast.fail(res.msg);
                     }
@@ -534,13 +697,23 @@
                 }
             },
             // 选择部门回调
-            selctdept(data, isDown, oneDeptList) {
-                this.queryObj.deptList = data;
-                this.queryObj.oneDeptList = oneDeptList;
-                this.queryObj.isDown = isDown;
-                this.queryFindCadreReportWholeInfo(this.queryObj);
+            // selctdept(data, isDown, oneDeptList) {
+            //   debugger
+            //     this.queryObj.deptList = data;
+            //     this.queryObj.oneDeptList = oneDeptList;
+            //     this.queryObj.isDown = isDown;
+            //     this.queryFindCadreReportWholeInfo(this.queryObj);
+            // },
+            cellMergeCadresChange(rowIndex, rowData, field) {
+                if (field === "gbbz") {
+                    return {
+                        colSpan: 1,
+                        rowSpan: 6,
+                        content: `<span style='color:red'>${rowData.gbbz}</span>`,
+                        componentName: ""
+                    };
+                }
             },
-            cellMergeCadresChange(rowIndex, rowData, field) {},
             columnCellClassCadresChange(rowIndex, columnName, rowData) {
                 if (rowData.type == "M1-M3") {
                     return "mClass";
@@ -561,8 +734,8 @@
                     return "oClass";
                 }
             },
-            columnCellClassTrangeChange(rowIndex, columnName, rowData){
-              if (rowData.type == "M1-M3") {
+            columnCellClassTrangeChange(rowIndex, columnName, rowData) {
+                if (rowData.type == "M1-M3") {
                     return "mClass";
                 }
                 if (rowData.type == "M4及以上") {
@@ -594,6 +767,7 @@
                     };
                 }
                 queryData.deptList = this.readySelectDept
+                queryData.oneDeptList = this.readyOneSelectDept
                 findCadreReportYearChangeInfo(queryData).then((res) => {
                     if (res.code == "1000") {
                         this.cadresChangeEchart(res.obj.yearChange);
@@ -797,7 +971,261 @@
                     }]
                 })
 
-            }
+            },
+            queryfindCadreReportZJFbInfo() {
+                this.findCadreReportZJFbInfoData.deptList = this.readySelectDept
+                findCadreReportZJFbInfo(this.findCadreReportZJFbInfoData).then(res => {
+                    this.countDistributionMeth(res.obj)
+
+                })
+            },
+            //职级柱图
+            countDistributionMeth(list) {
+                var that = this;
+                var myChart = this.$echarts.init(this.$refs.countDistribution);
+                let SList = [];
+                let PList = [];
+                let MList = [];
+                let zlList = [];
+                let echartsData = []
+                this.rightSList = []
+                this.rightPList = []
+                this.rightMList = []
+                for (let i in list) {
+                    zlList.push(list[i].type)
+                    if (list[i].zl == "S类") {
+                        SList.push(list[i].count || "")
+                        PList.push('')
+                        MList.push('')
+                        if (list[i].count) {
+                            this.rightSList.push(list[i])
+                        }
+                    } else if (list[i].zl == "P类") {
+                        PList.push(list[i].count || "")
+                        SList.push('')
+                        MList.push('')
+                        if (list[i].count) {
+                            this.rightPList.push(list[i])
+                        }
+                    } else if (list[i].zl == "M类") {
+                        MList.push(list[i].count || "")
+                        SList.push('')
+                        PList.push('')
+                        if (list[i].count) {
+                            this.rightMList.push(list[i])
+                        }
+                    }
+                }
+                myChart.setOption({
+                    color: ['#6495ED', '#A9A9A9', '#FFD700'],
+                    legend: {
+                        data: ["S类", "P类", "M类", ],
+                        // height:'10'
+                        top: '3%'
+                    },
+                    grid: {
+                        left: "3%",
+                        right: "4%",
+                        // bottom: "3%",
+                        containLabel: true,
+                    },
+                    xAxis: [{
+                        type: "value",
+                        position: 'top', //x 轴的位置【top bottom】
+                        nameRotate: -90, //坐标轴名字旋转，角度值。
+                        // axisLabel: { //坐标轴刻度标签的相关设置。
+                        //     // rotate: 90 //刻度标签旋转的角度，
+                        // },
+                        // scale: true,
+                        interval: 10,
+
+                    }, ],
+                    yAxis: [{
+                        type: "category",
+                        data: zlList,
+                        // axisLabel: {
+                        //     interval: 0,
+                        //     rotate: 40
+                        // },
+                        // scale : true,
+                        // max: "100%",
+                        inverse: 'true', //是否是反向坐标轴。
+                        // axisLabel: {
+                        //     rotate: -90
+                        // },
+                    }, ],
+
+
+                    series: [{
+                            name: "S类",
+                            type: "bar",
+                            barWidth: 15,
+                            stack: '人数',
+                            data: SList,
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true, //开启显示
+                                        position: "inside", //在上方显示
+                                        textStyle: {
+                                            //数值样式
+                                            color: "#000",
+                                            fontSize: 10,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        {
+                            name: "P类",
+                            type: "bar",
+                            barWidth: 15,
+                            stack: '人数',
+
+                            data: PList,
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true, //开启显示
+                                        position: "inside", //在上方显示
+                                        textStyle: {
+                                            //数值样式
+                                            color: "#000",
+                                            fontSize: 10,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        {
+                            name: "M类",
+                            type: "bar",
+                            barWidth: 15,
+                            data: MList,
+                            stack: '人数',
+
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: true, //开启显示
+                                        position: "inside", //在上方显示
+                                        textStyle: {
+                                            //数值样式
+                                            color: "#000",
+                                            fontSize: 10,
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    ],
+                });
+                myChart.on("click", function(params) {
+                    // debugger;
+                    that.RightInfo(params);
+                    // console.log(params);
+                });
+            },
+            zjYearChange(item) {
+                this.findCadreReportZJFbInfoData.year = item
+                this.queryfindCadreReportZJFbInfo()
+            },
+            RightInfo(obj) {
+                // debugger;
+                var that = this;
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        that.showRightInfo = true;
+                        that.titleRight = obj.seriesName;
+                        if (obj.seriesName == "S类") {
+                            for (let item of that.rightSList) {
+                                item.title = item.type
+                                item.value = item.count
+                                item.direction = ''
+                                item.jobList = item.countJobnumber
+                            }
+                            that.vancellList = that.rightSList
+                        } else if (obj.seriesName == "P类") {
+                            for (let item of that.rightPList) {
+                                item.title = item.type
+                                item.value = item.count
+                                item.direction = ''
+                                item.jobList = item.countJobnumber
+                            }
+                            that.vancellList = that.rightPList
+                        } else if (obj.seriesName == "M类") {
+                            for (let item of that.rightMList) {
+                                item.title = item.type
+                                item.value = item.count
+                                item.direction = ''
+                                item.jobList = item.countJobnumber
+                            }
+                            that.vancellList = that.rightMList
+                        }
+                        that.vancellListTouch(that.vancellList[0]);
+                        // if (type == 1) {
+                        //     for (let item of this.jobAgeListRes) {
+                        //         if (item.type == obj.name) {
+                        //             // ["3年以内", "3-5年", "5-10年", "10年以上"]
+                        //             this.titleRight = obj.name;
+                        //             this.vancellList = [{
+                        //                     title: "3年以内",
+                        //                     value: item.a3yearCount,
+                        //                     direction: "down",
+                        //                     jobList: item.a3yearJobmumbers,
+                        //                 },
+                        //                 {
+                        //                     title: "30-39",
+                        //                     value: item.a3to5yearCount,
+                        //                     direction: "",
+                        //                     jobList: item.a3to5yearJobmumbers,
+                        //                 },
+                        //                 {
+                        //                     title: "40-49",
+                        //                     value: item.a5to10yearCount,
+                        //                     direction: "",
+                        //                     jobList: item.a5to10yearJobmumbers,
+                        //                 },
+                        //                 {
+                        //                     title: "10年以上",
+                        //                     value: item.a10yearCount,
+                        //                     direction: "",
+                        //                     jobList: item.a10yearJobmumbers,
+                        //                 },
+                        //             ];
+                        //             this.vancellListTouch(this.vancellList[0]);
+                        //         }
+                        //     }
+                        // }
+                    }, 60);
+                });
+            },
+            vancellListTouch(obj) {
+                for (let item of this.vancellList) {
+                    if (item == obj) {
+                        obj.direction = "down";
+                        this.querySelectEmployeeByJobnumber(obj.jobList);
+                    } else {
+                        item.direction = "";
+                    }
+                }
+            },
+            querySelectEmployeeByJobnumber(list) {
+                this.isLoading = true;
+                selectEmployeeByJobnumber({
+                    jobnumbers: list,
+                    type:'2'
+                }).then((res) => {
+                    if (res.code == "1000") {
+                        this.rightInfoData = res.obj;
+                        this.isLoading = false;
+                        this.$refs.rightInfoTable.scrollToTop();
+                    } else {
+                        Toast.fail(res.msg);
+                    }
+
+                });
+            },
         },
     };
 </script>
@@ -875,5 +1303,12 @@
 
     .colorFFF {
         color: #fff;
+    }
+
+    .titleRightInfo {
+        font-size: 18px;
+        font-weight: 700;
+        margin-top: 20px;
+        color: red;
     }
 </style>
