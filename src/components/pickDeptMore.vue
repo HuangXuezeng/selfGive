@@ -16,25 +16,26 @@
       position="top"
       :style="{ height: '70%' }"
       get-container="body"
-      :closeable="closeableFlag"
     >
       <div style="padding-bottom:20%" v-if="isReload">
         <!-- <van-switch :value="isDownValue" @input="isDownMethods" /> -->
-        <van-cell
-          center
-          title="是否自动包含下级部门"
-          title-style="color:red"
-          icon="setting"
-          v-if="isSelctall"
-        >
-          <template #right-icon>
-            <van-switch
-              :value="isDownValue"
-              @input="isDownMethods"
-              size="15px"
-            />
-          </template>
-        </van-cell>
+        <div v-if="isShowDown">
+          <van-cell
+            center
+            title="是否自动包含下级部门"
+            title-style="color:red"
+            icon="setting"
+            v-if="isSelctall"
+          >
+            <template #right-icon>
+              <van-switch
+                :value="isDownValue"
+                @input="isDownMethods"
+                size="15px"
+              />
+            </template>
+          </van-cell>
+        </div>
         <el-tree
           :data="deptData"
           ref="tree"
@@ -84,7 +85,7 @@
 </template>
 
 <script>
-import { getOrz, checkDept } from "@/views/leadAffairs/api.js";
+import { getOrz, checkDept,isHaveQx } from "@/views/leadAffairs/api.js";
 import { findTeamBuildingJGLJInfo } from "@/views/personAffairs/teamFoster/teamFosterApi.js";
 
 import { Notify, Toast, Col, Row, Dialog, Switch } from "vant";
@@ -125,10 +126,16 @@ export default {
     isFromRost: {
       type: Boolean,
       default: false
+    },
+    isShowDown: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {
+      allValue: '',
+      searchData: {}, //权限查询的参数值
       isReload: true,
       idFlag: "",
       deptData: [],
@@ -210,46 +217,110 @@ export default {
     },
     //团队培育用的方法 选择时触发
     handleCheckChange(data, checked, indeterminate) {
-      if (this.isSelctall) {
-      } else {
-        // 如果不存在数组中，并且数组中已经有一个id并且checked为true的时候，代表不能再次选择。
-        if (data.deptId == this.onSelected) {
-          this.onSelected = "";
-          return;
-        }
-        if (this.selectOrg.orgsid.length === 1 && checked) {
-          // Toast.fail("只能选择一个部门");
-          // 设置已选择的节点为false 很重要
-          this.$refs.tree.setChecked(this.selectOrg.orgsid[0], false);
-          this.onSelected = this.selectOrg.orgsid[0].deptId;
-          this.selectOrg.orgsid = [];
-          this.selectOrg.orgsid.push(data);
-          let assignData = Object.assign({}, data);
-          this.mechanismPath(assignData);
-          this.showPickDept = false;
-          Notify({ type: "success", message: "选择成功" });
-        } else if (this.selectOrg.orgsid.length === 0 && checked) {
-          // 发现数组为空 并且是已选择
-          // 防止数组有值，首先清空，再push
-          this.selectOrg.orgsid = [];
-          this.selectOrg.orgsid.push(data);
-          // this.selectedDepartment = data.content;
-          let assignData = Object.assign({}, data);
-          this.mechanismPath(assignData);
-          if (this.firstIn == 1 && this.selectName) {
-            this.firstIn++;
+      //验证选择部门的权限
+      const deptIdsRes = JSON.parse(localStorage.getItem('deptIdsRes'))
+      this.searchData = {
+        deptId: data.deptId,
+        deptIds: deptIdsRes
+      }
+      if(checked == true){
+        if(this.isDownValue == false){
+          let searchData = this.searchData
+          isHaveQx(searchData).then(res=>{
+            if(res.code == 1001 && checked == true){
+              this.RemoveNodeMeth() //清空操作
+              Toast.fail(res.msg)
+              return
+            }else{
+              // 选择部门的权限else中的逻辑
+              if (this.isSelctall) {
+              } else {
+                // 如果不存在数组中，并且数组中已经有一个id并且checked为true的时候，代表不能再次选择。
+                if (data.deptId == this.onSelected) {
+                  this.onSelected = "";
+                  return;
+                }
+                if (this.selectOrg.orgsid.length === 1 && checked) {
+                  // Toast.fail("只能选择一个部门");
+                  // 设置已选择的节点为false 很重要
+                  this.$refs.tree.setChecked(this.selectOrg.orgsid[0], false);
+                  this.onSelected = this.selectOrg.orgsid[0].deptId;
+                  this.selectOrg.orgsid = [];
+                  this.selectOrg.orgsid.push(data);
+                  let assignData = Object.assign({}, data);
+                  this.mechanismPath(assignData);
+                  this.showPickDept = false;
+                  Notify({ type: "success", message: "选择成功" });
+                } else if (this.selectOrg.orgsid.length === 0 && checked) {
+                  // 发现数组为空 并且是已选择
+                  // 防止数组有值，首先清空，再push
+                  this.selectOrg.orgsid = [];
+                  this.selectOrg.orgsid.push(data);
+                  // this.selectedDepartment = data.content;
+                  let assignData = Object.assign({}, data);
+                  this.mechanismPath(assignData);
+                  if (this.firstIn == 1 && this.selectName) {
+                    this.firstIn++;
+                  } else {
+                    this.showPickDept = false;
+                    this.onSelected = "";
+                    Notify({ type: "success", message: "选择成功" });
+                  }
+                } else if (this.selectOrg.orgsid.length === 1 && !checked) {
+                  // 再次直接进行赋值为空操作
+                  let assignData = { content: "", deptId: "" };
+                  this.transferData(assignData);
+                  this.selectedDepartment = "";
+                  this.selectOrg.orgsid = [];
+                  this.onSelected = "";
+                }
+              }
+            }
+          })
+        }else{
+          // 选择部门的权限else中的逻辑
+          if (this.isSelctall) {
           } else {
-            this.showPickDept = false;
-            this.onSelected = "";
-            Notify({ type: "success", message: "选择成功" });
+            // 如果不存在数组中，并且数组中已经有一个id并且checked为true的时候，代表不能再次选择。
+            if (data.deptId == this.onSelected) {
+              this.onSelected = "";
+              return;
+            }
+            if (this.selectOrg.orgsid.length === 1 && checked) {
+              // Toast.fail("只能选择一个部门");
+              // 设置已选择的节点为false 很重要
+              this.$refs.tree.setChecked(this.selectOrg.orgsid[0], false);
+              this.onSelected = this.selectOrg.orgsid[0].deptId;
+              this.selectOrg.orgsid = [];
+              this.selectOrg.orgsid.push(data);
+              let assignData = Object.assign({}, data);
+              this.mechanismPath(assignData);
+              this.showPickDept = false;
+              Notify({ type: "success", message: "选择成功" });
+            } else if (this.selectOrg.orgsid.length === 0 && checked) {
+              // 发现数组为空 并且是已选择
+              // 防止数组有值，首先清空，再push
+              this.selectOrg.orgsid = [];
+              this.selectOrg.orgsid.push(data);
+              // this.selectedDepartment = data.content;
+              let assignData = Object.assign({}, data);
+              this.mechanismPath(assignData);
+              if (this.firstIn == 1 && this.selectName) {
+                this.firstIn++;
+              } else {
+                this.showPickDept = false;
+                this.onSelected = "";
+                Notify({ type: "success", message: "选择成功" });
+              }
+            } else if (this.selectOrg.orgsid.length === 1 && !checked) {
+              // 再次直接进行赋值为空操作
+              let assignData = { content: "", deptId: "" };
+              this.transferData(assignData);
+              this.selectedDepartment = "";
+              this.selectOrg.orgsid = [];
+              this.onSelected = "";
+            }
           }
-        } else if (this.selectOrg.orgsid.length === 1 && !checked) {
-          // 再次直接进行赋值为空操作
-          let assignData = { content: "", deptId: "" };
-          this.transferData(assignData);
-          this.selectedDepartment = "";
-          this.selectOrg.orgsid = [];
-          this.onSelected = "";
         }
       }
     },
@@ -266,59 +337,33 @@ export default {
     //多选的主要逻辑
     judgeLowerLevel(checkedNodes, obj) {
       console.log(checkedNodes)
-    // console.log(checkedNodes.depts.length)
-    
-    // console.log(this.strictlyFlag)
-    // if(checkedNodes.depts !== null){
-    //     if(checkedNodes.depts.length == 1){
-    //         this.strictlyFlag = true;
-    //     }
-    // }else{
-    //     this.strictlyFlag = true;
-    // }
-      // let deptids = [];
-      // deptids.push(checkedNodes.deptId);
-      // const deptIdsRes = JSON.parse(localStorage.getItem("deptIdsRes"));
-      // let queryData = {
-      //   ids: deptids,
-      //   deptIds: deptIdsRes
-      // };
-      // checkDept(queryData).then(res => {
-      //   if (res.code == 1001) {
-      //   //   this.strictlyFlag = true;
-      //     this.$refs.tree.setCheckedKeys([]);
-      //     Toast.fail(res.msg);
-      //     return;
-      //   } else {
-          if (this.isDownValue) {
-            // debugger
-            this.strictlyFlag = false
-            this.selectkeySet.clear();
-            for (let k in obj.checkedKeys) {
-              this.selectkeySet.add(obj.checkedKeys[k]);
-              this.SelectNameMap.set(
-                obj.checkedNodes[k].deptId,
-                obj.checkedNodes[k].content
-              );
-            }
-            this.setbeforeSelectName(obj);
-          } else {
-            this.strictlyFlag = true
-            this.$refs.tree.setCheckedKeys([]);
-            this.SelectNameMap.set(checkedNodes.deptId, checkedNodes.content);
-            if (this.selectkeySet.has(checkedNodes.deptId)) {
-              this.selectkeySet.delete(checkedNodes.deptId);
-              this.setbeforeSelectName(obj);
-            } else {
-              this.selectkeySet.add(checkedNodes.deptId);
-              this.setbeforeSelectName(obj);
-            }
-            for (let item of this.selectkeySet) {
-              this.$refs.tree.setChecked(item, true, false);
-            }
-          }
-      //   }
-      // });
+      if (this.isDownValue) {
+        // debugger
+        this.strictlyFlag = false
+        this.selectkeySet.clear();
+        for (let k in obj.checkedKeys) {
+          this.selectkeySet.add(obj.checkedKeys[k]);
+          this.SelectNameMap.set(
+            obj.checkedNodes[k].deptId,
+            obj.checkedNodes[k].content
+          );
+        }
+        this.setbeforeSelectName(obj);
+      } else {
+        this.strictlyFlag = true
+        this.$refs.tree.setCheckedKeys([]);
+        this.SelectNameMap.set(checkedNodes.deptId, checkedNodes.content);
+        if (this.selectkeySet.has(checkedNodes.deptId)) {
+          this.selectkeySet.delete(checkedNodes.deptId);
+          this.setbeforeSelectName(obj);
+        } else {
+          this.selectkeySet.add(checkedNodes.deptId);
+          this.setbeforeSelectName(obj);
+        }
+        for (let item of this.selectkeySet) {
+          this.$refs.tree.setChecked(item, true, false);
+        }
+      }
     },
     //团队培育用的方法
     transferData(data) {
@@ -343,9 +388,12 @@ export default {
       this.selectkeySet.clear();
       this.beforeSelectName = "";
       this.selectedDepartment = "";
+      //全选清空
+      this.allValue = ''
     },
     //点击确认按钮
     confirmNodeMeth() {
+      // debugger
       let selctArray = Array.from(this.selectkeySet);
       let isDown = "";
       if (this.isDownValue) {
@@ -360,6 +408,9 @@ export default {
           // on close
         });
         return;
+      }else if(this.beforeSelectName == '全部'){
+        console.log('111222')
+        // this.$refs.tree.setCheckedKeys([1], false);
       }
       // debugger
       this.$emit("confirmNode", selctArray, isDown);
@@ -384,7 +435,14 @@ export default {
       // this.selectkeySet.clear();
       // this.selectkeySet.add(this.deptData[0].deptId);
       // this.beforeSelectName = "全部";
-      this.$refs.tree.setCheckedNodes(this.deptData);
+      this.$refs.tree.setCheckedKeys([this.deptData[0].deptId], false);
+      this.selectkeySet.clear();
+      this.selectkeySet.add(this.deptData[0].deptId);
+      this.beforeSelectName = "全部";
+      //全选后传给后台的标识
+      this.allValue = 'Y'
+      this.$emit('getAllVal',this.allValue)
+      // this.$refs.tree.setCheckedNodes(this.deptData);
     },
     //开关按钮方法
     isDownMethods(isDownValue) {
@@ -399,6 +457,7 @@ export default {
         message: `是否${isDownTip}自动包含下级？`
       }).then(() => {
         this.isDownValue = isDownValue;
+        this.$emit('getIsdownVal',this.isDownValue)
         if (!isDownValue) {
           this.selectAllstyle = "background-color:#ccc";
           this.$refs.tree.setCheckedKeys([]);

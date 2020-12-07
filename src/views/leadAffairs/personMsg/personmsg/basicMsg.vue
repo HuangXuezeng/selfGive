@@ -15,7 +15,7 @@
         <div class="message">
             <p><span>当前状态：</span><span>{{personList.a01201}}</span></p>
             <!-- <p><span>工号：</span><span>{{personList.a0190}}</span></p> -->
-            <p><span>性别：</span><span>{{personList.a0107}}</span></p>
+            <!-- <p><span>性别：</span><span>{{personList.a0107}}</span></p> -->
             <p><span>出生日期：</span><span>{{personList.A0111}}</span></p>
             <p><span>年龄：</span><span>{{personList.a01101}}</span></p>
             <p><span>民族：</span><span>{{personList.a0121}}</span></p>

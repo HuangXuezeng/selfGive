@@ -4,13 +4,18 @@
             <van-field v-model="selectTime" label="选择时间：" placeholder="请选择" @click="timeClick=showTime=true" readonly/>
             <choosedepartment 
             ref="dept_content" 
+            :showSwitchFlag="true"
             @transferFa="selctdept" 
+            @getIsdownVal="getIsdownVal"
             :Farequired="true">
             </choosedepartment>
             <div class="btn">
                 <van-button type="primary" color="#fc5f10" size="small" @click="search" style="width:45%">查询</van-button>
                 <van-button type="primary" color="#fc5f10" size="small" @click="reset" style="width:45%">重置</van-button>
                 <!-- <van-button type="primary" color="#fc5f10" size="small" @click="_isHaveQx">测试</van-button> -->
+            </div>
+            <div class="remark">
+                <p>默认展示当前负责部门编制内人员结构</p>
             </div>
         </div>
         <div class="total" @click="searchAllCount">
@@ -76,7 +81,7 @@
         </div>
         <!-- 查看详细 -->
         <div class="post">
-            <p class="titlea"><span class="borleft"></span> 查看详细</p>
+            <p class="titlea"><span class="borleft"></span> 人员在编情况</p>
             <div class="table">
                 <v-table 
                 ref="table" 
@@ -136,7 +141,7 @@
 </template>
 <script>
 import { Notify,Toast } from 'vant';
-import { querySelectTime,queryGwfl,queryGwcj,queryXlTeam,queryAgeTeam,querySexTeam,queryJobAgeTeam,queryDeptDetailTeam,queryRoster,isHaveQx } from './api'
+import { querySelectTime,queryGwfl,queryGwcj,queryXlTeam,queryAgeTeam,querySexTeam,queryJobAgeTeam,queryDeptDetailTeam,queryRoster,isHaveQx,selectEmployeeLimit } from './api'
 import chooseDepartment from "@/components/pickerDeptOne.vue";
 import { mapMutations } from 'vuex'
 export default {
@@ -145,6 +150,8 @@ components: {
 },
   data () {
     return {
+        loadMoreJobnum: {}, //下一页的工号
+        isDown: 'Y', //是否包含下级部门
         qxFlag: false,
         isLoading: true, //弹窗表格的加载
         isLoading1: true, //查看详细表格的加载
@@ -191,7 +198,7 @@ components: {
         popupTableData:[], //弹窗表格
         fenyeData:[], //处理好的分页数据
         total: 0, //总条数
-        dataIndex: 0, //假分页默认显示
+        dataIndex: 1, //假分页默认显示
 
     };
   },
@@ -222,12 +229,21 @@ components: {
     loadMore(){
         // debugger
         this.dataIndex++ //点击+1
-        if(this.dataIndex >= this.fenyeData.length){
-            Notify({ type: "warning", message: "没有更多数据了哦~" });
-        }else{
-            this.popupTableData = this.popupTableData.concat(this.fenyeData[this.dataIndex])
-            Toast('加载成功，请滑动表格查看')
+        let queryData = {
+            // jobnumber: localStorage.getItem('jobNum'),
+            jobnumbers: this.loadMoreJobnum,
+            page: this.dataIndex,
+            type: '1',
         }
+        queryRoster(queryData).then(res=>{
+            if(res.obj == null){
+            Notify({ 
+                type: "warning", message: "没有更多数据了哦~" })
+            }else{
+                this.popupTableData = this.popupTableData.concat(res.obj)
+                Toast('加载成功，请滑动表格查看')
+            }
+        })
     },
     //关闭弹窗
     closePop(){
@@ -254,6 +270,7 @@ components: {
         //获取岗位分类
         let queryData = {
             jobnumber:localStorage.getItem('jobNum'),
+            isDown: this.isDown,
             flag:1
         }
         queryGwfl(queryData).then(res=>{
@@ -261,6 +278,7 @@ components: {
             this.selectDeptContent = res.obj.content
             this.selectDeptId = res.obj.deptId
             this.selectDeptGrade = res.obj.grade
+            this.$refs.dept_content.selectedDepartment = res.obj.content
             //获取的时间去掉年月传给后台
             let str = res.obj.time.replace("年","")
             let newStr = str.replace("月","")
@@ -299,8 +317,15 @@ components: {
             this.isLoading1 = false
             this.columns = [
                 {field: 'highDeptName', title:this.deptName.highDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
-                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
-                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true},
+                {field: 'deptName', title:this.deptName.lowDeptTitle, width: 150, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true,
+                    formatter: function(rowData, rowIndex, pagingIndex, field) {
+                        if(rowData[field] == '合计'){
+                            return `<span style="font-weight:700">${rowData[field]}</span>`;
+                        }
+                        return `<span>${rowData[field]}</span>`;
+                    }
+                },
+                {field: 'deptCount', title: '在编人数', width: 100, titleAlign: 'center',columnAlign:'center', isFrozen: false,isResize:true,},
             ]
         })
     },
@@ -314,6 +339,7 @@ components: {
             legend:{
               // textStyle:{color:'#f00'},
             //   orient: 'vertical',
+              selectedMode:false,
               left: 'left',
               padding: 20
             },
@@ -337,17 +363,18 @@ components: {
                     formatter: '{c}人 / {d}% \n\n',
                     padding: [0,50],
                     textStyle: {
-                        color: "#f64971",
+                        textBorderColor: '#fff',
+                        // color: "#f64971",
                         fontWeight: "700"
                     }
                   }
                 },
         　　data: [
-                {name:'直接类（O类）',value:this.gwcjObj.gwcjzhijieCount},
-                {name:'员工（P1/S1-P4/S4）',value:this.gwcjObj.gwcjyuangongCount},
-                {name:'技术干部（P4/S4（主任）及以上）',value:this.gwcjObj.gwcjjishuCount},
-                {name:'基层干部（M1-M3）',value:this.gwcjObj.gwcjjicengCount},
-                {name:'中层干部（M4-M5）',value:this.gwcjObj.gwcjzhongcengCount},
+                {name:'O类',value:this.gwcjObj.gwcjzhijieCount},
+                {name:'P1/S1-P4/S4',value:this.gwcjObj.gwcjyuangongCount},
+                {name:'P4/S4（主任）及以上',value:this.gwcjObj.gwcjjishuCount},
+                {name:'M1-M3',value:this.gwcjObj.gwcjjicengCount},
+                {name:'M4-M5',value:this.gwcjObj.gwcjzhongcengCount},
                 {name:'M6及以上',value:this.gwcjObj.gwcjhexinCount},
               ],
               itemStyle: {
@@ -355,7 +382,8 @@ components: {
                     color: function(params) {
                         //自定义颜色
                         var colorList = [
-                        'skyblue', 'lightgreen', 'orange','pink','#f66bbf','#e02c28'
+                            // '#fe5b5b','#539dff','#3aced8','#ff9100','#00fa9a','#ff00ff'
+                            '#5b9bd5','#ed7d31','#ffc000','#4572c4','#70ad47','#a5a5a5'
                         ];
                         return colorList[params.dataIndex]
                     }
@@ -368,82 +396,106 @@ components: {
         let that = this //改变this指向
         myChart.on('click', function (params) {
             switch (params.name) {
-              case '直接类（O类）':
-                that.dataIndex = 0
+              case 'O类':
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.gwcjObj.gwcjzhijieJobnumber
                 queryData.jobnumbers = that.gwcjObj.gwcjzhijieJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
-              case '员工（P1/S1-P4/S4）':
-                that.dataIndex = 0
+              case 'P1/S1-P4/S4':
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.gwcjObj.gwcjyuangongJobnumber
                 queryData.jobnumbers = that.gwcjObj.gwcjyuangongJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
-              case '技术干部（P4/S4（主任）及以上）':
-                that.dataIndex = 0
+              case 'P4/S4（主任）及以上':
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.gwcjObj.gwcjjishuJobnumber
                 queryData.jobnumbers = that.gwcjObj.gwcjjishuJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
-              case '基层干部（M1-M3）':
-                that.dataIndex = 0
+              case 'M1-M3':
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.gwcjObj.gwcjjicengJobnumber
                 queryData.jobnumbers = that.gwcjObj.gwcjjicengJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
-              case '中层干部（M4-M5）':
-                that.dataIndex = 0
+              case 'M4-M5':
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.gwcjObj.gwcjzhongcengJobnumber
                 queryData.jobnumbers = that.gwcjObj.gwcjzhongcengJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
               case 'M6及以上':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.gwcjObj.gwcjhexinJobnumber
                 queryData.jobnumbers = that.gwcjObj.gwcjhexinJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
             
@@ -455,9 +507,10 @@ components: {
     //按学历
     initCharts1 () {
     　　let myChart = this.$echarts.init(this.$refs.chart1);
+    console.log(this.xlTeam)
         let data1 = [
-            {name:this.xlTeam.xlxiaoXuePct,value:this.xlTeam.xlxiaoXueCount},
-            {name:this.xlTeam.xlchuZhongPct,value:this.xlTeam.xlchuZhongCount},
+            // {name:this.xlTeam.xlxiaoXuePct,value:this.xlTeam.xlxiaoXueCount},
+            {name:this.xlTeam.xlotherPct,value:this.xlTeam.xlotherCount},
             {name:this.xlTeam.xlgaoZhongPct,value:this.xlTeam.xlgaoZhongCount},
             {name:this.xlTeam.xldaZhuanPct,value:this.xlTeam.xldaZhuanCount},
             {name:this.xlTeam.xlbenKePct,value:this.xlTeam.xlbenKeCount},
@@ -466,8 +519,7 @@ components: {
             {name:this.xlTeam.xlboShiPct,value:this.xlTeam.xlboShiCount},
         ];
         let data2 = [
-            {name:'小学'},
-            {name:'小初中学'},
+            {name:'其他'},
             {name:'高中中专'},
             {name:'大专'},
             {name:'本科'},
@@ -482,7 +534,7 @@ components: {
                 position: 'insideLeft',
                 offset: [10, 0],
                 textBorderWidth: 2,
-                formatter: '{c}人 / {b}'
+                formatter: '{c} / {b}'
             }
         }
     　　// 绘制图表
@@ -497,18 +549,33 @@ components: {
                 // data: ['2011年', '2012年']
             },
             grid: {
-                left: '3%',
+                left: '1%',
                 right: '4%',
                 bottom: '3%',
                 containLabel: true
             },
             xAxis: {
                 type: 'value',
-                boundaryGap: [0, 0.01]
+                boundaryGap: [0, 0.01],
+                name: '单位（人）',
+                axisLabel: {
+                    interval:0,
+                    rotate:20
+                },
+    　　　　　　 nameTextStyle:{         //关键代码
+    　　　　　　　  padding:[70,0,0,-70],
+                },
+                boundaryGap: false, // 将此属性设置为false即可让其在两侧显示
+                axisTick: {show:false},
+                // axisLine: {
+                //     lineStyle: {
+                //         color: '#e0e0e0'
+                //     }
+                // },
             },
             yAxis: {
                 type: 'category',
-                data: ['小学','初中','高中中专','大专','本科','硕士及以上','MBA','博士']
+                data: ['其他','高中中专','大专','本科','硕士及以上','MBA','博士'],
                 // data: ['博士', 'MBA', '硕士及以上', '本科', '大专','高中中专','初中','小学']
             },
             series: [
@@ -520,13 +587,7 @@ components: {
                     data: data1,
                     itemStyle: {
                         normal: {
-                        color: function(params) {
-                                //自定义颜色
-                                var colorList = [
-                                    '#f2902a', '#f2902b', '#f2902c','#f2902d','#f2902e','#f2902f','#f29022','#f29023'
-                                ];
-                                return colorList[params.dataIndex]
-                            }
+                            color: '#ed7d31'
                         }
                     }
                 },
@@ -543,109 +604,124 @@ components: {
               var xIndex = myChart.convertFromPixel({seriesIndex:0},pointInPixel)[1];
               // console.log(data1[xIndex])
             switch (data2[xIndex].name) {
-              case '初中':
-                that.dataIndex = 0
+              case '其他':
+                that.dataIndex = 1
                 // console.log(data2[xIndex].name)
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
-                queryData.jobnumbers = that.xlTeam.xlchuZhongJobnumber
+                that.loadMoreJobnum = that.xlTeam.xlotherJobnumber
+                queryData.jobnumbers = that.xlTeam.xlotherJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
               case '高中中专':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.xlTeam.xlgaoZhongJobnumber
                 queryData.jobnumbers = that.xlTeam.xlgaoZhongJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
               case '本科':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.xlTeam.xlbenKeJobnumber
                 queryData.jobnumbers = that.xlTeam.xlbenKeJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
               case '大专':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.xlTeam.xldaZhuanJobnumber
                 queryData.jobnumbers = that.xlTeam.xldaZhuanJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
-                })
-                break;
-              case '小学':
-                that.dataIndex = 0
-                var queryData = {}
-                setTimeout(() => {
-                  that.showTable = true
-                }, 500);
-                queryData.jobnumbers = that.xlTeam.xlxiaoxueJobnumber
-                queryRoster(queryData).then(res=>{
-                    that.popupTableData = res.obj
-                    that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
               case '硕士及以上':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.xlTeam.xlshuoShiJobnumber
                 queryData.jobnumbers = that.xlTeam.xlshuoShiJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
               case 'MBA':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.xlTeam.xlmbajobnumber
                 queryData.jobnumbers = that.xlTeam.xlmbajobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
               case '博士':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.xlTeam.xlboShiJobnumber
                 queryData.jobnumbers = that.xlTeam.xlboShiJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
             
@@ -665,7 +741,7 @@ components: {
                 position:'insideBottom',
                 // formatter: `{c}人 {b}%`
                 formatter:function(param){
-                     return param.name+'\n'+'\n'+param.value
+                     return param.name+'\n'+'\n'+param.value+'\n'
                 }
             }
         }
@@ -673,10 +749,10 @@ components: {
     　　myChart.setOption({
             xAxis: {
                 type: 'category',
-                data: ['25岁以下', '25-35岁', '35-45岁', '45-50岁', '50岁以上'],
+                data: ['25岁及以下', '26-35岁', '36-45岁', '46-50岁', '51岁及以上'],
                 axisLabel: {
                     interval:0,
-                    rotate:60
+                    rotate:40
                 },
             },
             yAxis: {
@@ -693,22 +769,16 @@ components: {
                 label: seriesLabel,
                 barWidth: 25,
                 data: [
-                        {name:this.ageTeam.age25Pct,value:this.ageTeam.age25Count,title:'25岁以下'},
-                        {name:this.ageTeam.age25to35Pct,value:this.ageTeam.age25to35Count,title:'25-35岁'},
-                        {name:this.ageTeam.age35to45Pct,value:this.ageTeam.age35to45Count,title:'35-45岁'},
-                        {name:this.ageTeam.age45to50Pct,value:this.ageTeam.age45to50Count,title:'45-50岁'},
-                        {name:this.ageTeam.age50Pct,value:this.ageTeam.age50Count,title:'50岁以上'},
+                        {name:this.ageTeam.age25Pct,value:this.ageTeam.age25Count,title:'25岁及以下'},
+                        {name:this.ageTeam.age25to35Pct,value:this.ageTeam.age25to35Count,title:'26-35岁'},
+                        {name:this.ageTeam.age35to45Pct,value:this.ageTeam.age35to45Count,title:'36-45岁'},
+                        {name:this.ageTeam.age45to50Pct,value:this.ageTeam.age45to50Count,title:'46-50岁'},
+                        {name:this.ageTeam.age50Pct,value:this.ageTeam.age50Count,title:'51岁及以上'},
                     ],
                 type: 'bar',
                 itemStyle: {
                     normal: {
-                    color: function(params) {
-                            //自定义颜色
-                            var colorList = [
-                                '#adbd38', '#f06615', '#e972b1','#24ac83','#1ba1c3'
-                            ];
-                            return colorList[params.dataIndex]
-                        }
+                    color: '#daa520'
                     }
                 }
             }]
@@ -719,69 +789,89 @@ components: {
         myChart.on('click', function (params) {
             // console.log(params)
             switch (params.data.title) {
-              case '25岁以下':
-                that.dataIndex = 0
+              case '25岁及以下':
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.ageTeam.age25Jobnumber
                 queryData.jobnumbers = that.ageTeam.age25Jobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
-              case '25-35岁':
-                that.dataIndex = 0
+              case '26-35岁':
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.ageTeam.age25to35Jobnumber
                 queryData.jobnumbers = that.ageTeam.age25to35Jobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
-              case '35-45岁':
-                that.dataIndex = 0
+              case '36-45岁':
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.ageTeam.age35to45Jobnumber
                 queryData.jobnumbers = that.ageTeam.age35to45Jobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
-              case '45-50岁':
-                that.dataIndex = 0
+              case '46-50岁':
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.ageTeam.age45to50Jobnumber
                 queryData.jobnumbers = that.ageTeam.age45to50Jobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
-              case '50岁以上':
-                that.dataIndex = 0
+              case '51岁及以上':
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.ageTeam.age50Jobnumber
                 queryData.jobnumbers = that.ageTeam.age50Jobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
             
@@ -802,7 +892,8 @@ components: {
             legend: {
                 orient: 'vertical',
                 left: 10,
-                data: ['男', '女']
+                data: ['男', '女'],
+                selectedMode:false,
             },
             series: [
                 {
@@ -837,7 +928,7 @@ components: {
                         color: function(params) {
                                 //自定义颜色
                                 var colorList = [
-                                    '#56a336','#f64971'
+                                    '#5b9bd5','#ed7d31'
                                 ];
                                 return colorList[params.dataIndex]
                             }
@@ -853,29 +944,37 @@ components: {
             // window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));
             switch (params.name) {
               case '男':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.sexTeam.manJobnumber
                 queryData.jobnumbers = that.sexTeam.manJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
               case '女':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.sexTeam.womanJobnumber
                 queryData.jobnumbers = that.sexTeam.womanJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
             
@@ -894,7 +993,8 @@ components: {
             legend:{
               orient: 'vertical',
               left: 'left',
-              padding: 20
+              padding: 20,
+              selectedMode:false,
             },
         　　xAxis: {
               show:false,//不显示坐标轴线、坐标轴刻度线和坐标轴上的文字
@@ -916,14 +1016,15 @@ components: {
                     formatter: '{c}人 / {d}% \n\n',
                     padding: [0,0],
                     textStyle: {
-                        color: "#f64971",
+                        textBorderColor: '#fff',
+                        // color: "#fff",
                         fontWeight: "700"
                     }
                   }
                 },
                 labelLine: {   //引导线设置
                     normal: {
-                        show:true,       //引导线不显示
+                        show:true,       //引导线显示
                         length:5 ,
                     },
                 },
@@ -938,7 +1039,7 @@ components: {
                   color: function(params) {
                           //自定义颜色
                           var colorList = [
-                          'skyblue', 'lightgreen', 'orange','pink','#f66bbf','#e02c28'
+                            '#ffc000', '#5b9bd5', '#ed7d31','#a5a5a5','#70ad47','#ff00ff'
                           ];
                           return colorList[params.dataIndex]
                       }
@@ -952,55 +1053,71 @@ components: {
         myChart.on('click', function (params) {
             switch (params.name) {
               case '6个月及以下':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.jobAgeTeam.jobAge6mJobnumber
                 queryData.jobnumbers = that.jobAgeTeam.jobAge6mJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
               case '6个月至1年（含）':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.jobAgeTeam.jobAge6mTo1yJobnumber
                 queryData.jobnumbers = that.jobAgeTeam.jobAge6mTo1yJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
               case '1年至3年（含）':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.jobAgeTeam.jobAge1yTo3yJobnumber
                 queryData.jobnumbers = that.jobAgeTeam.jobAge1yTo3yJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
               case '3年以上':
-                that.dataIndex = 0
+                that.dataIndex = 1
                 var queryData = {}
                 setTimeout(() => {
                   that.showTable = true
                 }, 500);
+                that.loadMoreJobnum = that.jobAgeTeam.jobAge3yJobnumber
                 queryData.jobnumbers = that.jobAgeTeam.jobAge3yJobnumber
+                queryData.type = '1',
+                queryData.page = 1
                 queryRoster(queryData).then(res=>{
                     that.popupTableData = res.obj
+                    that.total = res.totalSize
                     that.isLoading = false
-                    that.pagePev() //获取的表格数据分组
+                    // that.pagePev() //获取的表格数据分组
                 })
                 break;
             
@@ -1014,14 +1131,18 @@ components: {
         // console.log(rowData)
         //通过cloumn来判断点击的是哪个
         if(column.field=='deptCount'){
-            this.dataIndex = 0
+            this.dataIndex = 1
             this.showTable = true
             let queryData = {}
+            this.loadMoreJobnum = rowData.jobnumbers
             queryData.jobnumbers = rowData.jobnumbers
+            queryData.type = '1',
+            queryData.page = 1
             queryRoster(queryData).then(res=>{
                 this.popupTableData = res.obj
+                this.total = res.totalSize
                 this.isLoading = false
-                this.pagePev() //获取的表格数据分组
+                // this.pagePev() //获取的表格数据分组
             })
         }
     },
@@ -1036,6 +1157,7 @@ components: {
 
         }
     },
+    //部门选择
     selctdept(data) {
         // console.log(data)
         //截取部门
@@ -1046,62 +1168,92 @@ components: {
         this.selectDeptId = data.deptId
         this.selectDeptGrade = data.grade
     },
+    // 是否包含下级部门的事件
+    getIsdownVal(data){
+      // console.log(data)
+      if(data){
+        this.isDown = 'Y'
+      }else{
+        this.isDown = 'N'
+      }
+    },
     // 岗位分类查看详情
     znClick(){
         this.showTable = true
-        this.dataIndex = 0
+        this.dataIndex = 1
         let queryData = {}
+        this.loadMoreJobnum = this.gwObj.gwzhinengJobnumber
         queryData.jobnumbers = this.gwObj.gwzhinengJobnumber
+        queryData.type = '1',
+        queryData.page = 1
         queryRoster(queryData).then(res=>{
             this.popupTableData = res.obj
+            this.total = res.totalSize
             this.isLoading = false
-            this.pagePev() //获取的表格数据分组
+            // this.pagePev() //获取的表格数据分组
         })
     },
     jsClick(){
         this.showTable = true
-        this.dataIndex = 0
+        this.dataIndex = 1
         let queryData = {}
+        this.loadMoreJobnum = this.gwObj.gwjiShuJobnumber
         queryData.jobnumbers = this.gwObj.gwjiShuJobnumber
+        queryData.type = '1',
+        queryData.page = 1
         queryRoster(queryData).then(res=>{
             this.popupTableData = res.obj
+            this.total = res.totalSize
             this.isLoading = false
-            this.pagePev() //获取的表格数据分组
+            // this.pagePev() //获取的表格数据分组
         })
     },
     yxClick(){
         this.showTable = true
-        this.dataIndex = 0
+        this.dataIndex = 1
         let queryData = {}
+        this.loadMoreJobnum = this.gwObj.gwyingXiaoJobnumber
         queryData.jobnumbers = this.gwObj.gwyingXiaoJobnumber
+        queryData.type = '1',
+        queryData.page = 1
         queryRoster(queryData).then(res=>{
             this.popupTableData = res.obj
+            this.total = res.totalSize
             this.isLoading = false
-            this.pagePev() //获取的表格数据分组
+            // this.pagePev() //获取的表格数据分组
             // console.log(this.$refs.pop_table)
         })
     },
     zjClick(){
         this.showTable = true
-        this.dataIndex = 0
+        this.dataIndex = 1
         let queryData = {}
+        this.loadMoreJobnum = this.gwObj.gwzhiJieJobnumber
         queryData.jobnumbers = this.gwObj.gwzhiJieJobnumber
+        queryData.type = '1',
+        queryData.page = 1
+        // queryData.page = 1
         queryRoster(queryData).then(res=>{
             this.popupTableData = res.obj
+            this.total = res.totalSize
             this.isLoading = false
-            this.pagePev() //获取的表格数据分组
+            // this.pagePev() //获取的表格数据分组
         })
     },
     //查询全部人员
     searchAllCount(){
         this.showTable = true
-        this.dataIndex = 0
+        this.dataIndex = 1
         let queryData = {}
+        this.loadMoreJobnum = this.gwObj.allCountJobnumber
         queryData.jobnumbers = this.gwObj.allCountJobnumber
+        queryData.type = '1'
+        queryData.page = 1
         queryRoster(queryData).then(res=>{
             this.popupTableData = res.obj
+            this.total = res.totalSize
             this.isLoading = false
-            this.pagePev() //获取的表格数据分组
+            // this.pagePev() //获取的表格数据分组
         })
     },
     //查询
@@ -1113,6 +1265,7 @@ components: {
             deptId:this.selectDeptId,
             grade:this.selectDeptGrade,
             time:this.selectChangeTime,
+            isDown: this.isDown,
         }
         queryGwfl(queryData).then(res=>{
             this.gwObj = res.obj
@@ -1238,6 +1391,15 @@ watch:{
             line-height 35px
             text-align center
         }
+        .remark{
+            font-size 14px
+            text-align center
+            color #ee6471
+            p{
+                font-weight 700
+                padding 5px
+            }
+        }
     }
     .total{
         // margin 0 10px 0 10px
@@ -1281,24 +1443,24 @@ watch:{
             }
             .post_itema{
                 flex 1
-                background-color #0f6b83
+                background-color #5a9bd5
             }
             .post_itemb{
                 flex 1
-                background-color #53958c
+                background-color #ed7d31
             }
             .post_itemc{
                 flex 1
-                background-color #fda677
+                background-color #a5a5a5
             }
             .post_itemd{
                 flex 1
-                background-color #d45348
+                background-color #ffc000
             }
             
         }
         .postrank{
-            height 500px
+            height 460px
             background-color #f6f6f8
             .pie{
                 width 100%
@@ -1306,7 +1468,7 @@ watch:{
             }
         }
         .ages{
-            height 350px
+            height 365px
             background-color #f6f6f8
             .pie{
                 width 100%

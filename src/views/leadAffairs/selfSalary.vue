@@ -27,11 +27,11 @@
         color="#fc5f10"
         line-height="4px">
           <van-tab title="花名册" to="roster"></van-tab>
-          <van-tab title="人员流失" to="retention"></van-tab>
           <van-tab title="人员结构" to="perStructure"></van-tab>
-          <van-tab title="人效分析" to="humanEffect"></van-tab>
-          <van-tab title="人员异动" to="changes"></van-tab>
           <van-tab title="人员编制" to="organization"></van-tab>
+          <van-tab title="人员效率" to="humanEffect"></van-tab>
+          <van-tab title="人员异动" to="changes"></van-tab>
+          <van-tab title="人员流失" to="retention"></van-tab>
         </van-tabs>
       </van-sticky>
       <router-view />

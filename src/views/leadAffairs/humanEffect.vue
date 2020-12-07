@@ -10,6 +10,7 @@
           <pickdeptmore
           ref="select"
           @confirmNode="selctdept"
+          @getAllVal="getAllVal"
           :Farequired="true"
           labelTitle="部门："
           :workingNum="true"
@@ -31,6 +32,9 @@
           </div>
         </div>
         <div class="title">
+          <div class="remark">
+            <p>默认展示当前负责单位人员效率</p>
+          </div>
           <p class="titlea">
             <span class="borleft">人效情况</span>
             <!-- <span>（<span style="color:#ee0a24;font-weight:700">单位：万</span>）</span> -->
@@ -84,6 +88,8 @@
         </div> -->
         <!-- 每月收入 -->
         <div class="title">
+          <!-- 选择年 -->
+          <van-field v-model="selectDrawYear" label="选择年：" placeholder="请选择" @click-input="showDrawYear=true" readonly/>
           <!-- 单选单位 -->
           <choosedepartment
             ref="resetForm"
@@ -123,6 +129,21 @@
             :default-index="50"
           />
         </van-popup> 
+        <!-- 选择图形年弹窗 -->
+        <van-popup
+        v-model="showDrawYear" 
+        get-container="body"
+        position="bottom" 
+        :style="{ height: '50%' }">
+          <van-picker
+            title="选择年份"
+            show-toolbar
+            :columns="columnTime"
+            @confirm="onConfirmDrawYear"
+            @cancel="showDrawYear = false"
+            :default-index="50"
+          />
+        </van-popup> 
         <!-- 选择岗位分类一的弹窗 -->
       <van-popup
         v-model="showPost"
@@ -136,7 +157,7 @@
             item.content
             }}</van-checkbox>
           </van-checkbox-group>
-          <van-button type="info" size="mini" @click="onConfirm1" style="width:100%">确定</van-button>
+          <van-button type="info" size="mini" @click="onConfirm1" style="width:100%" color="#fc5f10">确定</van-button>
         </div>
       </van-popup>
       <!-- 选择岗位分类一的弹窗二 -->
@@ -170,12 +191,16 @@ export default {
   },
   data () {
     return {
+      isDownYn: '', //全选的标识传给后台
+      renxiaoCode: [], //保存的人效code
+      selectDrawYear: '', //图形选择年
+      showDrawYear: false, //图形选择年弹窗
       isLoading: true, //表格数据加载
       // showecharts: false, //显示异常图形
       deptCodeStr: '', //单选的部门值
       showPost1: false, //图形选择岗位分类一弹窗
       selectPost1: '', //图形选择岗位分类1
-      selectPostId1: [], //图形选择岗位分类1传给后台值
+      selectPostId1: '', //图形选择岗位分类1传给后台值
       dataIndex: 1, //分页页码
       total: '', //总条数
       deptData: [], //部门数据
@@ -203,13 +228,20 @@ export default {
         {field: 'time', title: '时间', width: 150, titleAlign: 'center',columnAlign:'center'},
         {field: 'deptOne', title: '一级单位', width: 150, titleAlign: 'center',columnAlign:'center'},
         {field: 'deptTwo', title: '二级部门', width: 150, titleAlign: 'center',columnAlign:'center'},
-        {field: 'postOne', title: '岗位分类一', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'postOne', title: '岗位分类一', width: 150, titleAlign: 'center',columnAlign:'center'},
         {field: 'rxUnit', title: '人效单位', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'rxTarget', title: '年度人效目标', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'rxTarget', title: '年度人效目标', width: 150, titleAlign: 'center',columnAlign:'center',
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            if(rowData[field] == 0){
+              return `<span>/</span>`;
+            }
+            return `<span>${rowData[field]}</span>`;
+          }
+        },
         {field: 'monthRx', title: '月度人效', width: 150, titleAlign: 'center',columnAlign:'center',},
         {field: 'diff', title: '月度人效同比', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'cumulRx', title: '累计人效同比', width: 150, titleAlign: 'center',columnAlign:'center',},
-        {field: 'cumulDiff', title: '累计同比', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'cumulRx', title: '累计人效', width: 150, titleAlign: 'center',columnAlign:'center',},
+        {field: 'cumulDiff', title: '累计人效同比', width: 150, titleAlign: 'center',columnAlign:'center',},
         {field: 'rxProgress', title: '人效进度', width: 150, titleAlign: 'center',columnAlign:'center',},
         {field: 'progressDiff', title: '对比销售收入的进度差异', width: 170, titleAlign: 'center',columnAlign:'center',
           // formatter: function (rowData,rowIndex,pagingIndex,field) {
@@ -238,8 +270,11 @@ export default {
     },
     //单元格样式
     columnCellClass(rowIndex,columnName,rowData){
-      if (rowIndex % 2 == 0){
-          return 'column-cell-class-name-test';
+      // if (rowIndex % 2 == 0){
+      //   return 'column-cell-class-name-test';
+      // }
+      if (rowData.postOne == null){
+         return 'column-cell-class-name-test-a';
       }
       // if (rowData.chayi < 0 && columnName==='chayi'){
       //     return 'cell-edit-color-a';select
@@ -249,10 +284,43 @@ export default {
     onConfirm(value, index) {
       // console.log(`当前值：${value}, 当前索引：${index}`);
       this.selectYear = value
+      this.selectDrawYear = value
       this.showyear = false
     },
     onCancel() {
       this.showyear = false
+    },
+    //图形选择年
+    onConfirmDrawYear(value){
+      // console.log(value)
+      this.selectDrawYear = value
+      this.showDrawYear = false
+      //清空图形的数据
+      this.timeData = []
+      this.monthData = []
+      this.ljData = []
+      this.targetData = []
+      // 图形获取数据
+      let queryData = {
+        code: this.deptCodeStr,
+        deptCode: this.renxiaoCode,
+        year: this.selectDrawYear,
+        postOne: this.selectPostId1,
+      }
+      selectDrawInfo(queryData).then(res=>{
+        if(res.obj == ''){
+          Notify({ type: "warning", message: "没有该数据" })
+          return
+        }else{
+          for(let i in res.obj){
+            this.timeData.push(res.obj[i].time)
+            this.monthData.push(res.obj[i].monthRx)
+            this.ljData.push(res.obj[i].cumulRx)
+            this.targetData.push(res.obj[i].rxTarget)
+          }
+          this.initCharts()
+        }
+      })
     },
     MySort() {
       return this.sort((a, b) => a - b)
@@ -275,7 +343,9 @@ export default {
     },
     initData(){
       const renxiaoOrganRes = JSON.parse(localStorage.getItem("renxiaoOrganRes"))
-      const renxiaoCode = JSON.parse(localStorage.getItem("renxiaoCodeRes"))
+      this.renxiaoCode = JSON.parse(localStorage.getItem("renxiaoCodeRes"))
+      this.selectDrawYear = this.formatDate(new Date())
+      this.selectYear = this.formatDate(new Date())
       // console.log(renxiaoCode)
       this.deptData = renxiaoOrganRes
       // this.pickerYear() //初始化选择年
@@ -290,8 +360,8 @@ export default {
         year: this.selectYear,
         ids: this.depts,
         postOne: this.selectPostId,
-        deptCode: renxiaoCode,
-        jobnumber: localStorage.getItem('jobNum'),
+        deptCode: this.renxiaoCode,
+        jobnumber: localStorage.getItem("jobNum")
       }
       selectAnalysisCondition(selectData).then(res=>{
         this.total = res.totalSize
@@ -301,9 +371,14 @@ export default {
       })
       // 图形获取数据
       let queryData = {
-        jobnumber: localStorage.getItem('jobNum')
+        code: '',
+        year: this.selectYear,
+        postOne: '',
+        deptCode: this.renxiaoCode
       }
       selectDrawInfo(queryData).then(res=>{
+        this.$refs.resetForm.selectedDepartment = res.name
+        this.deptCodeStr = res.msg
         for(let i in res.obj){
           this.timeData.push(res.obj[i].time)
           this.monthData.push(res.obj[i].monthRx)
@@ -313,19 +388,38 @@ export default {
         this.initCharts()
       })
     },
+    //转换时间戳
+    formatDate(date) {
+      var y = date.getFullYear();
+      var m = date.getMonth() + 1;
+      m = m < 10 ? "0" + m : m;
+      var d = date.getDate();
+      d = d < 10 ? "0" + d : d;
+      return y;
+    },
     //查询
     search(){
-      const renxiaoCode = JSON.parse(localStorage.getItem("renxiaoCodeRes"))
+      Toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true,
+        message: '数据加载中',
+      })
       let selectData = {
         year: this.selectYear,
         ids: this.depts,
         postOne: this.selectPostId,
-        deptCode: renxiaoCode
+        deptCode: this.renxiaoCode,
+        jobnumber: localStorage.getItem('jobNum'),
+        isDown: this.isDownYn
       }
       selectAnalysisCondition(selectData).then(res=>{
         this.tableData = res.obj
+        this.total = res.totalSize
         //请求到数据之后停止加载
         this.isLoading = false;
+        this.isDownYn = '' //清空全选标识
+        //停止转圈
+        Toast.clear()
       })
     },
     //选择部门
@@ -333,10 +427,41 @@ export default {
       console.log(data)
       this.depts = data
     },
+    // 是否包含下级部门的事件
+    getAllVal(val){
+      console.log(val)
+      this.isDownYn = val //全选的标识 
+    },
     //选择单位
     selctdept1(data) {
       // console.log(data)
+      //清空图形的数据
+      this.timeData = []
+      this.monthData = []
+      this.ljData = []
+      this.targetData = []
       this.deptCodeStr = data.deptCode
+      // 图形获取数据
+      let queryData = {
+        code: this.deptCodeStr,
+        deptCode: this.renxiaoCode,
+        year: this.selectDrawYear,
+        postOne: this.selectPostId1,
+      }
+      selectDrawInfo(queryData).then(res=>{
+        if(res.obj == ''){
+          Notify({ type: "warning", message: "没有该数据" })
+          return
+        }else{
+          for(let i in res.obj){
+            this.timeData.push(res.obj[i].time)
+            this.monthData.push(res.obj[i].monthRx)
+            this.ljData.push(res.obj[i].cumulRx)
+            this.targetData.push(res.obj[i].rxTarget)
+          }
+          this.initCharts()
+        }
+      })
     },
     //下一页
     loadMore() {
@@ -356,7 +481,12 @@ export default {
     },
     //确认图形选择的岗位分类一
     onConfirm2(picker) {
-      console.log(picker)
+      // console.log(picker)
+      //清空图形的数据
+      this.timeData = []
+      this.monthData = []
+      this.ljData = []
+      this.targetData = []
       if(this.deptCodeStr == ''){
         Notify({ type: "warning", message: "请选择部门！" })
         this.showPost1 = false;
@@ -365,20 +495,27 @@ export default {
       
       this.selectPost1 = picker.content;
       this.selectPostId1 = picker.code;
+
       // 图形获取数据
       let queryData = {
-        deptCode: this.deptCodeStr,
-        year: this.selectYear,
+        code: this.deptCodeStr,
+        deptCode: this.renxiaoCode,
+        year: this.selectDrawYear,
         postOne: this.selectPostId1,
       }
       selectDrawInfo(queryData).then(res=>{
-        for(let i in res.obj){
-          this.timeData.push(res.obj[i].time)
-          this.monthData.push(res.obj[i].monthRx)
-          this.ljData.push(res.obj[i].cumulRx)
-          this.targetData.push(res.obj[i].rxTarget)
+        if(res.obj == ''){
+          Notify({ type: "warning", message: "没有该数据" })
+          return
+        }else{
+          for(let i in res.obj){
+            this.timeData.push(res.obj[i].time)
+            this.monthData.push(res.obj[i].monthRx)
+            this.ljData.push(res.obj[i].cumulRx)
+            this.targetData.push(res.obj[i].rxTarget)
+          }
+          this.initCharts()
         }
-        this.initCharts()
       })
       this.showPost1 = false;
     },
@@ -391,8 +528,19 @@ export default {
             normal: {
                 show: true,
                 // textBorderColor: 'red',
-                position: 'insideLeft',
-                offset: [10, 0],
+                position: 'inside',
+                // offset: [10, 0],
+                textBorderWidth: 2,
+                // formatter: '{c}人 {b}'
+                formatter: '{c}'
+            }
+        }
+        let seriesLabel1 = {
+            normal: {
+                show: true,
+                // textBorderColor: 'red',
+                position: 'top',
+                // offset: [10, 0],
                 textBorderWidth: 2,
                 // formatter: '{c}人 {b}'
                 formatter: '{c}'
@@ -400,31 +548,59 @@ export default {
         }
     　　// 绘制图表
     　　myChart.setOption({
+            tooltip: {
+                trigger: "axis",
+                axisPointer: {
+                  type: "cross",
+                  crossStyle: {
+                    color: "#999"
+                  }
+                },
+              },
               xAxis: {
                 type: 'category',
                 data: this.timeData
               },
               yAxis: {
-                  type: 'value'
+                  type: 'value',
+                  name:'单位（人）',
+                  nameTextStyle: {
+                    // align: 'verticalAlign',
+                    padding: [0, 0, 0, 30]
+                  }
+              },
+              grid: {
+                left: '1%',
+                containLabel: true
               },
             series: [
                 {
-                    label: seriesLabel,
-                    name: '累计人数',
-                    type: 'bar',
-                    data: data1,
+                  label: seriesLabel1,
+                  name: '累计人效',
+                  type: 'line',
+                  data: data1,
+                  itemStyle: {
+                    normal: {
+                      color: '#4875c5'
+                    }
+                  }
                 },
                 {
                     label: seriesLabel,
-                    name: '月度人数',
-                    type: 'line',
+                    name: '月度人效',
+                    type: 'bar',
                     data: data2,
+                    itemStyle: {
+                      normal: {
+                        color: '#bf0000'
+                      }
+                  }
                 },
                 {
                   // label: seriesLabel,
                   name: '年度人效目标',
                   type: 'line',
-                  data: data3,
+                  data: [data3[0]],
                   markLine: {
                       // data: [{
                       //   type: 'average'
@@ -453,7 +629,7 @@ export default {
                         padding: [-13, -40, 0, 0],
                         position:"middle",
                         formatter: function (params) {
-                          return `${params.value+'人'}`
+                          return `${'年度人效目标 '+params.value}`
                         }
                       }
                   },
@@ -475,7 +651,7 @@ export default {
           ],
            legend: {
             // left: 'left',
-            data: ['累计人数', '月度人数','年度人效目标']
+            data: ['累计人效', '月度人效','年度人效目标']
           },
     　　});
         window.onresize = myChart.resize
@@ -512,6 +688,7 @@ export default {
       this.selectYear = ''
       this.$refs.select.restFlag = true
       this.$refs.select.selectedDepartment = ''
+      this.selectPostId = []
     },
     //确认选择岗位分类一
     onConfirm1(){
@@ -556,6 +733,9 @@ export default {
     }
     .column-cell-class-name-test{
       background-color: #f5f5f5;
+    }
+    .column-cell-class-name-test-a{
+      background-color: #f7c7a7;
     }
     .cell-edit-color-a{
       color:#dd001b;
@@ -662,6 +842,14 @@ export default {
       .pie{
           width 100%
           height 100%
+      }
+    }
+    .remark{
+      font-size 14px
+      text-align center
+      color #ee6471
+      p{
+        font-weight 700
       }
     }
   }

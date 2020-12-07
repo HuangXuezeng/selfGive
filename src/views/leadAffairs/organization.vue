@@ -8,6 +8,19 @@
         @click-input="showTime = true"
         readonly
       />
+      <pickdeptmore
+        ref="select"
+        @confirmNode="selctdept"
+        @getAllVal="getAllVal"
+        :Farequired="true"
+        labelTitle="部门："
+        :workingNum="true"
+        :isSelctall="true"
+        :isFromRost="true"
+        :isShowDown="false"
+        :faDeptData="deptData"
+        @getIsdownVal="getIsdownVal"
+      ></pickdeptmore>
       <van-field
         v-model="selectPost"
         label="岗位分类一："
@@ -15,16 +28,6 @@
         @click-input="showPost = true"
         readonly
       />
-      <pickdeptmore
-        ref="select"
-        @confirmNode="selctdept"
-        :Farequired="true"
-        labelTitle="部门："
-        :workingNum="true"
-        :isSelctall="true"
-        :isFromRost="true"
-        :faDeptData="deptData"
-      ></pickdeptmore>
       <div class="btns">
         <van-button
           type="primary"
@@ -50,6 +53,9 @@
           style="width:45%;font-size:15px"
           >测试</van-button
         > -->
+      </div>
+      <div class="remark">
+        <p>默认展示当前负责单位编制内人员编制</p>
       </div>
     </div>
     <!-- 一级单位编制情况 -->
@@ -83,11 +89,14 @@
             <van-dropdown-item v-model="deptValue1" :options="option1" @change="handChange1"/>
           </van-dropdown-menu>
         </div> -->
+        <!-- 选择年 -->
+        <van-field v-model="selectDrawYear" label="选择年：" placeholder="请选择" @click-input="showDrawYear=true" readonly/>
         <!-- 单选单位 -->
         <choosedepartment
-        ref="resetForm"
+        ref="resetForm1"
         @transferFa="selctdept1"
         :workingNum="true"
+        :labelTitleFlag="true"
         :faDeptData="deptData"
         :Farequired="true"
       ></choosedepartment>
@@ -96,7 +105,7 @@
         v-model="selectPost1"
         label="岗位分类一："
         placeholder="请选择"
-        @click-input="showPost1 = true"
+        @click-input="showPostClick"
         readonly
       />
       <div class="titlechart">全员在编情况</div>
@@ -104,12 +113,15 @@
         <div class="pie" ref="chart1" id="chart1"></div>
       </div>
       <div class="titlechart">干部在编情况</div>
+      <!-- 选择年 -->
+        <van-field v-model="selectDrawYear1" label="选择年：" placeholder="请选择" @click-input="showDrawYear1=true" readonly/>
       <!-- 单选单位 -->
         <div style="padding:5px 0 5px 0">
           <choosedepartment
             ref="resetForm"
             @transferFa="selctdept2"
             :workingNum="true"
+            :labelTitleFlag="true"
             :faDeptData="deptData"
             :Farequired="true"
           ></choosedepartment>
@@ -133,6 +145,36 @@
         @cancel="showTime = false"
       />
     </van-popup>
+    <!-- 选择图形1年弹窗 -->
+    <van-popup
+    v-model="showDrawYear" 
+    get-container="body"
+    position="bottom" 
+    :style="{ height: '50%' }">
+      <van-picker
+        title="选择年份"
+        show-toolbar
+        :columns="columns"
+        @confirm="onConfirmDrawYear"
+        @cancel="showDrawYear = false"
+        :default-index="50"
+      />
+    </van-popup> 
+    <!-- 选择图形2年弹窗 -->
+    <van-popup
+    v-model="showDrawYear1" 
+    get-container="body"
+    position="bottom" 
+    :style="{ height: '50%' }">
+      <van-picker
+        title="选择年份"
+        show-toolbar
+        :columns="columns"
+        @confirm="onConfirmDrawYear1"
+        @cancel="showDrawYear1 = false"
+        :default-index="50"
+      />
+    </van-popup> 
     <!-- 选择岗位分类一的弹窗 -->
     <van-popup
       v-model="showPost"
@@ -146,7 +188,7 @@
           item.content
           }}</van-checkbox>
         </van-checkbox-group>
-        <van-button type="info" size="mini" @click="onConfirm1" style="width:100%">确定</van-button>
+        <van-button type="info" size="mini" @click="onConfirm1" style="width:100%" color="#fc5f10">确定</van-button>
       </div>
     </van-popup>
     <!-- 选择岗位分类一的弹窗二 -->
@@ -171,7 +213,7 @@
 import pickDeptMore from "@/components/pickDeptMore.vue";
 import chooseDepartment from "@/components/pickerDeptOne.vue";
 import { getSelector,selectBianzhi,getPostOne,selectDraw } from './api'
-import { Toast } from 'vant'
+import { Notify, Toast } from 'vant'
 export default {
   components: {
     pickdeptmore: pickDeptMore,
@@ -179,6 +221,13 @@ export default {
   },
   data() {
     return {
+      isDownYn: '', //全选的标识传给后台
+      isDown: 'Y', //是否包含下级部门
+      bianzhiCodeRes: [], //保存的编制code
+      selectDrawYear: '', //图形1选择年
+      selectDrawYear1: '', //图形2选择年
+      showDrawYear: false, //图形1选择年弹窗
+      showDrawYear1: false, //图形2选择年弹窗
       isLoading: true, //表格数据加载
       result1: [],//岗位分类一
       result2: [],//岗位分类一（二）
@@ -192,7 +241,7 @@ export default {
       selectPost: '', //岗位分类1
       selectPostId: [], //岗位分类1传给后台值
       selectPost1: '', //图形选择岗位分类1
-      selectPostId1: [], //图形选择岗位分类1传给后台值
+      selectPostId1: '', //图形选择岗位分类1传给后台值
       selectTime: "", //选择年值
       minDate: new Date(1980, 0, 1),
       maxDate: new Date(2030, 10, 1),
@@ -234,7 +283,13 @@ export default {
           width: 100,
           titleAlign: "center",
           columnAlign: "center",
-          isResize: true
+          isResize: true,
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span>${rowData[field]}</span>`;
+          }
         },
         {
           field: "realOnjob",
@@ -242,7 +297,13 @@ export default {
           width: 100,
           titleAlign: "center",
           columnAlign: "center",
-          isResize: true
+          isResize: true,
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span>${rowData[field]}</span>`;
+          }
         },
         {
           field: "avgOnjob",
@@ -250,7 +311,13 @@ export default {
           width: 150,
           titleAlign: "center",
           columnAlign: "center",
-          isResize: true
+          isResize: true,
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span>${rowData[field]}</span>`;
+          }
         },
         {
           field: "more",
@@ -271,7 +338,13 @@ export default {
           width: 150,
           titleAlign: "center",
           columnAlign: "center",
-          isResize: true
+          isResize: true,
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span class='cell-edit-color-b'>${rowData[field]}</span>`;
+          }
         },
         {
           field: "cadreRealOnjob",
@@ -279,7 +352,13 @@ export default {
           width: 150,
           titleAlign: "center",
           columnAlign: "center",
-          isResize: true
+          isResize: true,
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span class='cell-edit-color-b'>${rowData[field]}</span>`;
+          }
         },
         {
           field: "cadreOnjob",
@@ -287,7 +366,13 @@ export default {
           width: 150,
           titleAlign: "center",
           columnAlign: "center",
-          isResize: true
+          isResize: true,
+          formatter: function(rowData, rowIndex, pagingIndex, field) {
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span class='cell-edit-color-b'>${rowData[field]}</span>`;
+          }
         },
       ], 
       tableData1: [], //一级单位编制情况表格
@@ -315,7 +400,138 @@ export default {
     onConfirm(val) {
       // console.log(val)
       this.selectTime = val;
+      this.selectDrawYear = val
+      this.selectDrawYear1 = val
       this.showTime = false;
+    },
+    // 是否包含下级部门的事件
+    getIsdownVal(data){
+      console.log(data)
+      if(data){
+        this.isDown = 'Y'
+      }else{
+        this.isDown = 'N'
+      }
+    },
+    //图形1选择年
+    onConfirmDrawYear(value){
+      // console.log(value)
+      this.selectDrawYear = value
+      this.showDrawYear = false
+      //清空图形的数据
+      this.monthData = []
+      this.echartData1 = []
+      this.echartData2 = []
+      this.echartData5 = []
+      this.monthData1 = []
+      this.echartData3 = []
+      this.echartData4 = []
+      this.echartData6 = []
+      // 图形获取数据
+      let selectData = {
+        deptId: this.deptIdStr,
+        year: this.selectDrawYear,
+        postOne: this.selectPostId1,
+        deptCode: this.bianzhiCodeRes
+      }
+      //干部的数据
+      selectDraw(selectData).then(res=>{
+        if(res.obj == null){
+          Notify({ type: "warning", message: "没有该数据" })
+          return
+        }else{
+          let monthArr = []
+          let echartArr1 = []
+          let echartArr2 = []
+          let monthArr1 = []
+          let echartArr3 = []
+          let echartArr4 = []
+          let echartArr5 = []
+          let echartArr6 = []
+          for(let i in res.obj.cadre){
+            monthArr.push(res.obj.cadre[i].time)
+            echartArr1.push(res.obj.cadre[i].avgOnjob)
+            echartArr2.push(res.obj.cadre[i].dingbian)
+            echartArr5.push(res.obj.cadre[i].realOnjob)
+          }
+          this.monthData = monthArr
+          this.echartData1 = echartArr1
+          this.echartData2 = echartArr2
+          this.echartData5 = echartArr5
+          for(let i in res.obj.postOne){
+            monthArr1.push(res.obj.postOne[i].time)
+            echartArr3.push(res.obj.postOne[i].avgOnjob)
+            echartArr4.push(res.obj.postOne[i].dingbian)
+            echartArr6.push(res.obj.postOne[i].realOnjob)
+          }
+          this.monthData1 = monthArr1
+          this.echartData3 = echartArr3
+          this.echartData4 = echartArr4
+          this.echartData6 = echartArr6
+          this.initCharts()
+          this.initCharts1()
+        }
+      })
+    },
+    //图形2选择年
+    onConfirmDrawYear1(value){
+      // console.log(value)
+      this.selectDrawYear1 = value
+      this.showDrawYear1 = false
+      //清空图形的数据
+      this.monthData = []
+      this.echartData1 = []
+      this.echartData2 = []
+      this.echartData5 = []
+      this.monthData1 = []
+      this.echartData3 = []
+      this.echartData4 = []
+      this.echartData6 = []
+      // 图形获取数据
+      let selectData = {
+        deptId: this.deptIdStr,
+        year: this.selectDrawYear1,
+        postOne: this.selectPostId1,
+        deptCode: this.bianzhiCodeRes
+      }
+      //干部的数据
+      selectDraw(selectData).then(res=>{
+        if(res.obj == null){
+          Notify({ type: "warning", message: "没有该数据" })
+          return
+        }else{
+          let monthArr = []
+          let echartArr1 = []
+          let echartArr2 = []
+          let monthArr1 = []
+          let echartArr3 = []
+          let echartArr4 = []
+          let echartArr5 = []
+          let echartArr6 = []
+          for(let i in res.obj.cadre){
+            monthArr.push(res.obj.cadre[i].time)
+            echartArr1.push(res.obj.cadre[i].avgOnjob)
+            echartArr2.push(res.obj.cadre[i].dingbian)
+            echartArr5.push(res.obj.cadre[i].realOnjob)
+          }
+          this.monthData = monthArr
+          this.echartData1 = echartArr1
+          this.echartData2 = echartArr2
+          this.echartData5 = echartArr5
+          for(let i in res.obj.postOne){
+            monthArr1.push(res.obj.postOne[i].time)
+            echartArr3.push(res.obj.postOne[i].avgOnjob)
+            echartArr4.push(res.obj.postOne[i].dingbian)
+            echartArr6.push(res.obj.postOne[i].realOnjob)
+          }
+          this.monthData1 = monthArr1
+          this.echartData3 = echartArr3
+          this.echartData4 = echartArr4
+          this.echartData6 = echartArr6
+          this.initCharts()
+          this.initCharts1()
+        }
+      })
     },
     //确认选择的岗位分类一
     onConfirm1() {
@@ -337,31 +553,42 @@ export default {
     },
     //确认图形选择的岗位分类一
     onConfirm2(picker) {
-      console.log(picker)
+      // console.log(picker)
       this.selectPost1 = picker.content;
       this.selectPostId1 = picker.code;
+      //清空图形数据
+      this.monthData1 = []
+      this.echartData3 = []
+      this.echartData4 = []
+      this.echartData6 = []
       //岗位分类一的数据
       let selectData = {
         deptId: this.deptIdStr,
-        year: this.selectTime,
+        year: this.selectDrawYear,
         postOne: this.selectPostId1,
+        deptCode: this.bianzhiCodeRes
       }
       selectDraw(selectData).then(res=>{
-        let monthArr1 = []
-        let echartArr3 = []
-        let echartArr4 = []
-        let echartArr6 = []
-        for(let i in res.obj.postOne){
-          monthArr1.push(res.obj.postOne[i].time)
-          echartArr3.push(res.obj.postOne[i].avgOnjob)
-          echartArr4.push(res.obj.postOne[i].dingbian)
-          echartArr5.push(res.obj.postOne[i].realOnjob)
+        if(res.obj == null){
+          Notify({ type: "warning", message: "没有该数据" })
+          return
+        }else{
+          let monthArr1 = []
+          let echartArr3 = []
+          let echartArr4 = []
+          let echartArr6 = []
+          for(let i in res.obj.postOne){
+            monthArr1.push(res.obj.postOne[i].time)
+            echartArr3.push(res.obj.postOne[i].avgOnjob)
+            echartArr4.push(res.obj.postOne[i].dingbian)
+            echartArr6.push(res.obj.postOne[i].realOnjob)
+          }
+          this.monthData1 = monthArr1
+          this.echartData3 = echartArr3
+          this.echartData4 = echartArr4
+          this.echartData6 = echartArr6
+          this.initCharts1()
         }
-        this.monthData1 = monthArr1
-        this.echartData3 = echartArr3
-        this.echartData4 = echartArr4
-        this.echartData6 = echartArr6
-        this.initCharts1()
       })
       this.showPost1 = false;
     },
@@ -372,21 +599,26 @@ export default {
       m = m < 10 ? "0" + m : m;
       var d = date.getDate();
       d = d < 10 ? "0" + d : d;
-      return y + "-" + m;
+      return y;
     },
     //初始化数据
     initData(){
       const bianzhiOrganRes = JSON.parse(localStorage.getItem("bianzhiOrganRes"))
+      this.bianzhiCodeRes = JSON.parse(localStorage.getItem("bianzhiCodeRes"))
+      this.selectTime = this.formatDate(new Date())
+      this.selectDrawYear = this.formatDate(new Date())
+      this.selectDrawYear1 = this.formatDate(new Date())
       // console.log(bianzhiOrganRes)
       this.deptData = bianzhiOrganRes
       //获取岗位分类一和年份
       getSelector().then(res=>{
         this.columns = res.obj.year
         this.columns2 = res.obj.postOne
+        this.columns3 = res.obj.postOne
       })
       //默认查询
       let queryData = {
-        deptCode: JSON.parse(localStorage.getItem("bianzhiCodeRes")),
+        deptCode: this.bianzhiCodeRes,
         year: '',
         postOne: [],
         ids: []
@@ -398,9 +630,15 @@ export default {
       })
       //获取默认图形数据
       let selectData = {
-        jobnumber: JSON.parse(localStorage.getItem("jobNum"))
+        deptCode: this.bianzhiCodeRes,
+        year: this.selectTime,
+        postOne: '',
+        deptId: ''
       }
       selectDraw(selectData).then(res=>{
+        this.$refs.resetForm.selectedDepartment = res.name
+        this.$refs.resetForm1.selectedDepartment = res.name
+        this.deptId = res.msg
         let monthArr = []
         let echartArr1 = []
         let echartArr2 = []
@@ -453,13 +691,24 @@ export default {
       // console.log(this.form.deptIdStr);
       //   this.deptVal = data
     },
+    // 是否包含下级部门的事件
+    getAllVal(val){
+      console.log(val)
+      this.isDownYn = val //全选的标识 
+    },
     //条件搜索
     search(){
+      Toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true,
+        message: '数据加载中',
+      })
       let queryData = {
-        deptCode: JSON.parse(localStorage.getItem("bianzhiCodeRes")),
+        deptCode: this.bianzhiCodeRes,
         year: this.selectTime,
         postOne: this.selectPostId,
-        ids: this.deptId
+        ids: this.deptId,
+        isDown: this.isDownYn
       }
       selectBianzhi(queryData).then(res=>{
         if(res.code == 1000){
@@ -469,6 +718,9 @@ export default {
         }else{
           Toast.fail(res.msg)
         }
+        this.isDownYn = ''
+        //停止转圈
+        Toast.clear()
       })
     },
     //重置查询
@@ -490,15 +742,15 @@ export default {
           show: true,
           position: "inside", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}人`
+          formatter: `{c}`
         }
       };
       let seriesLabel1 = {
         normal: {
-          show: false,
-          position: "inside", //在上方显示
+          show: true,
+          position: "top", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}人`
+          formatter: `{c}`
         }
       }; // 绘制图表
       myChart.setOption({
@@ -510,14 +762,13 @@ export default {
               color: "#999"
             }
           },
-          // formatter: function(params) {
-          //   // console.log(params);
-          //   return params[0].name+'<br>'
-          //   +'<div class="runoff" style="background-color:#c23531"></div>'+'流失人数：'+params[0].data+'<br>'
-          //   +'<div class="runoff" style="background-color:#2f4554"></div>'+'干部流失人数：'+params[1].data+'<br>'
-          //   +'<div class="runoff" style="background-color:#61a0a8"></div>'+'流失率：'+params[2].data+'%<br>'
-          //   +'<div class="runoff" style="background-color:#d48265"></div>'+'干部流失率：'+params[3].data+'%<br>'
-          // }
+          formatter: function(params) {
+            // console.log(params);
+            return params[0].name+'<br>'
+            +'<div class="runoff" style="background-color:#4875c5"></div>'+'干部平均在编：'+params[0].data+'<br>'
+            +'<div class="runoff" style="background-color:#bdd7ee"></div>'+'干部月末在编人数：'+params[1].data+'<br>'
+            +'<div class="runoff" style="background-color:#fc5f10"></div>'+'干部全年定编：'+data3+'<br>'
+          }
         },
         dataZoom: [
           {
@@ -567,27 +818,33 @@ export default {
         ],
         series: [
           {
-            label: seriesLabel,
-            name: "人数",
+            label: seriesLabel1,
+            name: "平均在编",
             type: "line",
             data: this.echartData1,
             itemStyle : {  
                 normal : {  
                     lineStyle:{  
-                        color:'#00c853'  
-                    }  
+                        color:'#4875c5'  
+                    },
+                    color: '#4875c5'
                 }  
             },
           },
           {
             label: seriesLabel,
-            name: "人数",
+            name: "干部月末在编人数",
             type: "bar",
             data: this.echartData5,
+            itemStyle: {
+              normal: {
+                color: '#bdd7ee'
+              }
+            }
           },
           {
             // label: seriesLabel,
-            name: '定编',
+            name: '干部全年定编',
             type: 'line',
             data: data3,
             markLine: {
@@ -619,7 +876,7 @@ export default {
                 padding: [-13, -40, 0, 0],
                 position:"middle",
                 formatter: function (params) {
-                  return `${'定编'+params.value+'人'}`
+                  return `${'干部全年定编'+params.value}`
                 }
               }
             },
@@ -638,15 +895,15 @@ export default {
           show: true,
           position: "inside", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}人`
+          formatter: `{c}`
         }
       };
       let seriesLabel1 = {
         normal: {
           show: true,
-          position: "inside", //在上方显示
+          position: "top", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}人`
+          formatter: `{c}`
         }
       }; // 绘制图表
       myChart.setOption({
@@ -658,14 +915,13 @@ export default {
               color: "#999"
             }
           },
-          // formatter: function(params) {
-          //   // console.log(params);
-          //   return params[0].name+'<br>'
-          //   +'<div class="runoff" style="background-color:#c23531"></div>'+'流失人数：'+params[0].data+'<br>'
-          //   +'<div class="runoff" style="background-color:#2f4554"></div>'+'干部流失人数：'+params[1].data+'<br>'
-          //   +'<div class="runoff" style="background-color:#61a0a8"></div>'+'流失率：'+params[2].data+'%<br>'
-          //   +'<div class="runoff" style="background-color:#d48265"></div>'+'干部流失率：'+params[3].data+'%<br>'
-          // }
+          formatter: function(params) {
+            // console.log(params);
+            return params[0].name+'<br>'
+            +'<div class="runoff" style="background-color:#4472c4"></div>'+'平均在编：'+params[0].data+'<br>'
+            +'<div class="runoff" style="background-color:#c02d2d"></div>'+'月末在编人数：'+params[1].data+'<br>'
+            +'<div class="runoff" style="background-color:#fc5f10"></div>'+'全年定编：'+data3+'<br>'
+          }
         },
         dataZoom: [
           {
@@ -715,20 +971,30 @@ export default {
         ],
         series: [
           {
-            label: seriesLabel,
-            name: "人数",
+            label: seriesLabel1,
+            name: "平均在编",
             type: "line",
-            data: this.echartData3
+            data: this.echartData3,
+            itemStyle: {
+              normal: {
+                color: '#4472c4'
+              }
+            }
           },
           {
             label: seriesLabel,
             name: "月末在编人数",
             type: "bar",
-            data: this.echartData6
+            data: this.echartData6,
+            itemStyle: {
+              normal: {
+                color: '#bf0000'
+              }
+            }
           },
           {
             // label: seriesLabel,
-            name: '年度人效目标',
+            name: '全年定编',
             type: 'line',
             data: data3,
             markLine: {
@@ -759,7 +1025,7 @@ export default {
                   padding: [-13, -40, 0, 0],
                   position:"middle",
                   formatter: function (params) {
-                    return `${'定编'+params.value+'人'}`
+                    return `${'全年定编'+params.value}`
                   }
                 }
             },
@@ -772,54 +1038,70 @@ export default {
     },
     //选择单位
     selctdept1(data) {
-      console.log(data)
+      // console.log(data)
+      this.$refs.resetForm.selectedDepartment = data.content
       this.deptIdStr = data.deptId;
       // 根据部门查询岗位分类一
-      let queryData = {
-        deptId: data.deptId,
-        year: this.selectTime
-      }
-      getPostOne(queryData).then(res=>{
-        this.columns3 = res.obj
-      })
+      // let queryData = {
+      //   deptId: data.deptId,
+      //   year: this.selectTime
+      // }
+      // getPostOne(queryData).then(res=>{
+      //   this.columns3 = res.obj
+      // })
+      //清空图形的数据
+      this.monthData = []
+      this.echartData1 = []
+      this.echartData2 = []
+      this.echartData5 = []
+      this.monthData1 = []
+      this.echartData3 = []
+      this.echartData4 = []
+      this.echartData6 = []
       // 图形获取数据
       let selectData = {
         deptId: data.deptId,
-        year: this.selectTime,
+        year: this.selectDrawYear,
         postOne: this.selectPostId1,
+        deptCode: this.bianzhiCodeRes
       }
       //干部的数据
       selectDraw(selectData).then(res=>{
-        let monthArr = []
-        let echartArr1 = []
-        let echartArr2 = []
-        let monthArr1 = []
-        let echartArr3 = []
-        let echartArr4 = []
-        let echartArr5 = []
-        let echartArr6 = []
-        for(let i in res.obj.cadre){
-          monthArr.push(res.obj.cadre[i].time)
-          echartArr1.push(res.obj.cadre[i].avgOnjob)
-          echartArr2.push(res.obj.cadre[i].dingbian)
-          echartArr5.push(res.obj.cadre[i].realOnjob)
+        if(res.obj == null){
+          Notify({ type: "warning", message: "没有该数据" })
+          return
+        }else{
+          let monthArr = []
+          let echartArr1 = []
+          let echartArr2 = []
+          let monthArr1 = []
+          let echartArr3 = []
+          let echartArr4 = []
+          let echartArr5 = []
+          let echartArr6 = []
+          for(let i in res.obj.cadre){
+            monthArr.push(res.obj.cadre[i].time)
+            echartArr1.push(res.obj.cadre[i].avgOnjob)
+            echartArr2.push(res.obj.cadre[i].dingbian)
+            echartArr5.push(res.obj.cadre[i].realOnjob)
+          }
+          this.monthData = monthArr
+          this.echartData1 = echartArr1
+          this.echartData2 = echartArr2
+          this.echartData5 = echartArr5
+          for(let i in res.obj.postOne){
+            monthArr1.push(res.obj.postOne[i].time)
+            echartArr3.push(res.obj.postOne[i].avgOnjob)
+            echartArr4.push(res.obj.postOne[i].dingbian)
+            echartArr6.push(res.obj.postOne[i].realOnjob)
+          }
+          this.monthData1 = monthArr1
+          this.echartData3 = echartArr3
+          this.echartData4 = echartArr4
+          this.echartData6 = echartArr6
+          this.initCharts()
+          this.initCharts1()
         }
-        this.monthData = monthArr
-        this.echartData1 = echartArr1
-        this.echartData2 = echartArr2
-        this.echartData5 = echartArr5
-        for(let i in res.obj.postOne){
-          monthArr1.push(res.obj.postOne[i].time)
-          echartArr3.push(res.obj.postOne[i].avgOnjob)
-          echartArr4.push(res.obj.postOne[i].dingbian)
-          echartArr6.push(res.obj.postOne[i].realOnjob)
-        }
-        this.monthData1 = monthArr1
-        this.echartData3 = echartArr3
-        this.echartData4 = echartArr4
-        this.echartData6 = echartArr6
-        this.initCharts()
-        this.initCharts1()
       })
     },
     //选择单位(单独)
@@ -829,36 +1111,53 @@ export default {
       // 图形获取数据
       let selectData = {
         deptId: data.deptId,
-        year: this.selectTime,
+        year: this.selectDrawYear,
         postOne: this.selectPostId1,
+        deptCode: this.bianzhiCodeRes
       }
       //干部的数据
       selectDraw(selectData).then(res=>{
-        let monthArr = []
-        let echartArr1 = []
-        let echartArr2 = []
-        let monthArr1 = []
-        let echartArr3 = []
-        let echartArr4 = []
-        let echartArr5 = []
-        let echartArr6 = []
-        for(let i in res.obj.cadre){
-          monthArr.push(res.obj.cadre[i].time)
-          echartArr1.push(res.obj.cadre[i].avgOnjob)
-          echartArr2.push(res.obj.cadre[i].dingbian)
-          echartArr5.push(res.obj.cadre[i].realOnjob)
+        if(res.obj == null){
+          Notify({ type: "warning", message: "没有该数据" })
+          return
+        }else{
+          let monthArr = []
+          let echartArr1 = []
+          let echartArr2 = []
+          let monthArr1 = []
+          let echartArr3 = []
+          let echartArr4 = []
+          let echartArr5 = []
+          let echartArr6 = []
+          for(let i in res.obj.cadre){
+            monthArr.push(res.obj.cadre[i].time)
+            echartArr1.push(res.obj.cadre[i].avgOnjob)
+            echartArr2.push(res.obj.cadre[i].dingbian)
+            echartArr5.push(res.obj.cadre[i].realOnjob)
+          }
+          this.monthData = monthArr
+          this.echartData1 = echartArr1
+          this.echartData2 = echartArr2
+          this.echartData5 = echartArr5
+          this.initCharts()
         }
-        this.monthData = monthArr
-        this.echartData1 = echartArr1
-        this.echartData2 = echartArr2
-        this.echartData5 = echartArr5
-        this.initCharts()
       })
+    },
+    //图形岗位分类一判断是否选择了部门
+    showPostClick(){
+      if(this.deptId == ''){
+        Notify({ type: "warning", message: "请先选择部门！" });
+      }else{
+        this.showPost1 = true
+      }
     },
     //单元格样式
     columnCellClass(rowIndex, columnName, rowData) {
-      if (rowIndex % 2 == 0) {
-        return "column-cell-class-name-test";
+      // if (rowIndex % 2 == 0) {
+      //   return "column-cell-class-name-test";
+      // }
+      if (rowData.postOne == null){
+         return 'column-cell-class-name-test-a';
       }
     },
   },
@@ -879,6 +1178,22 @@ export default {
     .column-cell-class-name-test {
       background-color: #f6f6f8;
     }
+    .cell-edit-color-a {
+      color: #ed4f5d;
+    }
+    .cell-edit-color-b {
+      color: #3e6dc2;
+    }
+    .runoff{
+      float: left;
+      height: 12px;
+      width: 12px;
+      margin: 4px 4px 0 0;
+      border-radius: 50%;
+    }
+    .column-cell-class-name-test-a{
+      background-color: #f7c7a7;
+    }
 </style>
 <style lang="stylus" scoped>
 .tiaojian {
@@ -886,6 +1201,15 @@ export default {
   .btns {
     padding: 10px;
     text-align: center;
+  }
+  .remark{
+    font-size 14px
+    text-align center
+    color #ee6471
+    p{
+      font-weight 700
+      padding 5px
+    }
   }
 }
 

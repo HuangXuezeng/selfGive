@@ -8,13 +8,13 @@
         @click-input="showyear = true"
         readonly
       />
-      <van-field
+      <!-- <van-field
         v-model="selectMonth"
         label="选择月："
         placeholder="请选择"
         @click-input="pickmonth"
         readonly
-      />
+      /> -->
       <choosedepartment
         ref="resetForm"
         @transferFa="selctdept"
@@ -41,6 +41,9 @@
         >
         <!-- <van-button type="primary" size="small" color="#fc5f10" @click="ceshi" style="font-size:15px">测试</van-button> -->
       </div>
+      <div class="remark">
+        <p>默认展示当前负责部门编制内人员流失</p>
+      </div>
     </div>
     <div class="header">
       <div class="title">
@@ -61,7 +64,7 @@
           <p @click="cadreClick">{{ totalData.cadreRunoffSum }}</p> -->
         </div>
         <div class="count_right">
-          <p>流失率</p>
+          <p>月均流失率</p>
           <p>{{ totalData.runoffRate }}</p>
           <!-- <p>干部流失率</p>
           <p>{{ totalData.cadreRunoffRate }}</p> -->
@@ -73,7 +76,7 @@
           <p @click="zhuClick">{{ totalData.activeSum }}</p>
         </div>
         <div class="flextwo">
-          <p>主动流失率</p>
+          <p>主动月均流失率</p>
           <p>{{ totalData.activeRunoffRate }}</p>
         </div>
         <div class="flexthree">
@@ -81,7 +84,7 @@
           <p @click="beiClick">{{ totalData.passiveSum }}</p>
         </div>
         <div class="flexfore">
-          <p>被动流失率</p>
+          <p>被动月均流失率</p>
           <p>{{ totalData.passiveRunoffRate }}</p>
         </div>
       </div>
@@ -91,20 +94,22 @@
           <p @click="cadreClick">{{ totalData.cadreRunoffSum }}</p>
         </div>
         <div class="count_right">
-          <p>干部流失率</p>
+          <p>干部月均流失率</p>
           <p>{{ totalData.cadreRunoffRate }}</p>
         </div>
       </div>
+      <!-- <div class="remark">
+        <p>默认展示当前负责部门数据</p>
+      </div> -->
     </div>
     <!-- 按一级单位查看 -->
-    <div class="onedept" v-if="tableData !== null">
+    <div class="onedept">
       <!-- <p class="detail">按一级单位查看</p> -->
       <p class="titlea"><span class="borleft"></span> 每月流失情况</p>
       <div class="table">
         <v-table
           ref="table"
           is-horizontal-resize
-          :is-loading="isLoading1"
           style="width:100%;font-size:14px"
           columns-width-drag
           title-bg-color="#e5ecf0"
@@ -132,7 +137,6 @@
         <v-table
           ref="table"
           is-horizontal-resize
-          :is-loading="isLoading2"
           style="width:100%;font-size:14px"
           columns-width-drag
           title-bg-color="#e5ecf0"
@@ -147,14 +151,14 @@
       </div>
     </div>
     <!-- 按每月情况 -->
-    <div class="onedept" v-if="tableData !== null">
-      <p class="titlea"><span class="borleft"></span> 按人员每月情况</p>
+    <div class="onedept">
+      <p class="titlea"><span class="borleft"></span> 全员流失情况</p>
       <div class="postrank">
         <div class="pie" ref="chart1" id="chart1"></div>
       </div>
     </div>
-    <div class="onedept" v-if="tableData !== null">
-      <p class="titlea"><span class="borleft"></span> 按干部每月情况</p>
+    <div class="onedept">
+      <p class="titlea"><span class="borleft"></span> 干部流失情况</p>
       <div class="postrank">
         <div class="pie" ref="chart2" id="chart2"></div>
       </div>
@@ -231,10 +235,11 @@ export default {
   },
   data() {
     return {
+      currentDeptsRes: [], //获取首页本地保存的当前部门
       isDown: 'Y', //默认传给后台的（自动包含下级）值
       isLoading: true, //弹窗表格的加载
-      isLoading1: true, //每月明细表格的加载
-      isLoading2: true, //按职级表格的加载
+      // isLoading1: true, //每月明细表格的加载
+      // isLoading2: true, //按职级表格的加载
       aa: "20%",
       showTable: false, //表格弹窗
       selectYear: "", //选择年
@@ -287,7 +292,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-a'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span>${rowData[field]}</span>`;
           }
         },
         {
@@ -298,7 +306,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-b'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span>${rowData[field]}</span>`;
           }
         },
         {
@@ -309,7 +320,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span>${rowData[field]}</span>`;
           }
         },
         {
@@ -320,7 +334,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-d'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span>${rowData[field]}</span>`;
           }
         },
         {
@@ -331,7 +348,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-e'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span>${rowData[field]}</span>`;
           }
         },
         {
@@ -342,7 +362,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-f'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span>${rowData[field]}</span>`;
           }
         },
         {
@@ -353,7 +376,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-a'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
           }
         },
         {
@@ -364,7 +390,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-b'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
           }
         },
         {
@@ -375,6 +404,9 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
             return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
           }
         },
@@ -386,6 +418,9 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
             return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
           }
         }
@@ -394,7 +429,7 @@ export default {
         {
           field: "name",
           title: "职级",
-          width: 100,
+          width: 150,
           titleAlign: "center",
           columnAlign: "center"
         },
@@ -406,7 +441,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-a'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span>${rowData[field]}</span>`;
           }
         },
         {
@@ -417,7 +455,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span>${rowData[field]}</span>`;
           }
         },
         {
@@ -428,7 +469,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span>${rowData[field]}</span>`;
           }
         },
         {
@@ -439,7 +483,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-e'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
           }
         },
         {
@@ -450,7 +497,10 @@ export default {
           columnAlign: "center",
           isResize: true,
           formatter: function(rowData, rowIndex, pagingIndex, field) {
-            return `<span class='cell-edit-color-f'>${rowData[field]}</span>`;
+            if(rowData[field] == null){
+              rowData[field] = ''
+            }
+            return `<span class='cell-edit-color-c'>${rowData[field]}</span>`;
           }
         }
       ],
@@ -648,7 +698,7 @@ export default {
           show: true,
           position: "insideLeft", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}人 / {b}`
+          formatter: `{c} / {b}`
         }
       };
       let data1 = [
@@ -702,11 +752,21 @@ export default {
         },
         xAxis: {
           type: "value",
-          boundaryGap: [0, 0.01]
+          boundaryGap: [0, 0.01],
+          name: '单位（人）',
+          axisLabel: {
+              interval:0,
+              rotate:20
+          },
+　　　　　　 nameTextStyle:{         //关键代码
+　　　　　　　  padding:[70,0,0,-70],
+          },
+          boundaryGap: false, // 将此属性设置为false即可让其在两侧显示
+          axisTick: {show:false},
         },
         yAxis: {
           type: "category",
-          data: ["直接类", "营销类", "技术类", "职能类"]
+          data: ["直接类", "营销类", "技术类", "职能类"],
         },
         series: [
           {
@@ -720,16 +780,7 @@ export default {
                 label: {
                   show: true
                 },
-                color: function(params) {
-                  //自定义颜色
-                  var colorList = [
-                    "#ad1c3a",
-                    "#ccd2c1",
-                    "#61a455",
-                    "#e5c19a"
-                  ];
-                  return colorList[params.dataIndex];
-                }
+                color: '#fc5f10'
               }
             }
           }
@@ -844,13 +895,13 @@ export default {
           show: true,
           position: "inside", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}人`
+          formatter: `{c}`
         }
       };
       let seriesLabel1 = {
         normal: {
           show: true,
-          position: "inside", //在上方显示
+          position: "top", //在上方显示
           textBorderWidth: 2,
           formatter: `{c}%`
         }
@@ -867,8 +918,8 @@ export default {
           formatter: function(params) {
             // console.log(params);
             return params[0].name+'<br>'
-            +'<div class="runoff" style="background-color:#c23531"></div>'+'流失人数：'+params[0].data+'<br>'
-            +'<div class="runoff" style="background-color:#61a0a8"></div>'+'流失率：'+params[1].data+'%<br>'
+            +'<div class="runoff" style="background-color:#bf0000"></div>'+'流失人数：'+params[0].data+'<br>'
+            +'<div class="runoff" style="background-color:#4875c5"></div>'+'月均流失率：'+params[1].data+'%<br>'
           }
         },
         dataZoom: [
@@ -923,7 +974,7 @@ export default {
               formatter: "{value}"
             },
             nameTextStyle: {
-              padding: [0, 50, 0, 0]
+              padding: [0, 70, 0, 0]
             }
           }
         ],
@@ -932,18 +983,29 @@ export default {
             label: seriesLabel,
             name: "流失人数",
             type: "bar",
-            data: this.runArr
+            data: this.runArr,
+            itemStyle: {
+              normal: {
+                color: '#bf0000'
+              }
+            }
+          },
+          {
+            label: seriesLabel1,
+            // symbol: "none",
+            name: "流失率",
+            type: "line",
+            yAxisIndex: 1,
+            data: this.runLvArr,
+            itemStyle: {
+              normal: {
+                color: '#4875c5',
+              }
+            }
           },
           {
             label: seriesLabel1,
             name: "流失率",
-            type: "line",
-            yAxisIndex: 1,
-            data: this.runLvArr
-          },
-          {
-            label: seriesLabel1,
-            name: "月均流失率",
             type: "line",
             yAxisIndex: 1,
             data: this.baseLine,
@@ -960,7 +1022,7 @@ export default {
                       opacity: 0.8
                     },
                     label: { // 文字的样式，默认是白色，有时候文字不显示，可能是颜色的问题
-                      color: "#f39f57"
+                      color: "#fc5f10"
                     }
                   },
                 ],
@@ -968,8 +1030,8 @@ export default {
                   padding: [-13, -40, 0, 0],
                   position:"middle",
                   formatter: function (params) {
-                    console.log(params)
-                    return `${params.value+'人'}`
+                    // console.log(params)
+                    return `${'月均流失率'+params.value}`
                   }
                 }
             },
@@ -988,13 +1050,13 @@ export default {
           show: true,
           position: "inside", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}人`
+          formatter: `{c}`
         }
       };
-      let seriesLabel1 = {
+      let seriesLabel2 = {
         normal: {
           show: true,
-          position: "inside", //在上方显示
+          position: "top", //在上方显示
           textBorderWidth: 2,
           formatter: `{c}%`
         }
@@ -1011,8 +1073,8 @@ export default {
           formatter: function(params) {
             // console.log(params);
             return params[0].name+'<br>'
-            +'<div class="runoff" style="background-color:#2f4554"></div>'+'干部流失人数：'+params[0].data+'<br>'
-            +'<div class="runoff" style="background-color:#d48265"></div>'+'干部流失率：'+params[1].data+'%<br>'
+            +'<div class="runoff" style="background-color:#bdd7ee"></div>'+'干部流失人数：'+params[0].data+'<br>'
+            +'<div class="runoff" style="background-color:#4472c4"></div>'+'干部月均流失率：'+params[1].data+'%<br>'
           }
         },
         dataZoom: [
@@ -1058,7 +1120,7 @@ export default {
             nameTextStyle: {
               // align: 'verticalAlign',
               padding: [0, 0, 0, 110]
-            }
+            },
           },
           {
             type: "value",
@@ -1067,7 +1129,7 @@ export default {
               formatter: "{value}"
             },
             nameTextStyle: {
-              padding: [0, 50, 0, 0]
+              padding: [0, 80, 0, 0]
             }
           }
         ],
@@ -1076,18 +1138,31 @@ export default {
             label: seriesLabel,
             name: "干部流失人数",
             type: "bar",
-            data: this.runGbArr
+            data: this.runGbArr,
+            itemStyle: {
+              normal: {
+                color: '#bdd7ee'
+              }
+            }
           },
           {
-            label: seriesLabel1,
+            label: seriesLabel2,
             name: "干部流失率",
             type: "line",
             yAxisIndex: 1,
-            data: this.runGblvArr
+            data: this.runGblvArr,
+            itemStyle: {
+              normal: {
+                color: '#4472c4',
+                lineStyle:{
+                  fontWeight: '700'
+                }
+              }
+            }
           },
           {
-            label: seriesLabel1,
-            name: "月均流失率",
+            label: seriesLabel2,
+            name: "干部月均流失率",
             type: "line",
             yAxisIndex: 1,
             data: this.cadreBaseLine,
@@ -1112,8 +1187,8 @@ export default {
                   padding: [-13, -40, 0, 0],
                   position:"middle",
                   formatter: function (params) {
-                    console.log(params)
-                    return `${params.value+'人'}`
+                    // console.log(params)
+                    return `${'干部月均流失率'+params.value}`
                   }
                 }
             },
@@ -1144,15 +1219,26 @@ export default {
         this.columnTime.push(tYear + i);
         this.columnTime.push(tYear - i);
       }
+      //只能选择2019年之后的
+      let arrNum = []
+      for(let i in this.columnTime){
+        if(this.columnTime[i] > 2018){
+          arrNum.push(this.columnTime[i])
+        }
+      }
+      this.columnTime = arrNum
       this.columnTime.sort(function(a, b) {
         //callback
         if (a > b) {
           // a b 分别是Arr中的 56 21
           return 1; //返回正数 ，b排列在a之前
+          // console.log(this.columnTime)
         } else {
           return -1; //返回负数 ，a排列在b之前
         }
       });
+      this.columnTime.reverse()
+      console.log(this.columnTime)
     },
     //选择月
     pickmonth() {
@@ -1179,16 +1265,28 @@ export default {
     },
     //查询
     search() {
+      this.currentDeptsRes = JSON.parse(localStorage.getItem('currentDeptsRes')) //保存当前部门
+      // console.log(currentDeptsRes)
+      this.runArr = []
+      this.runLvArr = []
+      this.runGbArr = []
+      this.runGblvArr = []
       this.runTime = [] //时间置空，防止图表中的时间重复
       if (this.selectYear == "") {
         Notify({ type: "warning", message: "需要先选择年份才能进行查询！" });
       } else {
+        Toast.loading({
+          duration: 0, // 持续展示 toast
+          forbidClick: true,
+          message: '数据加载中',
+        })
         let queryData = {
           year: this.selectYear,
           month: this.selectMonth,
           deptId: this.deptId,
           deptIds: this.deptIds,
           isDown: this.isDown,
+          currentDept: this.currentDeptsRes, //当前部门
           jobnumber: localStorage.getItem('jobNum')
         };
         queryRunoff(queryData).then(res => {
@@ -1205,15 +1303,30 @@ export default {
             this.runGblvArr.push(res.obj.detail[i].cadreRunoffRate0);
             this.runTime.push(res.obj.detail[i].time);
           }
+          //图形月份倒序（正序）
+          this.runArr.reverse()
+          this.runLvArr.reverse()
+          this.runGbArr.reverse()
+          this.runGblvArr.reverse()
+          this.runTime.reverse()
           this.initCharts();
           this.initCharts1();
           this.initCharts2();
+          //停止转圈
+          Toast.clear()
         });
       }
     },
     //默认展示最新年份
     initData() {
+      //加载状态
+      Toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true,
+        message: '数据加载中',
+      })
       const deptIdsRes = JSON.parse(localStorage.getItem('deptIdsRes'))
+      this.currentDeptsRes = JSON.parse(localStorage.getItem('currentDeptsRes')) //保存当前部门
       this.deptIds = deptIdsRes;
       this.selectYear = this.formatDate(new Date())
       let queryData = {
@@ -1222,13 +1335,14 @@ export default {
         deptId: this.deptId,
         deptIds: this.deptIds,
         isDown: this.isDown,
+        currentDept: this.currentDeptsRes, //当前部门
         jobnumber: localStorage.getItem('jobNum')
       };
       queryRunoff(queryData).then(res => {
         this.totalData = res.obj;
         //请求到数据后表格加载结束
-        this.isLoading1 = false
-        this.isLoading2 = false
+        // this.isLoading1 = false
+        // this.isLoading2 = false
         this.tableData = res.obj.detail;
         this.tableData1 = res.obj.category;
         this.baseLine = res.obj.detail[0].avgBaseline
@@ -1241,9 +1355,18 @@ export default {
           this.runGblvArr.push(res.obj.detail[i].cadreRunoffRate0);
           this.runTime.push(res.obj.detail[i].time);
         }
+        // for(let j in runLvArr)
+        //图形月份倒序（正序）
+        this.runArr.reverse()
+        this.runLvArr.reverse()
+        this.runGbArr.reverse()
+        this.runGblvArr.reverse()
+        this.runTime.reverse()
         this.initCharts();
         this.initCharts1();
         this.initCharts2();
+        //停止转圈
+        Toast.clear()
       });
     },
     //转换时间戳
@@ -1373,7 +1496,7 @@ td {
   vertical-align: bottom;
 }
 .column-cell-class-name-test {
-  background-color: #f9e9e0;
+  background-color: #f6f6f8;
 }
 .cell-edit-color-a {
   color: #ed4f5d;
@@ -1382,7 +1505,7 @@ td {
   color: #7fb475;
 }
 .cell-edit-color-c {
-  color: #f7af72;
+  color: #3e6dc2;
 }
 .cell-edit-color-d {
   color: #f29598;
@@ -1613,6 +1736,15 @@ td {
       width: 100%;
       height: 100%;
     }
+  }
+}
+.remark{
+  font-size 14px
+  text-align center
+  color #ee6471
+  p{
+    font-weight 700
+    padding 5px
   }
 }
 

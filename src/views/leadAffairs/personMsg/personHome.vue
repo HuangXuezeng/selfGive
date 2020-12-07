@@ -27,6 +27,7 @@
                         <van-tag class="vantag" plain type="primary" text-color="red">{{personObj.post}}</van-tag>
                         <van-tag class="vantag" plain type="primary" text-color="red">{{personObj.a01504}}</van-tag>
                         <van-tag class="vantag" plain type="primary" text-color="red">{{personObj.a01740}}</van-tag>
+                        <van-tag class="vantag" plain type="primary" text-color="red">{{personObj.a0107}}</van-tag>
                         <!-- <span> 岗位：</span><span>{{personObj.post}}</span><br>
                         <span> 部门：</span>{{personObj.dept}}<span></span> -->
                     </div>

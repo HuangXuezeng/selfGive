@@ -3,7 +3,7 @@
     <van-field
       v-model="selectedDepartment"
       @click-input="pickDept"
-      label="选择单位："
+      :label="labelTitle"
       :placeholder="deptPlacehoder"
       :rules="reqireRule"
       readonly
@@ -78,9 +78,15 @@ export default {
       type: Boolean,
       default: false
     },
+    //label显示的值
+    labelTitleFlag: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
+      labelTitle: '部门',
       showSwitch: false, //默认不显示是否包含下级，只有流失率页面可以显示
       isDownValue: true, //默认包含下级部门
       deptData: [],
@@ -96,7 +102,7 @@ export default {
         orgsid: []
       },
       reqireRule: [],
-      deptPlacehoder: "请选择单位",
+      deptPlacehoder: "请选择部门",
       openlist: [],
       onSelected:'',
       firstIn:1,
@@ -105,8 +111,13 @@ export default {
   },
   created() {
     this._getOrz();
+    //显示隐藏是否包含下级部门
     if(this.showSwitchFlag){
       this.showSwitch = true
+    }
+    // label显示的值
+    if(this.labelTitleFlag){
+      this.labelTitle = '单位'
     }
     // if (this.Farequired) {
     //   this.reqireRule = [{ required: true, message: "请选择部门" }];

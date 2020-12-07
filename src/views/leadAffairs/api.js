@@ -270,8 +270,10 @@ export function getPostOne (queryData) {
 export function selectDraw (selectData) {
   return fetch({
     url: `/kukacms/self/bianzhi/selectDraw`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
     method: 'post',
-    data: qs.stringify(selectData)
+    data: JSON.stringify(selectData)
   })
 }
 
@@ -316,7 +318,9 @@ export function getDrawDept (drawDatas) {
 export function selectDrawInfo (queryData) {
   return fetch({
     url: `/kukacms/self/analysis/selectDrawInfo`,
+    headers:{"content-type":"application/json"},
+    dataType: 'json',
     method: 'post',
-    data: qs.stringify(queryData)
+    data: JSON.stringify(queryData)
   })
 }

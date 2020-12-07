@@ -7,6 +7,7 @@
         <pickdeptmore
           ref="select"
           @confirmNode="selctdept"
+          @getAllVal="getAllVal"
           :Farequired="true"
           labelTitle="部门"
           :workingNum="true"
@@ -23,25 +24,25 @@
       />
       <van-field v-model="form.name" label="姓名" placeholder="请输入姓名" />
       <div class="btn">
-        <van-button type="primary" color="#fc5f10" size="mini" @click="search" style="width:18%"
+        <van-button type="primary" color="#fc5f10" size="mini" @click="search" style="width:24%"
           >查询</van-button
         >
-        <van-button type="primary" color="#fc5f10" size="mini" @click="reset" style="width:18%"
+        <van-button type="primary" color="#fc5f10" size="mini" @click="reset" style="width:24%"
           >重置</van-button
-        >
-        <van-button type="primary" color="#fc5f10" size="mini" @click="setMenu" style="width:18%"
-          >排序</van-button
         >
         <van-button
           type="primary"
           color="#fc5f10"
           size="mini"
-          style="width:26.333%"
+          style="width:38%"
           @click="moreSearch"
           >更多查询条件</van-button
         >
         <i @click="showAlert"><van-icon name="question-o" color="red"/></i>
-        <van-button type="primary" color="#fc5f10" size="mini" @click="_exportExl" style="width:18%"
+        <van-button type="primary" color="#fc5f10" size="mini" @click="setMenu" style="width:24%"
+          >排序</van-button
+        >
+        <van-button type="primary" color="#fc5f10" size="mini" @click="_exportExl" style="width:24%"
           >导出</van-button
         >
         <!-- 下载 -->
@@ -51,6 +52,9 @@
           </span>
         </div> -->
         <!-- <van-button type="primary" color="#fc5f10" size="small" @click="ceshi">测试</van-button> -->
+      </div>
+      <div class="remark">
+        <p>默认展示当前负责部门人员信息</p>
       </div>
     </div>
     <!-- 人数表格 -->
@@ -84,6 +88,7 @@
         <pickdeptmore
           ref="select"
           @confirmNode="selctdept1"
+          @getAllVal="getAllVal"
           :Farequired="true"
           labelTitle="部门"
           :workingNum="true"
@@ -131,6 +136,176 @@
               @click-input="selectState"
             />
             </van-checkbox>
+            <van-checkbox name="人员类别">
+              <van-field
+                v-model="form.personType"
+                label="人员类别"
+                placeholder="请选择"
+                readonly
+                @click="selectPerson"
+              />
+            </van-checkbox>
+            <van-checkbox name="编制类型">
+              <van-field
+                v-model="form.bzlx"
+                label="编制类型"
+                placeholder="请选择"
+                readonly
+                @click-input="selectBian"
+              />
+            </van-checkbox>
+            <van-checkbox name="职类">
+              <van-field
+                v-model="form.category"
+                label="职类"
+                placeholder="请选择"
+                readonly
+                @click-input="selectzl"
+              />
+            </van-checkbox>
+            <van-checkbox name="职级">
+              <van-field
+                v-model="form.rank"
+                label="职级"
+                placeholder="请选择"
+                readonly
+                @click-input="selectzj"
+              />
+            </van-checkbox>
+             <van-checkbox name="岗位分类一">
+              <van-field
+                v-model="form.postOne"
+                label="岗位分类一"
+                placeholder="请选择"
+                readonly
+                @click-input="selectFl1"
+              />
+            </van-checkbox>
+            <van-checkbox name="岗位分类二">
+              <van-field
+                v-model="form.postTwo"
+                label="岗位分类二"
+                placeholder="请选择"
+                readonly
+                @click-input="selectFl2"
+              />
+            </van-checkbox>
+            <van-checkbox name="入司开始日期">
+              <van-field
+                v-model="form.entryStartTime"
+                label="入司日期"
+                placeholder="请选择开始时间段"
+                readonly
+                @click-input="entryStartTime"
+              />
+              <van-field
+                v-model="form.entryEndTime"
+                label="至"
+                placeholder="请选择结束时间段"
+                readonly
+                @click-input="entryEndTime"
+              />
+            </van-checkbox>
+            <!-- <van-checkbox name="入司结束日期">
+              <van-field
+                v-model="form.entryEndTime"
+                label="入司结束日期"
+                placeholder="请选择"
+                readonly
+                @click-input="entryEndTime"
+              />
+            </van-checkbox> -->
+            <van-checkbox name="试用开始日期">
+              <van-field
+                v-model="form.syjsStartTime"
+                label="试用开始日期"
+                placeholder="请选择"
+                readonly
+                @click-input="syjsStartTime"
+              />
+            </van-checkbox>
+            <van-checkbox name="试用结束日期">
+              <van-field
+                v-model="form.syjsEndTime"
+                label="试用结束日期"
+                placeholder="请选择"
+                readonly
+                @click-input="endTime"
+              />
+            </van-checkbox>
+            <van-checkbox name="实际转正开始日期">
+              <van-field
+                v-model="form.sjzzStartTime"
+                label="实际转正日期"
+                placeholder="请选择开始时间段"
+                readonly
+                @click-input="startTime"
+              />
+              <van-field
+                v-model="form.sjzzEndTime"
+                label="至"
+                placeholder="请选择结束时间段"
+                readonly
+                @click-input="sjzzEndTime"
+              />
+            </van-checkbox>
+            <!-- <van-checkbox name="实际转正结束日期">
+              <van-field
+                v-model="form.sjzzEndTime"
+                label="实际转正结束日期"
+                placeholder="请选择"
+                readonly
+                @click-input="sjzzEndTime"
+              />
+            </van-checkbox> -->
+            <van-checkbox name="专业线标签">
+              <van-field
+                v-model="form.zyxbq"
+                label="专业线标签"
+                placeholder="请选择"
+                readonly
+                @click-input="selectZhuanye"
+              />
+            </van-checkbox>
+            <van-checkbox name="职务类型">
+              <van-field
+                v-model="form.jobType"
+                label="职务类型"
+                placeholder="请选择"
+                readonly
+                @click="selectJobType"
+              />
+            </van-checkbox>
+            <van-checkbox name="是否签订竞业协议">
+              <van-field
+                v-model="form.isCompete"
+                label="是否签订竞业协议"
+                placeholder="请选择"
+                readonly
+                @click-input="selectJyxy"
+              />
+            </van-checkbox>
+            <van-checkbox name="是否签订培训协议">
+              <van-field
+                v-model="form.isTrain"
+                label="是否签订培训协议"
+                placeholder="请选择"
+                readonly
+                @click-input="selectPxxy"
+              />
+            </van-checkbox>
+            <van-checkbox name="司龄">
+              <van-field
+                v-model="form.entryAge"
+                label="司龄"
+                placeholder="请选择"
+                @click-input="showEntryAge = true"
+                readonly 
+              />
+            </van-checkbox>
+            <van-checkbox name="岗位">
+              <van-field v-model="form.post" label="岗位" disabled />
+            </van-checkbox>
             <van-checkbox name="性别">
               <van-field
               v-model="form.sex"
@@ -139,6 +314,9 @@
               readonly
               @click-input="selectSex"
             />
+            </van-checkbox>
+            <van-checkbox name="年龄">
+              <van-field v-model="form.age" label="年龄" disabled />
             </van-checkbox>
             <van-checkbox name="最高学历">
               <van-field
@@ -168,150 +346,6 @@
             <van-checkbox name="专业">
               <van-field v-model="form.walk" label="专业" placeholder="请输入专业" />
             </van-checkbox>
-            <van-checkbox name="编制类型">
-              <van-field
-                v-model="form.bzlx"
-                label="编制类型"
-                placeholder="请选择"
-                readonly
-                @click-input="selectBian"
-              />
-            </van-checkbox>
-            <van-checkbox name="职类">
-              <van-field
-                v-model="form.category"
-                label="职类"
-                placeholder="请选择"
-                readonly
-                @click-input="selectzl"
-              />
-            </van-checkbox>
-            <van-checkbox name="职级">
-              <van-field
-                v-model="form.rank"
-                label="职级"
-                placeholder="请选择"
-                readonly
-                @click-input="selectzj"
-              />
-            </van-checkbox>
-            <van-checkbox name="岗位分类一">
-              <van-field
-                v-model="form.postOne"
-                label="岗位分类一"
-                placeholder="请选择"
-                readonly
-                @click-input="selectFl1"
-              />
-            </van-checkbox>
-            <van-checkbox name="岗位分类二">
-              <van-field
-                v-model="form.postTwo"
-                label="岗位分类二"
-                placeholder="请选择"
-                readonly
-                @click-input="selectFl2"
-              />
-            </van-checkbox>
-            <van-checkbox name="入司开始日期">
-              <van-field
-                v-model="form.entryStartTime"
-                label="入司开始日期"
-                placeholder="请选择"
-                readonly
-                @click-input="entryStartTime"
-              />
-            </van-checkbox>
-            <van-checkbox name="入司结束日期">
-              <van-field
-                v-model="form.entryEndTime"
-                label="入司结束日期"
-                placeholder="请选择"
-                readonly
-                @click-input="entryEndTime"
-              />
-            </van-checkbox>
-            <van-checkbox name="试用开始日期">
-              <van-field
-                v-model="form.syjsStartTime"
-                label="试用开始日期"
-                placeholder="请选择"
-                readonly
-                @click-input="syjsStartTime"
-              />
-            </van-checkbox>
-            <van-checkbox name="试用结束日期">
-              <van-field
-                v-model="form.syjsEndTime"
-                label="试用结束日期"
-                placeholder="请选择"
-                readonly
-                @click-input="endTime"
-              />
-            </van-checkbox>
-            <van-checkbox name="实际转正开始日期">
-              <van-field
-                v-model="form.sjzzStartTime"
-                label="实际转正开始日期"
-                placeholder="请选择"
-                readonly
-                @click-input="startTime"
-              />
-            </van-checkbox>
-            <van-checkbox name="实际转正结束日期">
-              <van-field
-                v-model="form.sjzzEndTime"
-                label="实际转正结束日期"
-                placeholder="请选择"
-                readonly
-                @click-input="sjzzEndTime"
-              />
-            </van-checkbox>
-            <van-checkbox name="专业线标签">
-              <van-field
-                v-model="form.zyxbq"
-                label="专业线标签"
-                placeholder="请选择"
-                readonly
-                @click-input="selectZhuanye"
-              />
-            </van-checkbox>
-            <van-checkbox name="是否为退伍军人">
-              <van-field
-                v-model="form.isVeteran"
-                label="是否为退伍军人"
-                placeholder="请选择"
-                readonly
-                @click-input="selectVal"
-              />
-            </van-checkbox>
-            <van-checkbox name="是否在本公司有亲属关系">
-              <van-field
-                v-model="form.isPerson"
-                label="是否在本公司有亲属关系"
-                placeholder="请选择"
-                readonly
-                @click-input="selectQs"
-              />
-            </van-checkbox>
-            <van-checkbox name="是否签订培训协议">
-              <van-field
-                v-model="form.isTrain"
-                label="是否签订培训协议"
-                placeholder="请选择"
-                readonly
-                @click-input="selectPxxy"
-              />
-            </van-checkbox>
-            <van-checkbox name="是否签订竞业协议">
-              <van-field
-                v-model="form.isCompete"
-                label="是否签订竞业协议"
-                placeholder="请选择"
-                readonly
-                @click-input="selectJyxy"
-              />
-            </van-checkbox>
             <van-checkbox name="工作单位" disabled>
               <van-field
                 v-model="form.company"
@@ -326,35 +360,22 @@
                 placeholder="请输入职称名称"
               />
             </van-checkbox>
-            <van-checkbox name="人员类别">
+            <van-checkbox name="是否在本公司有亲属关系">
               <van-field
-                v-model="form.personType"
-                label="人员类别"
+                v-model="form.isPerson"
+                label="是否在本公司有亲属关系"
                 placeholder="请选择"
                 readonly
-                @click="selectPerson"
+                @click-input="selectQs"
               />
             </van-checkbox>
-            <van-checkbox name="职务类型">
+            <van-checkbox name="是否为退伍军人">
               <van-field
-                v-model="form.jobType"
-                label="职务类型"
+                v-model="form.isVeteran"
+                label="是否为退伍军人"
                 placeholder="请选择"
                 readonly
-                @click="selectJobType"
-              />
-            </van-checkbox>
-            <van-checkbox name="年龄">
-              <van-field v-model="form.age" label="年龄" disabled />
-            </van-checkbox>
-            <van-checkbox name="岗位">
-              <van-field v-model="form.post" label="岗位" disabled />
-            </van-checkbox>
-            <van-checkbox name="司龄">
-              <van-field
-                v-model="form.entryAge"
-                label="司龄"
-                disabled 
+                @click-input="selectVal"
               />
             </van-checkbox>
           </van-checkbox-group>
@@ -536,7 +557,7 @@
             item.content
           }}</van-checkbox>
         </van-checkbox-group>
-        <van-button type="info" size="mini" @click="onConfirm4" style="width:100%">确定</van-button>
+        <van-button type="info" size="mini" @click="onConfirm4" style="width:100%" color="#fc5f10">确定</van-button>
       </div>
     </van-popup>
     <!-- 弹出时下拉选择学历 -->
@@ -552,7 +573,7 @@
             item.content
           }}</van-checkbox>
         </van-checkbox-group>
-        <van-button type="info" size="mini" @click="onConfirm8" style="width:100%">确定</van-button>
+        <van-button type="info" size="mini" @click="onConfirm8" style="width:100%" color="#fc5f10">确定</van-button>
       </div>
     </van-popup>
     <!-- 弹出时下拉选择专业线标签 -->
@@ -568,7 +589,7 @@
             item.content
           }}</van-checkbox>
         </van-checkbox-group>
-        <van-button type="info" size="mini" @click="onConfirm5" style="width:100%">确定</van-button>
+        <van-button type="info" size="mini" @click="onConfirm5" style="width:100%" color="#fc5f10">确定</van-button>
       </div>
     </van-popup>
     <!-- 弹出时下拉选择当前状态 -->
@@ -584,7 +605,7 @@
             item.content
           }}</van-checkbox>
         </van-checkbox-group>
-        <van-button type="info" size="mini" @click="onConfirm6" style="width:100%">确定</van-button>
+        <van-button type="info" size="mini" @click="onConfirm6" style="width:100%" color="#fc5f10">确定</van-button>
       </div>
     </van-popup>
     <!-- 弹出时下拉选择人员类别 -->
@@ -600,7 +621,7 @@
             item.content
           }}</van-checkbox>
         </van-checkbox-group>
-        <van-button type="info" size="mini" @click="onConfirm7" style="width:100%">确定</van-button>
+        <van-button type="info" size="mini" @click="onConfirm7" style="width:100%" color="#fc5f10">确定</van-button>
       </div>
     </van-popup>
     <!-- 弹出时下拉选择岗位分类1 -->
@@ -616,7 +637,7 @@
             item.content
           }}</van-checkbox>
         </van-checkbox-group>
-        <van-button type="info" size="mini" @click="onConfirm9" style="width:100%">确定</van-button>
+        <van-button type="info" size="mini" @click="onConfirm9" style="width:100%" color="#fc5f10">确定</van-button>
       </div>
     </van-popup>
     <!-- 弹出时下拉选择岗位分类2 -->
@@ -637,7 +658,7 @@
             >{{ item.content }}</van-checkbox
           >
         </van-checkbox-group>
-        <van-button type="info" size="mini" @click="confirmFl2" style="width:100%">确定</van-button>
+        <van-button type="info" size="mini" @click="confirmFl2" style="width:100%" color="#fc5f10">确定</van-button>
       </div>
     </van-popup>
     <!-- 职类 -->
@@ -653,7 +674,7 @@
             item.content
           }}</van-checkbox>
         </van-checkbox-group>
-        <van-button type="info" size="mini" @click="onConfirm10" style="width:100%">确定</van-button>
+        <van-button type="info" size="mini" @click="onConfirm10" style="width:100%" color="#fc5f10">确定</van-button>
       </div>
     </van-popup>
     <!-- 职级 -->
@@ -669,7 +690,7 @@
             item.content
           }}</van-checkbox>
         </van-checkbox-group>
-        <van-button type="info" size="mini" @click="onConfirm11" style="width:100%">确定</van-button>
+        <van-button type="info" size="mini" @click="onConfirm11" style="width:100%" color="#fc5f10">确定</van-button>
       </div>
     </van-popup>
     <!-- 图形人员类别下拉框 -->
@@ -679,22 +700,38 @@
       :style="{ height: '50%' }"
       get-container="body"
     >
-      <!-- <van-picker
-        title="标题"
-        show-toolbar
-        :columns="column7"
-        value-key="content"
-        @confirm="onConfirmLb"
-        @cancel="showLb = false"
-      /> -->
       <div class="condition">
         <van-checkbox-group v-model="result10" ref="checkboxGroup">
         <van-checkbox v-for="item in column7" :key="item.code" :name="item" class="conditionbox">{{
             item.content
           }}</van-checkbox>
         </van-checkbox-group>
-        <van-button type="info" size="mini" @click="onConfirmLb" style="width:100%">确定</van-button>
+        <van-button type="info" size="mini" @click="onConfirmLb" style="width:100%" color="#fc5f10">确定</van-button>
       </div>
+    </van-popup>
+    <!-- 司龄时间区间选择下拉框 -->
+    <van-popup
+      v-model="showEntryAge"
+      position="bottom"
+      :style="{ height: '50%' }"
+      get-container="body"
+    >
+      <!-- <div class="condition">
+        <van-checkbox-group v-model="result11" ref="checkboxGroup">
+        <van-checkbox v-for="item in column14" :key="item.code" :name="item" class="conditionbox">{{
+            item.content
+          }}</van-checkbox>
+        </van-checkbox-group>
+        <van-button type="info" size="mini" @click="onConfirmSl" style="width:100%">确定</van-button>
+      </div> -->
+      <van-picker
+        title="标题"
+        show-toolbar
+        :columns="column14"
+        value-key="content"
+        @confirm="onConfirmSl"
+        @cancel="showEntryAge = false"
+      />
     </van-popup>
     <!-- 遮罩层（导出表格等待） -->
     <loadingSpin ref="loadingSpin"></loadingSpin>
@@ -722,6 +759,7 @@ import draggable from "vuedraggable";
 export default {
   data() {
     return {
+      isDown: '',
       deIds: [],
       sum: [], //图形人员人数
       ratio: [], //图形人员占比
@@ -791,6 +829,7 @@ export default {
       showZj: false, //职级
       showJobType: false, //职位类型
       showPx: false, //排序弹窗
+      showEntryAge: false, //司龄弹窗选择
       result: [], //多选框
       results: [], //多选框
       result1: [], //岗位分类1
@@ -803,6 +842,7 @@ export default {
       result8: [], //职类
       result9: [], //职级
       result10: [], //图形人员类别
+      result11: [], //司龄下拉选择
       pickFalse: "",
       total: 0,
       pageIndex: 1,
@@ -845,8 +885,8 @@ export default {
         },
         {
           field: "department",
-          title: "部门",
-          width: 150,
+          title: "机构路径",
+          width: 160,
           titleAlign: "center",
           columnAlign: "center",
           formatter: function(rowData, rowIndex, pagingIndex, field) {
@@ -929,6 +969,12 @@ export default {
         { keyId: "01", text: "主职" },
         { keyId: "02", text: "兼职" }
       ],
+      column14: [
+        { code: "1", content: "6个月及以下" },
+        { code: "2", content: "6个月至1年(含)" },
+        { code: "3", content: "1年至3年(含)" },
+        { code: "4", content: "3年以上" }
+      ],
       sex: "", //传后台性别值
       jobType: "", //传后台职位类型值
       bianzhi: "", //传后台编制类型值
@@ -945,6 +991,7 @@ export default {
       fenlei2Val: "", //传后台岗位分类2值
       zhileiVal: "", //传后台职类值
       zhijiVal: "", //传后台职级值
+      silingVal: "", //传后台司龄值
       deptVal: [], //传后台选择部门的值
       selectFlag: "", //是否
       timeFlag: "", //时间选择标识
@@ -1146,6 +1193,7 @@ export default {
       this.bianzhi = "",
       this.zhileiVal = "",
       this.zhijiVal = "",
+      this.silingVal = "",
       this.fenlei1Val = "",
       this.fenlei2Val = "",
       this.zhuanyeVal = "",
@@ -1154,6 +1202,7 @@ export default {
       this.peixunVal = "",
       this.jingyeVal = "",
       this.leibieVal = "",
+      this.isDown = ""
       // this.currentDept = "",
       // this.deptIds = "",
       // this.deptVal = [],
@@ -1194,8 +1243,8 @@ export default {
         },
         {
           field: "department",
-          title: "部门",
-          width: 150,
+          title: "机构路径",
+          width: 160,
           titleAlign: "center",
           columnAlign: "center",
           formatter: function(rowData, rowIndex, pagingIndex, field) {
@@ -1255,6 +1304,11 @@ export default {
     },
     //查询添加表格
     search() {
+      // Toast.loading({
+      //   duration: 0, // 持续展示 toast
+      //   forbidClick: true,
+      //   message: '查询中',
+      // })
       let queryData = {
         // jobnumber: this.form.jobnumber,
         // name: this.form.name,
@@ -1291,7 +1345,7 @@ export default {
         post: this.form.post,
         entryStartTime: this.form.entryStartTime,
         entryEndTime: this.form.entryEndTime,
-        entryAge: this.form.entryAge,
+        entryAge: this.silingVal,
         syjsEndTime: this.form.syjsEndTime,
         syjsStartTime: this.form.syjsStartTime,
         sjzzStartTime: this.form.sjzzStartTime,
@@ -1331,18 +1385,23 @@ export default {
         syjsStartTimeAll: this.itemCheck.syjsStartTimeAll,   //试用开始日期
         syjsEndTimeAll: this.itemCheck.syjsEndTimeAll,   //试用结束日期
         sjzzStartTimeAll: this.itemCheck.sjzzStartTimeAll,   //实际转正开始日期
-        sjzzEndTimeAll: this.itemCheck.sjzzEndTimeAll   //实际转正结束日期
+        sjzzEndTimeAll: this.itemCheck.sjzzEndTimeAll,   //实际转正结束日期
+        //是否全选
+        isDown: this.isDown
       };
       querySome(queryData).then(res => {
         if(res.code == 1000){
           this.download = 2
           this.tableData = res.obj;
           this.total = res.totalSize
+          this.isDown = "" //清空是否全选
           // this.pagePev(); //获取的表格数据分组
         }else{
           Notify({ type: "warning", message: res.msg });
         }
       });
+      // //停止转圈
+      // Toast.clear()
       // console.log(this.form)
     },
     //全选
@@ -1393,6 +1452,7 @@ export default {
       this.bianzhi = "",
       this.zhileiVal = "",
       this.zhijiVal = "",
+      this.silingVal = "",
       this.fenlei1Val = "",
       this.fenlei2Val = "",
       this.zhuanyeVal = "",
@@ -1401,6 +1461,7 @@ export default {
       this.peixunVal = "",
       this.jingyeVal = "",
       this.leibieVal = "",
+      this.isDown = "",
       // this.currentDept = "",
       // this.deptIds = "",
       // this.deptVal = [],
@@ -1440,8 +1501,8 @@ export default {
         },
         {
           field: "department",
-          title: "部门",
-          width: 150,
+          title: "机构路径",
+          width: 160,
           titleAlign: "center",
           columnAlign: "center",
           formatter: function(rowData, rowIndex, pagingIndex, field) {
@@ -2169,7 +2230,7 @@ export default {
         post: this.form.post,
         entryStartTime: this.form.entryStartTime,
         entryEndTime: this.form.entryEndTime,
-        entryAge: this.form.entryAge,
+        entryAge: this.silingVal,
         syjsEndTime: this.form.syjsEndTime,
         syjsStartTime: this.form.syjsStartTime,
         sjzzStartTime: this.form.sjzzStartTime,
@@ -2209,7 +2270,9 @@ export default {
         syjsStartTimeAll: this.itemCheck.syjsStartTimeAll,   //试用开始日期
         syjsEndTimeAll: this.itemCheck.syjsEndTimeAll,   //试用结束日期
         sjzzStartTimeAll: this.itemCheck.sjzzStartTimeAll,   //实际转正开始日期
-        sjzzEndTimeAll: this.itemCheck.sjzzEndTimeAll   //实际转正结束日期
+        sjzzEndTimeAll: this.itemCheck.sjzzEndTimeAll,   //实际转正结束日期
+        //是否全选
+        isDown: this.isDown
       };
       // let queryData = this.form
       querySome(queryData).then(res => {
@@ -2218,6 +2281,7 @@ export default {
           this.tableData = res.obj;
           this.download = 2
           this.total = res.totalSize
+          this.isDown = "" //清空是否全选
           // this.pagePev(); //获��的表格数据分组
         }else{
           Notify({ type: "warning", message: res.msg });
@@ -2431,7 +2495,7 @@ export default {
       this.schoolVal = val;
       this.form.schoolProp = str;
       this.showSchool = false;
-      this.result3 = [];
+      // this.result3 = [];
     },
     onCancel4() {
       this.showSchool = false;
@@ -2454,7 +2518,7 @@ export default {
       this.zhuanyeVal = val;
       this.form.zyxbq = str;
       this.showZhuanye = false;
-      this.result5 = [];
+      // this.result5 = [];
     },
     onCancel5() {
       this.showZhuanye = false;
@@ -2477,7 +2541,7 @@ export default {
       this.stateVal = val;
       this.form.currentState = str;
       this.showState = false;
-      this.result6 = [];
+      // this.result6 = [];
     },
     onCancel6() {
       this.showState = false;
@@ -2500,7 +2564,7 @@ export default {
       this.leibieVal = val;
       this.form.personType = str;
       this.showLeibie = false;
-      this.result7 = [];
+      // this.result7 = [];
     },
     onCancel7() {
       this.showLeibie = false;
@@ -2523,7 +2587,7 @@ export default {
       this.xueliVal = val;
       this.form.education = str;
       this.showXueli = false;
-      this.result4 = [];
+      // this.result4 = [];
     },
     onCancel8() {
       this.showXueli = false;
@@ -2554,7 +2618,7 @@ export default {
       queryFen2(queryData).then(res => {
         this.column10 = res.obj;
       });
-      this.result2 = [];
+      // this.result2 = [];
     },
     onCancel9() {
       this.showFenlei1 = false;
@@ -2581,7 +2645,7 @@ export default {
       this.form.postTwo = str;
       this.fenlei2Val = val;
       this.showFenlei2 = false;
-      this.result1 = [];
+      // this.result1 = [];
     },
     //职类
     selectzl() {
@@ -2608,7 +2672,7 @@ export default {
       queryRank(queryData).then(res => {
         this.column12 = res.obj;
       });
-      this.result8 = [];
+      // this.result8 = [];
     },
     //选择职级
     selectzj() {
@@ -2628,7 +2692,7 @@ export default {
       this.zhijiVal = val;
       this.form.rank = str;
       this.showZj = false;
-      this.result9 = [];
+      // this.result9 = [];
     },
     //下拉加载
     onLoad() {
@@ -2712,11 +2776,12 @@ export default {
       this.sum = []
       this.ratio = []
       this.perName = []
-      console.log(data)
+      // console.log(data)
       this.deIds = data
       let queryData = {
         deptIds: JSON.parse(localStorage.getItem('deptIdsRes')),
         ids: data,
+        isDown: this.isDown,
         personType: this.perTypeCode
       }
       personalRatio(queryData).then(res=>{
@@ -2726,6 +2791,7 @@ export default {
           this.perName.push(res.obj[i].name)
         }
         this.initCharts()
+        this.isDown = "" //清空全选标志
       })
       // this.deptVal = data;
     },
@@ -2786,16 +2852,20 @@ export default {
         type: 'alert',
         title: '提示',
         content: '可设置花名册字段及更多查询条件',
-        icon: 'cubeic-alert'
+        icon: 'cubeic-alert',
+        confirmBtn: {
+          color:'#ccc'
+        }
       }).show()
     },
+    //司龄时间段选择
+    onConfirmSl(picker) {
+      // console.log(picker)
+      this.silingVal = picker.code;
+      this.form.entryAge = picker.content;
+      this.showEntryAge = false;
+    },
     //图形下拉人员类别
-    // onConfirmLb(picker){
-    //   // console.log(picker)
-    //   this.perType = picker.content
-    //   this.perTypeCode = picker.code
-    //   this.showLb = false
-    // },
     onConfirmLb() {
       let str = "";
       let val = "";
@@ -2810,7 +2880,7 @@ export default {
       this.perTypeCode = val;
       this.perType = str;
       this.showLb = false;
-      this.result10 = [];
+      // this.result10 = [];
       //查询人员类别图形数据
       this.sum = []
       this.ratio = []
@@ -2818,6 +2888,7 @@ export default {
       let queryData = {
         deptIds: JSON.parse(localStorage.getItem('deptIdsRes')),
         ids: this.deIds,
+        isDown: this.isDown,
         personType: this.perTypeCode
       }
       personalRatio(queryData).then(res=>{
@@ -2827,6 +2898,7 @@ export default {
           this.perName.push(res.obj[i].name)
         }
         this.initCharts()
+        this.isDown = "" //清空全选标志
       })
     },
     //人员每月情况
@@ -2837,13 +2909,13 @@ export default {
           show: true,
           position: "inside", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}人`
+          formatter: `{c}`
         }
       };
       let seriesLabel1 = {
         normal: {
           show: true,
-          position: "inside", //在上方显示
+          position: "top", //在上方显示
           textBorderWidth: 2,
           formatter: `{c}%`
         }
@@ -2860,8 +2932,8 @@ export default {
           formatter: function(params) {
             // console.log(params);
             return params[0].name+'<br>'
-            +'<div class="runoff" style="background-color:#c23531"></div>'+'流失人数：'+params[0].data+'<br>'
-            +'<div class="runoff" style="background-color:#61a0a8"></div>'+'流失率：'+params[1].data+'%<br>'
+            +'<div class="runoff" style="background-color:#c23531"></div>'+'人数：'+params[0].data+'<br>'
+            +'<div class="runoff" style="background-color:#4472c4"></div>'+'占比：'+params[1].data+'%<br>'
           }
         },
         dataZoom: [
@@ -2901,14 +2973,14 @@ export default {
         yAxis: [
           {
             type: "value",
-            name: "人员人数（单位：人）",
+            name: "人数（单位：人）",
             axisLabel: {
               formatter: "{value}"
             },
             nameTextStyle: {
               // align: 'verticalAlign',
               padding: [0, 0, 0, 40]
-            }
+            },
           },
           {
             type: "value",
@@ -2924,16 +2996,22 @@ export default {
         series: [
           {
             label: seriesLabel,
-            name: "人员人数",
+            name: "人数",
             type: "bar",
-            data: this.sum
+            data: this.sum,
+            barWidth: '20%'
           },
           {
             label: seriesLabel1,
             name: "占比",
             type: "line",
             yAxisIndex: 1,
-            data: this.ratio
+            data: this.ratio,
+            itemStyle: {
+              normal: {
+                color: '#4472c4'
+              }
+            }
           }
         ]
       });
@@ -2941,6 +3019,16 @@ export default {
       //点击事件
       // myChart.on("click", function(params) {});
     },
+    // 是否包含下级部门的事件
+    getAllVal(val){
+      console.log(val)
+      this.isDown = val
+    },
+    // // 图形是否包含下级部门的事件
+    // getAllVal1(val){
+    //   console.log(val)
+    //   this.isDown = val
+    // },
     ...mapMutations({
       save_jobNum: "save_jobNum",
       scroll_top: "scroll_top",
@@ -3001,6 +3089,16 @@ export default {
   .column-cell-class-name-test {
     background-color: #f6f6f8;
   }
+  .cubeic-alert{
+    color:#ff4500
+  }
+  .runoff{
+    float: left;
+    height: 12px;
+    width: 12px;
+    margin: 4px 4px 0 0;
+    border-radius: 50%;
+  }
 </style>
 <style lang="stylus" scoped>
 .header {
@@ -3010,6 +3108,15 @@ export default {
   .btn {
     padding: 5px;
     line-height: 35px;
+  }
+  .remark{
+    font-size 14px
+    text-align center
+    color #ee6471
+    p{
+      font-weight 700
+      padding 5px
+    }
   }
 }
 

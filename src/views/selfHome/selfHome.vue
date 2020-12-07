@@ -184,17 +184,17 @@
                     },
                     {
                         sortNum: 1,
-                        title: "流失率",
-                        img: "http://ehrfile.kukahome.com:7020/menuImage/liushi.png",
-                    },
-                    {
-                        sortNum: 2,
                         title: "人员结构",
                         img: "http://ehrfile.kukahome.com:7020/menuImage/jiegou.png",
                     },
                     {
+                        sortNum: 2,
+                        title: "人员编制",
+                        img: "http://ehrfile.kukahome.com:7020/menuImage/bianzhi.png",
+                    },
+                    {
                         sortNum: 3,
-                        title: "人效分析",
+                        title: "人员效率",
                         img: "http://ehrfile.kukahome.com:7020/menuImage/renxiao.png",
                     },
                     {
@@ -204,8 +204,8 @@
                     },
                     {
                         sortNum: 5,
-                        title: "编制分析",
-                        img: "http://ehrfile.kukahome.com:7020/menuImage/bianzhi.png",
+                        title: "人员流失",
+                        img: "http://ehrfile.kukahome.com:7020/menuImage/liushi.png",
                     },
                     {
                         sortNum: 6,
@@ -282,7 +282,8 @@
         },
         created() {
             // debugger
-            localStorage.setItem("jobNum", 6006212);
+            // localStorage.setItem("jobNum", 6006212); //liu
+            localStorage.setItem("jobNum", 6005506); //li
             // localStorage.setItem('jobNum',9085360)
             // localStorage.setItem('jobNum',9107021)
             // localStorage.setItem('jobNum',9078825)
@@ -786,7 +787,7 @@
                             name: "roster"
                         });
                         break;
-                    case "流失率":
+                    case "人员流失":
                         this.save_type(sortNum);
                         this.$router.push({
                             name: "retention"
@@ -798,7 +799,7 @@
                             name: "perStructure"
                         });
                         break;
-                    case "人效分析":
+                    case "人员效率":
                         this.save_type(sortNum);
                         this.$router.push({
                             name: "humanEffect"
@@ -810,7 +811,7 @@
                             name: "changes"
                         });
                         break;
-                    case "编制分析":
+                    case "人员编制":
                         this.save_type(sortNum);
                         this.$router.push({
                             name: "organization"
