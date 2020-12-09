@@ -281,6 +281,7 @@
             };
         },
         created() {
+            localStorage.clear();
             // debugger
             // localStorage.setItem("jobNum", 6006212); //liu
             localStorage.setItem("jobNum", 6005506); //li

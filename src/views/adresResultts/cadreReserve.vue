@@ -368,10 +368,10 @@
                             // name: "人数",
                             // min: 0,
                             // max: 480,
-                            interval: 80,
+                            // interval: 80,
                             axisLabel: {
-                                show: false,
-                                formatter: "{value}",
+                                // show: false,
+                                formatter: "{value}人",
                             },
                         },
                         {
@@ -675,7 +675,7 @@
         //生命周期 - 挂载完成（可以访问DOM元素）
         mounted() {
             this.$refs.adresResultsTanbber.changtab("cadreReserve");
-            // this.initcadreReserveEchart();
+            this.initcadreReserveEchart();
         },
         beforeCreate() {}, //生命周期 - 创建之前
         beforeMount() {}, //生命周期 - 挂载之前

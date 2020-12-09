@@ -432,6 +432,7 @@ export default new Router({
       path: '/departselect',
       name: 'departselect',
       component: () => import('@/views/adresResultts/departselect'),
+      meta: { keepAlive: true }
     },
     {
       path: '/cadresInventory',
@@ -442,6 +443,7 @@ export default new Router({
       path: '/careerPath',
       name: 'careerPath',
       component: () => import('@/views/adresResultts/careerPath'),
+
     },
     {
       path: '/teamAtmosphere',

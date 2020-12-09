@@ -34,6 +34,10 @@
                     </div>
                 </van-col>
             </van-row>
+            <selctYearcurrent @yearChangeItem='JGGyearChange' :startYear='2017' :allPage='0'></selctYearcurrent>
+            <van-dropdown-menu>
+                <van-dropdown-item v-model="selectJGGtype" :options="selectJGGtypelist" @change='confirmJGG' />
+            </van-dropdown-menu>
             <div>
                 <div style="width: 100%; height: 400px">
                     <div ref="findCadreJGGinfoEchart" :style="{ width: '100%', height: '400px' }"></div>
@@ -81,6 +85,17 @@
             //这里存放数据
             return {
                 selectDownDept: '',
+                selectJGGtype: '',
+                selectJGGtypelist: [{
+                    text: '全部',
+                    value: ''
+                }, {
+                    text: '经理',
+                    value: '1'
+                }, {
+                    text: '总监',
+                    value: '2'
+                }],
                 downDeptlist: [],
                 showNodatas: false,
                 findCadreChartInfoUeryData: {
@@ -93,8 +108,8 @@
                 findCadreJGGinfoData: {
                     deptList: [],
                     isDown: 'Y',
-                    year: '2018',
-                    type: '1'
+                    year: '',
+                    type: ''
                 },
                 //坐标x值，y值
                 normX: 0,
@@ -322,57 +337,29 @@
                     }
                 })
             },
-            setRandomTree(minNum, maxNum, len, type) {
-                // debugger
-                // if (len) {
-                //     if (type == 'x') {
-                //         if (this.normX == maxNum) {
-                //             this.normX = minNum
-                //             return this.normX
-                //         } else {
-                //             if (len > 90) {
-                //                 this.normX = this.normX + 1
-                //             } else {
-                //                 this.normX = this.normX + 0.5
-                //             }
-                //             return this.normX
-                //         }
-                //     } else {
-                //         if (this.normY == minNum) {
-                //             this.normY = minNum
-                //             return this.normY
-                //         } else {
-                //             if (this.normX == maxNum) {
-                //                 this.normY = this.normY - 8
-                //                 return this.normY
-                //             } else {
-                //                 return this.normY
-                //             }
-                //         }
-                //     }
-                // }
-                if(this.normX == maxNum){
-                  this.normX = minNum
-                }else{
-
-                }
-                var max = 0,
-                    min = 0;
+            setRandomTree(minNum, maxNum, len, site) {
+                // let sites = Number(site) + 1
+                // let divisionNum = (maxNum - minNum) / len
+                // var max = minNum + (divisionNum * sites),
+                //     min = minNum + (divisionNum * (sites - 1));
+                let max = 0;
+                let min = 0;
                 minNum <= maxNum ? (min = minNum, max = maxNum) : (min = maxNum, max = minNum);
-                switch (arguments.length) {
-                    case 1:
-                        return Math.floor(Math.random() * (max + 1));
-                        break;
-                    case 2:
-                        return Math.floor(Math.random() * (max - min + 1) + min);
-                        break;
-                    case 3:
-                        return (Math.random() * (max - min) + min).toFixed(len);
-                        break;
-                    default:
-                        return Math.random();
-                        break;
-                }
+
+                // switch (arguments.length) {
+                //     case 1:
+                //         return Math.floor(Math.random() * (max + 1));
+                //         break;
+                //     case 2:
+                //         return Math.floor(Math.random() * (max - min + 1) + min);
+                //         break;
+                //     case 3:
+                return (Math.random() * (max - min) + min).toFixed(2);
+                //         break;
+                //     default:
+                //         return Math.random();
+                //         break;
+                // }
             },
             PointlistSet(listitem) {
                 let obj = {}
@@ -413,8 +400,8 @@
                         for (let i in oneobjList) {
                             // oneobjList[i].x = that.setRandomTree(0, 30, oneobjList.length, 'x')
                             // oneobjList[i].y = that.setRandomTree(0, 30, oneobjList.length, 'y')
-                            oneobjList[i].x = that.setRandomTree(0, 30, 2)
-                            oneobjList[i].y = that.setRandomTree(0, 30, 2)
+                            oneobjList[i].x = that.setRandomTree(0, 30, oneobjList.length, i)
+                            oneobjList[i].y = that.setRandomTree(0, 30, oneobjList.length, i)
                             onelist.push([oneobjList[i].x, oneobjList[i].y])
                             onePointlist.push(that.PointlistSet(oneobjList[i]))
                         }
@@ -426,8 +413,8 @@
                         for (let i in twoobjList) {
                             // twoobjList[i].x = that.setRandomTree(30, 60, twoobjList.length, 'x')
                             // twoobjList[i].y = that.setRandomTree(0, 30, twoobjList.length, 'y')
-                            twoobjList[i].y = that.setRandomTree(0, 30, 2)
-                            twoobjList[i].x = that.setRandomTree(30, 60, 2)
+                            twoobjList[i].y = that.setRandomTree(0, 30, twoobjList.length, i)
+                            twoobjList[i].x = that.setRandomTree(30, 60, twoobjList.length, i)
 
                             twolist.push([twoobjList[i].x, twoobjList[i].y])
                             twoPointlist.push(that.PointlistSet(twoobjList[i]))
@@ -441,8 +428,8 @@
                             // threeobjList[i].x = that.setRandomTree(0, 30, threeobjList.length, 'x')
 
                             // threeobjList[i].y = that.setRandomTree(30, 60, threeobjList.length, 'y')
-                            threeobjList[i].y = that.setRandomTree(30, 60, 2)
-                            threeobjList[i].x = that.setRandomTree(0, 30, 2)
+                            threeobjList[i].y = that.setRandomTree(30, 60, threeobjList.length, i)
+                            threeobjList[i].x = that.setRandomTree(0, 30, threeobjList.length, i)
 
                             threelist.push([threeobjList[i].x, threeobjList[i].y])
                             threePointlist.push(that.PointlistSet(threeobjList[i]))
@@ -456,8 +443,8 @@
                             // fourobjList[i].x = that.setRandomTree(60, 90, fourobjList.length, 'x')
 
                             // fourobjList[i].y = that.setRandomTree(0, 30, fourobjList.length, 'y')
-                            fourobjList[i].y = that.setRandomTree(0, 30, 2)
-                            fourobjList[i].x = that.setRandomTree(60, 90, 2)
+                            fourobjList[i].y = that.setRandomTree(0, 30, fourobjList.length, i)
+                            fourobjList[i].x = that.setRandomTree(60, 90, fourobjList.length, i)
 
                             fourlist.push([fourobjList[i].x, fourobjList[i].y])
                             fourPointlist.push(that.PointlistSet(fourobjList[i]))
@@ -468,12 +455,13 @@
                         that.normY = 60
                         // debugger
                         let fiveobjList = obj[key]
+                        debugger
                         for (let i in fiveobjList) {
                             // fiveobjList[i].x = that.setRandomTree(30, 60, fiveobjList.length, 'x')
 
                             // fiveobjList[i].y = that.setRandomTree(30, 60, fiveobjList.length, 'y')
-                            fiveobjList[i].y = that.setRandomTree(30, 60, 2)
-                            fiveobjList[i].x = that.setRandomTree(30, 60, 2)
+                            fiveobjList[i].y = that.setRandomTree(30, 60, fiveobjList.length, i)
+                            fiveobjList[i].x = that.setRandomTree(30, 60, fiveobjList.length, i)
 
                             fivelist.push([fiveobjList[i].x, fiveobjList[i].y])
                             fivePointlist.push(that.PointlistSet(fiveobjList[i]))
@@ -487,8 +475,8 @@
                             // sixobjList[i].x = that.setRandomTree(0, 30, sixobjList.length, 'x')
 
                             // sixobjList[i].y = that.setRandomTree(60, 90, sixobjList.length, 'y')
-                            sixobjList[i].y = that.setRandomTree(60, 90,2)
-                            sixobjList[i].x = that.setRandomTree(0, 30, 2)
+                            sixobjList[i].y = that.setRandomTree(60, 90, sixobjList.length, i)
+                            sixobjList[i].x = that.setRandomTree(0, 30, sixobjList.length, i)
 
                             sixlist.push([sixobjList[i].x, sixobjList[i].y])
                             sixPointlist.push(that.PointlistSet(sixobjList[i]))
@@ -502,8 +490,8 @@
                             // sevenobjList[i].x = that.setRandomTree(60, 90, sevenobjList.length, 'x')
 
                             // sevenobjList[i].y = that.setRandomTree(30, 60, sevenobjList.length, 'y')
-                            sevenobjList[i].y = that.setRandomTree(30, 60, 2)
-                            sevenobjList[i].x = that.setRandomTree(60, 90, 2)
+                            sevenobjList[i].y = that.setRandomTree(30, 60, sevenobjList.length, i)
+                            sevenobjList[i].x = that.setRandomTree(60, 90, sevenobjList.length, i)
 
                             sevenlist.push([sevenobjList[i].x, sevenobjList[i].y])
                             sevenPointlist.push(that.PointlistSet(sevenobjList[i]))
@@ -517,8 +505,8 @@
                             // eightobjList[i].x = that.setRandomTree(30, 60, eightobjList.length, 'x')
 
                             // eightobjList[i].y = that.setRandomTree(60, 90, eightobjList.length, 'y')
-                            eightobjList[i].y = that.setRandomTree(60, 90, 2)
-                            eightobjList[i].x = that.setRandomTree(30, 60, 2)
+                            eightobjList[i].y = that.setRandomTree(60, 90, eightobjList.length, i)
+                            eightobjList[i].x = that.setRandomTree(30, 60, eightobjList.length, i)
 
                             eightlist.push([eightobjList[i].x, eightobjList[i].y])
                             eightPointlist.push(that.PointlistSet(eightobjList[i]))
@@ -532,8 +520,8 @@
                             // nineobjList[i].x = that.setRandomTree(60, 90, nineobjList.length, 'x')
 
                             // nineobjList[i].y = that.setRandomTree(60, 90, nineobjList.length, 'y')
-                            nineobjList[i].y = that.setRandomTree(60, 90,2)
-                            nineobjList[i].x = that.setRandomTree(60, 90, 2)
+                            nineobjList[i].y = that.setRandomTree(60, 90, nineobjList.length, i)
+                            nineobjList[i].x = that.setRandomTree(60, 90, nineobjList.length, i)
 
                             ninelist.push([nineobjList[i].x, nineobjList[i].y])
                             ninePointlist.push(that.PointlistSet(nineobjList[i]))
@@ -1103,6 +1091,14 @@
                     ]
                 })
 
+            },
+            JGGyearChange(item) {
+                this.findCadreJGGinfoData.year = item
+                this.queryfindCadreJGGinfo()
+            },
+            confirmJGG(item) {
+                this.findCadreJGGinfoData.type = item
+                this.queryfindCadreJGGinfo()
             }
         },
         //生命周期 - 创建完成（可以访问当前this实例）

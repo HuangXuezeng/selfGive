@@ -190,7 +190,7 @@
             },
             //团队培育用的方法 选择时触发
             handleCheckChange(data, checked, indeterminate) {
-                // debugger
+                //
                 if (this.isSelctall) {} else {
                     // 如果不存在数组中，并且数组中已经有一个id并且checked为true的时候，代表不能再次选择。
                     if (data.deptId == this.onSelected) {
@@ -318,7 +318,7 @@
             },
             //点击确认按钮
             confirmNodeMeth() {
-                debugger
+
                 let selctArray = Array.from(this.selectkeySet);
                 let isDown = "";
                 if (this.isDownValue) {
@@ -346,17 +346,28 @@
                     this.selectedDepartment = this.beforeSelectName;
                 }
             },
-            restCareerPathName(value){
-              this.selectedDepartment = value
+            restCareerPathName(value) {
+                this.selectedDepartment = value
             },
             //全选按钮
             selctAllNodeMeth() {
                 if (!this.isDownValue) {
                     return;
                 }
-                this.$refs.tree.setCheckedKeys([this.deptData[0].deptId], false);
-                this.selectkeySet.clear();
-                this.selectkeySet.add(this.deptData[0].deptId);
+
+                if (this.deptData[0].deptId == 1) {
+                    this.$refs.tree.setCheckedKeys([this.deptData[0].deptId], false);
+                    this.selectkeySet.clear();
+                    this.selectkeySet.add(this.deptData[0].deptId);
+                } else {
+                    let deptIdlist = []
+                    this.selectkeySet.clear();
+                    for (let item of this.deptData) {
+                        deptIdlist.push(item.deptId)
+                        this.selectkeySet.add(item.deptId);
+                    }
+                    this.$refs.tree.setCheckedKeys(deptIdlist, false);
+                }
                 this.beforeSelectName = "全部";
             },
             //开关按钮方法
