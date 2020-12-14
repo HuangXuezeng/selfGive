@@ -10,6 +10,14 @@
         :swipeable='true'
       >
       <van-tab
+          title="数据看板"
+          replace
+          to="/dataBoard"
+          name="dataBoard"
+        >
+          </van-tab
+        >
+      <van-tab
           title="整体情况"
           replace
           to="/cadresChange"

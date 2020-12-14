@@ -450,6 +450,11 @@ export default new Router({
       name: 'teamAtmosphere',
       component: () => import('@/views/adresResultts/teamAtmosphere'),
     },
+    {
+      path: '/dataBoard',
+      name: 'dataBoard',
+      component: () => import('@/views/adresResultts/dataBoard'),
+    },
     /**
      * 干部简报结束
      */

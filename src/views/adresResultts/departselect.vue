@@ -53,17 +53,6 @@
             //这里存放数据
             return {
                 activeIndex: 0,
-                items: [{
-                        text: '浙江',
-                        children: [],
-                        dot: true
-                    },
-                    {
-                        text: '江苏',
-                        children: [],
-                        badge: 5
-                    },
-                ],
                 nextdept: [],
                 deptData: [],
                 animateShow: true,
@@ -80,6 +69,7 @@
         //方法集合
         methods: {
             init() {
+                //页面进行缓存了，以前的历史赋值逻辑作废
                 if (this.reselect) {
                     this.reselectHistory()
                 } else {
@@ -90,7 +80,7 @@
 
             // },
             reselectHistory() {
-                // debugger
+                //
                 let adresResultHistoryList = JSON.parse(localStorage.getItem("adresResultHistory"))
                 if (adresResultHistoryList != null && adresResultHistoryList.length) {
 
@@ -101,7 +91,7 @@
                     // if (this.noneDeptOne) {
                     //     this.processingField(adresResultHistoryList[0].deptData, 2)
                     // } else {
-                        this.processingField(this.deptData)
+                    this.processingField(this.deptData)
                     // }
                     this.historyList = adresResultHistoryList
                 }

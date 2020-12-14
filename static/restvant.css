@@ -141,13 +141,17 @@ input {
     background-color: #FF8C00;
     color: #fff;
 }
-.resetVantGrid .van-grid-item__text{
-  color: #fff;
+
+.resetVantGrid .van-grid-item__text {
+    color: #fff;
 }
+
 .resetVantGridAct .van-grid-item__content--center {
-  background-color:#00BFFF;
-  color: #fff;
+    background-color: #00BFFF;
+    color: #fff;
 }
+
 .resetVantGridAct .van-grid-item__text {
-  color: #fff;
+    color: #fff;
 }
+

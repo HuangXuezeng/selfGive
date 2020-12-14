@@ -122,18 +122,27 @@
         watch: {},
         //方法集合
         methods: {
+            // 数据初始化
             init() {
+                // 获取本地存储的部门id
                 this.readySelectDept = [JSON.parse(localStorage.getItem("adresResultDept")).deptId];
+                //获取本地存储的部门对象
                 this.readySelectDeptObj = JSON.parse(localStorage.getItem("adresResultDept"))
+                // 查询赋值部门信息
                 this.findCadreChartInfoUeryData.deptList = this.readySelectDept
+                // 干部雷达图下拉部门数据初始化
                 this.queryfindCadreChartDownDeptInfo()
+                //干部雷达图数据初始化
                 this.queryfindCadreChartInfo()
+                // 九宫格数据初始化
                 this.queryfindCadreJGGinfo()
             },
+            // 年份改变事件
             yearChange(item) {
                 this.findCadreChartInfoUeryData.year = item
                 this.queryfindCadreChartInfo()
             },
+            //干部雷达图下拉部门数据
             queryfindCadreChartDownDeptInfo() {
                 findCadreChartDownDeptInfo({
                     deptList: this.readySelectDept
@@ -152,14 +161,13 @@
                             text: this.readySelectDeptObj.text
                         })
                         this.selectDownDept = this.downDeptlist[0].value
-                        // Toast.fail(res.msg);
-                        // this.showNodatas = true
                     }
 
                 })
             },
+            // 点击下拉部门事件
             confirmDept(item) {
-                // debugger
+                //
                 this.findCadreChartInfoUeryData.deptList = [item]
                 this.queryfindCadreChartInfo()
             },
@@ -177,6 +185,7 @@
                     }
                 })
             },
+            // 干部雷达图echarts渲染
             initfindCadreChartInfoEchart(list) {
                 var myChart = this.$echarts.init(this.$refs.findCadreChartInfoEchart);
                 let upLevelList = [];
@@ -326,6 +335,7 @@
                     }]
                 })
             },
+            // 九宫格数据
             queryfindCadreJGGinfo() {
                 this.findCadreJGGinfoData.deptList = this.readySelectDept
                 findCadreJGGinfo(this.findCadreJGGinfoData).then(res => {
@@ -337,30 +347,14 @@
                     }
                 })
             },
+            //九宫格散点图位置处理
             setRandomTree(minNum, maxNum, len, site) {
-                // let sites = Number(site) + 1
-                // let divisionNum = (maxNum - minNum) / len
-                // var max = minNum + (divisionNum * sites),
-                //     min = minNum + (divisionNum * (sites - 1));
                 let max = 0;
                 let min = 0;
                 minNum <= maxNum ? (min = minNum, max = maxNum) : (min = maxNum, max = minNum);
-
-                // switch (arguments.length) {
-                //     case 1:
-                //         return Math.floor(Math.random() * (max + 1));
-                //         break;
-                //     case 2:
-                //         return Math.floor(Math.random() * (max - min + 1) + min);
-                //         break;
-                //     case 3:
                 return (Math.random() * (max - min) + min).toFixed(2);
-                //         break;
-                //     default:
-                //         return Math.random();
-                //         break;
-                // }
             },
+            //九宫格散点图姓名标注处理
             PointlistSet(listitem) {
                 let obj = {}
                 obj.name = `姓名：${ listitem.name}<br/>年龄：${listitem.age}<br/>职级：${listitem.zj}<br/>象限：${listitem.jgg}<br/>`
@@ -369,6 +363,7 @@
                 obj.yAxis = listitem.y
                 return obj
             },
+            //九宫格散点图渲染图
             initfindCadreJGGinfoEchart(obj) {
                 var that = this
                 var myChart = this.$echarts.init(this.$refs.findCadreJGGinfoEchart);
@@ -392,7 +387,7 @@
                 let ninePointlist = []
                 Object.keys(obj).forEach((key) => {
                     console.log(key, obj[key]);
-                    // debugger
+                    //
                     if (key == 'one') {
                         that.normX = 0
                         that.normY = 30
@@ -453,9 +448,9 @@
                     if (key == 'five') {
                         that.normX = 30
                         that.normY = 60
-                        // debugger
+                        //
                         let fiveobjList = obj[key]
-                        debugger
+
                         for (let i in fiveobjList) {
                             // fiveobjList[i].x = that.setRandomTree(30, 60, fiveobjList.length, 'x')
 
@@ -634,7 +629,8 @@
                         // }
                     },
                     dataZoom: {
-                        type: 'inside'
+                        type: 'inside',
+                        // xAxisIndex: [0]
                     },
 
                     toolbox: {
@@ -1092,10 +1088,12 @@
                 })
 
             },
+            //九宫格年份改变事件
             JGGyearChange(item) {
                 this.findCadreJGGinfoData.year = item
                 this.queryfindCadreJGGinfo()
             },
+            //九宫格职位改变事件
             confirmJGG(item) {
                 this.findCadreJGGinfoData.type = item
                 this.queryfindCadreJGGinfo()

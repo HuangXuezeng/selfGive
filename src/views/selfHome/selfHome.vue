@@ -283,8 +283,8 @@
         created() {
             localStorage.clear();
             // debugger
-            // localStorage.setItem("jobNum", 6006212); //liu
-            localStorage.setItem("jobNum", 6005506); //li
+            localStorage.setItem("jobNum", 6006212); //liu
+            // localStorage.setItem("jobNum", 6005506); //li
             // localStorage.setItem('jobNum',9085360)
             // localStorage.setItem('jobNum',9107021)
             // localStorage.setItem('jobNum',9078825)
