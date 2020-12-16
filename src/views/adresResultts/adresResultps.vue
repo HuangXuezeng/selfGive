@@ -49,8 +49,10 @@
                         </div>
                     </van-col>
                 </van-row>
-                <van-row  type="flex" justify="center">
-                    <van-col > <div style="font-size:14px;color:#DC143C;font-weight:700"> 整体情况:青苗占比:{{youngPct}}</div> </van-col>
+                <van-row type="flex" justify="center">
+                    <van-col>
+                        <div style="font-size:14px;color:#DC143C;font-weight:700"> 整体情况:青苗占比:{{youngPct}}</div>
+                    </van-col>
                 </van-row>
 
                 <div>
@@ -68,8 +70,10 @@
                         </div>
                     </van-col>
                 </van-row>
-                <van-row  type="flex" justify="center">
-                    <van-col > <div style="font-size:14px;color:#DC143C;font-weight:700"> 整体情况:本科及以上占比:{{eduPct}}</div> </van-col>
+                <van-row type="flex" justify="center">
+                    <van-col>
+                        <div style="font-size:14px;color:#DC143C;font-weight:700"> 整体情况:本科及以上占比:{{eduPct}}</div>
+                    </van-col>
                 </van-row>
                 <div>
                     <div style="width: 100%; height: 300px">
@@ -86,8 +90,10 @@
                         </div>
                     </van-col>
                 </van-row>
-                <van-row  type="flex" justify="center">
-                    <van-col > <div style="font-size:14px;color:#DC143C;font-weight:700"> 男女比例:{{sexProportion}}</div> </van-col>
+                <van-row type="flex" justify="center">
+                    <van-col>
+                        <div style="font-size:14px;color:#DC143C;font-weight:700"> 男女比例:{{sexProportion}}</div>
+                    </van-col>
                 </van-row>
                 <div>
                     <div style="width: 100%; height: 300px">
@@ -96,18 +102,19 @@
                 </div>
             </div>
             <div>
-                <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '80%' }" get-container="body">
-                    <van-row type="flex" justify="center" style="margin-bottom: 10px">
-                        <van-col>
-                            <div class="titleRightInfo">
-                                {{ titleRight }}
-                            </div>
-                        </van-col>
-                    </van-row>
-                    <div v-for="(item, index) in vancellList" :key="index">
-                        <van-cell :title="item.title" is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)" />
-                    </div>
-                    <v-table ref="rightInfoTable" is-horizontal-resize :is-loading="isLoading" columns-width-drag :height="400" style="width: 100%; font-size: 14px" title-bg-color="#ccc" :columns="popupColumns" :table-data="rightInfoData" row-hover-color="#eee" row-click-color="#edf7ff"></v-table>
+                <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '80%', }" get-container="body">
+                        <van-row type="flex" justify="center" style="margin-bottom: 10px">
+                            <van-col>
+                                <div class="titleRightInfo">
+                                    {{ titleRight }}
+                                </div>
+                            </van-col>
+                        </van-row>
+                        <div v-for="(item, index) in vancellList" :key="index">
+                            <van-cell :title="item.title" is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)" />
+                        </div>
+                        <v-table ref="rightInfoTable" is-horizontal-resize :is-loading="isLoading" columns-width-drag :height="400" style="width: 100%; font-size: 14px" title-bg-color="#ccc" :columns="popupColumns" :table-data="rightInfoData" row-hover-color="#eee" row-click-color="#edf7ff" ></v-table>
+
                 </van-popup>
             </div>
         </div>
@@ -339,11 +346,11 @@
                 // 请求的原始数据
                 reportFbInfoData: {},
                 // 青苗百分比
-                youngPct:'',
+                youngPct: '',
                 // 学历百分比
-                eduPct:'',
+                eduPct: '',
                 // 男女比例
-                sexProportion:""
+                sexProportion: "",
             };
         },
         created() {
@@ -393,6 +400,7 @@
                         deptList: [],
                         isDown: "Y",
                         year: "",
+                        bzType:'Y'
                     };
                 }
                 queryData.deptList = this.readySelectDept
@@ -406,7 +414,11 @@
                         this.sexDistributionMeth(res.obj.sex)
                         this.workAgeTable()
                         this.ageTable()
-                        let {youngPct,eduPct,sexProportion} = res.obj
+                        let {
+                            youngPct,
+                            eduPct,
+                            sexProportion
+                        } = res.obj
                         this.youngPct = youngPct
                         this.eduPct = eduPct
                         this.sexProportion = sexProportion
@@ -422,6 +434,7 @@
                     deptList: [],
                     isDown: "Y",
                     year: item,
+                    bzType:'Y'
                 };
                 queryData.deptList = this.readySelectDept
                 this.queryFindCadreReportFbInfo(queryData);
@@ -914,7 +927,7 @@
                     // },
                     legend: {
                         data: ['男', '女'],
-                         top: '3%'
+                        top: '3%'
                     },
                     series: [{
                         name: '性别',

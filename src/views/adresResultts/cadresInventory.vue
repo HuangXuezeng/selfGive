@@ -365,6 +365,7 @@
             },
             //九宫格散点图渲染图
             initfindCadreJGGinfoEchart(obj) {
+              debugger
                 var that = this
                 var myChart = this.$echarts.init(this.$refs.findCadreJGGinfoEchart);
                 let onelist = []

@@ -14,6 +14,7 @@
                             <van-cell :title="item.text" icon="friends-o" v-for="(item,index) in nextdept" :key="index">
                                 <!-- 使用 right-icon 插槽来自定义右侧图标 -->
                                 <template #right-icon>
+                                    <van-switch v-model="checked" size="12px" v-if="item.text =='国内营销事业部'"/>
                                     <van-button type="primary" size="small" @click="selectNext(item)" v-if="item.children != null && item.children.length != 0">子部门</van-button>
                                     <van-button type="info" size="small" @click="confirmDept(item)">进入</van-button>
                                 </template>
@@ -35,7 +36,8 @@
     import {
         Card,
         Toast,
-        NavBar
+        NavBar,
+        Switch
     } from "vant";
     import {
         findIsHaveCadreInDept
@@ -59,7 +61,8 @@
                 historyList: [],
                 reselect: '',
                 noneDeptOne: 0,
-                leftIndexrecord: 0
+                leftIndexrecord: 0,
+                checked:true
             };
         },
         //监听属性 类似于data概念
@@ -246,7 +249,7 @@
                 }).then(res => {
                     //
                     if (res.obj == "Y") {
-                        let activeTab = localStorage.getItem("activeTab") || 'cadresChange'
+                        let activeTab = localStorage.getItem("activeTab") || 'dataBoard'
                         localStorage.setItem('adresResultDept', JSON.stringify(item))
                         localStorage.setItem('adresResultHistory', JSON.stringify(this.historyList))
 
@@ -264,7 +267,7 @@
                     Toast.fail('请至少选择一个部门');
                     return
                 }
-                let activeTab = localStorage.getItem("activeTab") || 'cadresChange'
+                let activeTab = localStorage.getItem("activeTab") || 'dataBoard'
                 this.$router.push({
                     name: activeTab,
                 })

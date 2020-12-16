@@ -28,11 +28,11 @@
             },
             hexHeight: {
                 type: Number,
-                default: 105
+                default: 90
             },
             hexWidth: {
                 type: Number,
-                default: 80
+                default: 60
             },
             showStr: {
                 type: String,
@@ -113,11 +113,11 @@
 
     .positionStr {
         position: absolute;
-        top: 34%;
-        left: 29%;
+        top: 32%;
+        left: 22%;
         width: 40px;
         font-size: 17px;
-        color #fff
+        color: #fff;
     }
 
 

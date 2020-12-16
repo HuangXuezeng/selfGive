@@ -225,17 +225,23 @@
                     isDown: "Y",
                     oneDeptList: [],
                     year: "",
+                    bzType: 'Y',
+
                 },
                 queryYearChangeObj: {
                     jobnumber: localStorage.getItem("jobNum"),
                     deptList: [],
                     isDown: "Y",
                     oneDeptList: [],
+                    bzType: 'Y',
+
                 },
                 queryYearManagementrange: {
                     jobnumber: localStorage.getItem("jobNum"),
                     deptList: [],
                     isDown: "Y",
+                    bzType: 'Y',
+
                 },
                 readySelectDept: [],
                 findCadreTeamFwInfoData: {
@@ -245,7 +251,9 @@
                 findCadreReportZJFbInfoData: {
                     deptList: [],
                     isDown: 'Y',
-                    year: ''
+                    year: '',
+                    bzType: 'Y',
+
                 },
                 showRightInfo: false,
                 vancellList: [],
@@ -343,7 +351,7 @@
         methods: {
             //数据初始化
             init() {
-                
+
                 // 从本地存储数据中获取权限部门信息
                 this.readySelectDept = [JSON.parse(localStorage.getItem("adresResultDept")).deptId];
                 // 接口需要传一级或二级部门的deptid
@@ -523,6 +531,7 @@
                         deptList: [],
                         isDown: "Y",
                         oneDeptList: [],
+                        bzType: 'Y',
                         year: this.selecYear + this.selecMoth,
                     };
                 }
@@ -595,6 +604,8 @@
                         deptList: [],
                         isDown: "Y",
                         oneDeptList: [],
+                        bzType: 'Y',
+
                     };
                 }
                 queryData.deptList = this.readySelectDept
