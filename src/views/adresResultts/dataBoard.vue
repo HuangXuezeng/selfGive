@@ -55,7 +55,7 @@
                         <div style="position:relative" v-show="atmosphereFlag">
                             <span class="zuzhi" style="top:-19vh">组织氛围</span>
                             <div>
-                                <img :src="weatherSrc" alt="" class="weatherSty" style="top:-16vh">
+                                <img :src="weatherSrc" alt="" class="weatherSty" style="top:-16vh" v-if="weatherSrc">
                                 <div class="zuzhiatostr" style="top:-10vh">{{weatherStr}}</div>
                             </div>
                         </div>
@@ -149,7 +149,8 @@
                 findCadreHomePageInfoData: {
                     jobnumber: '',
                     deptList: [],
-                    isDown: 'Y'
+                    isDown: 'Y',
+                    bzType: 'Y'
                 },
                 weatherStr: '',
                 delayTime: {
@@ -161,7 +162,8 @@
                     pandian: 0,
                     fenwei: 0,
                 },
-                hexagonalFlag: false
+                hexagonalFlag: false,
+                bzType: ''
             };
         },
         //监听属性 类似于data概念
@@ -172,7 +174,6 @@
         methods: {
             queryfindCadreHomePageInfo() {
                 var that = this
-
                 findCadreHomePageInfo(this.findCadreHomePageInfoData).then(res => {
 
                     if (res.code == "1000") {
@@ -186,7 +187,7 @@
                             fenWei,
                             glfd,
                             highXl,
-                            jingli,
+                            monthLossjingli,
                             monthLoss,
                             nineXX,
                             oneXX,
@@ -197,64 +198,64 @@
                             zongjian,
                         } = res.obj
                         this.silinglist = [{
-                            value: `平均司龄:${avgJobAge}`,
+                            value: `平均司龄:${avgJobAge ? avgJobAge : 0}`,
                             siling: false
                         }, {
-                            value: `平均年龄:${avgAge}`,
+                            value: `平均年龄:${avgAge ? avgAge : 0}`,
                             siling: false
                         }, {
-                            value: `本科及以上:${highXl}`,
+                            value: `本科及以上:${highXl ? highXl : 0}`,
                             siling: false
                         }, {
-                            value: `青苗干部:${youngCadre}`,
+                            value: `青苗干部:${youngCadre ? youngCadre : 0}`,
                             siling: false
                         }, ]
                         this.zaibianlist = [{
-                            value: `当前在编:${dqzb}`,
+                            value: `当前在编:${dqzb ? dqzb : 0 }`,
                             zaibian: false
                         }, {
-                            value: `平均在编:${dqzb}`,
+                            value: `平均在编:${pjzb ? pjzb : 0}`,
                             zaibian: false
                         }, {
-                            value: `管理幅度:${glfd}`,
+                            value: `管理幅度:${glfd ? glfd : 0}`,
                             zaibian: false
                         }, ]
                         this.delayTime.zhengti = this.delayTime.jiegou + Number(this.silinglist.length) * 50
                         this.leibielist = [{
-                            value: `M类:${countM}`,
+                            value: `M类:${countM ? countM : 0}`,
                             leibie: false
                         }, {
-                            value: `P类:${countP}`,
+                            value: `P类:${countP ? countP : 0}`,
                             leibie: false
                         }, {
-                            value: `S类:${countS}`,
+                            value: `S类:${countS ? countS : 0}`,
                             leibie: false
                         }, {
-                            value: `总监级:${zongjian}`,
+                            value: `总监级:${zongjian ? zongjian : 0}`,
                             leibie: false
                         }, {
-                            value: `经理级:${jingli}`,
+                            value: `经理级:${monthLossjingli ? monthLossjingli : 0}`,
                             leibie: false
                         }, ]
                         this.delayTime.cengji = this.delayTime.zhengti + Number(this.zaibianlist.length) * 50
                         this.liushilist = [{
-                            value: `月均流失率:${monthLoss}`,
+                            value: `月均流失率:${monthLoss  ? monthLoss : 0}`,
                             liushi: false
                         }, {
-                            value: `年均流失率:${yearLoss}`,
+                            value: `年均流失率:${yearLoss ? yearLoss : 0}`,
                             liushi: false
                         }, ]
                         this.delayTime.baoliu = this.delayTime.cengji + Number(this.leibielist.length) * 50
                         this.chubeilist = [{
-                            value: `一年内可用:${oneYearWorker}`,
+                            value: `一年内可用:${oneYearWorker ? oneYearWorker : 0}`,
                             chubei: false
                         }, ]
                         this.delayTime.chubei = this.delayTime.baoliu + Number(this.liushilist.length) * 50
                         this.pandianlist = [{
-                            value: `第一象限:<br/>${oneXX}`,
+                            value: `第一象限:<br/>${oneXX ? oneXX : 0}`,
                             pandian: false
                         }, {
-                            value: `第九象限:<br/>${nineXX}`,
+                            value: `第九象限:<br/>${nineXX ? nineXX : 0}`,
                             pandian: false
                         }, ]
                         this.delayTime.pandian = this.delayTime.chubei + Number(this.chubeilist.length) * 50
@@ -277,9 +278,10 @@
                                 this.weatherSrc = require("@/assets/多云.png");
                                 break;
                             case '晴天':
-                                this.weatherSrc = require("@/assets/图片1.png");
+                                this.weatherSrc = require("@/assets/晴天.png");
                                 break;
                             default:
+                                // this.weatherSrc = ''
                                 break;
                         }
                     } else {
@@ -357,9 +359,10 @@
         //生命周期 - 挂载完成（可以访问DOM元素）
         mounted() {
             this.$refs.adresResultsTanbber.changtab("dataBoard");
-
             this.findCadreHomePageInfoData.deptList = [JSON.parse(localStorage.getItem("adresResultDept")).deptId]
             this.findCadreHomePageInfoData.jobnumber = localStorage.getItem("jobNum")
+            this.bzType = localStorage.getItem("bzType")
+            this.findCadreHomePageInfoData.bzType = this.bzType
             this.queryfindCadreHomePageInfo()
         },
         beforeCreate() {}, //生命周期 - 创建之前

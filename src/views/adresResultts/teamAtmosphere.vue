@@ -58,8 +58,10 @@
                 readySelectDept: [],
                 findCadreTeamFwInfoData: {
                     deptList: [],
-                    year: ''
+                    year: '',
+                    bzType:'Y'
                 },
+                bzType:''
             };
         },
         //监听属性 类似于data概念
@@ -72,6 +74,8 @@
             init() {
                 // 获取本地存储的部门id
                 this.readySelectDept = [JSON.parse(localStorage.getItem("adresResultDept")).deptId];
+                this.bzType = localStorage.getItem("bzType")
+                this.findCadreTeamFwInfoData.bzType = this.bzType
                 // 查询氛围数据
                 this.queryfindCadreTeamFwInfo()
             },

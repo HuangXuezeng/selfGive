@@ -115,19 +115,24 @@
             return {
                 findCadreGrowInfoData: {
                     deptList: [],
-                    jobnumber: ''
+                    jobnumber: '',
+                    bzType:'Y'
 
                 },
                 readySelectDept: [],
                 findThisDeptWorkerInfoData: {
                     deptList: [],
-                    a0188: ''
+                    a0188: '',
+                    bzType:'Y'
+
                 },
                 findCadreGrowInfoBySearchData: {
                     jobnumber: '',
                     deptList: [],
                     isDown: 'Y',
-                    jobnumber1: ''
+                    jobnumber1: '',
+                    bzType:'Y'
+
                 },
                 deptJobnum: [],
                 choseName: '',
@@ -139,7 +144,8 @@
                 refreshSearch: 1,
                 filtrateFlag: false,
                 deptData: [],
-                readySelectObj: {}
+                readySelectObj: {},
+                bzType: ''
             };
         },
         //监听属性 类似于data概念
@@ -154,6 +160,10 @@
                 this.readySelectDept = [JSON.parse(localStorage.getItem("adresResultDept")).deptId];
                 //获取本地存储的部门对象
                 this.readySelectObj = JSON.parse(localStorage.getItem("adresResultDept"))
+                this.bzType = localStorage.getItem("bzType")
+                this.findCadreGrowInfoData.bzType = this.bzType
+                this.findThisDeptWorkerInfoData.bzType = this.bzType
+                this.findCadreGrowInfoBySearchData.bzType = this.bzType
                 // 职业路径数据
                 this.queryfindCadreGrowInfo()
                 // 查询部门右边弹窗部门信息
@@ -448,7 +458,7 @@
                 this.findCadreGrowInfoBySearchData.deptList = data
                 this.queryfindCadreGrowInfoBySearch(1)
             },
-             // 右边弹窗点击人员格点击事件
+            // 右边弹窗点击人员格点击事件
             checkRichClick(obj) {
                 for (let item of this.searchJobList) {
                     if (item.name == obj.name) {

@@ -337,7 +337,7 @@
                         isResize: true,
                     },
                 ],
-
+                bzType:''
             };
         },
         created() {
@@ -361,6 +361,11 @@
                         this.readyOneSelectDept = this.readySelectDept
                     }
                 }
+                this.bzType =  localStorage.getItem("bzType")
+                this.queryObj.bzType = this.bzType
+                this.queryYearChangeObj.bzType = this.bzType
+                this.queryYearManagementrange.bzType = this.bzType
+                this.findCadreReportZJFbInfoData.bzType = this.bzType
                 //设定月份
                 this.getMoth();
                 //获取最新年份
@@ -371,6 +376,7 @@
                 this.queryfindCadreRepotrRangeInfo();
                 // 职级分布数据初始化
                 this.queryfindCadreReportZJFbInfo()
+
             },
             // 年份变化事件
             yearChange(year) {
@@ -531,7 +537,7 @@
                         deptList: [],
                         isDown: "Y",
                         oneDeptList: [],
-                        bzType: 'Y',
+                        bzType: this.bzType,
                         year: this.selecYear + this.selecMoth,
                     };
                 }
@@ -604,7 +610,7 @@
                         deptList: [],
                         isDown: "Y",
                         oneDeptList: [],
-                        bzType: 'Y',
+                        bzType: this.bzType,
 
                     };
                 }

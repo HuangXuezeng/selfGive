@@ -116,13 +116,15 @@
                     jobnumber: localStorage.getItem("jobNum"),
                     deptList: [],
                     isDown: "Y",
+                    bzType:'Y'
                 },
                 readySelectDept: [],
                 readySelectDeptObj: {},
                 findCadreChartInfoUeryData: {
                     deptList: [],
                     year: "",
-                    isDown: 'Y'
+                    isDown: 'Y',
+                    bzType:'Y'
                 },
                 showNodatas: false,
                 downDeptlist: [],
@@ -131,7 +133,8 @@
                     jobnumber: '',
                     deptList: [],
                     isDown: 'Y',
-                    year: ''
+                    year: '',
+                    bzType:'Y'
                 },
                 // 右弹窗显示控制
                 showRightInfo: false,
@@ -221,6 +224,7 @@
                 csdPct: '',
                 lossAvgPct: "",
                 LossInfoRes: [],
+                bzType:''
             };
         },
         //监听属性 类似于data概念
@@ -237,6 +241,10 @@
                 this.readySelectDeptObj = JSON.parse(localStorage.getItem("adresResultDept"))
                 // 查询赋值部门信息
                 this.findCadreChartInfoUeryData.deptList = this.readySelectDept
+                this.bzType =  localStorage.getItem("bzType")
+                this.findCadresLossInfoData.bzType = this.bzType
+                this.querycadreReserve.bzType = this.bzType
+                this.findCadresLossInfoData.bzType = this.bzType
                 //查询干部储备情况
                 this.queryfindCadreReportReserveInfo()
                 //查询流失率

@@ -101,7 +101,8 @@
                 findCadreChartInfoUeryData: {
                     deptList: [],
                     year: "",
-                    isDown: 'Y'
+                    isDown: 'Y',
+                    bzType: 'Y'
                 },
                 readySelectDept: "",
                 readySelectDeptObj: {},
@@ -109,11 +110,13 @@
                     deptList: [],
                     isDown: 'Y',
                     year: '',
-                    type: ''
+                    type: '',
+                    bzType: 'Y'
                 },
                 //坐标x值，y值
                 normX: 0,
-                normY: 0
+                normY: 0,
+                bzType: ''
             };
         },
         //监听属性 类似于data概念
@@ -130,6 +133,9 @@
                 this.readySelectDeptObj = JSON.parse(localStorage.getItem("adresResultDept"))
                 // 查询赋值部门信息
                 this.findCadreChartInfoUeryData.deptList = this.readySelectDept
+                this.bzType = localStorage.getItem("bzType")
+                this.findCadreChartInfoUeryData.bzType = this.bzType
+                this.findCadreJGGinfoData.bzType = this.bzType
                 // 干部雷达图下拉部门数据初始化
                 this.queryfindCadreChartDownDeptInfo()
                 //干部雷达图数据初始化
@@ -145,7 +151,8 @@
             //干部雷达图下拉部门数据
             queryfindCadreChartDownDeptInfo() {
                 findCadreChartDownDeptInfo({
-                    deptList: this.readySelectDept
+                    deptList: this.readySelectDept,
+                    bzType: this.bzType
                 }).then(res => {
                     if (res.code == "1000") {
                         this.downDeptlist = JSON.parse(JSON.stringify(res.obj).replace(/deptId/g, 'value'))
@@ -363,9 +370,24 @@
                 obj.yAxis = listitem.y
                 return obj
             },
+            // 简略模式设置
+            briefPointList(item, minobj, maxobj) {
+                if (item) {
+
+                } else {
+                    // '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'jgg
+                    // let resList = [{
+                    //     name: minobj.value,
+                    //     value: minobj.value,
+                    //     xAxis: maxobj.x/2,
+                    //     yAxis: maxobj.x
+                    // }, ]
+                    // return resList
+                }
+            },
             //九宫格散点图渲染图
             initfindCadreJGGinfoEchart(obj) {
-              debugger
+                debugger
                 var that = this
                 var myChart = this.$echarts.init(this.$refs.findCadreJGGinfoEchart);
                 let onelist = []
@@ -386,6 +408,43 @@
                 let sevenPointlist = []
                 let eightPointlist = []
                 let ninePointlist = []
+                //                 eight: [{…}]
+                // eightCount: 1
+                // eightPct: "5.6%"
+                // five: (6) [{…}, {…}, {…}, {…}, {…}, {…}]
+                // fiveCount: 6
+                // fivePct: "33.3%"
+                // four: []
+                // fourCount: 0
+                // fourPct: "0.0%"
+                // nine: (4) [{…}, {…}, {…}, {…}]
+                // nineCount: 4
+                // ninePct: "22.2%"
+                // one: []
+                // oneCount: 0
+                // onePct: "0.0%"
+                // seven: (4) [{…}, {…}, {…}, {…}]
+                // sevenCount: 4
+                // sevenPct: "22.2%"
+                // six: []
+                // sixCount: 0
+                // sixPct: "0.0%"
+                // three: []
+                // threeCount: 0
+                // threePct: "0.0%"
+                // two: (3) [{…}, {…}, {…}]
+                // twoCount: 3
+                // twoPct: "16.7%"
+                // 显示模式切换
+                let briefFlag = false
+                for (let ksy in obj) {
+                    if (ksy == 'oneCount' || ksy == 'twoCount' || ksy == 'threeCount' || ksy == 'fourCount' || ksy == 'fiveCount' || ksy == 'sixCount' || ksy == 'sevenCount' || ksy == 'eightCount' || ksy == 'nineCount') {
+                        if (Number(obj[ksy]) > 5) {
+                            briefFlag = true
+                            break
+                        }
+                    }
+                }
                 Object.keys(obj).forEach((key) => {
                     console.log(key, obj[key]);
                     //
@@ -393,135 +452,407 @@
                         that.normX = 0
                         that.normY = 30
                         let oneobjList = obj[key]
-                        for (let i in oneobjList) {
-                            // oneobjList[i].x = that.setRandomTree(0, 30, oneobjList.length, 'x')
-                            // oneobjList[i].y = that.setRandomTree(0, 30, oneobjList.length, 'y')
-                            oneobjList[i].x = that.setRandomTree(0, 30, oneobjList.length, i)
-                            oneobjList[i].y = that.setRandomTree(0, 30, oneobjList.length, i)
-                            onelist.push([oneobjList[i].x, oneobjList[i].y])
-                            onePointlist.push(that.PointlistSet(oneobjList[i]))
+                        if (!briefFlag) {
+                            for (let i in oneobjList) {
+                                oneobjList[i].x = that.setRandomTree(0, 30, oneobjList.length, i)
+                                oneobjList[i].y = that.setRandomTree(0, 30, oneobjList.length, i)
+                                onelist.push([oneobjList[i].x, oneobjList[i].y])
+                                onePointlist.push(that.PointlistSet(oneobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 0,
+                                yrange: 0,
+
+                            }
+                            let y = {
+                                xrange: 30,
+                                yrange: 30,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                onePointlist.push({
+                                    name: obj.onePct,
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + '',
+                                    value: obj.onePct
+                                })
+                                onelist = [
+                                    [x.xrange, y.yrange]
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                onelist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'two') {
                         that.normX = 30
                         that.normY = 30
                         let twoobjList = obj[key]
-                        for (let i in twoobjList) {
-                            // twoobjList[i].x = that.setRandomTree(30, 60, twoobjList.length, 'x')
-                            // twoobjList[i].y = that.setRandomTree(0, 30, twoobjList.length, 'y')
-                            twoobjList[i].y = that.setRandomTree(0, 30, twoobjList.length, i)
-                            twoobjList[i].x = that.setRandomTree(30, 60, twoobjList.length, i)
+                        if (!briefFlag) {
+                            for (let i in twoobjList) {
+                                // twoobjList[i].x = that.setRandomTree(30, 60, twoobjList.length, 'x')
+                                // twoobjList[i].y = that.setRandomTree(0, 30, twoobjList.length, 'y')
+                                twoobjList[i].y = that.setRandomTree(0, 30, twoobjList.length, i)
+                                twoobjList[i].x = that.setRandomTree(30, 60, twoobjList.length, i)
 
-                            twolist.push([twoobjList[i].x, twoobjList[i].y])
-                            twoPointlist.push(that.PointlistSet(twoobjList[i]))
+                                twolist.push([twoobjList[i].x, twoobjList[i].y])
+                                twoPointlist.push(that.PointlistSet(twoobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 0,
+                                yrange: 30,
+
+                            }
+                            let y = {
+                                xrange: 30,
+                                yrange: 60,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                twoPointlist.push({
+                                    name: obj.twoPct,
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + '',
+                                    value: obj.twoPct,
+
+                                })
+                                twolist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                twolist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'three') {
                         that.normX = 0
                         that.normY = 60
                         let threeobjList = obj[key]
-                        for (let i in threeobjList) {
-                            // threeobjList[i].x = that.setRandomTree(0, 30, threeobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in threeobjList) {
+                                // threeobjList[i].x = that.setRandomTree(0, 30, threeobjList.length, 'x')
 
-                            // threeobjList[i].y = that.setRandomTree(30, 60, threeobjList.length, 'y')
-                            threeobjList[i].y = that.setRandomTree(30, 60, threeobjList.length, i)
-                            threeobjList[i].x = that.setRandomTree(0, 30, threeobjList.length, i)
+                                // threeobjList[i].y = that.setRandomTree(30, 60, threeobjList.length, 'y')
+                                threeobjList[i].y = that.setRandomTree(30, 60, threeobjList.length, i)
+                                threeobjList[i].x = that.setRandomTree(0, 30, threeobjList.length, i)
 
-                            threelist.push([threeobjList[i].x, threeobjList[i].y])
-                            threePointlist.push(that.PointlistSet(threeobjList[i]))
+                                threelist.push([threeobjList[i].x, threeobjList[i].y])
+                                threePointlist.push(that.PointlistSet(threeobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 30,
+                                yrange: 0,
+
+                            }
+                            let y = {
+                                xrange: 60,
+                                yrange: 30,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                threePointlist.push({
+                                    name: obj.threePct,
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + '',
+                                    value: obj.threePct,
+
+                                })
+                                threelist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                threelist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'four') {
                         that.normX = 60
                         that.normY = 30
                         let fourobjList = obj[key]
-                        for (let i in fourobjList) {
-                            // fourobjList[i].x = that.setRandomTree(60, 90, fourobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in fourobjList) {
+                                // fourobjList[i].x = that.setRandomTree(60, 90, fourobjList.length, 'x')
 
-                            // fourobjList[i].y = that.setRandomTree(0, 30, fourobjList.length, 'y')
-                            fourobjList[i].y = that.setRandomTree(0, 30, fourobjList.length, i)
-                            fourobjList[i].x = that.setRandomTree(60, 90, fourobjList.length, i)
+                                // fourobjList[i].y = that.setRandomTree(0, 30, fourobjList.length, 'y')
+                                fourobjList[i].y = that.setRandomTree(0, 30, fourobjList.length, i)
+                                fourobjList[i].x = that.setRandomTree(60, 90, fourobjList.length, i)
 
-                            fourlist.push([fourobjList[i].x, fourobjList[i].y])
-                            fourPointlist.push(that.PointlistSet(fourobjList[i]))
+                                fourlist.push([fourobjList[i].x, fourobjList[i].y])
+                                fourPointlist.push(that.PointlistSet(fourobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 0,
+                                yrange: 60,
+
+                            }
+                            let y = {
+                                xrange: 30,
+                                yrange: 90,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                fourPointlist.push({
+                                    name: obj.fourPct,
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + '',
+                                    value: obj.fourPct,
+
+                                })
+                                fourlist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                fourlist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'five') {
                         that.normX = 30
                         that.normY = 60
                         //
                         let fiveobjList = obj[key]
+                        if (!briefFlag) {
+                            for (let i in fiveobjList) {
+                                // fiveobjList[i].x = that.setRandomTree(30, 60, fiveobjList.length, 'x')
 
-                        for (let i in fiveobjList) {
-                            // fiveobjList[i].x = that.setRandomTree(30, 60, fiveobjList.length, 'x')
+                                // fiveobjList[i].y = that.setRandomTree(30, 60, fiveobjList.length, 'y')
+                                fiveobjList[i].y = that.setRandomTree(30, 60, fiveobjList.length, i)
+                                fiveobjList[i].x = that.setRandomTree(30, 60, fiveobjList.length, i)
 
-                            // fiveobjList[i].y = that.setRandomTree(30, 60, fiveobjList.length, 'y')
-                            fiveobjList[i].y = that.setRandomTree(30, 60, fiveobjList.length, i)
-                            fiveobjList[i].x = that.setRandomTree(30, 60, fiveobjList.length, i)
+                                fivelist.push([fiveobjList[i].x, fiveobjList[i].y])
+                                fivePointlist.push(that.PointlistSet(fiveobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 30,
+                                yrange: 30,
 
-                            fivelist.push([fiveobjList[i].x, fiveobjList[i].y])
-                            fivePointlist.push(that.PointlistSet(fiveobjList[i]))
+                            }
+                            let y = {
+                                xrange: 60,
+                                yrange: 60,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                fivePointlist.push({
+                                    name: obj.fivePct,
+                                    value: obj.fivePct,
+
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + ''
+                                })
+                                fivelist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                fivelist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'six') {
                         that.normX = 0
                         that.normY = 90
                         let sixobjList = obj[key]
-                        for (let i in sixobjList) {
-                            // sixobjList[i].x = that.setRandomTree(0, 30, sixobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in sixobjList) {
+                                // sixobjList[i].x = that.setRandomTree(0, 30, sixobjList.length, 'x')
 
-                            // sixobjList[i].y = that.setRandomTree(60, 90, sixobjList.length, 'y')
-                            sixobjList[i].y = that.setRandomTree(60, 90, sixobjList.length, i)
-                            sixobjList[i].x = that.setRandomTree(0, 30, sixobjList.length, i)
+                                // sixobjList[i].y = that.setRandomTree(60, 90, sixobjList.length, 'y')
+                                sixobjList[i].y = that.setRandomTree(60, 90, sixobjList.length, i)
+                                sixobjList[i].x = that.setRandomTree(0, 30, sixobjList.length, i)
 
-                            sixlist.push([sixobjList[i].x, sixobjList[i].y])
-                            sixPointlist.push(that.PointlistSet(sixobjList[i]))
+                                sixlist.push([sixobjList[i].x, sixobjList[i].y])
+                                sixPointlist.push(that.PointlistSet(sixobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 60,
+                                yrange: 0,
+
+                            }
+                            let y = {
+                                xrange: 90,
+                                yrange: 30,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                sixPointlist.push({
+                                    name: obj.sixPct,
+                                    value: obj.sixPct,
+
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + ''
+                                })
+                                sixlist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                sixlist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'seven') {
                         that.normX = 60
                         that.normY = 60
                         let sevenobjList = obj[key]
-                        for (let i in sevenobjList) {
-                            // sevenobjList[i].x = that.setRandomTree(60, 90, sevenobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in sevenobjList) {
+                                // sevenobjList[i].x = that.setRandomTree(60, 90, sevenobjList.length, 'x')
 
-                            // sevenobjList[i].y = that.setRandomTree(30, 60, sevenobjList.length, 'y')
-                            sevenobjList[i].y = that.setRandomTree(30, 60, sevenobjList.length, i)
-                            sevenobjList[i].x = that.setRandomTree(60, 90, sevenobjList.length, i)
+                                // sevenobjList[i].y = that.setRandomTree(30, 60, sevenobjList.length, 'y')
+                                sevenobjList[i].y = that.setRandomTree(30, 60, sevenobjList.length, i)
+                                sevenobjList[i].x = that.setRandomTree(60, 90, sevenobjList.length, i)
 
-                            sevenlist.push([sevenobjList[i].x, sevenobjList[i].y])
-                            sevenPointlist.push(that.PointlistSet(sevenobjList[i]))
+                                sevenlist.push([sevenobjList[i].x, sevenobjList[i].y])
+                                sevenPointlist.push(that.PointlistSet(sevenobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 30,
+                                yrange: 60,
+
+                            }
+                            let y = {
+                                xrange: 60,
+                                yrange: 90,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                sevenPointlist.push({
+                                    name: obj.sevenPct,
+                                    value: obj.sevenPct,
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + ''
+                                })
+                                sevenlist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                sevenlist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'eight') {
                         that.normX = 30
                         that.normY = 90
                         let eightobjList = obj[key]
-                        for (let i in eightobjList) {
-                            // eightobjList[i].x = that.setRandomTree(30, 60, eightobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in eightobjList) {
+                                // eightobjList[i].x = that.setRandomTree(30, 60, eightobjList.length, 'x')
 
-                            // eightobjList[i].y = that.setRandomTree(60, 90, eightobjList.length, 'y')
-                            eightobjList[i].y = that.setRandomTree(60, 90, eightobjList.length, i)
-                            eightobjList[i].x = that.setRandomTree(30, 60, eightobjList.length, i)
+                                // eightobjList[i].y = that.setRandomTree(60, 90, eightobjList.length, 'y')
+                                eightobjList[i].y = that.setRandomTree(60, 90, eightobjList.length, i)
+                                eightobjList[i].x = that.setRandomTree(30, 60, eightobjList.length, i)
 
-                            eightlist.push([eightobjList[i].x, eightobjList[i].y])
-                            eightPointlist.push(that.PointlistSet(eightobjList[i]))
+                                eightlist.push([eightobjList[i].x, eightobjList[i].y])
+                                eightPointlist.push(that.PointlistSet(eightobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 60,
+                                yrange: 30,
+
+                            }
+                            let y = {
+                                xrange: 90,
+                                yrange: 60,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                eightPointlist.push({
+                                    name: obj.eightPct,
+                                    value: obj.eightPct,
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + ''
+                                })
+                                eightlist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                eightlist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'nine') {
                         that.normX = 60
                         that.normY = 90
                         let nineobjList = obj[key]
-                        for (let i in nineobjList) {
-                            // nineobjList[i].x = that.setRandomTree(60, 90, nineobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in nineobjList) {
+                                // nineobjList[i].x = that.setRandomTree(60, 90, nineobjList.length, 'x')
 
-                            // nineobjList[i].y = that.setRandomTree(60, 90, nineobjList.length, 'y')
-                            nineobjList[i].y = that.setRandomTree(60, 90, nineobjList.length, i)
-                            nineobjList[i].x = that.setRandomTree(60, 90, nineobjList.length, i)
+                                // nineobjList[i].y = that.setRandomTree(60, 90, nineobjList.length, 'y')
+                                nineobjList[i].y = that.setRandomTree(60, 90, nineobjList.length, i)
+                                nineobjList[i].x = that.setRandomTree(60, 90, nineobjList.length, i)
 
-                            ninelist.push([nineobjList[i].x, nineobjList[i].y])
-                            ninePointlist.push(that.PointlistSet(nineobjList[i]))
+                                ninelist.push([nineobjList[i].x, nineobjList[i].y])
+                                ninePointlist.push(that.PointlistSet(nineobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 60,
+                                yrange: 60,
+
+                            }
+                            let y = {
+                                xrange: 90,
+                                yrange: 90,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                ninePointlist.push({
+                                    name: obj.ninePct,
+                                    value: obj.ninePct,
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + ''
+                                })
+                                ninelist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                ninelist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
 
                 })

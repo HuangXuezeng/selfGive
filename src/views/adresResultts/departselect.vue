@@ -14,9 +14,21 @@
                             <van-cell :title="item.text" icon="friends-o" v-for="(item,index) in nextdept" :key="index">
                                 <!-- 使用 right-icon 插槽来自定义右侧图标 -->
                                 <template #right-icon>
-                                    <van-switch v-model="checked" size="12px" v-if="item.text =='国内营销事业部'"/>
-                                    <van-button type="primary" size="small" @click="selectNext(item)" v-if="item.children != null && item.children.length != 0">子部门</van-button>
-                                    <van-button type="info" size="small" @click="confirmDept(item)">进入</van-button>
+                                    <van-row>
+                                        <van-col>
+                                            <div>
+                                                <van-button type="primary" size="small" @click="selectNext(item)" v-if="item.children != null && item.children.length != 0">子部门</van-button>
+                                                <van-button type="info" size="small" @click="confirmDept(item)">进入</van-button>
+                                            </div>
+                                            <div>
+                                                <transition name="van-slide-left">
+                                                    <div v-show="makeUpShow" style="font-size:12px;display: inline-block;" v-if="item.text =='国内营销事业部'">{{makeUpchecked ? '包含非编':'不包含非编'}}</div>
+                                                </transition>
+                                                 <van-switch @change='makeUpChange' v-model="makeUpchecked" size="12px" v-if="item.text =='国内营销事业部'" />
+
+                                            </div>
+                                        </van-col>
+                                    </van-row>
                                 </template>
                             </van-cell>
                         </div>
@@ -37,7 +49,9 @@
         Card,
         Toast,
         NavBar,
-        Switch
+        Switch,
+        Col,
+        Row
     } from "vant";
     import {
         findIsHaveCadreInDept
@@ -62,7 +76,9 @@
                 reselect: '',
                 noneDeptOne: 0,
                 leftIndexrecord: 0,
-                checked:true
+                makeUpchecked: true,
+                bzType: "Y",
+                makeUpShow: true
             };
         },
         //监听属性 类似于data概念
@@ -78,10 +94,10 @@
                 } else {
                     this.queryfindPayrollDept();
                 }
+                localStorage.setItem("bzType", 'Y');
+                // localStorage.getItem("bzType")
             },
-            // initSalaryDeptRes() {
 
-            // },
             reselectHistory() {
                 //
                 let adresResultHistoryList = JSON.parse(localStorage.getItem("adresResultHistory"))
@@ -245,7 +261,8 @@
             },
             confirmDept(item) {
                 findIsHaveCadreInDept({
-                    deptList: [item.deptId]
+                    deptList: [item.deptId],
+                    bzType: this.bzType
                 }).then(res => {
                     //
                     if (res.obj == "Y") {
@@ -282,6 +299,23 @@
                 this.nextdept = this.deptData[index].children
                 this.leftIndexrecord = index
                 //
+            },
+            makeUpChange(judge) {
+                if (judge) {
+                    this.makeUpShow = false
+                    this.bzType = 'Y'
+                    localStorage.setItem("bzType", 'Y');
+                    this.$nextTick(() => {
+                        this.makeUpShow = true
+                    })
+                } else {
+                    this.makeUpShow = false
+                    this.bzType = 'N'
+                    localStorage.setItem("bzType", 'N');
+                    this.$nextTick(() => {
+                        this.makeUpShow = true
+                    })
+                }
             }
         },
         //生命周期 - 创建完成（可以访问当前this实例）

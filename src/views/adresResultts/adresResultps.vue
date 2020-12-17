@@ -351,6 +351,7 @@
                 eduPct: '',
                 // 男女比例
                 sexProportion: "",
+                bzType:''
             };
         },
         created() {
@@ -369,6 +370,7 @@
                 this.readySelectDept = [JSON.parse(localStorage.getItem("adresResultDept")).deptId];
                 // 获取年份
                 this.getNewYear();
+                this.bzType =  localStorage.getItem("bzType")
                 //查询司龄数据
                 this.queryFindCadreReportFbInfo();
             },
@@ -400,7 +402,7 @@
                         deptList: [],
                         isDown: "Y",
                         year: "",
-                        bzType:'Y'
+                        bzType:this.bzType
                     };
                 }
                 queryData.deptList = this.readySelectDept
@@ -434,7 +436,7 @@
                     deptList: [],
                     isDown: "Y",
                     year: item,
-                    bzType:'Y'
+                    bzType:this.bzType
                 };
                 queryData.deptList = this.readySelectDept
                 this.queryFindCadreReportFbInfo(queryData);
