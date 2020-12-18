@@ -39,6 +39,15 @@
             readonly 
             placeholder="必填"/>
             <van-field 
+            v-model="a01017"
+            label-width="7.4em" 
+            @click="showConpany = true" 
+            label="是否在其他公司任职：" 
+            readonly 
+            placeholder="必填"/>
+            <van-field v-model="a01231" label="任职公司名称：" placeholder="若在其他公司任职，则必填" :disabled="disabledFlag"/>
+            <van-field v-model="a01232" label="任职岗位：" placeholder="若在其他公司任职，则必填" :disabled="disabledFlag"/>
+            <van-field 
             v-model="a01003"
             label-width="7.4em" 
             @click-input="showEnglish = true" 
@@ -99,6 +108,16 @@
                 @cancel="showSure = false"
                 value-key="text"
                 @confirm="confirm1"
+            />
+        </van-popup>
+        <!-- 是否在其他公司任职 -->
+        <van-popup v-model="showConpany" round position="bottom" get-container="body">
+            <van-picker
+                show-toolbar
+                :columns="columns1"
+                @cancel="showConpany = false"
+                value-key="text"
+                @confirm="confirm12"
             />
         </van-popup>
         <!-- 是否英语弹窗 -->
@@ -264,6 +283,7 @@ import { updateJb,backJb,queryNationality,queryNation,queryBank,deleteFile } fro
 export default {
   data () {
     return {
+        disabledFlag: false, //默认可填写
         showPhoto: false, //图片
         images: [],
         fileList: [], //element上传测试
@@ -305,8 +325,12 @@ export default {
         a01113: '',
         a01102: '',
         a01185: '', //退伍军人显示的值
+        a01017: '', //是否在其他公司任职显示的值
+        a01231: '', //任职公司名称显示的值
+        a01232: '', //任职岗位显示的值
         a01003: '', //是否英语显示的值
         sure: '', //退伍军人发送的值
+        otherCom: '', //其他公司任职的值
         english: '', //是否英语发送的值
         a0177: '',
         yxsfzjlx: '',
@@ -327,6 +351,7 @@ export default {
         showTime: false,
         showSure: false, //是否退伍军人弹窗
         showEnglish: false, //是否英语弹窗
+        showConpany: false, //是否其他公司任职
         showGuo: false, //选择国籍弹窗
         showMing: false, //选择民族弹窗
         showHu: false, //选择民族弹窗
@@ -405,6 +430,19 @@ export default {
             if(this.english == ''){
                 this.english = this.a01003
             }
+            if(this.otherCom == ''){
+                this.otherCom = this.a01017
+            }
+            //如其他公司任职选的是，则底下两项必填
+            if(this.otherCom == 1){
+                if(this.a01231 == ''){
+                    Notify({ type: 'danger', message: '请填写任职公司名称' })
+                    return
+                }else if(this.a01232 == ''){
+                    Notify({ type: 'danger', message: '请填写任职岗位' })
+                    return
+                }
+            }
             let sendData = {
                 a01121:this.a01121,
                 POLICE:this.police,
@@ -421,6 +459,9 @@ export default {
                 A0141: this.A0141,
                 a01185: this.sure,
                 a01003: this.english,
+                a01017: this.otherCom,
+                a01231: this.a01231,
+                a01232: this.a01232,
                 a0190: localStorage.getItem('jobNum'),
                 idcardFile1: this.idcardPath1, //身份证正面
                 idcardFile2: this.idcardPath2, //身份证反面
@@ -441,6 +482,7 @@ export default {
                 this.a01113 == '' || this.a01113 == null ||
                 this.a01102 == '' || this.a01102 == null ||
                 this.a01185 == '' || this.a01185 == null ||
+                this.a01017 == '' || this.a01017 == null ||
                 this.a01003 == '' || this.a01003 == null
                 ){
                     Notify({ type: 'danger', message: '您有必填写未填写，请填写后提交！' })
@@ -470,6 +512,17 @@ export default {
         this.sure = picker.keyId
         this.a01185 = picker.text
         this.showSure = false;
+    },
+    //选择是否在其他公司任职
+    confirm12(picker) {
+        console.log(picker)
+        this.otherCom = picker.keyId
+        this.a01017 = picker.text
+        if(this.otherCom == 2){
+            //不可填写
+            this.disabledFlag = true
+        }
+        this.showConpany = false;
     },
     //选择是否英语
     confirm11(picker) {

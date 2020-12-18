@@ -8,6 +8,7 @@
             </van-field>
             <van-field v-model="a805006" label="关系人姓名：" placeholder="必填"/>
             <van-field v-model="a805007" label="关系人工号：" placeholder="必填"/>
+            <van-field v-model="a805015" label="关系人所在公司：" label-width="8em" placeholder="必填"/>
             <van-field v-model="a805008" label="关系人所在部门："  label-width="8em" placeholder="必填"/>
             <van-field v-model="a805009" label="关系人岗位：" placeholder="必填"/>
             <van-field v-model="a805010" label="关系人电话：" placeholder="必填"/>
@@ -58,6 +59,7 @@ export default {
         a805005: '',
         a805006: '',
         a805007: '',
+        a805015: '',
         a805008: '',
         a805009: '',
         a805010: '',
@@ -91,6 +93,7 @@ export default {
                 a805005: this.a805005,
                 a805006: this.a805006,
                 a805007: this.a805007,
+                a805015: this.a805015,
                 a805008: this.a805008,
                 a805009: this.a805009,
                 a805010: this.a805010,
@@ -105,6 +108,7 @@ export default {
             if( this.a805005 == '' ||
                 this.a805006 == '' ||
                 this.a805007 == '' ||
+                this.a805015 == '' ||
                 this.a805008 == '' ||
                 this.a805009 == '' ||
                 this.a805010 == '' ||
@@ -208,7 +212,7 @@ export default {
       this.$createDialog({
         type: 'alert',
         title: '提示',
-        content: '公司内亲属关系指三代以内的亲属关系。',
+        content: '请主动提报您的社会关系（包括但不限于公司内外亲属、朋友关系等。公司外社会关系主要指任职在与公司业务相关的供应商、合作商、经销商、竞品单位人员）',
         icon: 'cubeic-alert'
       }).show()
     },

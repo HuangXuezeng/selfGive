@@ -28,8 +28,8 @@
         line-height="4px">
           <van-tab title="花名册" to="roster"></van-tab>
           <van-tab title="人员结构" to="perStructure"></van-tab>
-          <van-tab title="人员编制" to="organization"></van-tab>
-          <van-tab title="人员效率" to="humanEffect"></van-tab>
+          <van-tab title="人员编制" to="organization" v-if="isHaveBianzhi"></van-tab>
+          <van-tab title="人员效率" to="humanEffect" v-if="isHaveRenxiao"></van-tab>
           <van-tab title="人员异动" to="changes"></van-tab>
           <van-tab title="人员流失" to="retention"></van-tab>
         </van-tabs>
@@ -47,7 +47,9 @@ export default {
       // active: 1,
       flag: true,
       hideleArr: true,
-      showArr: false
+      showArr: false,
+      isHaveBianzhi: true,
+      isHaveRenxiao: true
     };
   },
   computed: {
@@ -62,8 +64,19 @@ export default {
       }
     }
   },
-  created() {},
+  created() {
+    this.isHaveQx()
+  },
   methods: {
+    // 根据权限显示隐藏编制和人效
+    isHaveQx(){
+      if(localStorage.getItem("isHaveBianzhi") == "N"){
+        this.isHaveBianzhi = false
+      };
+      if(localStorage.getItem("isHaveRenxiao") == "N"){
+        this.isHaveRenxiao = false
+      };
+    },
     //隐藏导航栏
     hiddle() {
       this.arr_flag(1); //vuex中赋值标识
@@ -101,14 +114,36 @@ export default {
     toChanges(){
       this.$router.push({name:'changes'})
     },
+    handleFn(){
+      this.$router.push({name:'selfHome'})
+    },
     ...mapMutations({
       save_type: "save_type",
       arr_flag: "arr_flag"
     })
   },
   mounted() {
-    // console.log(this.$refs.right.style.height)
-    // window.addEventListener('scroll',this.scrollHandle);//绑定页面滚动事件
+    let that = this
+    dd.ready(() => {
+      dd.biz.navigation.setRight({
+          // show: false,//控制按钮显示， true 显示， false 隐藏， 默认true
+          control: true,//是否控制点击事件，true 控制，false 不控制， 默认false
+          text: '首页',//控制显示文本，空字符串表示显示默认文本
+          onSuccess : function(result) {
+              //如果control为true，则onSuccess将在发生按钮点击事件被回调
+              /*
+              {}
+              */
+            that.$router.push({name:'selfHome'})
+          },
+          onFail : function(err) {}
+      });
+    })
+
+    //pc端返回事件
+    DingTalkPC.ready(() => {
+      DingTalkPC.addEventListener('leftBtnClick', handleFn)
+    })
   }
 };
 </script>

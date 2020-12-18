@@ -41,7 +41,7 @@
                     <div class="_items">
                         <div class="_item" v-for="item in gerenList" :key="item.recordid" @click="handlerClick(item)">
                             <img :src="item.path" alt="" />
-                            <span>{{ item.menu }}</span>
+                            <p v-html="item.menu"></p>
                         </div>
                         <div class="edit" @click="edit">
                             <img src="../../assets/paixu2.png" alt="" />
@@ -49,7 +49,7 @@
                     </div>
                 </div>
 
-                <div class="other" v-if="judgeLeadList.length != 0">
+                <div class="other" v-if="isLeaderFlag">
                     <div>
                         <span class="border"></span>
                         <span style="font-weight: 900">我的团队</span>
@@ -57,7 +57,7 @@
                     <div class="_items">
                         <div class="_item" ref="hiddenBox" v-for="item in judgeLeadList" :key="item.title" @click="handlerTeam(item)">
                             <img :src="item.img" alt="" />
-                            <span>{{ item.title }}</span>
+                            <p>{{ item.title }}</p>
                         </div>
                     </div>
                 </div>
@@ -69,23 +69,23 @@
                     <div class="_items">
                         <div class="_item" @click="leadClick">
                             <img src="../../assets/rongyu.png" alt="" />
-                            <span>荣誉堂</span>
+                            <p>荣誉堂</p>
                         </div>
                         <div class="_item" @click="leadClick1">
                             <img src="../../assets/rencailogo.png" alt="" />
-                            <span>人才池</span>
+                            <p>人才池</p>
                         </div>
                         <div class="_item" @click="leadClick2">
                             <img src="../../assets/gujiaren.png" alt="" />
-                            <span>顾家人</span>
+                            <p>顾家人</p>
                         </div>
                         <div class="_item" @click="leadClick3">
                             <img src="../../assets/tousu.jpg" alt="" />
-                            <span>投诉直通车</span>
+                            <p>投诉直通车</p>
                         </div>
                         <div class="_item" @click="leadClick4">
                             <img src="../../assets/xue.png" alt="" />
-                            <span>顾家学堂</span>
+                            <p>顾家学堂</p>
                         </div>
                     </div>
                 </div>
@@ -98,7 +98,7 @@
             <transition-group type="transition" class="infoitems" :name="!drag ? 'flip-list' : null">
                 <div class="infoitem" v-for="item in gerenLists" v-dragging="{ item: item, list: gerenLists, group: 'gerenLists' }" :key="item.recordid" @click="update(item)">
                     <img :src="item.path" alt="" />
-                    <span>{{ item.menu }}</span>
+                    <p v-html="item.menu"></p>
                 </div>
             </transition-group>
 
@@ -165,6 +165,7 @@
     export default {
         data() {
             return {
+                isLeaderFlag: true,
                 personObj: {},
                 zanPhoto: "", //暂存头像
                 showImg: false, //上传头像的弹窗
@@ -242,11 +243,11 @@
                     //   title: "奖励进度",
                     //   img: "http://ehrfile.kukahome.com:7020/menuImage/jljd.png",
                     // },
-                    {
-                        sortNum: 12,
-                        title: "干部简报",
-                        img: "http://ehrfile.kukahome.com:7020/menuImage/rgfy.png",
-                    },
+                    // {
+                    //     sortNum: 12,
+                    //     title: "干部简报",
+                    //     img: "http://ehrfile.kukahome.com:7020/menuImage/rgfy.png",
+                    // },
                 ],
                 colors: [{
                         text: "Aquamarine",
@@ -283,11 +284,12 @@
         created() {
             // debugger
             // localStorage.setItem("jobNum", 6006212); //liu
-            localStorage.setItem("jobNum", 6005506); //li
+            // localStorage.setItem("jobNum", 6005506); //li
             // localStorage.setItem('jobNum',9085360)
             // localStorage.setItem('jobNum',9107021)
             // localStorage.setItem('jobNum',9078825)
-            // localStorage.setItem('jobNum',9025434)
+            // localStorage.setItem('jobNum',9050104)
+            // localStorage.setItem('jobNum',9136081)
             if (
                 localStorage.getItem("jobNum") == "" ||
                 localStorage.getItem("jobNum") == null ||
@@ -326,13 +328,18 @@
                             localStorage.setItem("departRes", JSON.stringify(res.obj));
                             // console.log(localStorage.getItem('departRes'))
                         });
+                    }else{
+                        this.isLeaderFlag = false //接受是否有团队权限的标志
                     }
+                    //保存编制和人效的权限
+                    localStorage.setItem("isHaveBianzhi", res.obj.isBianzhi);
+                    localStorage.setItem("isHaveRenxiao", res.obj.isRenxiao);
                     if (res.obj.isBianzhi == "Y") {
                         //编制分析有权限的人的res
                         localStorage.setItem("bianzhiOrganRes", JSON.stringify(res.obj.bianzhiOrgan));
                         localStorage.setItem("bianzhiCodeRes", JSON.stringify(res.obj.bianzhiCode));
                     } else {
-                        this.$refs.hiddenBox[5].style.display = 'none'
+                        this.$refs.hiddenBox[2].style.display = 'none'
                     }
                     if (res.obj.isRenxiao == "Y") {
                         //人效分析有权限的人的res
@@ -450,7 +457,7 @@
 
                     that.zanPhoto = reader.result;
                     // }
-                    console.log(reader.result);
+                    // console.log(reader.result);
                 };
                 that.showImg = false;
             },
@@ -524,7 +531,7 @@
                             name: urlPath
                         });
                         break;
-                    case "亲属关系":
+                    case "社会(亲属)关系":
                         // console.log(urlPath)
                         this.save_type(sortNum);
                         this.$router.push({
@@ -728,7 +735,7 @@
                     }
                 } else {
                     // 正式环境需解开
-                    // this.splitLeader("干部档案")
+                    this.splitLeader("干部档案")
                 }
                 // 判断薪资库
                 if (userinfo != null &&
@@ -738,14 +745,14 @@
                     }
                 } else {
                     // 正式环境需解开
-                    // this.splitLeader("薪资库")
+                    this.splitLeader("薪资库")
                 }
                 if (userinfo != null) {
                     this.judgeLeadList = this.leadList;
 
                 }
                 // 正式环境需注释
-                this.judgeLeadList = this.leadList;
+                // this.judgeLeadList = this.leadList;
             },
 
             //确认排序
@@ -884,7 +891,6 @@
             border-radius: 6px;
             padding: 10px;
             background-color: #fff;
-
             ._items {
                 padding: 20px 10px 10px 0;
                 display: flex;
@@ -894,17 +900,19 @@
                 ._item {
                     width: 25%;
                     height: 100px;
-                    line-height: 40px;
+                    // line-height: 20px;
                     text-align: center;
+                    margin-bottom: 10px;
 
                     img {
                         display: block;
                         width: 45px;
                         height: 45px;
-                        margin: 0 auto;
+                        margin: 0 auto 10px auto;
                     }
 
-                    span {
+                    p {
+                        padding: 0 7px 0 7px
                         font-size: 14px;
                     }
                 }
@@ -956,17 +964,19 @@
                 ._item {
                     width: 25%;
                     height: 100px;
-                    line-height: 40px;
+                    // line-height: 20px;
                     text-align: center;
+                    margin-bottom: 10px;
 
                     img {
                         display: block;
                         width: 45px;
                         height: 45px;
-                        margin: 0 auto;
+                        margin: 0 auto 10px auto;
                     }
 
-                    span {
+                    p {
+                        padding: 0 7px 0 7px
                         font-size: 14px;
                     }
                 }
@@ -1059,18 +1069,20 @@
         .infoitem {
             cursor: move;
             width: 25%;
+            margin-bottom: 10px;
             height: 100px;
-            line-height: 40px;
+            // line-height: 30px;
             text-align: center;
 
             img {
                 display: block;
                 width: 50px;
                 height: 50px;
-                margin: 0 auto;
+                margin: 0 auto 10px auto;
             }
 
-            span {
+            p {
+                padding: 0 7px 0 7px
                 font-size: 14px;
             }
         }

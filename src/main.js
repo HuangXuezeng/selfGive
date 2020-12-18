@@ -47,9 +47,9 @@ import VueDND from 'awe-dnd'
 Vue.use(VueDND)
 
 //引入vConsole
-import Vconsole from 'vconsole'
-const vConsole = new Vconsole()
-Vue.use(vConsole)
+// import Vconsole from 'vconsole'
+// const vConsole = new Vconsole()
+// Vue.use(vConsole)
 
 //引入表格组件
 import 'vue-easytable/libs/themes-base/index.css'			// 引入样式

@@ -125,7 +125,7 @@
     </div>
     <!-- 按岗位分类一 -->
     <div class="onedept">
-      <p class="titlea"><span class="borleft"></span> 按岗位分类一</p>
+      <p class="titlea"><span class="borleft"></span> 按岗位分类一（流失人数/月均流失率）</p>
       <div class="postrank">
         <div class="pie" ref="chart" id="chart"></div>
       </div>
@@ -162,6 +162,9 @@
       <div class="postrank">
         <div class="pie" ref="chart2" id="chart2"></div>
       </div>
+    </div>
+    <div class="remark">
+      <p>因组织架构调整，历史在编情况供参考</p>
     </div>
     <!-- 选择年弹窗 -->
     <van-popup
@@ -287,7 +290,7 @@ export default {
         {
           field: "avgOnjob",
           title: "平均在编",
-          width: 150,
+          width: 100,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -371,7 +374,7 @@ export default {
         {
           field: "cadreAvgOnjob",
           title: "干部平均在编",
-          width: 150,
+          width: 100,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -385,7 +388,7 @@ export default {
         {
           field: "cadreRealOnjob",
           title: "干部实际在编",
-          width: 150,
+          width: 100,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -399,7 +402,7 @@ export default {
         {
           field: "cadreRunoffSum",
           title: "干部流失人数",
-          width: 150,
+          width: 100,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -429,14 +432,14 @@ export default {
         {
           field: "name",
           title: "职级",
-          width: 150,
+          width: 60,
           titleAlign: "center",
           columnAlign: "center"
         },
         {
           field: "avgOnjob",
           title: "平均在编",
-          width: 150,
+          width: 100,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -463,7 +466,7 @@ export default {
         },
         {
           field: "runoffRate",
-          title: "流失率",
+          title: "月均流失率",
           width: 100,
           titleAlign: "center",
           columnAlign: "center",
@@ -555,7 +558,7 @@ export default {
         {
           field: "rank",
           title: "职级",
-          width: 100,
+          width: 60,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true
@@ -563,7 +566,7 @@ export default {
         {
           field: "outTime",
           title: "离职时间",
-          width: 150,
+          width: 100,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true
@@ -817,7 +820,6 @@ export default {
             //   })
             //   break;
             case "直接类":
-              console.log(data2[xIndex].name)
               that.dataIndex = 0
               setTimeout(() => {
                 that.showTable = true;
@@ -833,7 +835,6 @@ export default {
               })
               break;
             case "营销类":
-              console.log(data2[xIndex].name)
               that.dataIndex = 0
               setTimeout(() => {
                 that.showTable = true;
@@ -849,7 +850,6 @@ export default {
               })
               break;
             case "技术类":
-              console.log(data2[xIndex].name)
               that.dataIndex = 0
               setTimeout(() => {
                 that.showTable = true;
@@ -865,7 +865,6 @@ export default {
               })
               break;
             case "职能类":
-              console.log(data2[xIndex].name)
               that.dataIndex = 0
               setTimeout(() => {
                 that.showTable = true;
@@ -903,7 +902,13 @@ export default {
           show: true,
           position: "top", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}%`
+          formatter: function(param){
+            if(!/\./.test(param.value)){
+              param.value += '.0';
+            }
+            return param.value+'%'
+          }
+          // formatter: `{c}%`
         }
       }; // 绘制图表
       myChart.setOption({
@@ -919,7 +924,7 @@ export default {
             // console.log(params);
             return params[0].name+'<br>'
             +'<div class="runoff" style="background-color:#bf0000"></div>'+'流失人数：'+params[0].data+'<br>'
-            +'<div class="runoff" style="background-color:#4875c5"></div>'+'月均流失率：'+params[1].data+'%<br>'
+            +'<div class="runoff" style="background-color:#4875c5"></div>'+'流失率：'+params[1].data+'%<br>'
           }
         },
         dataZoom: [
@@ -1058,7 +1063,13 @@ export default {
           show: true,
           position: "top", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}%`
+          formatter: function(param){
+            if(!/\./.test(param.value)){
+              param.value += '.0';
+            }
+            return param.value+'%'
+          }
+          // formatter: `{c}%`
         }
       }; // 绘制图表
       myChart.setOption({
@@ -1074,7 +1085,7 @@ export default {
             // console.log(params);
             return params[0].name+'<br>'
             +'<div class="runoff" style="background-color:#bdd7ee"></div>'+'干部流失人数：'+params[0].data+'<br>'
-            +'<div class="runoff" style="background-color:#4472c4"></div>'+'干部月均流失率：'+params[1].data+'%<br>'
+            +'<div class="runoff" style="background-color:#4472c4"></div>'+'干部流失率：'+params[1].data+'%<br>'
           }
         },
         dataZoom: [
@@ -1221,12 +1232,18 @@ export default {
       }
       //只能选择2019年之后的
       let arrNum = []
+      let arrNum1 = []
       for(let i in this.columnTime){
         if(this.columnTime[i] > 2018){
           arrNum.push(this.columnTime[i])
         }
       }
-      this.columnTime = arrNum
+      for(let k in arrNum){
+        if(arrNum[k] < tYear+1){
+          arrNum1.push(arrNum[k])
+        }
+      }
+      this.columnTime = arrNum1
       this.columnTime.sort(function(a, b) {
         //callback
         if (a > b) {
@@ -1238,7 +1255,7 @@ export default {
         }
       });
       this.columnTime.reverse()
-      console.log(this.columnTime)
+      // console.log(this.columnTime)
     },
     //选择月
     pickmonth() {
@@ -1468,7 +1485,9 @@ export default {
       this.popupTableData = result[0]; //默认显示100条
       this.fenyeData = result;
     },
-    // ceshi(){},
+    // ceshi(){
+
+    // },
     ...mapMutations({
       save_type: "save_type",
       // arr_flag: "arr_flag",
@@ -1744,7 +1763,7 @@ td {
   color #ee6471
   p{
     font-weight 700
-    padding 5px
+    padding 10px
   }
 }
 

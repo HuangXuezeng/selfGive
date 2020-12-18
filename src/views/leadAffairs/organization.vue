@@ -64,7 +64,6 @@
       <div class="table">
         <v-table
           ref="table"
-          :is-loading="isLoading"
           is-horizontal-resize
           :height="400"
           style="width:100%;font-size:14px"
@@ -128,6 +127,9 @@
         </div>
       <div class="postrank">
         <div class="pie" ref="chart" id="chart"></div>
+      </div>
+      <div class="remark">
+        <p>因组织架构调整，历史在编情况供参考</p>
       </div>
     </div>
     <!-- 选择年的弹窗 -->
@@ -228,7 +230,7 @@ export default {
       selectDrawYear1: '', //图形2选择年
       showDrawYear: false, //图形1选择年弹窗
       showDrawYear1: false, //图形2选择年弹窗
-      isLoading: true, //表格数据加载
+      // isLoading: true, //表格数据加载
       result1: [],//岗位分类一
       result2: [],//岗位分类一（二）
       // showecharts: false,
@@ -272,7 +274,7 @@ export default {
         {
           field: "postOne",
           title: "岗位分类一",
-          width: 150,
+          width: 80,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true
@@ -335,7 +337,7 @@ export default {
         {
           field: "cadreDingbian",
           title: "干部定编",
-          width: 150,
+          width: 100,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -349,7 +351,7 @@ export default {
         {
           field: "cadreRealOnjob",
           title: "当前干部在编",
-          width: 150,
+          width: 100,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -363,7 +365,7 @@ export default {
         {
           field: "cadreOnjob",
           title: "干部平均在编",
-          width: 150,
+          width: 100,
           titleAlign: "center",
           columnAlign: "center",
           isResize: true,
@@ -406,7 +408,7 @@ export default {
     },
     // 是否包含下级部门的事件
     getIsdownVal(data){
-      console.log(data)
+      // console.log(data)
       if(data){
         this.isDown = 'Y'
       }else{
@@ -610,6 +612,12 @@ export default {
       this.selectDrawYear1 = this.formatDate(new Date())
       // console.log(bianzhiOrganRes)
       this.deptData = bianzhiOrganRes
+      //数据加载中
+      Toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true,
+        message: '数据加载中',
+      })
       //获取岗位分类一和年份
       getSelector().then(res=>{
         this.columns = res.obj.year
@@ -626,19 +634,19 @@ export default {
       selectBianzhi(queryData).then(res=>{
         this.tableData1 = res.obj
         //请求到数据之后停止加载
-        this.isLoading = false;
+        // this.isLoading = false;
       })
       //获取默认图形数据
       let selectData = {
         deptCode: this.bianzhiCodeRes,
         year: this.selectTime,
         postOne: '',
-        deptId: ''
+        deptIdStr: ''
       }
       selectDraw(selectData).then(res=>{
         this.$refs.resetForm.selectedDepartment = res.name
         this.$refs.resetForm1.selectedDepartment = res.name
-        this.deptId = res.msg
+        this.deptIdStr = res.msg
         let monthArr = []
         let echartArr1 = []
         let echartArr2 = []
@@ -669,6 +677,8 @@ export default {
         this.echartData6 = echartArr6
         this.initCharts()
         this.initCharts1()
+        //停止转圈
+        Toast.clear()
       })
     },
     //给value加字段名方法
@@ -714,7 +724,7 @@ export default {
         if(res.code == 1000){
           this.tableData1 = res.obj
           //请求到数据之后停止加载
-          this.isLoading = false;
+          // this.isLoading = false;
         }else{
           Toast.fail(res.msg)
         }
@@ -750,7 +760,13 @@ export default {
           show: true,
           position: "top", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}`
+          formatter: function(param){
+            if(!/\./.test(param.value)){
+              param.value += '.0';
+            }
+            return param.value
+          }
+          // formatter: `{c}`
         }
       }; // 绘制图表
       myChart.setOption({
@@ -903,7 +919,13 @@ export default {
           show: true,
           position: "top", //在上方显示
           textBorderWidth: 2,
-          formatter: `{c}`
+          formatter: function(param){
+            if(!/\./.test(param.value)){
+              param.value += '.0';
+            }
+            return param.value
+          }
+          // formatter: `{c}`
         }
       }; // 绘制图表
       myChart.setOption({
@@ -1145,7 +1167,7 @@ export default {
     },
     //图形岗位分类一判断是否选择了部门
     showPostClick(){
-      if(this.deptId == ''){
+      if(this.deptIdStr == ''){
         Notify({ type: "warning", message: "请先选择部门！" });
       }else{
         this.showPost1 = true
@@ -1202,14 +1224,15 @@ export default {
     padding: 10px;
     text-align: center;
   }
-  .remark{
-    font-size 14px
-    text-align center
-    color #ee6471
-    p{
-      font-weight 700
-      padding 5px
-    }
+}
+
+.remark{
+  font-size 14px
+  text-align center
+  color #ee6471
+  p{
+    font-weight 700
+    padding 10px
   }
 }
 

@@ -9,6 +9,7 @@
                     <p><span >关系：{{item.a805005}}</span></p>
                     <p><span>关系人姓名：{{item.a805006}}</span></p>
                     <p><span>关系人工号：{{item.a805007}}</span></p>
+                    <p><span>关系人所在公司：{{item.a805015}}</span></p>
                     <p><span>关系人所在部门：{{item.a805008}}</span></p>
                     <p><span>关系人岗位：{{item.a805009}}</span></p>
                     <p><span>关系人电话：{{item.a805010}}</span></p>

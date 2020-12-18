@@ -1304,11 +1304,11 @@ export default {
     },
     //查询添加表格
     search() {
-      // Toast.loading({
-      //   duration: 0, // 持续展示 toast
-      //   forbidClick: true,
-      //   message: '查询中',
-      // })
+      Toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true,
+        message: '查询中',
+      })
       let queryData = {
         // jobnumber: this.form.jobnumber,
         // name: this.form.name,
@@ -1396,12 +1396,14 @@ export default {
           this.total = res.totalSize
           this.isDown = "" //清空是否全选
           // this.pagePev(); //获取的表格数据分组
+          // //停止转圈
+          Toast.clear()
         }else{
           Notify({ type: "warning", message: res.msg });
+          // //停止转圈
+          Toast.clear()
         }
       });
-      // //停止转圈
-      // Toast.clear()
       // console.log(this.form)
     },
     //全选

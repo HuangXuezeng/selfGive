@@ -12,7 +12,7 @@
             <div class="btn">
                 <van-button type="primary" color="#fc5f10" size="small" @click="search" style="width:45%">查询</van-button>
                 <van-button type="primary" color="#fc5f10" size="small" @click="reset" style="width:45%">重置</van-button>
-                <!-- <van-button type="primary" color="#fc5f10" size="small" @click="_isHaveQx">测试</van-button> -->
+                <!-- <van-button type="primary" color="#fc5f10" size="small" @click="ceshi">测试</van-button> -->
             </div>
             <div class="remark">
                 <p>默认展示当前负责部门编制内人员结构</p>
@@ -99,6 +99,9 @@
                 :column-cell-class-name="columnCellClass"
                 ></v-table>	
             </div>
+        </div>
+        <div class="remark">
+            <p>因组织架构调整，历史在编情况供参考</p>
         </div>
         <!-- 选择时间 -->
         <van-popup v-model="showTime" round position="bottom" get-container="body">
@@ -360,7 +363,15 @@ components: {
                     position:'outer',
                     alignTo:'edge',
                     margin:10,
-                    formatter: '{c}人 / {d}% \n\n',
+                    formatter: function(param){
+                        // console.log(param)
+                        // debugger
+                        if(!/^(\d+|\d+\.\d{2})$/.test(param.percent)){
+                            param.percent += '0';
+                        }
+                        return param.value+'人'+' / '+param.percent+'%'+ '\n\n'
+                    },
+                    // formatter: '{c}人 / {d}% \n\n',
                     padding: [0,50],
                     textStyle: {
                         textBorderColor: '#fff',
@@ -507,7 +518,7 @@ components: {
     //按学历
     initCharts1 () {
     　　let myChart = this.$echarts.init(this.$refs.chart1);
-    console.log(this.xlTeam)
+    // console.log(this.xlTeam)
         let data1 = [
             // {name:this.xlTeam.xlxiaoXuePct,value:this.xlTeam.xlxiaoXueCount},
             {name:this.xlTeam.xlotherPct,value:this.xlTeam.xlotherCount},
@@ -1013,7 +1024,17 @@ components: {
                     position:'outer',
                     alignTo:'edge',
                     margin:10,
-                    formatter: '{c}人 / {d}% \n\n',
+                    formatter: function(param){
+                        // console.log(param)
+                        // debugger
+                        if(!/^(\d+|\d+\.\d{2})$/.test(param.percent)){
+                            param.percent += '0';
+                        }
+                        return param.value+'人'+' / '+param.percent+'%'+ '\n\n'
+                    },
+                    // formatter: '{c}人 / {d}% \n\n',
+                    // let a = /^(\d+|\d+\.\d{2})$/;
+                    // console.log(a.test(1.22))
                     padding: [0,0],
                     textStyle: {
                         textBorderColor: '#fff',
@@ -1163,7 +1184,7 @@ components: {
         //截取部门
         let result = data.content.split( "-" )
         this.results = result[0]
-        console.log(this.results)
+        // console.log(this.results)
         this.selectDeptContent = this.results
         this.selectDeptId = data.deptId
         this.selectDeptGrade = data.grade
@@ -1330,6 +1351,9 @@ components: {
         }
     },
     ceshi(){
+        let a = /^(\d+|\d+\.\d{2})$/;
+        console.log(a.test(1.22))
+
         // console.log(this.$refs.pop_table)
         // console.log(this.$refs.pop_table.$el.children[0].children[1].scrollTop)
         // console.log(this.$refs.pop_table.$el.children[0].children[1].scrollHeight)
@@ -1391,14 +1415,14 @@ watch:{
             line-height 35px
             text-align center
         }
-        .remark{
-            font-size 14px
-            text-align center
-            color #ee6471
-            p{
-                font-weight 700
-                padding 5px
-            }
+    }
+    .remark{
+        font-size 14px
+        text-align center
+        color #ee6471
+        p{
+            font-weight 700
+            padding 10px
         }
     }
     .total{

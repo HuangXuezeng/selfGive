@@ -10,7 +10,8 @@
               <van-sidebar-item
               v-for="item in gerenList"
               :key="item.recordid"
-              :title="item.menu"
+              v-html="item.menu"
+       
               :to="item.url"/>
           </van-sidebar>
         </div>
@@ -122,33 +123,6 @@ export default {
   },
   mounted() {
     let that = this
-    // dd.ready(() => {
-    //       const u = navigator.userAgent
-    //       const isAndroid = u.indexOf('Android') > -1 || u.indexOf('Adr') > -1 // 判断是否是 android终端
-    //       const isiOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
-    //       if (isAndroid) {
-    //         console.log('安卓')
-    //         document.addEventListener('backbutton', (e) => { //安卓调用方式
-    //         e.preventDefault() //阻止返回
-    //           //在这里处理你的业务
-    //           that.$router.push({name:'selfHome'})
-    //         })
-    //       }
-    //       if(isiOS){
-    //         console.log('苹果')
-    //         dd.biz.navigation.setLeft({
-    //           control: true,
-    //           text: '',
-    //           onSuccess: (result) => { //IOS调用方法 ios返回不起作用，需要手动让他返回window.history.go(-1)
-    //             that.$router.push({name:'selfHome'})
-    //           },
-    //           onFail(err) {
-    //             console.log('返回失败', err)
-    //           }
-    //         })
-    //       }
-    //     })
-
     dd.ready(() => {
       dd.biz.navigation.setRight({
           // show: false,//控制按钮显示， true 显示， false 隐藏， 默认true

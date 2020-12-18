@@ -65,12 +65,9 @@
               <van-sidebar-item 
               title="职业资格" 
               to="zhiyeMsg"/>
-              <!-- <van-sidebar-item 
+              <van-sidebar-item 
               title="家庭成员" 
-              to="memberMsg"/> -->
-              <!-- <van-sidebar-item 
-              title="绩效考核" 
-              to="jixiaoMsg"/> -->
+              to="memberMsg"/>
           </van-sidebar>
         </div>
         <div class="box_right" ref="right">
@@ -200,7 +197,6 @@ export default {
           }
       }
       .contain{
-          
           padding 10px 15px
           line-height 28px
           .iconfont{
@@ -218,6 +214,7 @@ export default {
       position fixed
       height 100vh
       background-color #f7f8fa
+      overflow-y auto
       .van-sidebar{
         overflow-y auto
         overflow-x hidden
@@ -254,8 +251,8 @@ export default {
         }
       }
       .contain{
-          padding 10px
-          line-height 35px
+          padding 0 10px 2px 10px
+          line-height 30px
           // box-shadow 0px 10px 10px #eee
           .iconfont{
               color #ee0a24

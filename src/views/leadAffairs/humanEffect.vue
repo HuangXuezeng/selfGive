@@ -16,6 +16,7 @@
           :workingNum="true"
           :isSelctall="true"
           :isFromRost="true"
+          :isShowDown="false"
           :faDeptData="deptData"
         ></pickdeptmore>
         <van-field
@@ -44,7 +45,6 @@
               <v-table 
               ref="table"
               :height="400" 
-              :is-loading="isLoading"
               style="font-size:14px"
               title-bg-color="#e5ecf0"
               :columns="columns1"
@@ -112,6 +112,9 @@
           </p>
           <div class="charts">
             <div class="pie" ref="chart" id="chart"></div>
+          </div>
+          <div class="remark">
+            <p>因组织架构调整，历史在编情况供参考</p>
           </div>
         </div>
         <!-- 选择年弹窗 -->
@@ -195,7 +198,7 @@ export default {
       renxiaoCode: [], //保存的人效code
       selectDrawYear: '', //图形选择年
       showDrawYear: false, //图形选择年弹窗
-      isLoading: true, //表格数据加载
+      // isLoading: true, //表格数据加载
       // showecharts: false, //显示异常图形
       deptCodeStr: '', //单选的部门值
       showPost1: false, //图形选择岗位分类一弹窗
@@ -350,6 +353,12 @@ export default {
       this.deptData = renxiaoOrganRes
       // this.pickerYear() //初始化选择年
       this.$store.state.arrflag = '' //清空标识
+      //加载中
+      Toast.loading({
+        duration: 0, // 持续展示 toast
+        forbidClick: true,
+        message: '数据加载中',
+      })
       //获取下拉选择值
       querySelectVal().then(res=>{
         this.columnTime = res.obj.year
@@ -367,7 +376,9 @@ export default {
         this.total = res.totalSize
         this.tableData = res.obj
         //请求到数据之后停止加载
-        this.isLoading = false;
+        // this.isLoading = false;
+        //停止转圈
+        Toast.clear()
       })
       // 图形获取数据
       let queryData = {
@@ -416,7 +427,7 @@ export default {
         this.tableData = res.obj
         this.total = res.totalSize
         //请求到数据之后停止加载
-        this.isLoading = false;
+        // this.isLoading = false;
         this.isDownYn = '' //清空全选标识
         //停止转圈
         Toast.clear()
@@ -844,14 +855,6 @@ export default {
           height 100%
       }
     }
-    .remark{
-      font-size 14px
-      text-align center
-      color #ee6471
-      p{
-        font-weight 700
-      }
-    }
   }
   .fenlei{
     padding 10px
@@ -860,5 +863,14 @@ export default {
   .more {
     font-size: 14px;
     padding: 10px;
+  }
+  .remark{
+    font-size 14px
+    text-align center
+    color #ee6471
+    p{
+      font-weight 700
+      padding 10px
+    }
   }
 </style>

@@ -6,6 +6,7 @@
             <p><span>关系：</span><span>{{item.a805005}}</span></p>
             <p><span>关系人姓名：</span><span>{{item.a805006}}</span></p>
             <p><span>关系人工号：</span><span>{{item.a805007}}</span></p>
+            <p><span>关系人所在公司：</span><span>{{item.a805015}}</span></p>
             <p><span>关系人所在部门：</span><span>{{item.a805008}}</span></p>
             <p><span>关系人岗位：</span><span>{{item.a805009}}</span></p>
             <p><span>关系人电话：</span><span>{{item.a805010}}</span></p>
@@ -22,6 +23,7 @@
             <p><span>关系：</span><span>{{item.a805005}}</span></p>
             <p><span>关系人姓名：</span><span>{{item.a805006}}</span></p>
             <p><span>关系人工号：</span><span>{{item.a805007}}</span></p>
+            <p><span>关系人所在公司：</span><span>{{item.a805015}}</span></p>
             <p><span>关系人所在部门：</span><span>{{item.a805008}}</span></p>
             <p><span>关系人岗位：</span><span>{{item.a805009}}</span></p>
             <p><span>关系人电话：</span><span>{{item.a805010}}</span></p>
