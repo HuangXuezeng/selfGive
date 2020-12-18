@@ -116,7 +116,7 @@
                     jobnumber: localStorage.getItem("jobNum"),
                     deptList: [],
                     isDown: "Y",
-                    bzType:'Y'
+                    bzType: 'Y'
                 },
                 readySelectDept: [],
                 readySelectDeptObj: {},
@@ -124,7 +124,7 @@
                     deptList: [],
                     year: "",
                     isDown: 'Y',
-                    bzType:'Y'
+                    bzType: 'Y'
                 },
                 showNodatas: false,
                 downDeptlist: [],
@@ -134,7 +134,7 @@
                     deptList: [],
                     isDown: 'Y',
                     year: '',
-                    bzType:'Y'
+                    bzType: 'Y'
                 },
                 // 右弹窗显示控制
                 showRightInfo: false,
@@ -224,7 +224,7 @@
                 csdPct: '',
                 lossAvgPct: "",
                 LossInfoRes: [],
-                bzType:''
+                bzType: ''
             };
         },
         //监听属性 类似于data概念
@@ -241,7 +241,7 @@
                 this.readySelectDeptObj = JSON.parse(localStorage.getItem("adresResultDept"))
                 // 查询赋值部门信息
                 this.findCadreChartInfoUeryData.deptList = this.readySelectDept
-                this.bzType =  localStorage.getItem("bzType")
+                this.bzType = localStorage.getItem("bzType")
                 this.findCadresLossInfoData.bzType = this.bzType
                 this.querycadreReserve.bzType = this.bzType
                 this.findCadresLossInfoData.bzType = this.bzType
@@ -810,7 +810,46 @@
                             that.vancellList[0].direction = "down"
                             that.isLoading = false
                         } else {
-                            that.showRightInfo = true
+                            this.popupColumns = [{
+                                        field: "custome",
+                                        width: 50,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        title: "序号",
+                                        formatter: function(rowData, index) {
+                                            return index + 1;
+                                        },
+                                        isResize: true,
+                                    },
+                                    {
+                                        field: "cadreName",
+                                        title: "现领导",
+                                        width: 80,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        formatter: function(rowData, rowIndex, pagingIndex, field) {
+                                            return `<span>${rowData[field]}</span>`;
+                                        },
+                                        isResize: true,
+                                    },
+                                    {
+                                        field: "staffName",
+                                        title: "继任者",
+                                        width: 80,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        isResize: true,
+                                    },
+                                    {
+                                        field: "year",
+                                        title: "成熟度",
+                                        width: 80,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        isResize: true,
+                                    },
+                                ],
+                                that.showRightInfo = true
                             that.titleRight = obj.name
                             that.vancellList = []
                             for (let item of that.reserveInfoData) {

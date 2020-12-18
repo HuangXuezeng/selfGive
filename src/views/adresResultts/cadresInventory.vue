@@ -44,6 +44,31 @@
                 </div>
             </div>
         </div>
+        <div>
+            <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '80%' }" get-container="body">
+                <van-row type="flex" justify="center" style="margin-bottom: 10px">
+                    <van-col>
+                        <div class="titleRightInfo">
+                            {{ titleRight }}
+                        </div>
+                    </van-col>
+                </van-row>
+                <div v-for="(item, index) in vancellList" :key="index">
+                    <van-cell  is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)">
+                        <template #title>
+                            <span style="font-size: 18 px;color: red;">{{item.title}}</span>
+                        </template>
+                          <template #default>
+                            <van-icon name="friends-o" />
+                            <span >{{item.value}}</span>
+                        </template>
+                    </van-cell>
+                </div>
+                <div style="padding-bottom:100px">
+                    <v-table ref="rightInfoTable" is-horizontal-resize :is-loading="isLoading" columns-width-drag :height="400" style="width: 100%; font-size: 14px" title-bg-color="#ccc" :columns="popupColumns" :table-data="rightInfoData" row-hover-color="#eee" row-click-color="#edf7ff"></v-table>
+                </div>
+            </van-popup>
+        </div>
     </div>
 </template>
 
@@ -116,7 +141,52 @@
                 //坐标x值，y值
                 normX: 0,
                 normY: 0,
-                bzType: ''
+                bzType: '',
+                showRightInfo: false,
+                vancellList: [],
+                isLoading: true,
+                popupColumns: [{
+                        field: "custome",
+                        width: 50,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        title: "序号",
+                        formatter: function(rowData, index) {
+                            return index + 1;
+                        },
+                        isResize: true,
+                    },
+                    {
+                        field: "name",
+                        title: "姓名",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        formatter: function(rowData, rowIndex, pagingIndex, field) {
+                            return `<span>${rowData[field]}</span>`;
+                        },
+                        isResize: true,
+                    },
+                    {
+                        field: "age",
+                        title: "年龄",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                    {
+                        field: "zj",
+                        title: "职级",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    }
+                ],
+                rightInfoData: [],
+                JGGinfoRes: {},
+                titleRight: ''
             };
         },
         //监听属性 类似于data概念
@@ -349,6 +419,7 @@
                     // let aa = this.setRandomTree(1, 99, 3)
                     if (res.code == "1000") {
                         this.initfindCadreJGGinfoEchart(res.obj)
+                        this.JGGinfoRes = res.obj
                     } else {
                         Toast.fail(res.msg);
                     }
@@ -370,24 +441,8 @@
                 obj.yAxis = listitem.y
                 return obj
             },
-            // 简略模式设置
-            briefPointList(item, minobj, maxobj) {
-                if (item) {
-
-                } else {
-                    // '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'jgg
-                    // let resList = [{
-                    //     name: minobj.value,
-                    //     value: minobj.value,
-                    //     xAxis: maxobj.x/2,
-                    //     yAxis: maxobj.x
-                    // }, ]
-                    // return resList
-                }
-            },
             //九宫格散点图渲染图
             initfindCadreJGGinfoEchart(obj) {
-                debugger
                 var that = this
                 var myChart = this.$echarts.init(this.$refs.findCadreJGGinfoEchart);
                 let onelist = []
@@ -408,33 +463,7 @@
                 let sevenPointlist = []
                 let eightPointlist = []
                 let ninePointlist = []
-                //                 eight: [{…}]
-                // eightCount: 1
-                // eightPct: "5.6%"
-                // five: (6) [{…}, {…}, {…}, {…}, {…}, {…}]
-                // fiveCount: 6
-                // fivePct: "33.3%"
-                // four: []
-                // fourCount: 0
-                // fourPct: "0.0%"
-                // nine: (4) [{…}, {…}, {…}, {…}]
-                // nineCount: 4
-                // ninePct: "22.2%"
-                // one: []
-                // oneCount: 0
-                // onePct: "0.0%"
-                // seven: (4) [{…}, {…}, {…}, {…}]
-                // sevenCount: 4
-                // sevenPct: "22.2%"
-                // six: []
-                // sixCount: 0
-                // sixPct: "0.0%"
-                // three: []
-                // threeCount: 0
-                // threePct: "0.0%"
-                // two: (3) [{…}, {…}, {…}]
-                // twoCount: 3
-                // twoPct: "16.7%"
+
                 // 显示模式切换
                 let briefFlag = false
                 for (let ksy in obj) {
@@ -472,13 +501,13 @@
                             }
                             if (obj[key].length != undefined && obj[key].length != 0) {
                                 onePointlist.push({
-                                    name: obj.onePct,
+                                    name: 'one',
                                     xAxis: x.xrange + 15 + '',
                                     yAxis: x.yrange + 15 + '',
-                                    value: obj.onePct
+                                    value: obj.onePct,
                                 })
                                 onelist = [
-                                    [x.xrange, y.yrange]
+                                    [x.xrange, y.yrange],
                                     [x.xrange + 15, x.yrange + 15]
                                 ]
                             } else {
@@ -495,8 +524,6 @@
                         let twoobjList = obj[key]
                         if (!briefFlag) {
                             for (let i in twoobjList) {
-                                // twoobjList[i].x = that.setRandomTree(30, 60, twoobjList.length, 'x')
-                                // twoobjList[i].y = that.setRandomTree(0, 30, twoobjList.length, 'y')
                                 twoobjList[i].y = that.setRandomTree(0, 30, twoobjList.length, i)
                                 twoobjList[i].x = that.setRandomTree(30, 60, twoobjList.length, i)
 
@@ -516,7 +543,7 @@
                             }
                             if (obj[key].length != undefined && obj[key].length != 0) {
                                 twoPointlist.push({
-                                    name: obj.twoPct,
+                                    name: 'two',
                                     xAxis: x.xrange + 15 + '',
                                     yAxis: x.yrange + 15 + '',
                                     value: obj.twoPct,
@@ -540,9 +567,6 @@
                         let threeobjList = obj[key]
                         if (!briefFlag) {
                             for (let i in threeobjList) {
-                                // threeobjList[i].x = that.setRandomTree(0, 30, threeobjList.length, 'x')
-
-                                // threeobjList[i].y = that.setRandomTree(30, 60, threeobjList.length, 'y')
                                 threeobjList[i].y = that.setRandomTree(30, 60, threeobjList.length, i)
                                 threeobjList[i].x = that.setRandomTree(0, 30, threeobjList.length, i)
 
@@ -562,7 +586,7 @@
                             }
                             if (obj[key].length != undefined && obj[key].length != 0) {
                                 threePointlist.push({
-                                    name: obj.threePct,
+                                    name: 'three',
                                     xAxis: x.xrange + 15 + '',
                                     yAxis: x.yrange + 15 + '',
                                     value: obj.threePct,
@@ -586,9 +610,6 @@
                         let fourobjList = obj[key]
                         if (!briefFlag) {
                             for (let i in fourobjList) {
-                                // fourobjList[i].x = that.setRandomTree(60, 90, fourobjList.length, 'x')
-
-                                // fourobjList[i].y = that.setRandomTree(0, 30, fourobjList.length, 'y')
                                 fourobjList[i].y = that.setRandomTree(0, 30, fourobjList.length, i)
                                 fourobjList[i].x = that.setRandomTree(60, 90, fourobjList.length, i)
 
@@ -608,7 +629,7 @@
                             }
                             if (obj[key].length != undefined && obj[key].length != 0) {
                                 fourPointlist.push({
-                                    name: obj.fourPct,
+                                    name: 'four',
                                     xAxis: x.xrange + 15 + '',
                                     yAxis: x.yrange + 15 + '',
                                     value: obj.fourPct,
@@ -633,9 +654,6 @@
                         let fiveobjList = obj[key]
                         if (!briefFlag) {
                             for (let i in fiveobjList) {
-                                // fiveobjList[i].x = that.setRandomTree(30, 60, fiveobjList.length, 'x')
-
-                                // fiveobjList[i].y = that.setRandomTree(30, 60, fiveobjList.length, 'y')
                                 fiveobjList[i].y = that.setRandomTree(30, 60, fiveobjList.length, i)
                                 fiveobjList[i].x = that.setRandomTree(30, 60, fiveobjList.length, i)
 
@@ -655,7 +673,7 @@
                             }
                             if (obj[key].length != undefined && obj[key].length != 0) {
                                 fivePointlist.push({
-                                    name: obj.fivePct,
+                                    name: 'five',
                                     value: obj.fivePct,
 
                                     xAxis: x.xrange + 15 + '',
@@ -679,9 +697,6 @@
                         let sixobjList = obj[key]
                         if (!briefFlag) {
                             for (let i in sixobjList) {
-                                // sixobjList[i].x = that.setRandomTree(0, 30, sixobjList.length, 'x')
-
-                                // sixobjList[i].y = that.setRandomTree(60, 90, sixobjList.length, 'y')
                                 sixobjList[i].y = that.setRandomTree(60, 90, sixobjList.length, i)
                                 sixobjList[i].x = that.setRandomTree(0, 30, sixobjList.length, i)
 
@@ -701,7 +716,7 @@
                             }
                             if (obj[key].length != undefined && obj[key].length != 0) {
                                 sixPointlist.push({
-                                    name: obj.sixPct,
+                                    name: 'six',
                                     value: obj.sixPct,
 
                                     xAxis: x.xrange + 15 + '',
@@ -725,9 +740,6 @@
                         let sevenobjList = obj[key]
                         if (!briefFlag) {
                             for (let i in sevenobjList) {
-                                // sevenobjList[i].x = that.setRandomTree(60, 90, sevenobjList.length, 'x')
-
-                                // sevenobjList[i].y = that.setRandomTree(30, 60, sevenobjList.length, 'y')
                                 sevenobjList[i].y = that.setRandomTree(30, 60, sevenobjList.length, i)
                                 sevenobjList[i].x = that.setRandomTree(60, 90, sevenobjList.length, i)
 
@@ -747,7 +759,7 @@
                             }
                             if (obj[key].length != undefined && obj[key].length != 0) {
                                 sevenPointlist.push({
-                                    name: obj.sevenPct,
+                                    name: 'seven',
                                     value: obj.sevenPct,
                                     xAxis: x.xrange + 15 + '',
                                     yAxis: x.yrange + 15 + ''
@@ -770,9 +782,6 @@
                         let eightobjList = obj[key]
                         if (!briefFlag) {
                             for (let i in eightobjList) {
-                                // eightobjList[i].x = that.setRandomTree(30, 60, eightobjList.length, 'x')
-
-                                // eightobjList[i].y = that.setRandomTree(60, 90, eightobjList.length, 'y')
                                 eightobjList[i].y = that.setRandomTree(60, 90, eightobjList.length, i)
                                 eightobjList[i].x = that.setRandomTree(30, 60, eightobjList.length, i)
 
@@ -792,7 +801,7 @@
                             }
                             if (obj[key].length != undefined && obj[key].length != 0) {
                                 eightPointlist.push({
-                                    name: obj.eightPct,
+                                    name: 'eight',
                                     value: obj.eightPct,
                                     xAxis: x.xrange + 15 + '',
                                     yAxis: x.yrange + 15 + ''
@@ -815,9 +824,6 @@
                         let nineobjList = obj[key]
                         if (!briefFlag) {
                             for (let i in nineobjList) {
-                                // nineobjList[i].x = that.setRandomTree(60, 90, nineobjList.length, 'x')
-
-                                // nineobjList[i].y = that.setRandomTree(60, 90, nineobjList.length, 'y')
                                 nineobjList[i].y = that.setRandomTree(60, 90, nineobjList.length, i)
                                 nineobjList[i].x = that.setRandomTree(60, 90, nineobjList.length, i)
 
@@ -837,7 +843,7 @@
                             }
                             if (obj[key].length != undefined && obj[key].length != 0) {
                                 ninePointlist.push({
-                                    name: obj.ninePct,
+                                    name: 'nine',
                                     value: obj.ninePct,
                                     xAxis: x.xrange + 15 + '',
                                     yAxis: x.yrange + 15 + ''
@@ -857,10 +863,6 @@
 
                 })
                 myChart.setOption({
-                    // title: {
-                    //     text: '男性女性身高体重分布',
-                    //     subtext: '抽样调查来自: Heinz  2003'
-                    // },
                     grid: {
                         left: '3%',
                         right: '7%',
@@ -868,8 +870,6 @@
                         containLabel: true
                     },
                     tooltip: {
-                        // trigger: 'axis',
-                        // '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'jgg
                         showDelay: 0,
                         formatter: function(params, ticket) {
                             var str = ''
@@ -951,14 +951,6 @@
                             }
                             return str
                         },
-                        // axisPointer: {
-                        //     show: false,
-                        //     type: 'cross',
-                        //     lineStyle: {
-                        //         type: 'dashed',
-                        //         width: 1
-                        //     }
-                        // }
                     },
                     dataZoom: {
                         type: 'inside',
@@ -967,12 +959,6 @@
 
                     toolbox: {
                         show: false,
-                        // feature: {
-                        //     dataZoom: {},
-                        //     brush: {
-                        //         type: ['rect', 'polygon', 'clear']
-                        //     }
-                        // }
                     },
                     brush: {},
                     legend: {
@@ -985,7 +971,6 @@
                         min: 0,
                         splitNumber: 3,
                         axisLabel: {
-                            // formatter: '{value} cm'
                             formatter: function(value) {
                                 var texts = [];
                                 if (value == 0) {
@@ -1008,7 +993,6 @@
                         max: 90,
                         min: 0,
                         axisLabel: {
-                            // formatter: '{value} kg'
                             formatter: function(value) {
                                 var texts = [];
                                 if (value == 0) {
@@ -1036,7 +1020,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -1071,7 +1059,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -1093,17 +1085,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '③',
@@ -1115,7 +1096,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -1137,17 +1122,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '④',
@@ -1159,7 +1133,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -1181,17 +1159,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '⑤',
@@ -1203,7 +1170,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -1225,17 +1196,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '⑥',
@@ -1247,7 +1207,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -1269,17 +1233,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '⑦',
@@ -1291,7 +1244,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -1313,17 +1270,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '⑧',
@@ -1335,7 +1281,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -1357,17 +1307,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '⑨',
@@ -1379,7 +1318,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -1401,24 +1344,51 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
-
-
-
                     ]
                 })
 
+            },
+            RightInfo(obj, type) {
+                // debugger
+                var that = this;
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        that.showRightInfo = true
+                        that.titleRight = '九宫格明细'
+                        that.vancellList = []
+                        let xiangxian = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨']
+                        Object.keys(that.JGGinfoRes).forEach((key) => {
+                            if (Array.isArray(that.JGGinfoRes[key])) {
+                                if (that.JGGinfoRes[key].length != 0) {
+                                    that.vancellList.push({
+                                        title: that.JGGinfoRes[key][0].jgg,
+                                        value: that.JGGinfoRes[key].length,
+                                        direction: "",
+                                        jobList: that.JGGinfoRes[key],
+                                    }, )
+                                }
+                            }
+                        })
+                        that.vancellList[0].direction = 'down'
+                        that.rightInfoData = that.vancellList[0].jobList
+                        that.isLoading = false
+                    }, 60)
+                })
+            },
+            vancellListTouch(obj) {
+                this.isLoading = true
+                for (let item of this.vancellList) {
+                    if (item.title == obj.title) {
+                        item.direction = "down"
+                    } else {
+                        item.direction = ""
+                    }
+                }
+                this.rightInfoData = obj.jobList
+                setTimeout(() => {
+                    this.isLoading = false
+                }, 500);
             },
             //九宫格年份改变事件
             JGGyearChange(item) {

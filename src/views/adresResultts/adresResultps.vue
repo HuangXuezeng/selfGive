@@ -355,7 +355,7 @@
             };
         },
         created() {
-            debugger
+            
             // 数据初始化
             this.init();
         },
@@ -904,7 +904,7 @@
                     ],
                 });
                 myChart.on("click", function(params) {
-                    that.RightInfo(params);
+                    that.RightInfo(params,3);
                 });
             },
             //性别柱图
@@ -957,12 +957,13 @@
             },
             // 右弹窗展示详细人员数据
             RightInfo(obj, type) {
+              
                 // ;
                 var that = this;
                 this.$nextTick(() => {
                     setTimeout(() => {
                         that.showRightInfo = true;
-                        if (type == 1) {
+                        if (type == 2) {
                             for (let item of this.jobAgeListRes) {
                                 if (item.type == obj.name) {
                                     // ["3年以内", "3-5年", "5-10年", "10年以上"]
@@ -995,7 +996,7 @@
                                     this.vancellListTouch(this.vancellList[0]);
                                 }
                             }
-                        } else if (type == 2) {
+                        } else if (type == 1) {
                             for (let item of this.ageListRes) {
                                 if (item.type == obj.name) {
                                     // ["3年以内", "3-5年", "5-10年", "10年以上"]

@@ -1,10 +1,10 @@
 <!--  -->
 <template>
     <div class='baggrond'>
+        <adresNavbar></adresNavbar>
+        <adresResultsTanbber ref="adresResultsTanbber"></adresResultsTanbber>
         <div class="bgopacity">
-            <adresNavbar></adresNavbar>
-            <adresResultsTanbber ref="adresResultsTanbber"></adresResultsTanbber>
-            <div style="height:20px"></div>
+            <div style="height:12vh"></div>
             <van-row>
                 <van-col span="8" offset="5">
                     <div class="cadresStructure">
@@ -187,7 +187,7 @@
                             fenWei,
                             glfd,
                             highXl,
-                            monthLossjingli,
+                            jingli,
                             monthLoss,
                             nineXX,
                             oneXX,
@@ -234,7 +234,7 @@
                             value: `总监级:${zongjian ? zongjian : 0}`,
                             leibie: false
                         }, {
-                            value: `经理级:${monthLossjingli ? monthLossjingli : 0}`,
+                            value: `经理级:${jingli ? jingli : 0}`,
                             leibie: false
                         }, ]
                         this.delayTime.cengji = this.delayTime.zhengti + Number(this.zaibianlist.length) * 50
@@ -402,13 +402,13 @@
     }
 
     .colorFF {
-        color: #fff;
+        color: #000;
         padding: 3px 0;
         font-size: 13px;
     }
 
     .zuzhi {
-        color: #fff;
+        color: #000;
         font-size: 12px;
         font-weight: 700;
         position: absolute;
@@ -425,7 +425,7 @@
     }
 
     .zuzhiato {
-        color: #fff;
+        color: #000;
         font-size: 7vh;
         font-weight: 700;
         position: absolute;
@@ -434,7 +434,7 @@
     }
 
     .zuzhiatostr {
-        color: #fff;
+        color: #000;
         font-size: 12px;
         font-weight: 700;
         position: absolute;

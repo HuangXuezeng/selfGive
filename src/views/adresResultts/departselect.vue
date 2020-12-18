@@ -22,7 +22,7 @@
                                             </div>
                                             <div>
                                                 <transition name="van-slide-left">
-                                                    <div v-show="makeUpShow" style="font-size:12px;display: inline-block;" v-if="item.text =='国内营销事业部'">{{makeUpchecked ? '包含非编':'不包含非编'}}</div>
+                                                    <div v-show="makeUpShow" style="font-size:12px;display: inline-block;" v-if="item.text =='国内营销事业部'">{{makeUpchecked ? '含零售':'不含零售'}}</div>
                                                 </transition>
                                                  <van-switch @change='makeUpChange' v-model="makeUpchecked" size="12px" v-if="item.text =='国内营销事业部'" />
 

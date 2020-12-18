@@ -135,7 +135,7 @@
                 columnsCadresChange: [{
                         field: "type",
                         title: "职级",
-                        width: 120,
+                        width: 110,
                         titleAlign: "center",
                         columnAlign: "center",
                         isResize: true,
