@@ -5,7 +5,7 @@
             <van-nav-bar title="选择部门" left-text="上一部门" left-arrow @click-left="onClickLeft" @click-right="onClickRight" right-text="取消" />
         </div>
         <div>
-            <van-tree-select height="170vw" :items="deptData" :main-active-index.sync="activeIndex">
+            <van-tree-select height="170vw" :items="deptData" :main-active-index.sync="activeIndex" @click-nav='clickLeft'>
                 <template #content>
                     <!-- <van-image v-if="active === 0" src="https://img.yzcdn.cn/vant/apple-1.jpg" />
                 <van-image v-if="active === 1" src="https://img.yzcdn.cn/vant/apple-2.jpg" /> -->
@@ -14,8 +14,21 @@
                             <van-cell :title="item.text" icon="friends-o" v-for="(item,index) in nextdept" :key="index">
                                 <!-- 使用 right-icon 插槽来自定义右侧图标 -->
                                 <template #right-icon>
-                                    <van-button type="primary" size="small" @click="selectNext(item)" v-if="item.children != null && item.children.length != 0">下级</van-button>
-                                    <van-button type="info" size="small" @click="confirmDept(item)">确认</van-button>
+                                    <van-row>
+                                        <van-col>
+                                            <div>
+                                                <van-button type="primary" size="small" @click="selectNext(item)" v-if="item.children != null && item.children.length != 0">子部门</van-button>
+                                                <van-button type="info" size="small" @click="confirmDept(item)">进入</van-button>
+                                            </div>
+                                            <div>
+                                                <transition name="van-slide-left">
+                                                    <div v-show="makeUpShow" style="font-size:12px;display: inline-block;" v-if="item.text =='国内营销事业部'">{{makeUpchecked ? '含零售':'不含零售'}}</div>
+                                                </transition>
+                                                 <van-switch @change='makeUpChange' v-model="makeUpchecked" size="12px" v-if="item.text =='国内营销事业部'" />
+
+                                            </div>
+                                        </van-col>
+                                    </van-row>
                                 </template>
                             </van-cell>
                         </div>
@@ -35,7 +48,10 @@
     import {
         Card,
         Toast,
-        NavBar
+        NavBar,
+        Switch,
+        Col,
+        Row
     } from "vant";
     import {
         findIsHaveCadreInDept
@@ -53,22 +69,16 @@
             //这里存放数据
             return {
                 activeIndex: 0,
-                items: [{
-                        text: '浙江',
-                        children: [],
-                        dot: true
-                    },
-                    {
-                        text: '江苏',
-                        children: [],
-                        badge: 5
-                    },
-                ],
                 nextdept: [],
                 deptData: [],
                 animateShow: true,
                 historyList: [],
-                reselect: ''
+                reselect: '',
+                noneDeptOne: 0,
+                leftIndexrecord: 0,
+                makeUpchecked: true,
+                bzType: "Y",
+                makeUpShow: true
             };
         },
         //监听属性 类似于data概念
@@ -78,22 +88,33 @@
         //方法集合
         methods: {
             init() {
+                //页面进行缓存了，以前的历史赋值逻辑作废
                 if (this.reselect) {
                     this.reselectHistory()
                 } else {
                     this.queryfindPayrollDept();
                 }
+                localStorage.setItem("bzType", 'Y');
+                // localStorage.getItem("bzType")
             },
-            // initSalaryDeptRes() {
 
-            // },
             reselectHistory() {
+                //
                 let adresResultHistoryList = JSON.parse(localStorage.getItem("adresResultHistory"))
-                if (adresResultHistoryList.length) {
+                if (adresResultHistoryList != null && adresResultHistoryList.length) {
+
+                    if (adresResultHistoryList[0].leftIndexrecord != undefined) {
+                        this.noneDeptOne = 1
+                    }
                     this.deptData = adresResultHistoryList[0].deptData[0];
+                    // if (this.noneDeptOne) {
+                    //     this.processingField(adresResultHistoryList[0].deptData, 2)
+                    // } else {
+                    this.processingField(this.deptData)
+                    // }
+                    this.historyList = adresResultHistoryList
                 }
-                this.processingField(this.deptData)
-                this.historyList = adresResultHistoryList
+                this.deptData
                 // this.$refs.loadingSpin.shutdown();
             },
             //查询部门
@@ -115,17 +136,24 @@
                         }
                     );
                 } else {
+                    //
                     let SalaryDeptRes = JSON.parse(localStorage.getItem("SalaryDeptRes"));
                     SalaryDeptRes = JSON.parse(JSON.stringify(SalaryDeptRes).replace(/depts/g, 'children'))
                     SalaryDeptRes = JSON.parse(JSON.stringify(SalaryDeptRes).replace(/content/g, 'text'))
                     this.deptData = SalaryDeptRes.obj.children;
-                    this.processingField(this.deptData, 1)
+                    if (SalaryDeptRes.obj.children[0].deptId != undefined && SalaryDeptRes.obj.children[0].deptId == 1) {
+                        this.processingField(this.deptData, 1)
+                    } else {
+                        this.noneDeptOne = 1
+                        this.processingField(this.deptData, 2)
+                    }
                     this.reselectHistory()
 
                 }
             },
             //处理字段名合乎组件要求
             processingField(obj, type) {
+                //
                 if (type == 1) {
 
                     // obj[0].children = obj[0].depts
@@ -143,24 +171,42 @@
                     array.unshift(copyObj)
                     this.nextdept = array
                     this.setHistoryList()
-                } else {
-
-                    let array = obj.children
-                    for (let i in array) {
-                        // array[i].children = array[i].depts
-                        // delete array[i].depts
-                        // array[i].text = array[i].content
-                        if (array[i].children != null) {
-                            array[i].badge = array[i].children.length
-                        }
+                } else if (type == 2) {
+                    for (let i in obj) {
+                        obj[i].badge = obj[i].children.length
                     }
-                    this.animateShow = false
-                    this.deptData = [obj]
-                    this.nextdept = obj.children
-                    this.$nextTick(() => {
-                        this.animateShow = true
-                    })
+                    let copyObj = Object.assign({}, obj[0])
+                    copyObj.children = []
+                    obj[0].children.unshift(copyObj)
+                    this.nextdept = obj[0].children
+                    this.deptData
                     this.setHistoryList()
+                } else {
+                    if (this.noneDeptOne) {
+                        obj.badge = obj.children.length
+                        this.animateShow = false
+                        this.deptData = [obj]
+                        this.nextdept = obj.children
+                        this.$nextTick(() => {
+                            this.animateShow = true
+                        })
+                        this.setHistoryList()
+                    } else {
+                        let arrays = obj.children
+                        for (let i in arrays) {
+                            if (arrays[i].children != null) {
+                                arrays[i].badge = arrays[i].children.length
+                            }
+                        }
+                        this.animateShow = false
+                        this.deptData = [obj]
+                        this.nextdept = obj.children
+                        this.$nextTick(() => {
+                            this.animateShow = true
+                        })
+                        this.setHistoryList()
+                    }
+
                 }
                 this.$refs.loadingSpin.shutdown();
 
@@ -168,9 +214,20 @@
             //记录选择路径
             setHistoryList() {
 
-                let obj = {
-                    deptData: this.deptData,
+                let obj = {}
+                if (this.noneDeptOne) {
+                    if (this.historyList.length == 1) {
+                        this.historyList[0].leftIndexrecord = this.leftIndexrecord
+                        obj.leftIndexrecord = this.leftIndexrecord
+                        obj.deptData = this.deptData
+                    } else {
+                        obj.leftIndexrecord = this.leftIndexrecord
+                        obj.deptData = this.deptData
+                    }
+                } else {
+                    obj.deptData = this.deptData
                 }
+
                 this.historyList.unshift(obj)
             },
             //下一级按钮逻辑
@@ -183,14 +240,20 @@
                 }
             },
             onClickLeft() {
-
-                if (this.historyList.length < 2) {
+                if (this.historyList.length < 2 && !this.noneDeptOne) {
                     Toast.fail('没有上一级部门');
                 } else {
-                    this.historyList.splice(0, 1)
+                    if (this.noneDeptOne && this.historyList.length == 1) {} else {
+                        this.historyList.splice(0, 1)
+                    }
                     this.animateShow = false
                     this.deptData = this.historyList[0].deptData
-                    this.nextdept = this.historyList[0].deptData[0].children
+                    if (this.historyList[0].leftIndexrecord != undefined) {
+                        this.nextdept = this.historyList[0].deptData[this.historyList[0].leftIndexrecord].children
+                        this.activeIndex = this.historyList[0].leftIndexrecord
+                    } else {
+                        this.nextdept = this.historyList[0].deptData[0].children
+                    }
                     this.$nextTick(() => {
                         this.animateShow = true
                     })
@@ -198,11 +261,12 @@
             },
             confirmDept(item) {
                 findIsHaveCadreInDept({
-                    deptList: [item.deptId]
+                    deptList: [item.deptId],
+                    bzType: this.bzType
                 }).then(res => {
-                    // debugger
+                    //
                     if (res.obj == "Y") {
-                        let activeTab = localStorage.getItem("activeTab") || 'cadresChange'
+                        let activeTab = localStorage.getItem("activeTab") || 'dataBoard'
                         localStorage.setItem('adresResultDept', JSON.stringify(item))
                         localStorage.setItem('adresResultHistory', JSON.stringify(this.historyList))
 
@@ -220,10 +284,38 @@
                     Toast.fail('请至少选择一个部门');
                     return
                 }
-                let activeTab = localStorage.getItem("activeTab") || 'cadresChange'
+                let activeTab = localStorage.getItem("activeTab") || 'dataBoard'
                 this.$router.push({
                     name: activeTab,
                 })
+            },
+            clickLeft(index) {
+                // this.nextdept = this.deptData[index].children
+                let copyObj = Object.assign({}, this.deptData[index])
+                copyObj.children = []
+                if (copyObj.deptCode != this.deptData[index].children[0].deptCode) {
+                    this.deptData[index].children.unshift(copyObj)
+                }
+                this.nextdept = this.deptData[index].children
+                this.leftIndexrecord = index
+                //
+            },
+            makeUpChange(judge) {
+                if (judge) {
+                    this.makeUpShow = false
+                    this.bzType = 'Y'
+                    localStorage.setItem("bzType", 'Y');
+                    this.$nextTick(() => {
+                        this.makeUpShow = true
+                    })
+                } else {
+                    this.makeUpShow = false
+                    this.bzType = 'N'
+                    localStorage.setItem("bzType", 'N');
+                    this.$nextTick(() => {
+                        this.makeUpShow = true
+                    })
+                }
             }
         },
         //生命周期 - 创建完成（可以访问当前this实例）

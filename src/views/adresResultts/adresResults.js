@@ -191,10 +191,22 @@ export function findCadreReportZJFbInfo(queryData) {
       data: JSON.stringify(queryData)
   })
 }
-// 职业发展搜索接口 /kukacms/self/findCadreReportZJFbInfo
+// 职业发展搜索接口/kukacms/self/findCadreHomePageInfo?
 export function findCadreGrowInfoBySearch(queryData) {
   return fetch({
       url: `/kukacms/self/findCadreGrowInfoBySearch`,
+      headers: {
+          "content-type": "application/json"
+      },
+      dataType: 'json',
+      method: 'post',
+      data: JSON.stringify(queryData)
+  })
+}
+// 人才看板接口/kukacms/self/findCadreHomePageInfo?
+export function findCadreHomePageInfo(queryData) {
+  return fetch({
+      url: `/kukacms/self/findCadreHomePageInfo`,
       headers: {
           "content-type": "application/json"
       },

@@ -23,7 +23,7 @@
             <transition name="van-slide-right">
                 <div class="simpleSeach" v-show="refreshListFlag">
                     <span v-for="(item,index) in searchJobList" :key="index">
-                        <span :class="item.check" @click='checkSearchJob(item)' >{{item.name}}</span>
+                        <span :class="item.check" @click='checkSearchJob(item)'>{{item.name}}</span>
                     </span>
                 </div>
             </transition>
@@ -56,13 +56,6 @@
             </div>
             <div>
                 <transition name="van-slide-right">
-                    <!-- <div class="richSeach" v-show="refreshListFlag">
-                        <span v-for="(item,index) in searchJobList" :key="index">
-                            <span :class="item.check" @click='checkSearchJob(item)'>{{item.name+'('+item.deptName+')'}}
-                            </span>
-
-                        </span>
-                    </div> -->
                     <van-grid :column-num="2" :gutter="10" v-show="refreshListFlag">
                         <van-grid-item :class="item.checkRich" v-for="(item,index) in searchJobList" :key="index" @click="checkRichClick(item)">
                             <template #icon>
@@ -122,19 +115,24 @@
             return {
                 findCadreGrowInfoData: {
                     deptList: [],
-                    jobnumber: ''
+                    jobnumber: '',
+                    bzType:'Y'
 
                 },
                 readySelectDept: [],
                 findThisDeptWorkerInfoData: {
                     deptList: [],
-                    a0188: ''
+                    a0188: '',
+                    bzType:'Y'
+
                 },
                 findCadreGrowInfoBySearchData: {
                     jobnumber: '',
                     deptList: [],
                     isDown: 'Y',
-                    jobnumber1: ''
+                    jobnumber1: '',
+                    bzType:'Y'
+
                 },
                 deptJobnum: [],
                 choseName: '',
@@ -146,7 +144,8 @@
                 refreshSearch: 1,
                 filtrateFlag: false,
                 deptData: [],
-                readySelectObj: {}
+                readySelectObj: {},
+                bzType: ''
             };
         },
         //监听属性 类似于data概念
@@ -155,14 +154,24 @@
         watch: {},
         //方法集合
         methods: {
+            // 数据初始化
             init() {
+                // 获取本地存储的部门id
                 this.readySelectDept = [JSON.parse(localStorage.getItem("adresResultDept")).deptId];
+                //获取本地存储的部门对象
                 this.readySelectObj = JSON.parse(localStorage.getItem("adresResultDept"))
+                this.bzType = localStorage.getItem("bzType")
+                this.findCadreGrowInfoData.bzType = this.bzType
+                this.findThisDeptWorkerInfoData.bzType = this.bzType
+                this.findCadreGrowInfoBySearchData.bzType = this.bzType
+                // 职业路径数据
                 this.queryfindCadreGrowInfo()
+                // 查询部门右边弹窗部门信息
                 this.queryfindPayrollDept()
+                // 首次查询部门信息赋值
                 this.findCadreGrowInfoBySearchData.deptList = this.readySelectDept
-                // this.queryfindCadreGrowInfoBySearch()
             },
+            // 职业路径数据
             queryfindCadreGrowInfo() {
                 this.findCadreGrowInfoData.deptList = this.readySelectDept
                 findCadreGrowInfo(this.findCadreGrowInfoData).then(res => {
@@ -182,25 +191,7 @@
                     }
                 })
             },
-            // queryfindThisDeptWorkerInfo() {
-            //     this.findThisDeptWorkerInfoData.deptList = this.readySelectDept
-            //     this.findThisDeptWorkerInfoData.a0188 = this.joba0188obj.a0188
-            //     findThisDeptWorkerInfo(this.findThisDeptWorkerInfoData).then(res => {
-            //         this.deptJobnum = JSON.parse(JSON.stringify(res.obj).replace(/jobnumber/g, 'value'))
-            //         this.deptJobnum = JSON.parse(JSON.stringify(this.deptJobnum).replace(/name/g, 'text'))
-            //         for (let i in this.deptJobnum) {
-            //             if (this.deptJobnum[i].text == this.joba0188obj.name) {
-            //                 this.choseName = this.deptJobnum[i].value
-            //                 break
-            //             }
-            //         }
-            //         console.log(this.deptJobnum)
-            //     })
-            // },
-            confirmJobnum(value) {
-                this.findCadreGrowInfoData.jobnumber = value
-                this.queryfindCadreGrowInfo()
-            },
+            // 职业路径echarts渲染
             initfindCadreGrowInfoEchart(list) {
                 var myChart = this.$echarts.init(this.$refs.findCadreJGGinfoEchart);
                 let timeList = []
@@ -265,7 +256,7 @@
                         },
                         // extraCssText: 'transform: rotate(90deg)',
                         formatter: function(params, ticket) {
-                            // debugger
+                            //
                             var str = ''
                             for (let item of list) {
                                 if (item.time + '(' + item.type + ')' == params[0].name) {
@@ -403,19 +394,17 @@
                     ]
                 })
             },
+            // 右边弹窗确认按钮事件
             onSearch(val) {
                 this.queryfindCadreGrowInfoBySearch()
             },
+            // 输入框清除事件
             clearMeth() {
                 this.queryfindCadreGrowInfoBySearch()
             },
+            // 查询数据
             queryfindCadreGrowInfoBySearch(type) {
-                // debugger
                 this.refreshListFlag = false
-                // if (!type) {
-                //     this.findCadreGrowInfoBySearchData.deptList = this.readySelectDept
-
-                // }
                 findCadreGrowInfoBySearch(this.findCadreGrowInfoBySearchData).then(res => {
                     if (res.code == "1000") {
                         this.searchJobList = res.obj
@@ -432,9 +421,10 @@
                     } else {
                         Toast.fail(res.msg);
                     }
-                    // debugger
+                    //
                 })
             },
+            // 横条点击人员格点击事件
             checkSearchJob(obj) {
                 this.refreshListFlag = false
                 for (let item of this.searchJobList) {
@@ -452,37 +442,24 @@
                     this.findCadreGrowInfoData.jobnumber = obj.jobnumber
                     this.queryfindCadreGrowInfo()
                 })
-                // debugger
+                //
             },
+            // 点击筛选弹出事件
             screen() {
                 this.filtrateFlag = true
-                // debugger
             },
+            // 查询部门右边弹窗部门信息
             queryfindPayrollDept() {
-                if (
-                    localStorage.getItem("SalaryDeptRes") == "" ||
-                    localStorage.getItem("SalaryDeptRes") == null ||
-                    localStorage.getItem("SalaryDeptRes") == "underfined" ||
-                    JSON.parse(localStorage.getItem("SalaryDeptRes")).code != "1000"
-                ) {
-                    findPayrollDept({
-                        jobnumber: localStorage.getItem("jobNum")
-                    }).then(
-                        res => {
-                            this.deptData = res.obj.depts;
-                        }
-                    );
-                } else {
-                    const SalaryDeptRes = JSON.parse(localStorage.getItem("SalaryDeptRes"));
-                    this.deptData = SalaryDeptRes.obj.depts;
-                }
+                const SalaryDeptRes = JSON.parse(localStorage.getItem("SalaryDeptRes"));
+                this.deptData = SalaryDeptRes.obj.depts;
             },
+            //选择部门回调函数
             selctdept(data, isDown, deptOne) {
                 this.findCadreGrowInfoBySearchData.deptList = data
                 this.queryfindCadreGrowInfoBySearch(1)
             },
+            // 右边弹窗点击人员格点击事件
             checkRichClick(obj) {
-                // this.refreshListFlag = false
                 for (let item of this.searchJobList) {
                     if (item.name == obj.name) {
                         item.checkRich = 'resetVantGridAct'
@@ -501,6 +478,7 @@
                     // location.href = "#"+obj.jobnumber
                 })
             },
+            // 右边弹窗重置按钮事件
             restSearch() {
                 this.findCadreGrowInfoBySearchData.deptList = this.readySelectDept
                 this.findCadreGrowInfoBySearchData.jobnumber = ''

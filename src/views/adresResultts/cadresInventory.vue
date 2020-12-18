@@ -34,11 +34,40 @@
                     </div>
                 </van-col>
             </van-row>
+            <selctYearcurrent @yearChangeItem='JGGyearChange' :startYear='2017' :allPage='0'></selctYearcurrent>
+            <van-dropdown-menu>
+                <van-dropdown-item v-model="selectJGGtype" :options="selectJGGtypelist" @change='confirmJGG' />
+            </van-dropdown-menu>
             <div>
                 <div style="width: 100%; height: 400px">
                     <div ref="findCadreJGGinfoEchart" :style="{ width: '100%', height: '400px' }"></div>
                 </div>
             </div>
+        </div>
+        <div>
+            <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '80%' }" get-container="body">
+                <van-row type="flex" justify="center" style="margin-bottom: 10px">
+                    <van-col>
+                        <div class="titleRightInfo">
+                            {{ titleRight }}
+                        </div>
+                    </van-col>
+                </van-row>
+                <div v-for="(item, index) in vancellList" :key="index">
+                    <van-cell  is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)">
+                        <template #title>
+                            <span style="font-size: 18 px;color: red;">{{item.title}}</span>
+                        </template>
+                          <template #default>
+                            <van-icon name="friends-o" />
+                            <span >{{item.value}}</span>
+                        </template>
+                    </van-cell>
+                </div>
+                <div style="padding-bottom:100px">
+                    <v-table ref="rightInfoTable" is-horizontal-resize :is-loading="isLoading" columns-width-drag :height="400" style="width: 100%; font-size: 14px" title-bg-color="#ccc" :columns="popupColumns" :table-data="rightInfoData" row-hover-color="#eee" row-click-color="#edf7ff"></v-table>
+                </div>
+            </van-popup>
         </div>
     </div>
 </template>
@@ -81,24 +110,83 @@
             //这里存放数据
             return {
                 selectDownDept: '',
+                selectJGGtype: '',
+                selectJGGtypelist: [{
+                    text: '全部',
+                    value: ''
+                }, {
+                    text: '经理',
+                    value: '1'
+                }, {
+                    text: '总监',
+                    value: '2'
+                }],
                 downDeptlist: [],
                 showNodatas: false,
                 findCadreChartInfoUeryData: {
                     deptList: [],
                     year: "",
-                    isDown: 'Y'
+                    isDown: 'Y',
+                    bzType: 'Y'
                 },
                 readySelectDept: "",
                 readySelectDeptObj: {},
                 findCadreJGGinfoData: {
                     deptList: [],
                     isDown: 'Y',
-                    year: '2018',
-                    type: '1'
+                    year: '',
+                    type: '',
+                    bzType: 'Y'
                 },
                 //坐标x值，y值
                 normX: 0,
-                normY: 0
+                normY: 0,
+                bzType: '',
+                showRightInfo: false,
+                vancellList: [],
+                isLoading: true,
+                popupColumns: [{
+                        field: "custome",
+                        width: 50,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        title: "序号",
+                        formatter: function(rowData, index) {
+                            return index + 1;
+                        },
+                        isResize: true,
+                    },
+                    {
+                        field: "name",
+                        title: "姓名",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        formatter: function(rowData, rowIndex, pagingIndex, field) {
+                            return `<span>${rowData[field]}</span>`;
+                        },
+                        isResize: true,
+                    },
+                    {
+                        field: "age",
+                        title: "年龄",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                    {
+                        field: "zj",
+                        title: "职级",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    }
+                ],
+                rightInfoData: [],
+                JGGinfoRes: {},
+                titleRight: ''
             };
         },
         //监听属性 类似于data概念
@@ -107,21 +195,34 @@
         watch: {},
         //方法集合
         methods: {
+            // 数据初始化
             init() {
+                // 获取本地存储的部门id
                 this.readySelectDept = [JSON.parse(localStorage.getItem("adresResultDept")).deptId];
+                //获取本地存储的部门对象
                 this.readySelectDeptObj = JSON.parse(localStorage.getItem("adresResultDept"))
+                // 查询赋值部门信息
                 this.findCadreChartInfoUeryData.deptList = this.readySelectDept
+                this.bzType = localStorage.getItem("bzType")
+                this.findCadreChartInfoUeryData.bzType = this.bzType
+                this.findCadreJGGinfoData.bzType = this.bzType
+                // 干部雷达图下拉部门数据初始化
                 this.queryfindCadreChartDownDeptInfo()
+                //干部雷达图数据初始化
                 this.queryfindCadreChartInfo()
+                // 九宫格数据初始化
                 this.queryfindCadreJGGinfo()
             },
+            // 年份改变事件
             yearChange(item) {
                 this.findCadreChartInfoUeryData.year = item
                 this.queryfindCadreChartInfo()
             },
+            //干部雷达图下拉部门数据
             queryfindCadreChartDownDeptInfo() {
                 findCadreChartDownDeptInfo({
-                    deptList: this.readySelectDept
+                    deptList: this.readySelectDept,
+                    bzType: this.bzType
                 }).then(res => {
                     if (res.code == "1000") {
                         this.downDeptlist = JSON.parse(JSON.stringify(res.obj).replace(/deptId/g, 'value'))
@@ -137,14 +238,13 @@
                             text: this.readySelectDeptObj.text
                         })
                         this.selectDownDept = this.downDeptlist[0].value
-                        // Toast.fail(res.msg);
-                        // this.showNodatas = true
                     }
 
                 })
             },
+            // 点击下拉部门事件
             confirmDept(item) {
-                // debugger
+                //
                 this.findCadreChartInfoUeryData.deptList = [item]
                 this.queryfindCadreChartInfo()
             },
@@ -162,6 +262,7 @@
                     }
                 })
             },
+            // 干部雷达图echarts渲染
             initfindCadreChartInfoEchart(list) {
                 var myChart = this.$echarts.init(this.$refs.findCadreChartInfoEchart);
                 let upLevelList = [];
@@ -311,69 +412,27 @@
                     }]
                 })
             },
+            // 九宫格数据
             queryfindCadreJGGinfo() {
                 this.findCadreJGGinfoData.deptList = this.readySelectDept
                 findCadreJGGinfo(this.findCadreJGGinfoData).then(res => {
                     // let aa = this.setRandomTree(1, 99, 3)
                     if (res.code == "1000") {
                         this.initfindCadreJGGinfoEchart(res.obj)
+                        this.JGGinfoRes = res.obj
                     } else {
                         Toast.fail(res.msg);
                     }
                 })
             },
-            setRandomTree(minNum, maxNum, len, type) {
-                // debugger
-                // if (len) {
-                //     if (type == 'x') {
-                //         if (this.normX == maxNum) {
-                //             this.normX = minNum
-                //             return this.normX
-                //         } else {
-                //             if (len > 90) {
-                //                 this.normX = this.normX + 1
-                //             } else {
-                //                 this.normX = this.normX + 0.5
-                //             }
-                //             return this.normX
-                //         }
-                //     } else {
-                //         if (this.normY == minNum) {
-                //             this.normY = minNum
-                //             return this.normY
-                //         } else {
-                //             if (this.normX == maxNum) {
-                //                 this.normY = this.normY - 8
-                //                 return this.normY
-                //             } else {
-                //                 return this.normY
-                //             }
-                //         }
-                //     }
-                // }
-                if(this.normX == maxNum){
-                  this.normX = minNum
-                }else{
-
-                }
-                var max = 0,
-                    min = 0;
+            //九宫格散点图位置处理
+            setRandomTree(minNum, maxNum, len, site) {
+                let max = 0;
+                let min = 0;
                 minNum <= maxNum ? (min = minNum, max = maxNum) : (min = maxNum, max = minNum);
-                switch (arguments.length) {
-                    case 1:
-                        return Math.floor(Math.random() * (max + 1));
-                        break;
-                    case 2:
-                        return Math.floor(Math.random() * (max - min + 1) + min);
-                        break;
-                    case 3:
-                        return (Math.random() * (max - min) + min).toFixed(len);
-                        break;
-                    default:
-                        return Math.random();
-                        break;
-                }
+                return (Math.random() * (max - min) + min).toFixed(2);
             },
+            //九宫格散点图姓名标注处理
             PointlistSet(listitem) {
                 let obj = {}
                 obj.name = `姓名：${ listitem.name}<br/>年龄：${listitem.age}<br/>职级：${listitem.zj}<br/>象限：${listitem.jgg}<br/>`
@@ -382,6 +441,7 @@
                 obj.yAxis = listitem.y
                 return obj
             },
+            //九宫格散点图渲染图
             initfindCadreJGGinfoEchart(obj) {
                 var that = this
                 var myChart = this.$echarts.init(this.$refs.findCadreJGGinfoEchart);
@@ -403,149 +463,406 @@
                 let sevenPointlist = []
                 let eightPointlist = []
                 let ninePointlist = []
+
+                // 显示模式切换
+                let briefFlag = false
+                for (let ksy in obj) {
+                    if (ksy == 'oneCount' || ksy == 'twoCount' || ksy == 'threeCount' || ksy == 'fourCount' || ksy == 'fiveCount' || ksy == 'sixCount' || ksy == 'sevenCount' || ksy == 'eightCount' || ksy == 'nineCount') {
+                        if (Number(obj[ksy]) > 5) {
+                            briefFlag = true
+                            break
+                        }
+                    }
+                }
                 Object.keys(obj).forEach((key) => {
                     console.log(key, obj[key]);
-                    // debugger
+                    //
                     if (key == 'one') {
                         that.normX = 0
                         that.normY = 30
                         let oneobjList = obj[key]
-                        for (let i in oneobjList) {
-                            // oneobjList[i].x = that.setRandomTree(0, 30, oneobjList.length, 'x')
-                            // oneobjList[i].y = that.setRandomTree(0, 30, oneobjList.length, 'y')
-                            oneobjList[i].x = that.setRandomTree(0, 30, 2)
-                            oneobjList[i].y = that.setRandomTree(0, 30, 2)
-                            onelist.push([oneobjList[i].x, oneobjList[i].y])
-                            onePointlist.push(that.PointlistSet(oneobjList[i]))
+                        if (!briefFlag) {
+                            for (let i in oneobjList) {
+                                oneobjList[i].x = that.setRandomTree(0, 30, oneobjList.length, i)
+                                oneobjList[i].y = that.setRandomTree(0, 30, oneobjList.length, i)
+                                onelist.push([oneobjList[i].x, oneobjList[i].y])
+                                onePointlist.push(that.PointlistSet(oneobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 0,
+                                yrange: 0,
+
+                            }
+                            let y = {
+                                xrange: 30,
+                                yrange: 30,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                onePointlist.push({
+                                    name: 'one',
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + '',
+                                    value: obj.onePct,
+                                })
+                                onelist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                onelist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'two') {
                         that.normX = 30
                         that.normY = 30
                         let twoobjList = obj[key]
-                        for (let i in twoobjList) {
-                            // twoobjList[i].x = that.setRandomTree(30, 60, twoobjList.length, 'x')
-                            // twoobjList[i].y = that.setRandomTree(0, 30, twoobjList.length, 'y')
-                            twoobjList[i].y = that.setRandomTree(0, 30, 2)
-                            twoobjList[i].x = that.setRandomTree(30, 60, 2)
+                        if (!briefFlag) {
+                            for (let i in twoobjList) {
+                                twoobjList[i].y = that.setRandomTree(0, 30, twoobjList.length, i)
+                                twoobjList[i].x = that.setRandomTree(30, 60, twoobjList.length, i)
 
-                            twolist.push([twoobjList[i].x, twoobjList[i].y])
-                            twoPointlist.push(that.PointlistSet(twoobjList[i]))
+                                twolist.push([twoobjList[i].x, twoobjList[i].y])
+                                twoPointlist.push(that.PointlistSet(twoobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 0,
+                                yrange: 30,
+
+                            }
+                            let y = {
+                                xrange: 30,
+                                yrange: 60,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                twoPointlist.push({
+                                    name: 'two',
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + '',
+                                    value: obj.twoPct,
+
+                                })
+                                twolist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                twolist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'three') {
                         that.normX = 0
                         that.normY = 60
                         let threeobjList = obj[key]
-                        for (let i in threeobjList) {
-                            // threeobjList[i].x = that.setRandomTree(0, 30, threeobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in threeobjList) {
+                                threeobjList[i].y = that.setRandomTree(30, 60, threeobjList.length, i)
+                                threeobjList[i].x = that.setRandomTree(0, 30, threeobjList.length, i)
 
-                            // threeobjList[i].y = that.setRandomTree(30, 60, threeobjList.length, 'y')
-                            threeobjList[i].y = that.setRandomTree(30, 60, 2)
-                            threeobjList[i].x = that.setRandomTree(0, 30, 2)
+                                threelist.push([threeobjList[i].x, threeobjList[i].y])
+                                threePointlist.push(that.PointlistSet(threeobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 30,
+                                yrange: 0,
 
-                            threelist.push([threeobjList[i].x, threeobjList[i].y])
-                            threePointlist.push(that.PointlistSet(threeobjList[i]))
+                            }
+                            let y = {
+                                xrange: 60,
+                                yrange: 30,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                threePointlist.push({
+                                    name: 'three',
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + '',
+                                    value: obj.threePct,
+
+                                })
+                                threelist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                threelist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'four') {
                         that.normX = 60
                         that.normY = 30
                         let fourobjList = obj[key]
-                        for (let i in fourobjList) {
-                            // fourobjList[i].x = that.setRandomTree(60, 90, fourobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in fourobjList) {
+                                fourobjList[i].y = that.setRandomTree(0, 30, fourobjList.length, i)
+                                fourobjList[i].x = that.setRandomTree(60, 90, fourobjList.length, i)
 
-                            // fourobjList[i].y = that.setRandomTree(0, 30, fourobjList.length, 'y')
-                            fourobjList[i].y = that.setRandomTree(0, 30, 2)
-                            fourobjList[i].x = that.setRandomTree(60, 90, 2)
+                                fourlist.push([fourobjList[i].x, fourobjList[i].y])
+                                fourPointlist.push(that.PointlistSet(fourobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 0,
+                                yrange: 60,
 
-                            fourlist.push([fourobjList[i].x, fourobjList[i].y])
-                            fourPointlist.push(that.PointlistSet(fourobjList[i]))
+                            }
+                            let y = {
+                                xrange: 30,
+                                yrange: 90,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                fourPointlist.push({
+                                    name: 'four',
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + '',
+                                    value: obj.fourPct,
+
+                                })
+                                fourlist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                fourlist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'five') {
                         that.normX = 30
                         that.normY = 60
-                        // debugger
+                        //
                         let fiveobjList = obj[key]
-                        for (let i in fiveobjList) {
-                            // fiveobjList[i].x = that.setRandomTree(30, 60, fiveobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in fiveobjList) {
+                                fiveobjList[i].y = that.setRandomTree(30, 60, fiveobjList.length, i)
+                                fiveobjList[i].x = that.setRandomTree(30, 60, fiveobjList.length, i)
 
-                            // fiveobjList[i].y = that.setRandomTree(30, 60, fiveobjList.length, 'y')
-                            fiveobjList[i].y = that.setRandomTree(30, 60, 2)
-                            fiveobjList[i].x = that.setRandomTree(30, 60, 2)
+                                fivelist.push([fiveobjList[i].x, fiveobjList[i].y])
+                                fivePointlist.push(that.PointlistSet(fiveobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 30,
+                                yrange: 30,
 
-                            fivelist.push([fiveobjList[i].x, fiveobjList[i].y])
-                            fivePointlist.push(that.PointlistSet(fiveobjList[i]))
+                            }
+                            let y = {
+                                xrange: 60,
+                                yrange: 60,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                fivePointlist.push({
+                                    name: 'five',
+                                    value: obj.fivePct,
+
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + ''
+                                })
+                                fivelist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                fivelist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'six') {
                         that.normX = 0
                         that.normY = 90
                         let sixobjList = obj[key]
-                        for (let i in sixobjList) {
-                            // sixobjList[i].x = that.setRandomTree(0, 30, sixobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in sixobjList) {
+                                sixobjList[i].y = that.setRandomTree(60, 90, sixobjList.length, i)
+                                sixobjList[i].x = that.setRandomTree(0, 30, sixobjList.length, i)
 
-                            // sixobjList[i].y = that.setRandomTree(60, 90, sixobjList.length, 'y')
-                            sixobjList[i].y = that.setRandomTree(60, 90,2)
-                            sixobjList[i].x = that.setRandomTree(0, 30, 2)
+                                sixlist.push([sixobjList[i].x, sixobjList[i].y])
+                                sixPointlist.push(that.PointlistSet(sixobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 60,
+                                yrange: 0,
 
-                            sixlist.push([sixobjList[i].x, sixobjList[i].y])
-                            sixPointlist.push(that.PointlistSet(sixobjList[i]))
+                            }
+                            let y = {
+                                xrange: 90,
+                                yrange: 30,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                sixPointlist.push({
+                                    name: 'six',
+                                    value: obj.sixPct,
+
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + ''
+                                })
+                                sixlist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                sixlist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'seven') {
                         that.normX = 60
                         that.normY = 60
                         let sevenobjList = obj[key]
-                        for (let i in sevenobjList) {
-                            // sevenobjList[i].x = that.setRandomTree(60, 90, sevenobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in sevenobjList) {
+                                sevenobjList[i].y = that.setRandomTree(30, 60, sevenobjList.length, i)
+                                sevenobjList[i].x = that.setRandomTree(60, 90, sevenobjList.length, i)
 
-                            // sevenobjList[i].y = that.setRandomTree(30, 60, sevenobjList.length, 'y')
-                            sevenobjList[i].y = that.setRandomTree(30, 60, 2)
-                            sevenobjList[i].x = that.setRandomTree(60, 90, 2)
+                                sevenlist.push([sevenobjList[i].x, sevenobjList[i].y])
+                                sevenPointlist.push(that.PointlistSet(sevenobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 30,
+                                yrange: 60,
 
-                            sevenlist.push([sevenobjList[i].x, sevenobjList[i].y])
-                            sevenPointlist.push(that.PointlistSet(sevenobjList[i]))
+                            }
+                            let y = {
+                                xrange: 60,
+                                yrange: 90,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                sevenPointlist.push({
+                                    name: 'seven',
+                                    value: obj.sevenPct,
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + ''
+                                })
+                                sevenlist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                sevenlist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'eight') {
                         that.normX = 30
                         that.normY = 90
                         let eightobjList = obj[key]
-                        for (let i in eightobjList) {
-                            // eightobjList[i].x = that.setRandomTree(30, 60, eightobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in eightobjList) {
+                                eightobjList[i].y = that.setRandomTree(60, 90, eightobjList.length, i)
+                                eightobjList[i].x = that.setRandomTree(30, 60, eightobjList.length, i)
 
-                            // eightobjList[i].y = that.setRandomTree(60, 90, eightobjList.length, 'y')
-                            eightobjList[i].y = that.setRandomTree(60, 90, 2)
-                            eightobjList[i].x = that.setRandomTree(30, 60, 2)
+                                eightlist.push([eightobjList[i].x, eightobjList[i].y])
+                                eightPointlist.push(that.PointlistSet(eightobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 60,
+                                yrange: 30,
 
-                            eightlist.push([eightobjList[i].x, eightobjList[i].y])
-                            eightPointlist.push(that.PointlistSet(eightobjList[i]))
+                            }
+                            let y = {
+                                xrange: 90,
+                                yrange: 60,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                eightPointlist.push({
+                                    name: 'eight',
+                                    value: obj.eightPct,
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + ''
+                                })
+                                eightlist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                eightlist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
                     if (key == 'nine') {
                         that.normX = 60
                         that.normY = 90
                         let nineobjList = obj[key]
-                        for (let i in nineobjList) {
-                            // nineobjList[i].x = that.setRandomTree(60, 90, nineobjList.length, 'x')
+                        if (!briefFlag) {
+                            for (let i in nineobjList) {
+                                nineobjList[i].y = that.setRandomTree(60, 90, nineobjList.length, i)
+                                nineobjList[i].x = that.setRandomTree(60, 90, nineobjList.length, i)
 
-                            // nineobjList[i].y = that.setRandomTree(60, 90, nineobjList.length, 'y')
-                            nineobjList[i].y = that.setRandomTree(60, 90,2)
-                            nineobjList[i].x = that.setRandomTree(60, 90, 2)
+                                ninelist.push([nineobjList[i].x, nineobjList[i].y])
+                                ninePointlist.push(that.PointlistSet(nineobjList[i]))
+                            }
+                        } else {
+                            let x = {
+                                xrange: 60,
+                                yrange: 60,
 
-                            ninelist.push([nineobjList[i].x, nineobjList[i].y])
-                            ninePointlist.push(that.PointlistSet(nineobjList[i]))
+                            }
+                            let y = {
+                                xrange: 90,
+                                yrange: 90,
+
+                            }
+                            if (obj[key].length != undefined && obj[key].length != 0) {
+                                ninePointlist.push({
+                                    name: 'nine',
+                                    value: obj.ninePct,
+                                    xAxis: x.xrange + 15 + '',
+                                    yAxis: x.yrange + 15 + ''
+                                })
+                                ninelist = [
+                                    [x.xrange, y.yrange],
+                                    [x.xrange + 15, x.yrange + 15]
+                                ]
+                            } else {
+                                ninelist = [
+                                    [x.xrange, y.yrange]
+                                ]
+                            }
                         }
+
                     }
 
                 })
                 myChart.setOption({
-                    // title: {
-                    //     text: '男性女性身高体重分布',
-                    //     subtext: '抽样调查来自: Heinz  2003'
-                    // },
                     grid: {
                         left: '3%',
                         right: '7%',
@@ -553,8 +870,6 @@
                         containLabel: true
                     },
                     tooltip: {
-                        // trigger: 'axis',
-                        // '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨'jgg
                         showDelay: 0,
                         formatter: function(params, ticket) {
                             var str = ''
@@ -636,27 +951,14 @@
                             }
                             return str
                         },
-                        // axisPointer: {
-                        //     show: false,
-                        //     type: 'cross',
-                        //     lineStyle: {
-                        //         type: 'dashed',
-                        //         width: 1
-                        //     }
-                        // }
                     },
                     dataZoom: {
-                        type: 'inside'
+                        type: 'inside',
+                        // xAxisIndex: [0]
                     },
 
                     toolbox: {
                         show: false,
-                        // feature: {
-                        //     dataZoom: {},
-                        //     brush: {
-                        //         type: ['rect', 'polygon', 'clear']
-                        //     }
-                        // }
                     },
                     brush: {},
                     legend: {
@@ -669,7 +971,6 @@
                         min: 0,
                         splitNumber: 3,
                         axisLabel: {
-                            // formatter: '{value} cm'
                             formatter: function(value) {
                                 var texts = [];
                                 if (value == 0) {
@@ -692,7 +993,6 @@
                         max: 90,
                         min: 0,
                         axisLabel: {
-                            // formatter: '{value} kg'
                             formatter: function(value) {
                                 var texts = [];
                                 if (value == 0) {
@@ -720,7 +1020,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -755,7 +1059,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -777,17 +1085,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '③',
@@ -799,7 +1096,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -821,17 +1122,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '④',
@@ -843,7 +1133,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -865,17 +1159,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '⑤',
@@ -887,7 +1170,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -909,17 +1196,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '⑥',
@@ -931,7 +1207,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -953,17 +1233,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '⑦',
@@ -975,7 +1244,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -997,17 +1270,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '⑧',
@@ -1019,7 +1281,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -1041,17 +1307,6 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
                         {
                             name: '⑨',
@@ -1063,7 +1318,11 @@
                                     trigger: 'item',
                                     position: 'top',
                                     formatter: function(param) {
-                                        return param.name;
+                                        if (!briefFlag) {
+                                            return param.name;
+                                        } else {
+                                            that.RightInfo(param)
+                                        }
                                     }
                                 }
                             },
@@ -1085,24 +1344,61 @@
                                     }]
                                 ]
                             },
-                            // markPoint: {
-                            //     data: [{
-                            //             type: 'max',
-                            //             name: '最大值'
-                            //         },
-                            //         {
-                            //             type: 'min',
-                            //             name: '最小值'
-                            //         }
-                            //     ]
-                            // },
                         },
-
-
-
                     ]
                 })
 
+            },
+            RightInfo(obj, type) {
+                // debugger
+                var that = this;
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        that.showRightInfo = true
+                        that.titleRight = '九宫格明细'
+                        that.vancellList = []
+                        let xiangxian = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨']
+                        Object.keys(that.JGGinfoRes).forEach((key) => {
+                            if (Array.isArray(that.JGGinfoRes[key])) {
+                                if (that.JGGinfoRes[key].length != 0) {
+                                    that.vancellList.push({
+                                        title: that.JGGinfoRes[key][0].jgg,
+                                        value: that.JGGinfoRes[key].length,
+                                        direction: "",
+                                        jobList: that.JGGinfoRes[key],
+                                    }, )
+                                }
+                            }
+                        })
+                        that.vancellList[0].direction = 'down'
+                        that.rightInfoData = that.vancellList[0].jobList
+                        that.isLoading = false
+                    }, 60)
+                })
+            },
+            vancellListTouch(obj) {
+                this.isLoading = true
+                for (let item of this.vancellList) {
+                    if (item.title == obj.title) {
+                        item.direction = "down"
+                    } else {
+                        item.direction = ""
+                    }
+                }
+                this.rightInfoData = obj.jobList
+                setTimeout(() => {
+                    this.isLoading = false
+                }, 500);
+            },
+            //九宫格年份改变事件
+            JGGyearChange(item) {
+                this.findCadreJGGinfoData.year = item
+                this.queryfindCadreJGGinfo()
+            },
+            //九宫格职位改变事件
+            confirmJGG(item) {
+                this.findCadreJGGinfoData.type = item
+                this.queryfindCadreJGGinfo()
             }
         },
         //生命周期 - 创建完成（可以访问当前this实例）
