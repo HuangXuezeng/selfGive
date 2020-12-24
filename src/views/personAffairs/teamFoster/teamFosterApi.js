@@ -45,3 +45,10 @@ export function findTeamBuildingJGLJInfo (queryData) {
     data: qs.stringify(queryData)
   })
 }
+export function findNameBySearch (queryData) {
+  return fetch({
+    url: `/kukacms/self/findNameBySearch`,
+    method: 'post',
+    data: qs.stringify(queryData)
+  })
+}

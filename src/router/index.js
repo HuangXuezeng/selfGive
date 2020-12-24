@@ -455,6 +455,12 @@ export default new Router({
       name: 'dataBoard',
       component: () => import('@/views/adresResultts/dataBoard'),
     },
+    {
+      path: '/talentPool',
+      name: 'talentPool',
+      component: () => import('@/views/adresResultts/talentPool'),
+      meta: { keepAlive: true }
+    },
     /**
      * 干部简报结束
      */

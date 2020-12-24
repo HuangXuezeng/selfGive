@@ -69,17 +69,30 @@
             <v-table is-horizontal-resize style="width: 100%" :columns="columnsManagementrange" :table-data="tableDataManagementrange" row-hover-color="#eee" row-click-color="#edf7ff" :is-loading="lodingFlagManagementrange" :column-cell-class-name="columnCellClassTrangeChange"></v-table>
         </div>
         <div>
-            <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '80%' }" get-container="body">
+            <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '88%' }" get-container="body" :closeable='true'>
                 <div style="padding-bottom: 30px;">
                     <van-row type="flex" justify="center" style="margin-bottom: 10px">
                         <van-col>
                             <div class="titleRightInfo">
-                                {{ titleRight }}
+                                职级分布明细
                             </div>
                         </van-col>
                     </van-row>
-                    <div v-for="(item, index) in vancellList" :key="index">
-                        <van-cell :title="item.title" is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)" />
+                    <van-grid :column-num="3" :clickable='true' :gutter="2">
+                        <van-grid-item v-for="(item, index) in titleTypelist" :key="index" :class="item.class" @click='titleTypeClick(item)'>
+                            <template #default>
+                                <div class="gridItemBgi van-ellipsis">
+                                    {{ item.seriesName }}
+                                </div>
+                            </template>
+                        </van-grid-item>
+                    </van-grid>
+                    <div v-for="(items, index) in vancellList" :key="index">
+                        <van-row type="flex" justify="space-around">
+                            <van-col span="12" v-for="(item, index) in items" :key="index">
+                                <van-cell :title="item.title" is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)" />
+                            </van-col>
+                        </van-row>
                     </div>
                     <v-table ref="rightInfoTable" is-horizontal-resize :is-loading="isLoading" columns-width-drag :height="400" style="width: 100%; font-size: 14px" title-bg-color="#ccc" :columns="popupColumns" :table-data="rightInfoData" row-hover-color="#eee" row-click-color="#edf7ff"></v-table>
                 </div>
@@ -337,7 +350,8 @@
                         isResize: true,
                     },
                 ],
-                bzType:''
+                bzType: '',
+                titleTypelist: []
             };
         },
         created() {
@@ -361,7 +375,7 @@
                         this.readyOneSelectDept = this.readySelectDept
                     }
                 }
-                this.bzType =  localStorage.getItem("bzType")
+                this.bzType = localStorage.getItem("bzType")
                 this.queryObj.bzType = this.bzType
                 this.queryYearChangeObj.bzType = this.bzType
                 this.queryYearManagementrange.bzType = this.bzType
@@ -698,8 +712,17 @@
             queryfindCadreReportZJFbInfo() {
                 this.findCadreReportZJFbInfoData.deptList = this.readySelectDept
                 findCadreReportZJFbInfo(this.findCadreReportZJFbInfoData).then(res => {
+                    this.titleTypelist = [{
+                        seriesName: "S类",
+                        class: 'resetVantAdresResultps',
+                    }, {
+                        seriesName: "P类",
+                        class: 'resetVantAdresResultps',
+                    }, {
+                        seriesName: "M类",
+                        class: 'resetVantAdresResultps',
+                    }]
                     this.countDistributionMeth(res.obj)
-
                 })
             },
             //职级柱图
@@ -714,29 +737,39 @@
                 this.rightSList = []
                 this.rightPList = []
                 this.rightMList = []
+                //  this.titleTypelist = [{
+                //         seriesName: "S类",
+                //         class: 'resetVantAdresResultps',
+                //     }, {
+                //         seriesName: "P类",
+                //         class: 'resetVantAdresResultps',
+                //     }, {
+                //         seriesName: "M类",
+                //         class: 'resetVantAdresResultps',
+                //     }]
                 for (let i in list) {
                     zlList.push(list[i].type)
                     if (list[i].zl == "S类") {
                         SList.push(list[i].count || "")
                         PList.push('')
                         MList.push('')
-                        if (list[i].count) {
-                            this.rightSList.push(list[i])
-                        }
+                        // if (list[i].count) {
+                        this.rightSList.push(list[i])
+                        // }
                     } else if (list[i].zl == "P类") {
                         PList.push(list[i].count || "")
                         SList.push('')
                         MList.push('')
-                        if (list[i].count) {
-                            this.rightPList.push(list[i])
-                        }
+                        // if (list[i].count) {
+                        this.rightPList.push(list[i])
+                        // }
                     } else if (list[i].zl == "M类") {
                         MList.push(list[i].count || "")
                         SList.push('')
                         PList.push('')
-                        if (list[i].count) {
-                            this.rightMList.push(list[i])
-                        }
+                        // if (list[i].count) {
+                        this.rightMList.push(list[i])
+                        // }
                     }
                 }
                 myChart.setOption({
@@ -861,8 +894,15 @@
                 this.$nextTick(() => {
                     setTimeout(() => {
                         that.showRightInfo = true;
-                        that.titleRight = obj.seriesName;
-                        if (obj.seriesName == "S类") {
+                        // debugger
+                        for (let item of this.titleTypelist) {
+                            if (obj.seriesName == item.seriesName) {
+                                item.class = 'resetVantAdresResulAct'
+                            } else {
+                                item.class = 'resetVantAdresResultps'
+                            }
+                        }
+                        if (!obj.seriesName || obj.seriesName == "S类") {
                             for (let item of that.rightSList) {
                                 item.title = item.type
                                 item.value = item.count
@@ -887,18 +927,29 @@
                             }
                             that.vancellList = that.rightMList
                         }
-                        that.vancellListTouch(that.vancellList[0]);
+                        that.vancellList = that.spArray(2, that.vancellList)
+                        that.vancellListTouch(that.vancellList[0][0]);
                     }, 60);
                 });
+            },
+            // 分割数组，两个一组
+            spArray(n, arr) {
+                var result = [];
+                for (var i = 0; i < arr.length; i += n) {
+                    result.push(arr.slice(i, i + n));
+                }
+                return result
             },
             // 右边弹窗点击行事件
             vancellListTouch(obj) {
                 for (let item of this.vancellList) {
-                    if (item == obj) {
-                        obj.direction = "down";
-                        this.querySelectEmployeeByJobnumber(obj.jobList);
-                    } else {
-                        item.direction = "";
+                    for (let i in item) {
+                        if (item[i] == obj) {
+                            obj.direction = "down";
+                            this.querySelectEmployeeByJobnumber(obj.jobList);
+                        } else {
+                            item[i].direction = "";
+                        }
                     }
                 }
             },
@@ -918,6 +969,10 @@
                     }
 
                 });
+            },
+            titleTypeClick(obj) {
+
+                this.RightInfo(obj)
             },
         },
     };
@@ -1003,5 +1058,12 @@
         font-weight: 700;
         margin-top: 20px;
         color: red;
+    }
+
+    .gridItemBgi {
+        color #fff;
+        font-size: 16px;
+        font-weight: 700;
+        width: 12vh;
     }
 </style>

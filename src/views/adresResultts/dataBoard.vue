@@ -51,7 +51,7 @@
                     </div>
                 </van-col>
                 <van-col span="5">
-                    <transition name="van-fade">
+                    <!-- <transition name="van-fade">
                         <div style="position:relative" v-show="atmosphereFlag">
                             <span class="zuzhi" style="top:-19vh">组织氛围</span>
                             <div>
@@ -59,7 +59,7 @@
                                 <div class="zuzhiatostr" style="top:-10vh">{{weatherStr}}</div>
                             </div>
                         </div>
-                    </transition>
+                    </transition> -->
                 </van-col>
                 <van-col span="5" offset="4">
                     <div style="position: relative;">
@@ -112,7 +112,9 @@
     import adresNavbar from "@/components/adresResultstab/adresResultsNavbar.vue";
     import hexagonalFix from "@/components/adresResultstab/hexagonalFix.vue";
     import {
-        findCadreHomePageInfo
+        findCadreHomePageInfo,
+        findCadreBzType,
+        findCadreDeptInfoByJobnumber
     } from "@/views/adresResultts/adresResults.js";
     import {
         Picker,
@@ -163,7 +165,12 @@
                     fenwei: 0,
                 },
                 hexagonalFlag: false,
-                bzType: ''
+                bzType: '',
+                ddJobNum: localStorage.getItem("jobNum"),
+                findCadreBzTypeData: {
+                    deptList: [],
+                    bzType: 'Y'
+                }
             };
         },
         //监听属性 类似于data概念
@@ -172,6 +179,34 @@
         watch: {},
         //方法集合
         methods: {
+            init() {
+                this.queryFindCadreDeptInfoByJobnumber()
+            },
+            queryFindCadreDeptInfoByJobnumber() {
+                findCadreDeptInfoByJobnumber({
+                    jobnumber: this.ddJobNum
+                }).then(res => {
+                    res.obj.text = res.obj.content
+                    localStorage.setItem('adresResultDept', JSON.stringify(res.obj))
+                    this.findCadreBzTypeData.deptList = [res.obj.deptId]
+                    this.queryFindCadreBzType()
+
+                })
+            },
+            queryFindCadreBzType() {
+                findCadreBzType(this.findCadreBzTypeData).then(res => {
+                    localStorage.setItem("bzType", res.obj);
+                    this.findCadreHomePageInfoData.deptList = [JSON.parse(localStorage.getItem("adresResultDept")).deptId]
+                    this.initquery()
+                })
+            },
+            initquery() {
+                this.$refs.adresResultsTanbber.changtab("dataBoard");
+                this.findCadreHomePageInfoData.jobnumber = localStorage.getItem("jobNum")
+                this.bzType = localStorage.getItem("bzType")
+                this.findCadreHomePageInfoData.bzType = this.bzType
+                this.queryfindCadreHomePageInfo()
+            },
             queryfindCadreHomePageInfo() {
                 var that = this
                 findCadreHomePageInfo(this.findCadreHomePageInfoData).then(res => {
@@ -291,14 +326,6 @@
 
             },
             animateMeth() {
-                // function timeAnimate(key) {
-                // jiegou:100,
-                // zhengti:1000,
-                // cengji:2000,
-                // baoliu:3000,
-                // chubei:4000,
-                // pandian:5000,
-                // fenwei:6000,
                 setTimeout(() => {
                     for (let i in this.silinglist) {
                         setTimeout(() => {
@@ -358,12 +385,12 @@
         },
         //生命周期 - 挂载完成（可以访问DOM元素）
         mounted() {
-            this.$refs.adresResultsTanbber.changtab("dataBoard");
-            this.findCadreHomePageInfoData.deptList = [JSON.parse(localStorage.getItem("adresResultDept")).deptId]
-            this.findCadreHomePageInfoData.jobnumber = localStorage.getItem("jobNum")
-            this.bzType = localStorage.getItem("bzType")
-            this.findCadreHomePageInfoData.bzType = this.bzType
-            this.queryfindCadreHomePageInfo()
+            if (localStorage.getItem("activeTab")) {
+                this.initquery()
+            } else {
+                this.init()
+            }
+
         },
         beforeCreate() {}, //生命周期 - 创建之前
         beforeMount() {}, //生命周期 - 挂载之前

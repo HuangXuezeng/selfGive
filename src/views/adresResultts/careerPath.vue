@@ -31,7 +31,7 @@
         <div>
             <div ref="findCadreJGGinfoEchart" :style="{ width: '98%', height: '650px' }"></div>
         </div>
-        <van-popup v-model="filtrateFlag" position="right" :style="{ height: '100%', width: '80%' }" :get-container="'body'">
+        <van-popup v-model="filtrateFlag" position="right" :style="{ height: '100%', width: '80%' }" :get-container="'body'" :closeable='true'>
             <div style="background-color: Chocolate;">
                 <van-row type="flex" justify="center" style="margin-bottom:10px">
                     <van-col>

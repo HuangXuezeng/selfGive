@@ -24,7 +24,7 @@
                                                 <transition name="van-slide-left">
                                                     <div v-show="makeUpShow" style="font-size:12px;display: inline-block;" v-if="item.text =='国内营销事业部'">{{makeUpchecked ? '含零售':'不含零售'}}</div>
                                                 </transition>
-                                                 <van-switch @change='makeUpChange' v-model="makeUpchecked" size="12px" v-if="item.text =='国内营销事业部'" />
+                                                <van-switch @change='makeUpChange' v-model="makeUpchecked" size="12px" v-if="item.text =='国内营销事业部'" />
 
                                             </div>
                                         </van-col>
@@ -54,7 +54,8 @@
         Row
     } from "vant";
     import {
-        findIsHaveCadreInDept
+        findIsHaveCadreInDept,
+        findCadreBzType
     } from "@/views/adresResultts/adresResults.js";
     import {
         findPayrollDept,
@@ -78,7 +79,11 @@
                 leftIndexrecord: 0,
                 makeUpchecked: true,
                 bzType: "Y",
-                makeUpShow: true
+                makeUpShow: true,
+                findCadreBzTypeData: {
+                    deptList: [],
+                    bzType: 'Y'
+                }
             };
         },
         //监听属性 类似于data概念
@@ -89,13 +94,7 @@
         methods: {
             init() {
                 //页面进行缓存了，以前的历史赋值逻辑作废
-                if (this.reselect) {
-                    this.reselectHistory()
-                } else {
-                    this.queryfindPayrollDept();
-                }
-                localStorage.setItem("bzType", 'Y');
-                // localStorage.getItem("bzType")
+                this.queryfindPayrollDept();
             },
 
             reselectHistory() {
@@ -114,7 +113,6 @@
                     // }
                     this.historyList = adresResultHistoryList
                 }
-                this.deptData
                 // this.$refs.loadingSpin.shutdown();
             },
             //查询部门
@@ -269,15 +267,32 @@
                         let activeTab = localStorage.getItem("activeTab") || 'dataBoard'
                         localStorage.setItem('adresResultDept', JSON.stringify(item))
                         localStorage.setItem('adresResultHistory', JSON.stringify(this.historyList))
+                        this.findCadreBzTypeData.deptList = [item.deptId]
+                        this.queryFindCadreBzType(activeTab)
 
-                        this.$router.push({
-                            name: activeTab,
-                        })
                     } else {
                         Toast.fail('该部门无干部');
                     }
                 })
 
+            },
+            queryFindCadreBzType(active) {
+                this.findCadreBzTypeData.bzType = this.bzType
+                findCadreBzType(this.findCadreBzTypeData).then(res => {
+                    localStorage.setItem("bzType", res.obj);
+                    if (active == 'talentPool') {
+                        this.$router.push({
+                            name: active,
+                            params: {
+                                refrashFlag: 1
+                            }
+                        })
+                    } else {
+                        this.$router.push({
+                            name: active,
+                        })
+                    }
+                })
             },
             onClickRight() {
                 if (!localStorage.getItem("adresResultDept")) {

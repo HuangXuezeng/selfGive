@@ -102,7 +102,7 @@
                 </div>
             </div>
             <div>
-                <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '88%', }" get-container="body">
+                <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '88%', }" get-container="body" :closeable='true'>
                     <van-row type="flex" justify="center" style="margin-bottom: 10px">
                         <van-col>
                             <div class="titleRightInfo">
@@ -110,7 +110,7 @@
                             </div>
                         </van-col>
                     </van-row>
-                    <van-grid :column-num="3" :clickable='true' :gutter="2">
+                    <van-grid :column-num="columnnum" :clickable='true' :gutter="2">
                         <van-grid-item v-for="(item, index) in titleTypelist" :key="index" :class="item.class" @click='titleTypeClick(item)'>
                             <template #default>
                                 <div class="gridItemBgi van-ellipsis">
@@ -121,7 +121,7 @@
                     </van-grid>
 
                     <div v-for="(items, index) in vancellList" :key="index">
-                        <van-row type="flex" justify="space-around">
+                        <van-row type="flex" justify="space-around" v-show="items[0].sexFlag != 1">
                             <van-col span="12" v-for="(item, index) in items" :key="index">
                                 <van-cell :title="item.title" is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)" />
                             </van-col>
@@ -188,79 +188,7 @@
                 sexListRes: [],
                 educationListRes: [],
                 countListRes: [],
-                popupColumns: [{
-                        field: "custome",
-                        width: 50,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        title: "序号",
-                        formatter: function(rowData, index) {
-                            return index + 1;
-                        },
-                        isResize: true,
-                        isFrozen: true,
-                    },
-                    {
-                        field: "jobnumber",
-                        title: "工号",
-                        width: 80,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        formatter: function(rowData, rowIndex, pagingIndex, field) {
-                            return `<span>${rowData[field]}</span>`;
-                        },
-                        isResize: true,
-                    },
-                    {
-                        field: "name",
-                        title: "姓名",
-                        width: 60,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        isFrozen: true,
-                    },
-                    {
-                        field: "department",
-                        title: "部门",
-                        width: 150,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                    },
-                    {
-                        field: "post",
-                        title: "岗位",
-                        width: 150,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                    },
-                    {
-                        field: "rank",
-                        title: "职级",
-                        width: 50,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                    },
-                    {
-                        field: "rsrq",
-                        title: "入司日期",
-                        width: 100,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                    },
-                    {
-                        field: "currentState",
-                        title: "当前状态",
-                        width: 70,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                    },
-                ],
+                popupColumns: [],
                 isLoading: false,
                 rightInfoData: [],
                 readySelectDept: [],
@@ -368,11 +296,11 @@
                 // 男女比例
                 sexProportion: "",
                 bzType: '',
-                titleTypelist: []
+                titleTypelist: [],
+                columnnum: 3
             };
         },
         created() {
-            debugger
             // 数据初始化
             this.init();
         },
@@ -982,7 +910,74 @@
                         that.showRightInfo = true;
                         this.vancellList = []
                         that.titleTypelist = []
+                        that.popupColumns = [{
+                                field: "custome",
+                                width: 50,
+                                titleAlign: "center",
+                                columnAlign: "center",
+                                title: "序号",
+                                formatter: function(rowData, index) {
+                                    return index + 1;
+                                },
+                                isResize: true,
+                                isFrozen: true,
+                            },
+                            {
+                                field: "jobnumber",
+                                title: "工号",
+                                width: 80,
+                                titleAlign: "center",
+                                columnAlign: "center",
+                                formatter: function(rowData, rowIndex, pagingIndex, field) {
+                                    return `<span>${rowData[field]}</span>`;
+                                },
+                                isResize: true,
+                            },
+                            {
+                                field: "name",
+                                title: "姓名",
+                                width: 60,
+                                titleAlign: "center",
+                                columnAlign: "center",
+                                isResize: true,
+                                isFrozen: true,
+                            },
+                            {
+                                field: "department",
+                                title: "部门",
+                                width: 150,
+                                titleAlign: "center",
+                                columnAlign: "center",
+                                isResize: true,
+                            },
+                            {
+                                field: "post",
+                                title: "岗位",
+                                width: 150,
+                                titleAlign: "center",
+                                columnAlign: "center",
+                                isResize: true,
+                            },
+                            {
+                                field: "rank",
+                                title: "职级",
+                                width: 50,
+                                titleAlign: "center",
+                                columnAlign: "center",
+                                isResize: true,
+                            },
+                            {
+                                field: "jobAge",
+                                title: "司龄",
+                                width: 100,
+                                titleAlign: "center",
+                                columnAlign: "center",
+                                isResize: true,
+                            },
+                        ]
                         if (type == 2) {
+                            this.columnnum = 3
+
                             for (let item of this.jobAgeListRes) {
                                 if (item.type == obj.name) {
                                     that.titleTypelist.push({
@@ -1028,6 +1023,8 @@
                                 }
                             }
                         } else if (type == 1) {
+                            this.columnnum = 3
+
                             for (let item of that.ageListRes) {
                                 if (item.type == obj.name) {
                                     that.titleTypelist.push({
@@ -1073,6 +1070,80 @@
                                 }
                             }
                         } else if (type == 3) {
+                            this.columnnum = 3
+                            this.popupColumns = [{
+                                    field: "custome",
+                                    width: 50,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    title: "序号",
+                                    formatter: function(rowData, index) {
+                                        return index + 1;
+                                    },
+                                    isResize: true,
+                                    isFrozen: true,
+                                },
+                                {
+                                    field: "jobnumber",
+                                    title: "工号",
+                                    width: 80,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    formatter: function(rowData, rowIndex, pagingIndex, field) {
+                                        return `<span>${rowData[field]}</span>`;
+                                    },
+                                    isResize: true,
+                                },
+                                {
+                                    field: "name",
+                                    title: "姓名",
+                                    width: 60,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    isFrozen: true,
+                                },
+                                {
+                                    field: "department",
+                                    title: "部门",
+                                    width: 150,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                },
+                                {
+                                    field: "post",
+                                    title: "岗位",
+                                    width: 150,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                },
+                                {
+                                    field: "young",
+                                    title: "xx届青苗",
+                                    width: 100,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                },
+                                {
+                                    field: "rank",
+                                    title: "职级",
+                                    width: 50,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                },
+                                {
+                                    field: "jobAge",
+                                    title: "司龄",
+                                    width: 100,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                },
+                            ]
                             for (let item of this.yongListRes) {
                                 if (item.type == obj.name) {
                                     that.titleTypelist.push({
@@ -1106,6 +1177,8 @@
                                 }
                             }
                         } else if (type == 4) {
+                            this.columnnum = 3
+
                             for (let item of this.educationListRes) {
                                 if (item.type == obj.name) {
                                     // data: ["高中及以下", "大专", "本科", "硕士及以上"],
@@ -1151,20 +1224,43 @@
                                 }
                             }
                         } else if (type == 5) {
+
                             this.vancellList = []
+                            this.columnnum = 2
+
                             for (let item of this.sexListRes) {
+                                that.titleTypelist.push({
+                                    name: item.type,
+                                    class: 'resetVantAdresResultps',
+                                    type: 5
+                                })
                                 this.vancellList.push({
                                     title: item.type,
                                     value: item.sexCount,
                                     direction: "",
-                                    jobList: item.jobnumbers
+                                    jobList: item.jobnumbers,
+                                    sexFlag: 1
                                 })
                                 // if (item.type == obj.name) {
-                                this.titleRight = '性别';
+                                this.titleRight = '性别分布明细';
                                 // }
                             }
-                            this.vancellList[0].direction = 'down'
-                            this.vancellListTouch(this.vancellList[0]);
+                            let chackFlag
+                            if (obj.name == '男') {
+                                chackFlag = 0
+                            } else {
+                                chackFlag = 1
+                            }
+                            for (let item of that.titleTypelist) {
+                                if (obj.name == item.name) {
+                                    item.class = 'resetVantAdresResulAct'
+                                } else {
+                                    item.class = 'resetVantAdresResultps'
+                                }
+                            }
+                            this.vancellList = that.spArray(2, this.vancellList)
+                            // this.vancellList[0].direction = 'down'
+                            this.vancellListTouch(this.vancellList[0][chackFlag]);
                         }
                     }, 60);
                 });
@@ -1192,15 +1288,18 @@
                 }
             },
             titleTypeClick(obj) {
-                // debugger
-                for (let item of this.titleTypelist) {
-                    if (obj.type == item.type) {
-                        item.class = 'resetVantAdresResulAct'
-                    } else {
-                        item.class = 'resetVantAdresResultps'
+                if (obj.type == 5) {
+                    this.RightInfo(obj, obj.type)
+                } else {
+                    for (let item of this.titleTypelist) {
+                        if (obj.type == item.type) {
+                            item.class = 'resetVantAdresResulAct'
+                        } else {
+                            item.class = 'resetVantAdresResultps'
+                        }
                     }
+                    this.RightInfo(obj, obj.type)
                 }
-                this.RightInfo(obj, obj.type)
             },
             // 右弹窗表格数据刷新
             querySelectEmployeeByJobnumber(list) {
@@ -1312,5 +1411,6 @@
         font-size: 16px;
         font-weight: 700;
         width: 12vh;
+        text-align: center;
     }
 </style>

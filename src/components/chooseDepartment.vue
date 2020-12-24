@@ -35,7 +35,6 @@
     import {
         findTeamBuildingJGLJInfo
     } from "@/views/personAffairs/teamFoster/teamFosterApi.js";
-
     import {
         Notify,
         Toast,
@@ -83,7 +82,6 @@
             },
             openKeyList: {
                 type: Array,
-                default: []
             },
         },
         data() {
@@ -180,11 +178,13 @@
                             this.firstIn++;
                         }
                     }
-
-                    this.$refs.tree.setCheckedKeys(this.openlist, false);
-                    for (let i in this.openlist) {
-                        this.selectkeySet.add(this.openlist[i]);
+                    if (this.openlist[0]) {
+                        this.$refs.tree.setCheckedKeys(this.openlist, false);
+                        for (let i in this.openlist) {
+                            this.selectkeySet.add(this.openlist[i]);
+                        }
                     }
+
                     // this.selectkeySet.add(this.deptData[0].deptId);
                 });
             },

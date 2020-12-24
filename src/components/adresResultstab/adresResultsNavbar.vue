@@ -35,17 +35,23 @@
                 this.$router.push({
                     name: 'departselect',
                     params: {
-                       reselect : 1
+                        reselect: 1
                     }
                 })
             },
         },
         //生命周期 - 创建完成（可以访问当前this实例）
-        created() {
-            this.readySelectDept = JSON.parse(localStorage.getItem("adresResultDept"));
-        },
+        created() {},
         //生命周期 - 挂载完成（可以访问DOM元素）
         mounted() {
+            // debugger
+            if (localStorage.getItem("activeTab")) {
+                this.readySelectDept = JSON.parse(localStorage.getItem("adresResultDept"));
+            } else {
+                setTimeout(() => {
+                    this.readySelectDept = JSON.parse(localStorage.getItem("adresResultDept"));
+                }, 1500);
+            }
 
         },
         beforeCreate() {}, //生命周期 - 创建之前

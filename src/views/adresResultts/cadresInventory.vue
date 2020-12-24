@@ -45,7 +45,7 @@
             </div>
         </div>
         <div>
-            <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '80%' }" get-container="body">
+            <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '80%' }" get-container="body" :closeable='true'>
                 <van-row type="flex" justify="center" style="margin-bottom: 10px">
                     <van-col>
                         <div class="titleRightInfo">
@@ -53,16 +53,27 @@
                         </div>
                     </van-col>
                 </van-row>
-                <div v-for="(item, index) in vancellList" :key="index">
-                    <van-cell  is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)">
-                        <template #title>
-                            <span style="font-size: 18 px;color: red;">{{item.title}}</span>
-                        </template>
-                          <template #default>
-                            <van-icon name="friends-o" />
-                            <span >{{item.value}}</span>
-                        </template>
-                    </van-cell>
+                <!-- <div v-for="(items, index) in vancellList" :key="index">
+                        <van-row type="flex" justify="space-around" v-show="items[0].sexFlag != 1">
+                            <van-col span="12" v-for="(item, index) in items" :key="index">
+                                <van-cell :title="item.title" is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)" />
+                            </van-col>
+                        </van-row>
+                    </div> -->
+                <div v-for="(items, index) in vancellList" :key="index">
+                    <van-row type="flex" justify="space-around">
+                        <van-col span="12" v-for="(item, index) in items" :key="index">
+                            <van-cell is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)" v-show="!item.show">
+                                <template #title>
+                                    <span style="font-size: 18 px;color: red;">{{item.title}}</span>
+                                </template>
+                                <template #default>
+                                    <van-icon name="friends-o" />
+                                    <span>{{item.value}}</span>
+                                </template>
+                            </van-cell>
+                        </van-col>
+                    </van-row>
                 </div>
                 <div style="padding-bottom:100px">
                     <v-table ref="rightInfoTable" is-horizontal-resize :is-loading="isLoading" columns-width-drag :height="400" style="width: 100%; font-size: 14px" title-bg-color="#ccc" :columns="popupColumns" :table-data="rightInfoData" row-hover-color="#eee" row-click-color="#edf7ff"></v-table>
@@ -1360,7 +1371,14 @@
                         let xiangxian = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨']
                         Object.keys(that.JGGinfoRes).forEach((key) => {
                             if (Array.isArray(that.JGGinfoRes[key])) {
-                                if (that.JGGinfoRes[key].length != 0) {
+                                if (key == 'all') {
+                                    that.vancellList.unshift({
+                                        title: '全部',
+                                        value: that.JGGinfoRes[key].length,
+                                        direction: "",
+                                        jobList: that.JGGinfoRes[key],
+                                    }, )
+                                } else if (that.JGGinfoRes[key].length != 0) {
                                     that.vancellList.push({
                                         title: that.JGGinfoRes[key][0].jgg,
                                         value: that.JGGinfoRes[key].length,
@@ -1370,19 +1388,37 @@
                                 }
                             }
                         })
-                        that.vancellList[0].direction = 'down'
-                        that.rightInfoData = that.vancellList[0].jobList
+                        if (Number(that.vancellList.length) & 1 == 0) {
+
+                        } else {
+                            that.vancellList.push({
+                                show: 1
+                            })
+                        }
+                        that.vancellList = that.spArray(2, that.vancellList)
+                        that.vancellList[0][0].direction = 'down'
+                        that.rightInfoData = that.vancellList[0][0].jobList
                         that.isLoading = false
                     }, 60)
                 })
             },
+            // 分割数组，两个一组
+            spArray(n, arr) {
+                var result = [];
+                for (var i = 0; i < arr.length; i += n) {
+                    result.push(arr.slice(i, i + n));
+                }
+                return result
+            },
             vancellListTouch(obj) {
                 this.isLoading = true
                 for (let item of this.vancellList) {
-                    if (item.title == obj.title) {
-                        item.direction = "down"
-                    } else {
-                        item.direction = ""
+                    for (let i in item) {
+                        if (item[i].title == obj.title) {
+                            item[i].direction = "down"
+                        } else {
+                            item[i].direction = ""
+                        }
                     }
                 }
                 this.rightInfoData = obj.jobList
@@ -1433,6 +1469,13 @@
     }
 
     .titleRewards {
+        font-size: 18px;
+        font-weight: 700;
+        margin-top: 20px;
+        color: red;
+    }
+
+    .titleRightInfo {
         font-size: 18px;
         font-weight: 700;
         margin-top: 20px;

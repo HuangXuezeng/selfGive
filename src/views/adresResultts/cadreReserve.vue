@@ -48,16 +48,29 @@
             </div>
         </div>
         <div>
-            <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '80%' }" get-container="body">
+            <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '88%' }" get-container="body" :closeable='true'>
                 <van-row type="flex" justify="center" style="margin-bottom: 10px">
                     <van-col>
                         <div class="titleRightInfo">
-                            {{ titleRight }}
+                            {{titleRight}}
                         </div>
                     </van-col>
                 </van-row>
-                <div v-for="(item, index) in vancellList" :key="index">
-                    <van-cell :title="item.title" is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)" />
+                <van-grid :column-num="3" :clickable='true' :gutter="2">
+                    <van-grid-item v-for="(item, index) in titleTypelist" :key="index" :class="item.class" @click='titleTypeClick(item)'>
+                        <template #default>
+                            <div class="gridItemBgi van-ellipsis">
+                                {{ item.name }}
+                            </div>
+                        </template>
+                    </van-grid-item>
+                </van-grid>
+                <div v-for="(items, index) in vancellList" :key="index">
+                    <van-row type="flex" justify="space-around">
+                        <van-col span="12" v-for="(item, index) in items" :key="index">
+                            <van-cell :title="item.title" is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)" v-show="!item.show" />
+                        </van-col>
+                    </van-row>
                 </div>
                 <div style="padding-bottom:100px">
                     <v-table ref="rightInfoTable" is-horizontal-resize :is-loading="isLoading" columns-width-drag :height="400" style="width: 100%; font-size: 14px" title-bg-color="#ccc" :columns="popupColumns" :table-data="rightInfoData" row-hover-color="#eee" row-click-color="#edf7ff"></v-table>
@@ -224,7 +237,8 @@
                 csdPct: '',
                 lossAvgPct: "",
                 LossInfoRes: [],
-                bzType: ''
+                bzType: '',
+                titleTypelist: []
             };
         },
         //监听属性 类似于data概念
@@ -310,7 +324,9 @@
                     monthMap.set(monthList[i], '')
                 }
                 for (let item of list) {
-                    monthMap.set(item.month, item.loss.split('%')[0])
+                    if (item.loss) {
+                        monthMap.set(item.month, item.loss.split('%')[0])
+                    }
                 }
                 const arr = [...monthMap];
                 for (let item of arr) {
@@ -745,10 +761,11 @@
 
             // 右弹窗展示目录点击事件
             RightInfo(obj, type) {
-                // debugger
                 var that = this;
                 this.$nextTick(() => {
                     setTimeout(() => {
+                        that.vancellList = []
+                        that.titleTypelist = []
                         if (type == 2) {
                             this.popupColumns = [{
                                         field: "custome",
@@ -794,8 +811,7 @@
                                     },
                                 ],
                                 that.showRightInfo = true
-                            that.titleRight = '干部流失'
-                            that.vancellList = []
+                            that.titleRight = '干部流失明细'
                             for (let item of that.LossInfoRes) {
                                 if (item.info) {
                                     that.vancellList.push({
@@ -806,8 +822,16 @@
                                     })
                                 }
                             }
-                            that.rightInfoData = that.vancellList[0].jobList
-                            that.vancellList[0].direction = "down"
+                            if (Number(that.vancellList.length) & 1 == 0) {
+
+                            } else {
+                                that.vancellList.push({
+                                    show: 1
+                                })
+                            }
+                            that.vancellList = that.spArray(2, that.vancellList)
+                            that.rightInfoData = that.vancellList[0][0].jobList
+                            that.vancellList[0][0].direction = "down"
                             that.isLoading = false
                         } else {
                             this.popupColumns = [{
@@ -850,10 +874,14 @@
                                     },
                                 ],
                                 that.showRightInfo = true
-                            that.titleRight = obj.name
-                            that.vancellList = []
+                            that.titleRight = '干部流失率明细'
                             for (let item of that.reserveInfoData) {
-                                if (item.type == that.titleRight) {
+                                if (item.type == obj.name) {
+                                    that.titleTypelist.push({
+                                        name: item.type,
+                                        class: 'resetVantAdresResulAct',
+                                        type: 1
+                                    })
                                     this.vancellList.push({
                                         title: "立即可用",
                                         value: item.now,
@@ -875,29 +903,63 @@
                                         direction: "",
                                         jobList: item.threeYearList,
                                     }, )
+                                } else {
+                                    that.titleTypelist.push({
+                                        name: item.type,
+                                        class: 'resetVantAdresResultps',
+                                        type: 1
+                                    })
                                 }
                             }
-                            that.rightInfoData = that.vancellList[0].jobList
+                            if (Number(that.vancellList.length) & 1 == 0) {
+
+                            } else {
+                                that.vancellList.push({
+                                    show: 1
+                                })
+                            }
+                            that.vancellList = that.spArray(2, that.vancellList)
+                            that.rightInfoData = that.vancellList[0][0].jobList
                             that.isLoading = false
                         }
 
                     }, 60)
                 })
             },
+            // 分割数组，两个一组
+            spArray(n, arr) {
+                var result = [];
+                for (var i = 0; i < arr.length; i += n) {
+                    result.push(arr.slice(i, i + n));
+                }
+                return result
+            },
             // 右弹窗展示目录点击事件
             vancellListTouch(obj) {
                 this.isLoading = true
-                for (let item of this.vancellList) {
-                    if (item.title == obj.title) {
-                        item.direction = "down"
-                    } else {
-                        item.direction = ""
+                for (let j in this.vancellList) {
+                    for (let i in this.vancellList[j]) {
+                        if (this.vancellList[j][i].title == obj.title) {
+                            this.vancellList[j][i].direction = "down"
+                        } else {
+                            this.vancellList[j][i].direction = ""
+                        }
                     }
                 }
                 this.rightInfoData = obj.jobList
                 setTimeout(() => {
                     this.isLoading = false
                 }, 500);
+            },
+            titleTypeClick(obj) {
+                for (let item of this.titleTypelist) {
+                    if (obj.type == item.type) {
+                        item.class = 'resetVantAdresResulAct'
+                    } else {
+                        item.class = 'resetVantAdresResultps'
+                    }
+                }
+                this.RightInfo(obj, obj.type)
             },
         },
         //生命周期 - 创建完成（可以访问当前this实例）
@@ -953,5 +1015,12 @@
         -webkit-line-clamp: 1;
         overflow: hidden;
         font-size: 13px;
+    }
+
+    .gridItemBgi {
+        color #fff;
+        font-size: 16px;
+        font-weight: 700;
+        width: 12vh;
     }
 </style>

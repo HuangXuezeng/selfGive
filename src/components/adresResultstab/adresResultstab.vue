@@ -7,7 +7,7 @@
                 <van-tab title="整体情况" replace to="/cadresChange" name="cadresChange">
                 </van-tab>
                 <van-tab title="干部结构" replace to="/adresResultps" name="adresResultps">
-                </van-tab> 
+                </van-tab>
                 <van-tab title="干部保留" replace to="/cadreReserve" name="cadreReserve">
                 </van-tab>
                 <van-tab title="干部盘点" replace to="/cadresInventory" name="cadresInventory">
@@ -16,7 +16,8 @@
                 </van-tab>
                 <van-tab title="职业路径" replace to="/careerPath" name="careerPath">
                 </van-tab>
-
+                <van-tab title="人才池" replace to="/talentPool" name="talentPool">
+                </van-tab>
             </van-tabs>
         </van-sticky>
     </div>
