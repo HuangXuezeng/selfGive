@@ -1,14 +1,6 @@
 <template>
     <div style="padding-bottom: 10%" class="my-container resetVantfixed">
         <payTab ref="payTab"></payTab>
-        <!-- <van-tabs
-      v-model="vanTabsActive"
-      scrollspy
-      sticky
-      type="card"
-      ref="vanTabs"
-    > -->
-        <!-- <van-tab title="各职级平均工资" name="各职级平均工资"> -->
         <div class="shodowRewards">
             <van-row type="flex" justify="left" style="margin-bottom: 10px">
                 <van-col>
@@ -19,106 +11,27 @@
                 </van-col>
             </van-row>
             <chooseZJlist ref="chooseZJlistRef" :checkboxlist="checkboxlist" :selectZjNameMap="selectZjNameMap" @confirmZj="selctzjquery"></chooseZJlist>
-            <!-- <van-row type="flex">
-            <van-col span="24">
-              <van-field
-                readonly
-                clickable
-                label="职级:"
-                label-class="labelStyle"
-                v-model="selectzjName"
-                placeholder="请选择职级"
-                @click="rightPopShow"
-              />
-              <van-popup
-                v-model="rightPop"
-                position="right"
-                :overlay="true"
-                :lazy-render="true"
-                style="width: 50%; height: 100%;"
-                :get-container="getContainer"
-              >
-                <div style="height: 90%;overflow: auto;z-index: 2049;">
-                  <div v-for="item in checkboxlist" :key="item.zl">
-                    <van-cell clickable @click="toggleZL(item)">
-                      <template #title>
-                        <div style="font-size: 15px;font-weight: 700;">
-                          <span class="honghe"></span>
-                          {{ item.zl }}
-                        </div>
-                      </template>
-                      <template #right-icon>
-                        <van-checkbox
-                          :name="item.zlNum"
-                          v-model="item.zlchecked"
-                          ref="checkboxesZL"
-                          shape="square"
-                        />
-                      </template>
-                    </van-cell>
-                    <van-checkbox-group v-model="result">
-                      <van-cell-group>
-                        <van-cell
-                          v-for="items in item.zjList"
-                          clickable
-                          :key="items.number"
-                          :title="`${items.zj}`"
-                          @click="toggle(items)"
-                        >
-                          <template #right-icon>
-                            <van-checkbox
-                              :name="items.indexNumber"
-                              ref="checkboxes"
-                            />
-                          </template>
-                        </van-cell>
-                      </van-cell-group>
-                    </van-checkbox-group>
-                  </div>
-                </div>
-                <van-row type="flex" justify="space-around">
-                  <van-col span="10">
-                    <van-button type="info" size="normal" @click="restSelectZj"
-                      >重置</van-button
-                    >
-                  </van-col>
-                  <van-col span="10">
-                    <van-button
-                      :loading="selctzjqueryLoading"
-                      loading-type="spinner"
-                      type="primary"
-                      size="normal"
-                      @click="selctzjquery"
-                      >确认</van-button
-                    >
-                  </van-col>
-                </van-row>
-              </van-popup>
-            </van-col>
-          </van-row> -->
+
         </div>
         <div style="width: 100%" v-if="!showNodata">
             <div ref="payEch" :style="{ width: '100%', height: '500px' }"></div>
         </div>
         <noData :showNodata="showNodata"></noData>
-        <!-- </van-tab> -->
-        <!-- <van-tab title="各职类平均工资" name="各职类平均工资"> -->
-        <div class="shodowRewards">
-            <van-row type="flex" justify="left" style="margin-bottom: 10px">
-                <van-col>
-                    <div class="titleRewards">
-                        <span class="honghe"></span>
-                        各职类平均工资
-                    </div>
-                </van-col>
-            </van-row>
-            <choosedepartment @confirmNode="selctdept" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData"></choosedepartment>
-        </div>
-        <div class="resetVant">
-            <v-table is-horizontal-resize style="width: 100%" :columns="columnsAnnualSalary" :table-data="tableDataAnnualSalary" row-hover-color="#eee" row-click-color="#edf7ff" :cell-merge="cellMergeAnnualSalary" :is-loading="lodingFlagAnnualSalary" :column-cell-class-name="columnCellClassAnnualSalary" :row-click="lineChart"></v-table>
-        </div>
-        <!-- </van-tab> -->
-        <!-- </van-tabs> -->
+        <!-- <div>
+            <div class="shodowRewards">
+                <van-row type="flex" justify="left" style="margin-bottom: 10px">
+                    <van-col>
+                        <div class="titleRewards">
+                            <span class="honghe"></span>
+                            各职类平均工资
+                        </div>
+                    </van-col>
+                </van-row>
+                <choosedepartment @confirmNode="selctdept" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData"></choosedepartment>
+            </div>
+            <div class="resetVant">
+                <v-table is-horizontal-resize style="width: 100%" :columns="columnsAnnualSalary" :table-data="tableDataAnnualSalary" row-hover-color="#eee" row-click-color="#edf7ff" :cell-merge="cellMergeAnnualSalary" :is-loading="lodingFlagAnnualSalary" :column-cell-class-name="columnCellClassAnnualSalary" :row-click="lineChart"></v-table>
+            </div>
         <van-overlay :show="lineChartShow" @click="lineChartShow = false">
             <div class="lineChartWrapper">
                 <div class="lineChartBox" @click.stop>
@@ -126,6 +39,9 @@
                 </div>
             </div>
         </van-overlay>
+        </div> -->
+        <zjpengjun></zjpengjun>
+
     </div>
 </template>
 
@@ -154,12 +70,17 @@
     import noData from "@/components/noData.vue";
     import chooseDepartment from "@/components/chooseDepartment.vue";
     import chooseZJlist from "@/components/PayLibrary/chooseZJlist.vue";
+    // import renjunComponernt from "@/views/PayLibrary/renjunComponernt.vue";
+    import zjpengjun from '@/views/PayLibrary/zjpengjun.vue';
+
+
     export default {
         components: {
             payTab,
             noData,
             choosedepartment: chooseDepartment,
             chooseZJlist,
+            zjpengjun
         },
         data() {
             return {

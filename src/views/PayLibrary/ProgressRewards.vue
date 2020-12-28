@@ -18,11 +18,7 @@
                     <van-col span="24">
                         <van-field readonly clickable label="部门/组织:" label-class="labelStyle" v-model="selectedOrg" placeholder="请选择部门/组织" @click="showPicker1 = true" />
                         <van-popup v-model="showPicker1" round position="bottom">
-                            <van-picker show-toolbar :columns="columns" @cancel="showPicker1 = false" @confirm="
-                  (value, index) => {
-                    onConfirm(value, index, '1');
-                  }
-                " />
+                            <van-picker show-toolbar :columns="columns" @cancel="showPicker1 = false" @confirm="(value, index) => {onConfirm(value, index, '1');}" />
                         </van-popup>
                     </van-col>
                 </van-row>
@@ -48,11 +44,7 @@
                     <van-col span="24">
                         <van-field readonly clickable label="部门/组织:" label-class="labelStyle" v-model="selectRewardName" placeholder="请选择部门/组织" @click="showPicker2 = true" />
                         <van-popup v-model="showPicker2" round position="bottom">
-                            <van-picker show-toolbar :columns="columns" @cancel="showPicker = false" @confirm="
-                  (value, index) => {
-                    onConfirm(value, index, '2');
-                  }
-                " />
+                            <van-picker show-toolbar :columns="columns" @cancel="showPicker = false" @confirm="(value, index) => {onConfirm(value, index, '2');}" />
                         </van-popup>
                     </van-col>
                 </van-row>

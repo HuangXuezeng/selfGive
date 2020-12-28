@@ -1639,7 +1639,7 @@
         // width: 10vh;
     }
     .info-right{
-      width:30vh;
+      max-width:30vh;
       text-align center
     }
 </style>

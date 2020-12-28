@@ -83,27 +83,30 @@
                     </div>
                 </van-popup>
             </div>
-            <div>
-                <van-row type="flex" justify="left" style="margin-bottom:10px">
-                    <van-col>
-                        <div class="titleRewards">
-                            <span class="honghe"></span>
-                            人均工资
-                        </div>
-                    </van-col>
-                </van-row>
-                <van-row type="flex">
-                    <van-col span="24">
-                        <van-field readonly clickable label="年/月:" label-class="labelStyle" v-model="selectedyear" placeholder="请选择年月" @click="vanDateShow = true" />
-                        <van-action-sheet v-model="vanDateShow">
-                            <van-datetime-picker v-model="currentDate" type="year-month" title="选择年月" :min-date="minDate" :max-date="maxDate" :formatter="formatter" @confirm="confirmYear" />
-                        </van-action-sheet>
-                    </van-col>
-                </van-row>
-            </div>
-            <div class="resetVant">
-                <v-table is-horizontal-resize style="width:100%" :columns="columns" :table-data="tableData" row-hover-color="#eee" row-click-color="#edf7ff" :cell-merge="cellMerge" :is-loading="lodingFlag" :column-cell-class-name="columnCellClass"></v-table>
-            </div>
+            <!-- <div>
+                <div>
+                    <van-row type="flex" justify="left" style="margin-bottom:10px">
+                        <van-col>
+                            <div class="titleRewards">
+                                <span class="honghe"></span>
+                                人均工资
+                            </div>
+                        </van-col>
+                    </van-row>
+                    <van-row type="flex">
+                        <van-col span="24">
+                            <van-field readonly clickable label="年/月:" label-class="labelStyle" v-model="selectedyear" placeholder="请选择年月" @click="vanDateShow = true" />
+                            <van-action-sheet v-model="vanDateShow">
+                                <van-datetime-picker v-model="currentDate" type="year-month" title="选择年月" :min-date="minDate" :max-date="maxDate" :formatter="formatter" @confirm="confirmYear" />
+                            </van-action-sheet>
+                        </van-col>
+                    </van-row>
+                </div>
+                <div class="resetVant">
+                    <v-table is-horizontal-resize style="width:100%" :columns="columns" :table-data="tableData" row-hover-color="#eee" row-click-color="#edf7ff" :cell-merge="cellMerge" :is-loading="lodingFlag" :column-cell-class-name="columnCellClass"></v-table>
+                </div>
+            </div> -->
+            <renjunComponernt></renjunComponernt>
             <div>
                 <!-- <van-tab title="人均工资" name="人均工资"> -->
                 <div class="shodowRewards">
@@ -191,6 +194,9 @@
     import pagination from "@/components/PayLibrary/pagination.vue";
     import chooseZJlist from "@/components/PayLibrary/chooseZJlist.vue";
     import loadingSpin from '@/components/loadingSpin.vue';
+    // import zjpengjun from '@/views/PayLibrary/zjpengjun.vue';
+    import renjunComponernt from "@/views/PayLibrary/renjunComponernt.vue";
+
     export default {
         components: {
             payTab,
@@ -198,7 +204,8 @@
             pagination,
             choosedepartment: chooseDepartment,
             chooseZJlist,
-            loadingSpin
+            loadingSpin,
+            renjunComponernt
         },
         data() {
             return {
@@ -1683,6 +1690,7 @@
     .labelStyle {
         color: red;
     }
+
     .titleclass {
         background-color: #dc7272;
         color: #ffffff;
