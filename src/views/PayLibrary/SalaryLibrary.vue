@@ -6,7 +6,6 @@
                 <template #action>
                     <span @click="onSearch(1)" style="display: inline-block;color:#fff" v-show="!seachFlag">搜索</span>
                     <span @click="clearSearchName" style="display: inline-block;color:#fff" v-show="seachFlag">取消</span>
-
                     <span class="searchSty" @click="showPopupClick">
                         <van-icon name="filter-o" />
                         <span style="font-size:12px;">筛选</span>
@@ -60,12 +59,6 @@
                         <choosedepartment @confirmNode="selctdept" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData" ref="salaryDep"></choosedepartment>
                         <span class="cadreLine"></span>
                         <van-field v-model="searchObj.name" label="姓名/工号:" placeholder="请输入用户名或工号" />
-                        <!-- <van-cell title="调薪次数:">
-          <template #default>
-            <van-stepper v-model="searchObj.num" />
-          </template>
-        </van-cell> -->
-                        <!-- <span class="cadreLine"></span> -->
                         <van-field label="最近调薪记录:" label-width="7em">
                             <template #input>
                                 <van-stepper v-model="searchObj.num" />
@@ -83,29 +76,6 @@
                     </div>
                 </van-popup>
             </div>
-            <!-- <div>
-                <div>
-                    <van-row type="flex" justify="left" style="margin-bottom:10px">
-                        <van-col>
-                            <div class="titleRewards">
-                                <span class="honghe"></span>
-                                人均工资
-                            </div>
-                        </van-col>
-                    </van-row>
-                    <van-row type="flex">
-                        <van-col span="24">
-                            <van-field readonly clickable label="年/月:" label-class="labelStyle" v-model="selectedyear" placeholder="请选择年月" @click="vanDateShow = true" />
-                            <van-action-sheet v-model="vanDateShow">
-                                <van-datetime-picker v-model="currentDate" type="year-month" title="选择年月" :min-date="minDate" :max-date="maxDate" :formatter="formatter" @confirm="confirmYear" />
-                            </van-action-sheet>
-                        </van-col>
-                    </van-row>
-                </div>
-                <div class="resetVant">
-                    <v-table is-horizontal-resize style="width:100%" :columns="columns" :table-data="tableData" row-hover-color="#eee" row-click-color="#edf7ff" :cell-merge="cellMerge" :is-loading="lodingFlag" :column-cell-class-name="columnCellClass"></v-table>
-                </div>
-            </div> -->
             <renjunComponernt></renjunComponernt>
             <div>
                 <!-- <van-tab title="人均工资" name="人均工资"> -->
@@ -118,9 +88,7 @@
                             </div>
                         </van-col>
                     </van-row>
-                    <van-row type="flex">
-                        <choosedepartment @confirmNode="selctdept" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData" ref="salaryDep"></choosedepartment>
-                    </van-row>
+                    <choosedepartment @confirmNode="selctdept" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData" ref="salaryDep"></choosedepartment>
                 </div>
                 <div class="resetVant">
                     <v-table is-horizontal-resize style="width:100%" :columns="SalaryLibraryColumns" :table-data="SalaryLibrarytableData" row-hover-color="#eee" row-click-color="#edf7ff" :cell-merge="MidSalaryLibrarycellMerge" :is-loading="SalaryLibrarylodingFlag" :column-cell-class-name="MidcolumnCellClass"></v-table>

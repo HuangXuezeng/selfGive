@@ -154,12 +154,37 @@ input {
 .resetVantGridAct .van-grid-item__text {
     color: #fff;
 }
+
 .resetVantAdresResultps .van-grid-item__content {
-  background-color: #ff8c00;
+    background-color: #ff8c00;
 }
-.resetVantAdresResultps .van-cell{
-  padding: 9px 2px;
+
+.resetVantAdresResultps .van-cell {
+    padding: 9px 2px;
 }
-.resetVantAdresResulAct .van-grid-item__content{
-  background-color: #00bfff;
+
+.resetVantAdresResulAct .van-grid-item__content {
+    background-color: #00bfff;
+}
+
+.resetVantArewards .van-dropdown-menu__bar {
+    background-color: #CD5C5C;
+}
+
+.resetVantArewards .van-dropdown-menu__title {
+    color: #fff;
+}
+
+.resetVantArewards .van-cell__value {
+    background-color: #D3D3D3;
+    margin-bottom: 3px;
+}
+
+.resetVantArewards .van-field__label {
+    color: red;
+}
+
+.resetVantArewards .van-field__control {
+    color:	#000;
+    text-align: center;
 }

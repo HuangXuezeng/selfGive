@@ -4,54 +4,55 @@
         <adresNavbar></adresNavbar>
         <adresResultsTanbber ref="adresResultsTanbber"></adresResultsTanbber>
         <div class="bgopacity">
-            <div style="height:12vh"></div>
-            <van-row>
-                <van-col span="8" offset="5">
-                    <div class="cadresStructure">
+            <div>
+                <div style="height:12vh"></div>
+                <van-row>
+                    <van-col span="8" offset="5">
+                        <div class="cadresStructure">
+                            <transition-group>
+                                <div v-for="(item,i) in silinglist" :key="i">
+                                    <transition name="van-slide-left">
+                                        <div class="colorFF" v-show="item.siling">{{item.value}}</div>
+                                    </transition>
+                                </div>
+                            </transition-group>
+                        </div>
+                    </van-col>
+                    <van-col span="8" offset="2">
                         <transition-group>
-                            <div v-for="(item,i) in silinglist" :key="i">
-                                <transition name="van-slide-left">
-                                    <div class="colorFF" v-show="item.siling">{{item.value}}</div>
+                            <div v-for="(item,i) in zaibianlist" :key="i">
+                                <transition name="van-slide-right">
+                                    <div class="colorFF" v-show="item.zaibian">{{item.value}}</div>
                                 </transition>
                             </div>
                         </transition-group>
-                    </div>
-                </van-col>
-                <van-col span="8" offset="2">
-                    <transition-group>
-                        <div v-for="(item,i) in zaibianlist" :key="i">
-                            <transition name="van-slide-right">
-                                <div class="colorFF" v-show="item.zaibian">{{item.value}}</div>
-                            </transition>
+                    </van-col>
+                    <van-col span="1">
+                        <div style="height: 10vh;width: 1px;">
                         </div>
-                    </transition-group>
-                </van-col>
-                <van-col span="1">
-                    <div style="height: 10vh;width: 1px;">
-                    </div>
-                </van-col>
-            </van-row>
+                    </van-col>
+                </van-row>
 
-            <hexagonalFix :delayttime='delayTime' v-if="hexagonalFlag"></hexagonalFix>
-            <van-row>
-                <van-col span="9" offset="1">
-                    <div class="cadresStructure">
-                        <div style="position: relative;">
-                            <div style="position: absolute;top: -17vh;left: 0vh;">
-                                <transition-group>
-                                    <div v-for="(item,i) in pandianlist" :key="i">
-                                        <transition name="van-slide-left">
-                                            <div class="colorFF" v-show="item.pandian"> <span v-html="item.value"></span></div>
-                                        </transition>
-                                    </div>
-                                </transition-group>
+                <hexagonalFix :delayttime='delayTime' v-if="hexagonalFlag"></hexagonalFix>
+                <van-row>
+                    <van-col span="9" offset="1">
+                        <div class="cadresStructure">
+                            <div style="position: relative;">
+                                <div style="position: absolute;top: -17vh;left: 0vh;">
+                                    <transition-group>
+                                        <div v-for="(item,i) in pandianlist" :key="i">
+                                            <transition name="van-slide-left">
+                                                <div class="colorFF" v-show="item.pandian"> <span v-html="item.value"></span></div>
+                                            </transition>
+                                        </div>
+                                    </transition-group>
+                                </div>
                             </div>
-                        </div>
 
-                    </div>
-                </van-col>
-                <van-col span="5">
-                    <!-- <transition name="van-fade">
+                        </div>
+                    </van-col>
+                    <van-col span="5">
+                        <!-- <transition name="van-fade">
                         <div style="position:relative" v-show="atmosphereFlag">
                             <span class="zuzhi" style="top:-19vh">组织氛围</span>
                             <div>
@@ -60,47 +61,47 @@
                             </div>
                         </div>
                     </transition> -->
-                </van-col>
-                <van-col span="5" offset="4">
-                    <div style="position: relative;">
-                        <div style="position: absolute;top: -25vh;left: 2vh;">
+                    </van-col>
+                    <van-col span="5" offset="4">
+                        <div style="position: relative;">
+                            <div style="position: absolute;top: -25vh;left: 2vh;">
+                                <transition-group>
+                                    <div v-for="(item,i) in leibielist" :key="i">
+                                        <transition name="van-slide-right">
+                                            <div class="colorFF" v-show="item.leibie">{{item.value}}</div>
+                                        </transition>
+                                    </div>
+                                </transition-group>
+                            </div>
+
+                        </div>
+
+                    </van-col>
+                </van-row>
+                <van-row>
+                    <van-col span="7" offset="4">
+                        <div class="cadresStructure">
                             <transition-group>
-                                <div v-for="(item,i) in leibielist" :key="i">
-                                    <transition name="van-slide-right">
-                                        <div class="colorFF" v-show="item.leibie">{{item.value}}</div>
+                                <div v-for="(item,i) in chubeilist" :key="i">
+                                    <transition name="van-slide-up">
+                                        <div class="colorFF" v-show="item.chubei">{{item.value}}</div>
                                     </transition>
                                 </div>
                             </transition-group>
                         </div>
-
-                    </div>
-
-                </van-col>
-            </van-row>
-            <van-row>
-                <van-col span="7" offset="4">
-                    <div class="cadresStructure">
+                    </van-col>
+                    <van-col span="10" offset="3">
                         <transition-group>
-                            <div v-for="(item,i) in chubeilist" :key="i">
+                            <div v-for="(item,i) in liushilist" :key="i">
                                 <transition name="van-slide-up">
-                                    <div class="colorFF" v-show="item.chubei">{{item.value}}</div>
+                                    <div class="colorFF" v-show="item.liushi">{{item.value}}</div>
                                 </transition>
                             </div>
                         </transition-group>
-                    </div>
-                </van-col>
-                <van-col span="10" offset="3">
-                    <transition-group>
-                        <div v-for="(item,i) in liushilist" :key="i">
-                            <transition name="van-slide-up">
-                                <div class="colorFF" v-show="item.liushi">{{item.value}}</div>
-                            </transition>
-                        </div>
-                    </transition-group>
-                </van-col>
-            </van-row>
+                    </van-col>
+                </van-row>
+            </div>
         </div>
-
     </div>
 </template>
 
@@ -415,13 +416,13 @@
     }
 
     .bgopacity {
-        position: absolute;
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        /* width: 500px; */
-        /* height: 300px; */
+        // position: absolute;
+        // left: 0;
+        // right: 0;
+        // top: 0;
+        // bottom: 0;
+        width: 100%;
+        height: 100%;
         /* line-height: 50px; */
         // text-align: center;
         background: rgba(255, 255, 255, 0.5);

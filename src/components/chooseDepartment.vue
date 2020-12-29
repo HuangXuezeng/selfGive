@@ -1,6 +1,8 @@
 <template>
     <div class="resetVant">
+      <div class="resetVantArewards">
         <van-field v-model="selectedDepartment" @click="pickDept" :label="labelTitle" :placeholder="deptPlacehoder" :rules="reqireRule" type="textarea" :autosize="autosize" :label-class="labelStyle" readonly />
+      </div>
         <van-popup v-model="showPickDept" position="top" :style="{ height: '70%' }" get-container="body" :closeable="closeableFlag">
             <div style="padding-bottom:12%">
                 <!-- <van-switch :value="isDownValue" @input="isDownMethods" /> -->

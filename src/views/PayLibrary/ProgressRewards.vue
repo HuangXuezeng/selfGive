@@ -11,12 +11,15 @@
                         </div>
                     </van-col>
                 </van-row>
-                <van-dropdown-menu class="resetVantfixed">
+                <van-dropdown-menu class="resetVantfixed resetVantArewards">
                     <van-dropdown-item v-model="years" :options="yearList" />
                 </van-dropdown-menu>
                 <van-row type="flex">
                     <van-col span="24">
-                        <van-field readonly clickable label="部门/组织:" label-class="labelStyle" v-model="selectedOrg" placeholder="请选择部门/组织" @click="showPicker1 = true" />
+                        <div class="resetVantArewards">
+                            <van-field readonly clickable label="部门/组织:" label-class="labelStyle" v-model="selectedOrg" placeholder="请选择部门/组织" @click="showPicker1 = true" />
+                        </div>
+
                         <van-popup v-model="showPicker1" round position="bottom">
                             <van-picker show-toolbar :columns="columns" @cancel="showPicker1 = false" @confirm="(value, index) => {onConfirm(value, index, '1');}" />
                         </van-popup>
@@ -37,20 +40,24 @@
                         </div>
                     </van-col>
                 </van-row>
-                <van-dropdown-menu class="resetVantfixed">
+                <van-dropdown-menu class="resetVantfixed resetVantArewards">
                     <van-dropdown-item v-model="years" :options="yearList" />
                 </van-dropdown-menu>
                 <van-row type="flex">
                     <van-col span="24">
-                        <van-field readonly clickable label="部门/组织:" label-class="labelStyle" v-model="selectRewardName" placeholder="请选择部门/组织" @click="showPicker2 = true" />
+                        <div class="resetVantArewards">
+                            <van-field readonly clickable label="部门/组织:" label-class="labelStyle" v-model="selectRewardName" placeholder="请选择部门/组织" @click="showPicker2 = true" />
+                        </div>
                         <van-popup v-model="showPicker2" round position="bottom">
-                            <van-picker show-toolbar :columns="columns" @cancel="showPicker = false" @confirm="(value, index) => {onConfirm(value, index, '2');}" />
+                            <van-picker show-toolbar :columns="columns" @cancel="showPicker2 = false" @confirm="(value, index) => {onConfirm(value, index, '2');}" />
                         </van-popup>
                     </van-col>
                 </van-row>
                 <van-row type="flex">
                     <van-col span="24">
-                        <van-field readonly clickable label="奖励类型:" label-class="labelStyle" v-model="RewardTypeName" placeholder="请选择奖励类型" @click="showPicker = true" />
+                        <div class="resetVantArewards">
+                            <van-field readonly clickable label="奖励类型:" label-class="labelStyle" v-model="RewardTypeName" placeholder="请选择奖励类型" @click="showPicker = true" />
+                        </div>
                         <van-popup v-model="showPicker" round position="bottom">
                             <van-picker show-toolbar :columns="DetailsList" @cancel="showPicker = false" @confirm="RewardTypeConfirm" />
                         </van-popup>
@@ -102,7 +109,8 @@
                 selectRewardName: "",
                 calcHight: "400px",
                 showNodata: false,
-                ddJobNum: localStorage.getItem("jobNum")
+                ddJobNum: localStorage.getItem("jobNum"),
+                updateRewardData: {}
             };
         },
         created() {
@@ -113,60 +121,57 @@
         },
         methods: {
             onConfirm(value, index, type) {
+                debugger
                 let queryobj = {};
-                if (value[0]) {
-                    this.showPicker1 = false;
-                    this.showPicker2 = false;
-                    if (value[2]) {
-                        queryobj.downDeptName = value[2];
-                    } else if (value[1]) {
-                        queryobj.downDeptName = value[1];
-                    } else if (value[0]) {
-                        queryobj.downDeptName = value[0];
-                    }
+                this.showPicker1 = false;
+                this.showPicker2 = false;
+                if (value[2] && value[2] != '无') {
+                    queryobj.downDeptName = value[2];
+                    queryobj.deptId = this.columns[index[0]].children[index[1]].children[index[2]].deptId
+                    queryobj.grade = this.columns[index[0]].children[index[1]].children[index[2]].grade
+                } else if (value[1] && value[1] != '无') {
+                    queryobj.downDeptName = value[1];
+                    queryobj.deptId = this.columns[index[0]].children[index[1]].deptId
+                    queryobj.grade = this.columns[index[0]].children[index[1]].grade
+                } else if (value[0] && value[0] != '无') {
+                    queryobj.downDeptName = value[0];
+                    queryobj.deptId = this.columns[index[0]].deptId
+                    queryobj.grade = this.columns[index[0]].grade
+                }
+                queryobj.time = "2020";
+                queryobj.flag = "2";
+                if (type == 1) {
                     //更新第一张表
-                    queryobj.time = "2020";
-                    queryobj.flag = "2";
-                    if (type == 1) {
-                        this.updateRewardInfo(queryobj);
-                        this.selectedOrg = queryobj.downDeptName;
-                    } else {
-                        //更新第二张表
-                        this.RewardTypeName = "";
-                        this.selectRewardName = queryobj.downDeptName;
-                        if (this.selectRewardName == "股份整体") {
+                    this.updateRewardInfo(queryobj);
+                    this.selectedOrg = queryobj.downDeptName;
+                } else {
+                    //更新第二张表
+                    this.RewardTypeName = "";
+                    this.selectRewardName = queryobj.downDeptName;
+                    if (this.selectRewardName == "股份整体") {
+                        if (this.showNodata) {
+                            Toast.fail("暂无数据");
+                            return
+                        } else {
                             var myCharts = this.$echarts.init(this.$refs.pptv);
                             myCharts.clear();
                             this.showNodata = true;
                             Toast.fail("暂无数据");
                             return;
                         }
-                        this.showNodata = false;
-                        this.updateFindRewardDetailsInfo(
-                            this.findDetail(queryobj.downDeptName)
-                        );
-                        this.RewardTypeName = "";
+
                     }
-                } else {
-                    this.showPicker1 = false;
-                    this.showPicker2 = false;
-                    //更新第一张表
-                    queryobj.time = "2020";
-                    queryobj.flag = "2";
-                    queryobj.downDeptName = value.deptName;
-                    if (type == 1) {
-                        this.updateRewardInfo(queryobj);
-                        this.selectedOrg = value.deptName;
-                    } else {
-                        this.selectRewardName = value.deptName;
-                        this.RewardTypeName = "";
-                        //更新第二张表
-                        this.updateFindRewardDetailsInfo(
-                            this.findDetail(queryobj.downDeptName)
-                        );
-                        this.RewardTypeName = "";
-                    }
+                    this.showNodata = false;
+                    let DetailsInfoQuery = this.findDetail(queryobj.downDeptName)
+                    DetailsInfoQuery.detailsName = this.deleteAllStr(DetailsInfoQuery.detailsName)
+                    this.updateFindRewardDetailsInfo(DetailsInfoQuery);
+                    this.RewardTypeName = "";
                 }
+            },
+            deleteAllStr(list) {
+                let DetailsListSet = new Set(list)
+                DetailsListSet.delete('全部')
+                return Array.from(DetailsListSet);
             },
             RewardTypeConfirm(value) {
                 if (!value) {
@@ -174,13 +179,12 @@
                     this.showPicker = false;
                     return;
                 }
-                let queryData = {
-                    time: "2020",
-                    flag: "2",
-                    downDeptName: this.selectRewardName
-                };
-                queryData.detailsName = [value];
-                this.updateFindRewardDetailsInfo(queryData);
+                if (value == '全部') {
+                    this.updateRewardData.detailsName = this.deleteAllStr(this.DetailsList)
+                } else {
+                    this.updateRewardData.detailsName = [value];
+                }
+                this.updateFindRewardDetailsInfo(this.updateRewardData);
                 this.RewardTypeName = value;
                 this.showPicker = false;
             },
@@ -222,14 +226,20 @@
                         for (let k in deptsList[i].downDept) {
                             if (deptsList[i].downDept[k].downDeptName == deptname) {
                                 queryData.detailsName = deptsList[i].downDept[k].detais;
+                                queryData.grade = deptsList[i].downDept[k].grade;
+                                queryData.deptId = deptsList[i].downDept[k].deptId;
                                 this.DetailsList = deptsList[i].downDept[k].detais;
+                                this.DetailsList.unshift('全部')
                                 break;
                             }
                         }
                     } else {
                         if (deptsList[i].deptName == deptname) {
                             queryData.detailsName = deptsList[i].detais;
+                            queryData.grade = deptsList[i].grade;
+                            queryData.deptId = deptsList[i].deptId;
                             this.DetailsList = deptsList[i].detais;
+                            this.DetailsList.unshift('全部')
                             break;
                         }
                     }
@@ -237,30 +247,30 @@
                 queryData.downDeptName = deptname;
                 queryData.flag = "2";
                 queryData.time = "2020";
+                this.updateRewardData = queryData
                 return queryData;
             },
             queryfindRewardDetailsInfo(queryobj) {
                 findRewardDetailsInfo({
                     jobnumber: this.ddJobNum,
                     flag: "1"
-                }).then(
-                    res => {
-                        if (res.code == 1000) {
-                            // debugger
-                            if (res.obj.title != "股份整体") {
-                                this.RewardsInfo(res);
-                                this.showNodata = false;
-                            } else {
-                                this.showNodata = true;
-                            }
-                            this.DetailsRes = res;
-                            this.selectRewardName = res.obj.title;
-                            this.findDetail(res.obj.title);
+                }).then(res => {
+                    if (res.code == 1000) {
+                        //
+                        if (res.obj.title != "股份整体") {
+                            this.RewardsInfo(res);
+                            this.showNodata = false;
                         } else {
-                            Toast.fail(res.msg);
+                            this.showNodata = true;
                         }
+                        this.DetailsRes = res;
+                        this.selectRewardName = res.obj.title;
+                        this.findDetail(res.obj.title);
+                        this.RewardTypeName = '全部'
+                    } else {
+                        Toast.fail(res.msg);
                     }
-                );
+                });
             },
             queryfindRewardInfo(queryobj) {
                 let queryData = {};
@@ -292,44 +302,53 @@
                 }
                 this.years = this.yearList[0].value;
             },
+            //设置三列或两列选项
             setcolumns(res) {
                 if (res.obj.title == "股份整体") {
-                    this.setdepts(res, 1);
-                    res.obj.depts.unshift({
-                        text: "",
-                        children: [{
-                            text: ""
-                        }]
-                    });
-                    let overall = [{
+                    // 三列设置
+                    let Twosetdepts = this.setdepts(res)
+                    let all = [{
                         text: "股份整体",
-                        children: res.obj.depts
-                    }];
-                    this.columns = overall;
+                        children: Twosetdepts,
+                        grade: '',
+                        deptId: '1'
+                    }]
+                    all[0].children.unshift({
+                        text: '无',
+                        children: [{
+                            text: '无'
+                        }]
+                    })
+                    this.columns = all
                 } else {
-                    this.setdepts(res, 2);
-                    this.columns = res.obj.depts;
+                    //两列设置
+                    this.columns = this.setdepts(res)
                 }
             },
-            setdepts(res, num) {
+            //设置三列或两列选项
+            setdepts(res) {
+                // let
                 let depts = res.obj.depts;
-                for (let i in depts) {
-                    depts[i].text = depts[i].deptName;
-                    if (depts[i].downDept != null) {
-                        for (let k in depts[i].downDept) {
-                            depts[i].downDept[k].text = depts[i].downDept[k].downDeptName;
+                for (let item of depts) {
+                    item.text = item.deptName
+                    if (item.downDept != null) {
+                        for (let i in item.downDept) {
+                            item.downDept[i].text = item.downDept[i].downDeptName
                         }
-                        depts[i].children = depts[i].downDept;
+                        item.downDept.unshift({
+                            text: '无'
+                        })
+                        item.children = item.downDept
                     } else {
-                        // if (num == 1) {
-                        depts[i].children = [{
-                            text: ""
-                        }];
-                        // }
+                        item.children = [{
+                            text: '无'
+                        }]
                     }
                 }
+                return depts
             },
             echatsMethod(res) {
+                debugger
                 var myChart = this.$echarts.init(this.$refs.ppt);
                 let data = res.obj.send;
                 let mouth = [];
@@ -371,10 +390,6 @@
                         data.twelveTotal
                     ];
                 }
-                let budgetList = [];
-                for (let p = 0; p <= 12; p++) {
-                    budgetList.push(res.obj.budget);
-                }
 
                 function isInteger(obj) {
                     return obj % 1 === 0;
@@ -398,6 +413,9 @@
                     },
                     xAxis: [{
                         type: "value",
+                        max: function(value) {
+                            return Number(res.obj.budget) * 1.2;
+                        },
                         axisLabel: {
                             show: true,
                             formatter: function(value, index) {
@@ -443,16 +461,6 @@
                         ]
                     }],
                     series: [{
-                            name: "年初预算",
-                            type: "bar",
-                            // label: {
-                            //   show: true,
-                            //   position: "inside"
-                            // },
-                            data: budgetList
-                            // barMaxWidth:60
-                        },
-                        {
                             name: "累计发放",
                             type: "bar",
                             stack: "总量",
@@ -460,7 +468,21 @@
                             //   show: true,
                             //   position: "right"
                             // },
-                            data: mouthTotal
+                            data: mouthTotal,
+                            markLine: {
+                                data: [{
+                                    name: '年初预算',
+                                    xAxis: res.obj.budget
+                                }, ],
+                                label: {
+                                    show: true,
+                                    position: 'end',
+                                    formatter: '{b}:\n{c}'
+                                },
+                                silent: true,
+                                animation: true,
+
+                            }
                             // barMaxWidth:60
                         },
                         {
@@ -482,12 +504,10 @@
                 var myCharts = this.$echarts.init(this.$refs.pptv);
                 let chartData = res.obj.allDetais;
                 let yAxisData = [];
-                let budgetData = [];
                 let grantData = [];
                 let surplusData = [];
                 for (let k in chartData) {
                     yAxisData.push(chartData[k].name);
-                    budgetData.push(chartData[k].budget);
                     grantData.push(chartData[k].grant);
                     surplusData.push(chartData[k].surplus);
                 }
@@ -561,17 +581,6 @@
                         }
                     },
                     series: [{
-                            name: "年初预算",
-                            type: "bar",
-                            stack: "总量",
-                            label: {
-                                show: labelFlag,
-                                position: "insideRight"
-                            },
-                            data: budgetData,
-                            barMaxWidth: 20
-                        },
-                        {
                             name: "已发",
                             type: "bar",
                             stack: "可用",

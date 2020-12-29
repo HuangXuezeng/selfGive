@@ -13,8 +13,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
 			'/kukacms': {
-        // target: 'http://172.16.28.98:7080/kukacms',
-        target: 'http://192.168.249.18:7020/kukacms', //测试库
+        target: 'http://172.16.28.97:7080/kukacms',
+        // target: 'http://192.168.249.18:7020/kukacms', //测试库
         // target: 'http://family.kukahome.com:5080/kukacms/',
         // target: 'http://kukacms.kukahome.com:8084/kukacms', //事业伙伴
         // target: 'http://kukacms.kukahome.com:8082/kukacms', //正式库
@@ -28,7 +28,7 @@ module.exports = {
 
     // Various Dev Server settings
     // host: 'localhost', // can be overwritten by process.env.HOST
-    host: '172.16.28.154',
+    host: '172.16.28.85',
     // host: 'localhost',
     port: 8082, // can be 表v'fdsavcv overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,

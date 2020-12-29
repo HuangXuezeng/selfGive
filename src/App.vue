@@ -102,7 +102,7 @@ export default {
   overflow-x: hidden; */
 }
 .container {
-  width: 100%;
+  /* width: 100%; */
   height: 100%;
   /* overflow-y: auto;
   overflow: hidden; */
