@@ -13,7 +13,11 @@
                         </div>
                     </van-col>
                 </van-row>
-                <!-- <chooseDepartment @confirmNode="cadreReserveDepart" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData"></chooseDepartment> -->
+                <van-row type="flex" justify="center">
+                    <van-col>
+                        <div style="font-size:14px;color:#DC143C;font-weight:700"> 整体情况：储备率：{{cblPct}}；成熟度：{{csdPct}}</div>
+                    </van-col>
+                </van-row>
                 <div>
                     <div style="width: 100%; height: 400px">
                         <div ref="cadreReserveEchart" :style="{ width: '100%', height: '400px' }"></div>
@@ -30,7 +34,11 @@
                     </van-col>
                 </van-row>
                 <selctYearcurrent @yearChangeItem='yearChange' :startYear='2018' :allPage='0'></selctYearcurrent>
-                <!-- <chooseDepartment @confirmNode="cadreReserveDepart" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData"></chooseDepartment> -->
+                <van-row type="flex" justify="center">
+                    <van-col>
+                        <div style="font-size:14px;color:#DC143C;font-weight:700;padding-top: 2vh;"> 整体情况：平均干部流失率：{{lossAvgPct}}</div>
+                    </van-col>
+                </van-row>
                 <div v-show="!showNodatas">
                     <div style="width: 100%; height: 400px">
                         <div ref="findCadresLossInfoEchart" :style="{ width: '100%', height: '400px' }"></div>
@@ -38,30 +46,37 @@
                 </div>
                 <noData :showNodata="showNodatas"></noData>
             </div>
-
         </div>
-        <!-- <div>
-            <div>
-                <van-row type="flex" justify="left" style="margin-bottom: 10px">
+        <div>
+            <van-popup v-model="showRightInfo" position="right" :style="{ height: '100%', width: '88%' }" get-container="body" :closeable='true'>
+                <van-row type="flex" justify="center" style="margin-bottom: 10px">
                     <van-col>
-                        <div class="titleRewards">
-                            <span class="honghe"></span>
-                            干部雷达图
+                        <div class="titleRightInfo">
+                            {{titleRight}}
                         </div>
                     </van-col>
                 </van-row>
-                <selctYearcurrent @yearChangeItem='yearChange' :startYear='2019'></selctYearcurrent>
-                <van-dropdown-menu>
-                    <van-dropdown-item v-model="selectDownDept" :options="downDeptlist" @change='confirmDept' />
-                </van-dropdown-menu>
-                <div v-if="!showNodatas">
-                    <div style="width: 100%; height: 400px">
-                        <div ref="findCadreChartInfoEchart" :style="{ width: '100%', height: '400px' }"></div>
-                    </div>
+                <van-grid :column-num="3" :clickable='true' :gutter="2">
+                    <van-grid-item v-for="(item, index) in titleTypelist" :key="index" :class="item.class" @click='titleTypeClick(item)'>
+                        <template #default>
+                            <div class="gridItemBgi van-ellipsis">
+                                {{ item.name }}
+                            </div>
+                        </template>
+                    </van-grid-item>
+                </van-grid>
+                <div v-for="(items, index) in vancellList" :key="index">
+                    <van-row type="flex" justify="space-around">
+                        <van-col span="12" v-for="(item, index) in items" :key="index">
+                            <van-cell :title="item.title" is-link :arrow-direction="item.direction" :value="item.value" @click="vancellListTouch(item)" v-show="!item.show" />
+                        </van-col>
+                    </van-row>
                 </div>
-                <noData :showNodata="showNodatas"></noData>
-            </div>
-        </div> -->
+                <div style="padding-bottom:100px">
+                    <v-table ref="rightInfoTable" is-horizontal-resize :is-loading="isLoading" columns-width-drag :height="400" style="width: 100%; font-size: 14px" title-bg-color="#ccc" :columns="popupColumns" :table-data="rightInfoData" row-hover-color="#eee" row-click-color="#edf7ff"></v-table>
+                </div>
+            </van-popup>
+        </div>
     </div>
 </template>
 
@@ -109,17 +124,20 @@
             //这里存放数据
             return {
                 deptData: [],
+
                 querycadreReserve: {
                     jobnumber: localStorage.getItem("jobNum"),
                     deptList: [],
                     isDown: "Y",
+                    bzType: 'Y'
                 },
                 readySelectDept: [],
                 readySelectDeptObj: {},
                 findCadreChartInfoUeryData: {
                     deptList: [],
                     year: "",
-                    isDown: 'Y'
+                    isDown: 'Y',
+                    bzType: 'Y'
                 },
                 showNodatas: false,
                 downDeptlist: [],
@@ -128,8 +146,99 @@
                     jobnumber: '',
                     deptList: [],
                     isDown: 'Y',
-                    year: ''
-                }
+                    year: '',
+                    bzType: 'Y'
+                },
+                // 右弹窗显示控制
+                showRightInfo: false,
+                // 目录展示
+                vancellList: [],
+                // 储备度原始数据
+                reserveInfoData: [],
+                // 右边弹窗标题
+                titleRight: '',
+                // 右弹窗更新控制
+                isLoading: true,
+                //人员信息
+                rightInfoData: [],
+                // 右弹窗人员详情
+                popupColumns: [{
+                        field: "custome",
+                        width: 50,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        title: "序号",
+                        formatter: function(rowData, index) {
+                            return index + 1;
+                        },
+                        isResize: true,
+                    },
+                    {
+                        field: "cadreName",
+                        title: "现领导",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        formatter: function(rowData, rowIndex, pagingIndex, field) {
+                            return `<span>${rowData[field]}</span>`;
+                        },
+                        isResize: true,
+                    },
+                    {
+                        field: "staffName",
+                        title: "继任者",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                    {
+                        field: "year",
+                        title: "成熟度",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                    {
+                        field: "dept",
+                        title: "部门",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                    {
+                        field: "name",
+                        title: "姓名",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                    {
+                        field: "post",
+                        title: "职位",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                    {
+                        field: "zj",
+                        title: "职级",
+                        width: 80,
+                        titleAlign: "center",
+                        columnAlign: "center",
+                        isResize: true,
+                    },
+                ],
+                cblPct: '',
+                csdPct: '',
+                lossAvgPct: "",
+                LossInfoRes: [],
+                bzType: '',
+                titleTypelist: []
             };
         },
         //监听属性 类似于data概念
@@ -140,22 +249,29 @@
         methods: {
             //数据初始化
             init() {
-                // debugger
-                // this.queryfindPayrollDept();
+                // 获取本地存储的部门id
                 this.readySelectDept = [JSON.parse(localStorage.getItem("adresResultDept")).deptId];
+                //获取本地存储的部门对象
                 this.readySelectDeptObj = JSON.parse(localStorage.getItem("adresResultDept"))
+                // 查询赋值部门信息
                 this.findCadreChartInfoUeryData.deptList = this.readySelectDept
+                this.bzType = localStorage.getItem("bzType")
+                this.findCadresLossInfoData.bzType = this.bzType
+                this.querycadreReserve.bzType = this.bzType
+                this.findCadresLossInfoData.bzType = this.bzType
+                //查询干部储备情况
                 this.queryfindCadreReportReserveInfo()
+                //查询流失率
                 this.queryfindCadresLossInfo()
-                // this.queryfindCadreChartInfo()
-                // this.queryfindCadreChartDownDeptInfo()
             },
             //查询流失率
             queryfindCadresLossInfo() {
                 this.findCadresLossInfoData.deptList = this.readySelectDept
                 findCadresLossInfo(this.findCadresLossInfoData).then(res => {
                     if (res.code == "1000") {
-                        this.initfindCadresLossInfoEchart(res.obj)
+                        this.initfindCadresLossInfoEchart(res.obj.list)
+                        this.lossAvgPct = res.obj.lossAvgPct
+                        this.LossInfoRes = res.obj.list
                     } else {
                         Toast.fail(res.msg);
                     }
@@ -188,14 +304,16 @@
                 this.querycadreReserve.deptList = this.readySelectDept
                 findCadreReportReserveInfo(this.querycadreReserve).then((res) => {
                     if (res.code == "1000") {
-                        this.initcadreReserveEchart(res.obj)
+                        this.reserveInfoData = res.obj.list
+                        this.csdPct = res.obj.csdPct
+                        this.cblPct = res.obj.cblPct
+                        this.initcadreReserveEchart(res.obj.list)
                     } else {
                         Toast.fail(res.msg);
                     }
-
-                    // debugger
                 });
             },
+            // 流失率echarts渲染
             initfindCadresLossInfoEchart(list) {
                 var that = this
                 var myChart = this.$echarts.init(this.$refs.findCadresLossInfoEchart);
@@ -206,7 +324,9 @@
                     monthMap.set(monthList[i], '')
                 }
                 for (let item of list) {
-                    monthMap.set(item.month, item.loss.split('%')[0])
+                    if (item.loss) {
+                        monthMap.set(item.month, item.loss.split('%')[0])
+                    }
                 }
                 const arr = [...monthMap];
                 for (let item of arr) {
@@ -214,7 +334,7 @@
                     monthData.push(b)
                 }
                 let labelflag = false
-                // debugger
+                //
                 // this.showNodatas = true
                 // 判断要不要显示折线图
                 for (let item of monthData) {
@@ -232,7 +352,11 @@
                                 backgroundColor: '#6a7985'
                             }
                         },
-                        formatter: " <br/>{b}:{c}%"
+                        formatter: function(params) {
+                            if (labelflag) {
+                                that.RightInfo(params, 2);
+                            }
+                        }
                     },
                     legend: {
                         data: [that.readySelectDeptObj.text]
@@ -262,24 +386,24 @@
 
                     }],
                     series: [{
-                            name: that.readySelectDeptObj.text,
-                            type: 'line',
-                            data: monthData,
-                            label: {
-                                normal: {
-                                    show: labelflag,
-                                    position: 'top',
-                                    formatter: "{c}%"
-                                }
-                            },
+                        name: that.readySelectDeptObj.text,
+                        type: 'line',
+                        data: monthData,
+                        label: {
+                            normal: {
+                                show: labelflag,
+                                position: 'top',
+                                formatter: "{c}%"
+                            }
                         },
+                    }, ],
+                });
 
-                    ]
-                })
+
             },
             // 干部准备度统计图
             initcadreReserveEchart(list) {
-                // debugger
+                var that = this
                 var myChart = this.$echarts.init(this.$refs.cadreReserveEchart);
                 let xAxisList = []
                 let nowList = []
@@ -305,6 +429,7 @@
                     color: ['#6495ED', '#FF8C00', '#A9A9A9', '#FFD700'],
                     tooltip: {
                         trigger: "axis",
+                        extraCssText: 'z-index:99',
                         axisPointer: {
                             type: "cross",
                             crossStyle: {
@@ -314,9 +439,9 @@
                         formatter: function(params, ticket) {
                             let str = ''
                             params.forEach(item => {
-                                // debugger
+                                //
                                 if (item.seriesName == '储备率') {
-                                    // debugger
+                                    //
                                     str = str + "<span style='display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:" +
                                         item["color"] +
                                         "'></span>" +
@@ -345,14 +470,6 @@
                         bottom: "3%",
                         containLabel: true,
                     },
-                    // toolbox: {
-                    //   feature: {
-                    //     dataView: { show: true, readOnly: false },
-                    //     magicType: { show: true, type: ["line", "bar"] },
-                    //     restore: { show: true },
-                    //     saveAsImage: { show: true },
-                    //   },
-                    // },
                     legend: {
                         data: ["立即可用", "一年可用", "两年可用", "三年可用", "储备率"],
                     },
@@ -365,13 +482,8 @@
                     }, ],
                     yAxis: [{
                             type: "value",
-                            // name: "人数",
-                            // min: 0,
-                            // max: 480,
-                            interval: 80,
                             axisLabel: {
-                                show: false,
-                                formatter: "{value}",
+                                formatter: "{value}人",
                             },
                         },
                         {
@@ -468,6 +580,9 @@
                         },
                     ],
                 });
+                myChart.on("click", function(params) {
+                    that.RightInfo(params);
+                });
             },
             // 干部雷达图
             queryfindCadreChartInfo() {
@@ -483,10 +598,10 @@
                     }
                 })
             },
+            // 年份改变事件
             yearChange(item) {
                 this.findCadresLossInfoData.year = item
                 this.queryfindCadresLossInfo()
-                // this.queryfindCadreChartInfo()
             },
             // 干部准备雷达图
             initfindCadreChartInfoEchart(list) {
@@ -638,35 +753,214 @@
                     }]
                 })
             },
-            queryfindCadreChartDownDeptInfo() {
-                findCadreChartDownDeptInfo({
-                    deptList: this.readySelectDept
-                }).then(res => {
-                    if (res.code == "1000") {
-                        this.downDeptlist = JSON.parse(JSON.stringify(res.obj).replace(/deptId/g, 'value'))
-                        this.downDeptlist = JSON.parse(JSON.stringify(this.downDeptlist).replace(/deptName/g, 'text'))
-                        this.downDeptlist.unshift({
-                            value: this.readySelectDeptObj.deptId,
-                            text: this.readySelectDeptObj.text
-                        })
-                        this.selectDownDept = this.downDeptlist[0].value
-                    } else {
-                        this.downDeptlist.unshift({
-                            value: this.readySelectDeptObj.deptId,
-                            text: this.readySelectDeptObj.text
-                        })
-                        this.selectDownDept = this.downDeptlist[0].value
-                        // Toast.fail(res.msg);
-                        // this.showNodatas = true
-                    }
+            /**
+             * 1从findCadreReportReserveInfo接口获取右边弹窗人员信息
+             * 2echarts有点击事件，通过传参，获取点击的位置
+             * 3点击后，右弹窗显示
+             */
 
+            // 右弹窗展示目录点击事件
+            RightInfo(obj, type) {
+                var that = this;
+                this.$nextTick(() => {
+                    setTimeout(() => {
+                        that.vancellList = []
+                        that.titleTypelist = []
+                        if (type == 2) {
+                            this.popupColumns = [{
+                                        field: "custome",
+                                        width: 50,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        title: "序号",
+                                        formatter: function(rowData, index) {
+                                            return index + 1;
+                                        },
+                                        isResize: true,
+                                    }, {
+                                        field: "dept",
+                                        title: "部门",
+                                        width: 120,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        isResize: true,
+                                    },
+                                    {
+                                        field: "name",
+                                        title: "姓名",
+                                        width: 80,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        isResize: true,
+                                    },
+                                    {
+                                        field: "post",
+                                        title: "职位",
+                                        width: 100,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        isResize: true,
+                                    },
+                                    {
+                                        field: "zj",
+                                        title: "职级",
+                                        width: 80,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        isResize: true,
+                                    },
+                                ],
+                                that.showRightInfo = true
+                            that.titleRight = '干部流失明细'
+                            for (let item of that.LossInfoRes) {
+                                if (item.info) {
+                                    that.vancellList.push({
+                                        title: item.month,
+                                        value: item.info ? item.info.length : 0,
+                                        direction: "",
+                                        jobList: item.info,
+                                    })
+                                }
+                            }
+                            if (Number(that.vancellList.length) & 1 == 0) {
+
+                            } else {
+                                that.vancellList.push({
+                                    show: 1
+                                })
+                            }
+                            that.vancellList = that.spArray(2, that.vancellList)
+                            that.rightInfoData = that.vancellList[0][0].jobList
+                            that.vancellList[0][0].direction = "down"
+                            that.isLoading = false
+                        } else {
+                            this.popupColumns = [{
+                                        field: "custome",
+                                        width: 50,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        title: "序号",
+                                        formatter: function(rowData, index) {
+                                            return index + 1;
+                                        },
+                                        isResize: true,
+                                    },
+                                    {
+                                        field: "cadreName",
+                                        title: "现领导",
+                                        width: 80,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        formatter: function(rowData, rowIndex, pagingIndex, field) {
+                                            return `<span>${rowData[field]}</span>`;
+                                        },
+                                        isResize: true,
+                                    },
+                                    {
+                                        field: "staffName",
+                                        title: "继任者",
+                                        width: 80,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        isResize: true,
+                                    },
+                                    {
+                                        field: "year",
+                                        title: "成熟度",
+                                        width: 80,
+                                        titleAlign: "center",
+                                        columnAlign: "center",
+                                        isResize: true,
+                                    },
+                                ],
+                                that.showRightInfo = true
+                            that.titleRight = '干部流失率明细'
+                            for (let item of that.reserveInfoData) {
+                                if (item.type == obj.name) {
+                                    that.titleTypelist.push({
+                                        name: item.type,
+                                        class: 'resetVantAdresResulAct',
+                                        type: 1
+                                    })
+                                    this.vancellList.push({
+                                        title: "立即可用",
+                                        value: item.now,
+                                        direction: "down",
+                                        jobList: item.nowList,
+                                    }, {
+                                        title: "一年可用",
+                                        value: item.oneYear,
+                                        direction: "",
+                                        jobList: item.oneYearList,
+                                    }, {
+                                        title: "两年可用",
+                                        value: item.twoYear,
+                                        direction: "",
+                                        jobList: item.twoYearList,
+                                    }, {
+                                        title: "三年可用",
+                                        value: item.threeYear,
+                                        direction: "",
+                                        jobList: item.threeYearList,
+                                    }, )
+                                } else {
+                                    that.titleTypelist.push({
+                                        name: item.type,
+                                        class: 'resetVantAdresResultps',
+                                        type: 1
+                                    })
+                                }
+                            }
+                            if (Number(that.vancellList.length) & 1 == 0) {
+
+                            } else {
+                                that.vancellList.push({
+                                    show: 1
+                                })
+                            }
+                            that.vancellList = that.spArray(2, that.vancellList)
+                            that.rightInfoData = that.vancellList[0][0].jobList
+                            that.isLoading = false
+                        }
+
+                    }, 60)
                 })
             },
-            confirmDept(item) {
-                // debugger
-                this.findCadreChartInfoUeryData.deptList = [item]
-                this.queryfindCadreChartInfo()
-            }
+            // 分割数组，两个一组
+            spArray(n, arr) {
+                var result = [];
+                for (var i = 0; i < arr.length; i += n) {
+                    result.push(arr.slice(i, i + n));
+                }
+                return result
+            },
+            // 右弹窗展示目录点击事件
+            vancellListTouch(obj) {
+                this.isLoading = true
+                for (let j in this.vancellList) {
+                    for (let i in this.vancellList[j]) {
+                        if (this.vancellList[j][i].title == obj.title) {
+                            this.vancellList[j][i].direction = "down"
+                        } else {
+                            this.vancellList[j][i].direction = ""
+                        }
+                    }
+                }
+                this.rightInfoData = obj.jobList
+                setTimeout(() => {
+                    this.isLoading = false
+                }, 500);
+            },
+            titleTypeClick(obj) {
+                for (let item of this.titleTypelist) {
+                    if (obj.type == item.type) {
+                        item.class = 'resetVantAdresResulAct'
+                    } else {
+                        item.class = 'resetVantAdresResultps'
+                    }
+                }
+                this.RightInfo(obj, obj.type)
+            },
         },
         //生命周期 - 创建完成（可以访问当前this实例）
         created() {
@@ -675,7 +969,7 @@
         //生命周期 - 挂载完成（可以访问DOM元素）
         mounted() {
             this.$refs.adresResultsTanbber.changtab("cadreReserve");
-            // this.initcadreReserveEchart();
+            this.initcadreReserveEchart();
         },
         beforeCreate() {}, //生命周期 - 创建之前
         beforeMount() {}, //生命周期 - 挂载之前
@@ -705,5 +999,28 @@
         font-weight: 700;
         margin-top: 20px;
         color: red;
+    }
+
+    .titleRightInfo {
+        font-size: 18px;
+        font-weight: 700;
+        margin-top: 20px;
+        color: red;
+    }
+
+    .lineEllipsis {
+        padding-top: 3px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1;
+        overflow: hidden;
+        font-size: 13px;
+    }
+
+    .gridItemBgi {
+        color #fff;
+        font-size: 16px;
+        font-weight: 700;
+        width: 12vh;
     }
 </style>

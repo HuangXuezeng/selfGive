@@ -432,6 +432,7 @@ export default new Router({
       path: '/departselect',
       name: 'departselect',
       component: () => import('@/views/adresResultts/departselect'),
+      meta: { keepAlive: true }
     },
     {
       path: '/cadresInventory',
@@ -442,11 +443,23 @@ export default new Router({
       path: '/careerPath',
       name: 'careerPath',
       component: () => import('@/views/adresResultts/careerPath'),
+
     },
     {
       path: '/teamAtmosphere',
       name: 'teamAtmosphere',
       component: () => import('@/views/adresResultts/teamAtmosphere'),
+    },
+    {
+      path: '/dataBoard',
+      name: 'dataBoard',
+      component: () => import('@/views/adresResultts/dataBoard'),
+    },
+    {
+      path: '/talentPool',
+      name: 'talentPool',
+      component: () => import('@/views/adresResultts/talentPool'),
+      meta: { keepAlive: true }
     },
     /**
      * 干部简报结束

@@ -164,34 +164,28 @@
                                 <van-collapse-item :name="index">
                                     <template #title>
                                         <div class="fontweig">
-                                            <van-tag mark type="primary" color="#fc5f10">{{
-                        item.startTime + " " + item.type == "无 无"
-                          ? "无"
-                          : item.startTime + " " + item.type
-                      }}</van-tag>
+                                            <van-tag mark type="primary" color="#fc5f10">{{item.startTime + " " + item.type == "无 无"? "无" : item.startTime + " " + item.type }}</van-tag>
                                         </div>
                                     </template>
-                                    <p>
-                                        <span>组织机构：</span>
-                                        <span class="floatRight">{{ item.organ }}</span>
+                                    <p class="floatRight">
+                                        <span >组织机构：</span>
+                                        <span class="info-right">{{ item.organ }}</span>
                                     </p>
-                                    <p>
-                                        <span>岗位：</span>
-                                        <span class="floatRight">{{ item.station }}</span>
+                                    <p class="floatRight">
+                                        <span >岗位：</span>
+                                        <span class="info-right">{{ item.station }}</span>
                                     </p>
-                                    <p>
-                                        <span>异动类型：</span>
-                                        <span class="floatRight">{{ item.type }}</span>
+                                    <p class="floatRight">
+                                        <span >异动类型：</span>
+                                        <span class="info-right">{{ item.type }}</span>
                                     </p>
-                                    <p>
-                                        <span>起止年月：</span>
-                                        <span class="floatRight">{{ item.startTime }}</span>
+                                    <p class="floatRight">
+                                        <span >起止年月：</span>
+                                        <span class="info-right">{{ item.startTime }}</span>
                                     </p>
-                                    <p>
-                                        <span>主要职责：</span>
-                                        <span class="floatRight strClamp" @click="strClampClick">{{
-                      item.mainWork
-                    }}</span>
+                                    <p class="floatRight">
+                                        <span >主要职责：</span>
+                                        <span class=" strClamp info-right" @click="strClampClick">{{item.mainWork}}</span>
                                     </p>
                                 </van-collapse-item>
                                 <van-collapse-item v-if="index == KukaWorkList.length - 1" v-show="showKukaWorkFlag" name="000">
@@ -232,25 +226,25 @@
                         }}</van-tag>
                                             </div>
                                         </template>
-                                        <p>
+                                        <p class="floatRight">
                                             <span>公司：</span>
-                                            <span class="floatRight">{{ item.workUnit }}</span>
+                                            <span class="info-right">{{ item.workUnit }}</span>
                                         </p>
-                                        <p>
+                                        <p class="floatRight">
                                             <span>任职岗位：</span>
-                                            <span class="floatRight">{{ item.station }}</span>
+                                            <span class="info-right">{{ item.station }}</span>
                                         </p>
-                                        <p>
+                                        <p class="floatRight">
                                             <span>开始日期：</span>
-                                            <span class="floatRight">{{ item.startTime }}</span>
+                                            <span class="info-right">{{ item.startTime }}</span>
                                         </p>
-                                        <p>
+                                        <p class="floatRight">
                                             <span>截止日期：</span>
-                                            <span class="floatRight">{{ item.endTime }}</span>
+                                            <span class="info-right">{{ item.endTime }}</span>
                                         </p>
-                                        <p>
+                                        <p class="floatRight">
                                             <span>主要描述：</span>
-                                            <span class="floatRight strClamp" @click="strClampClick">{{ item.description }}</span>
+                                            <span class="info-right strClamp" @click="strClampClick">{{ item.description }}</span>
                                         </p>
                                     </van-collapse-item>
                                     <van-collapse-item v-if="index == socialList.length - 1" v-show="showSocialListMore" name="000">
@@ -285,17 +279,17 @@
                     }}</van-tag>
                                     </div>
                                 </template>
-                                <p>
+                                <p class="floatRight">
                                     <span>年份:</span>
-                                    <span class="floatRight">{{ item.a812005 }}</span>
+                                    <span class="info-right">{{ item.a812005 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>季度</span>
-                                    <span class="floatRight">{{ item.a812006 }}</span>
+                                    <span class="info-right">{{ item.a812006 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>等级</span>
-                                    <span class="floatRight">{{ item.a812012 }}</span>
+                                    <span class="info-right">{{ item.a812012 }}</span>
                                 </p>
                             </van-collapse-item>
                             <van-collapse-item v-if="index == cadreAchieveInfoList.length - 1" v-show="showcadreAchieveInfoListMore" name="000">
@@ -319,30 +313,28 @@
                             <van-collapse-item :name="index">
                                 <template #title>
                                     <div class="fontweig">
-                                        <van-tag mark type="primary" color="#fc5f10">{{
-                      item.a832005 + "年"
-                    }}</van-tag>
+                                        <van-tag mark type="primary" color="#fc5f10">{{item.a832005 + "年"}}</van-tag>
                                     </div>
                                 </template>
-                                <p>
+                                <p class="floatRight">
                                     <span>年份:</span>
-                                    <span class="floatRight">{{ item.a832005 }}</span>
+                                    <span class="info-right">{{ item.a832005 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>一级单位</span>
-                                    <span class="floatRight">{{ item.contentone }}</span>
+                                    <span class="info-right">{{ item.contentone }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>岗位</span>
-                                    <span class="floatRight">{{ item.a832019 }}</span>
+                                    <span class="info-right">{{ item.a832019 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>分数</span>
-                                    <span class="floatRight">{{ item.a832009 }}</span>
+                                    <span class="info-right">{{ item.a832009 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>PBC链接</span>
-                                    <a class="floatRight" :href="item.a832htmURL" style="color: blue">{{
+                                    <a  :href="item.a832htmURL" style="color: blue">{{
                       item.a832005 + " " + item.contentone == "无 无"
                         ? "无"
                         : item.a832005 + " " + item.contentone
@@ -366,38 +358,36 @@
                             <van-collapse-item :name="index">
                                 <template #title>
                                     <div class="fontweig">
-                                        <van-tag mark type="primary" color="#fc5f10">{{
-                      item.a813006
-                    }}</van-tag>
+                                        <van-tag mark type="primary" color="#fc5f10">{{item.a813006}}</van-tag>
                                     </div>
                                 </template>
-                                <p>
+                                <p class="floatRight">
                                     <span>日期：</span>
-                                    <span class="floatRight">{{ item.A813005 }}</span>
+                                    <span class="info-right">{{ item.A813005 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>事件类型：</span>
-                                    <span class="floatRight">{{ item.a813006 }}</span>
+                                    <span class="info-right">{{ item.a813006 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>事件内涵：</span>
-                                    <span class="floatRight">{{ item.a813007 }}</span>
+                                    <span class="info-right">{{ item.a813007 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>事件描述：</span>
-                                    <span class="floatRight">{{ item.a813008 }}</span>
+                                    <span class="info-right">{{ item.a813008 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>事件评价：</span>
-                                    <span class="floatRight">{{ item.a813009 }}</span>
+                                    <span class="info-right">{{ item.a813009 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>奖惩结果：</span>
-                                    <span class="floatRight">{{ item.a813010 }}</span>
+                                    <span class="info-right">{{ item.a813010 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>红头文件：</span>
-                                    <span class="floatRight">{{ item.a813011 }}</span>
+                                    <span class="info-right">{{ item.a813011 }}</span>
                                 </p>
                             </van-collapse-item>
                             <van-collapse-item v-if="index == KeyEvents.length - 1" v-show="showKeyEventsMore" name="000">
@@ -429,45 +419,47 @@
                     }}</van-tag>
                                     </div>
                                 </template>
-                                <p v-if="item.date">
+                                <p v-if="item.date" class="floatRight">
                                     <span>日期:</span>
-                                    <span class="floatRight">{{ item.date }}</span>
+                                    <span class="info-right">{{ item.date }}</span>
                                 </p>
-                                <p v-if="item.a8SRLMX006">
+                                <p v-if="item.a8SRLMX006" class="floatRight">
                                     <span>排名:</span>
-                                    <span class="floatRight">{{ item.a8SRLMX006 }}</span>
+                                    <span class="info-right">{{ item.a8SRLMX006 }}</span>
                                 </p>
-                                <p v-if="item.qualityNum">
+                                <p v-if="item.qualityNum" class="floatRight">
                                     <span>素质测评得分:</span>
-                                    <span class="floatRight">{{ item.qualityNum }}</span>
+                                    <span class="info-right">{{ item.qualityNum }}</span>
                                 </p>
-                                <p v-if="item.s360Num">
+                                <p v-if="item.s360Num" class="floatRight">
                                     <span>360得分:</span>
-                                    <span class="floatRight">{{ item.s360Num }}</span>
+                                    <span class="info-right">{{ item.s360Num }}</span>
                                 </p>
-                                <p v-if="item.beinum">
+                                <p v-if="item.beinum" class="floatRight">
                                     <span>BEI/案例分析得分:</span>
-                                    <span class="floatRight">{{ item.beinum }}</span>
+                                    <span class="info-right">{{ item.beinum }}</span>
                                 </p>
-                                <p v-if="item.a8SRLMX011">
+                                <p v-if="item.a8SRLMX011" class="floatRight">
                                     <span>加权总分:</span>
-                                    <span class="floatRight">{{ item.a8SRLMX011 }}</span>
+                                    <span class="info-right">{{ item.a8SRLMX011 }}</span>
                                 </p>
-                                <p v-if="item.jiuGZ">
+                                <p v-if="item.jiuGZ" class="floatRight">
                                     <span>九宫格位置:</span>
-                                    <span class="floatRight">{{ item.jiuGZ }}</span>
+                                    <span class="info-right">{{ item.jiuGZ }}</span>
                                 </p>
-                                <p v-if="item.a8SRLMX012">
+                                <p v-if="item.a8SRLMX012" class="floatRight">
                                     <span>评估人:</span>
-                                    <span class="floatRight"> {{ item.a8SRLMX012 }}</span>
+                                    <span class="info-right"> {{ item.a8SRLMX012 }}</span>
                                 </p>
-                                <p v-if="item.promote">
-                                    <span>待提升项:</span>
-                                    <span class="floatRight">{{ item.promote }}</span>
-                                </p>
-                                <p v-if="item.teamFw">
+                                <p v-if="item.teamFw" class="floatRight">
                                     <span>团队氛围:</span>
-                                    <span class="floatRight">{{ item.teamFw }}</span>
+                                    <span class="info-right">{{ item.teamFw }}</span>
+                                </p>
+                                <p v-if="item.promote" class="floatRight">
+                                    <span>待提升项:</span>
+                                    <span v-html='item.promote' class="info-right">
+
+                                    </span>
                                 </p>
                             </van-collapse-item>
                         </van-collapse>
@@ -497,38 +489,36 @@
                             <van-collapse-item :name="index">
                                 <template #title>
                                     <div class="fontweig">
-                                        <van-tag mark type="primary" color="#fc5f10">{{
-                      item.a836008
-                    }}</van-tag>
+                                        <van-tag mark type="primary" color="#fc5f10">{{item.a836008}}</van-tag>
                                     </div>
                                 </template>
-                                <p>
+                                <p class="floatRight">
                                     <span>培训时间:</span>
-                                    <span class="floatRight">{{ item.time }}</span>
+                                    <span class="info-right">{{ item.time }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>培训组织部门:</span>
-                                    <span class="floatRight">{{ item.a836007 }}</span>
+                                    <span class="info-right">{{ item.a836007 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>培训项目:</span>
-                                    <span class="floatRight">{{ item.a836008 }}</span>
+                                    <span class="info-right">{{ item.a836008 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>培训类别:</span>
-                                    <span class="floatRight">{{ item.a836009 }}</span>
+                                    <span class="info-right">{{ item.a836009 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>培训成绩:</span>
-                                    <span class="floatRight">{{ item.a836010 }}</span>
+                                    <span class="info-right">{{ item.a836010 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>奖项:</span>
-                                    <span class="floatRight">{{ item.a836011 }}</span>
+                                    <span class="info-right">{{ item.a836011 }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>班级职务:</span>
-                                    <span class="floatRight">{{ item.a836012 }}</span>
+                                    <span class="info-right">{{ item.a836012 }}</span>
                                 </p>
                             </van-collapse-item>
                         </van-collapse>
@@ -545,44 +535,40 @@
                             <van-collapse-item :name="index">
                                 <template #title>
                                     <div class="fontweig">
-                                        <van-tag mark type="primary" color="#fc5f10">{{
-                      item.projectName
-                    }}</van-tag>
+                                        <van-tag mark type="primary" color="#fc5f10">{{item.projectName}}</van-tag>
                                     </div>
                                 </template>
-                                <p v-show="item.startTime != null && item.startTime != '无'">
+                                <p v-show="item.startTime != null && item.startTime != '无'" class="floatRight">
                                     <span>项目时间:</span>
-                                    <span class="floatRight">{{
+                                    <span class="info-right">{{
                     item.endTime == null
                       ? item.startTime + "——" + "至今"
                       : item.startTime + "——" + item.endTime
                   }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>项目名称:</span>
-                                    <span class="floatRight">{{ item.projectName }}</span>
+                                    <span class="info-right">{{ item.projectName }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>项目性质:</span>
-                                    <span class="floatRight">{{ item.projectProp }}</span>
+                                    <span class="info-right">{{ item.projectProp }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>项目角色:</span>
-                                    <span class="floatRight">{{ item.projectRole }}</span>
+                                    <span class="info-right">{{ item.projectRole }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>投入精力占比:</span>
-                                    <span class="floatRight">{{ item.trjlzb }}</span>
+                                    <span class="info-right">{{ item.trjlzb }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>任职类型:</span>
-                                    <span class="floatRight">{{ item.jobType }}</span>
+                                    <span class="info-right">{{ item.jobType }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>项目成果:</span>
-                                    <span class="floatRight strClamp" @click="strClampClick">{{
-                    item.projectResult
-                  }}</span>
+                                    <span class=" strClamp info-right" @click="strClampClick">{{item.projectResult}}</span>
                                 </p>
                             </van-collapse-item>
                             <van-collapse-item v-if="index == listProject.length - 1" v-show="showlistProjectMore" name="000">
@@ -612,13 +598,13 @@
                                         <van-tag mark type="primary" color="#fc5f10">团队{{ index + 1 }}</van-tag>
                                     </div>
                                 </template>
-                                <p>
+                                <p class="floatRight">
                                     <span>团队所在架构：</span>
-                                    <span class="floatRight">{{ item.a8TDPYXX013Name }}</span>
+                                    <span class="info-right">{{ item.a8TDPYXX013Name }}</span>
                                 </p>
-                                <p>
+                                <p class="floatRight">
                                     <span>团队规模：</span>
-                                    <span class="floatRight">{{ item.a8TDPYXX014 }}</span>
+                                    <span class="info-right">{{ item.a8TDPYXX014 }}</span>
                                 </p>
                                 <div style="border: 1px solid #ccc">
                                     <div style="border-bottom: 1px solid #ccc">
@@ -643,13 +629,6 @@
                                             </van-col>
                                         </van-row>
                                     </div>
-
-                                    <!-- <van-row >
-                      <van-col span="24">
-                        <span style=""></span>
-                      </van-col>
-                   </van-row> -->
-                                    <!-- <span></span> -->
                                     <van-row type="flex" justify="space-between">
                                         <van-col span="9">
                                             <div>继任者成熟度：</div>
@@ -671,81 +650,6 @@
                                         </van-col>
                                     </van-row>
                                 </div>
-
-                                <!-- <div style="position:relative;">
-                  <div class="successorFull">
-                    <div style="height: 14vh;text-align: center;">
-                      <div style="height:7vh;line-height: 7vh;">
-                        <div>
-                          继任者：
-                        </div>
-                      </div>
-                      <div style="height:7vh;line-height: 7vh;">
-                        <div>
-                          继任者成熟度：
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      style="justify-content: space-between;flex-direction: row;display: flex;"
-                    >
-                      <div class="cellclass">
-                        <div class="ceterHeight">
-                          {{ item.a8TDPYXX015 }}
-                        </div>
-                        <div class="ceterHeight">
-                          {{ item.a8TDPYXX016name }}
-                        </div>
-                      </div>
-                      <div class="cellclass">
-                        <div class="ceterHeight">
-                          {{ item.a8TDPYXX017 }}
-                        </div>
-                        <div class="ceterHeight">
-                          {{ item.a8TDPYXX018name }}
-                        </div>
-                      </div>
-                      <div class="cellclass">
-                        <div class="ceterHeight">
-                          {{ item.a8TDPYXX019 }}
-                        </div>
-                        <div class="ceterHeight">
-                          {{ item.a8TDPYXX020name }}
-                        </div>
-                      </div>
-                    </div>
-                    <span class="lineCCC"></span>
-                  </div>
-                </div> -->
-
-                                <!-- <p>
-                  <span>继任者：</span>
-                  <span class="floatRight">
-                    <div class="teamJr">
-                      {{ item.a8TDPYXX015 }}
-                    </div>
-                    <div class="teamJr">
-                      {{ item.a8TDPYXX017 }}
-                    </div>
-                    <div class="teamJr">
-                      {{ item.a8TDPYXX019 }}
-                    </div></span
-                  >
-                </p>
-                <p>
-                  <span>继任者成熟度：</span>
-                  <span class="floatRight">
-                    <div class="teamJr">
-                      {{ item.a8TDPYXX016name }}
-                    </div>
-                    <div class="teamJr">
-                      {{ item.a8TDPYXX018name }}
-                    </div>
-                    <div class="teamJr">
-                      {{ item.a8TDPYXX020name }}
-                    </div>
-                  </span>
-                </p> -->
                             </van-collapse-item>
                         </van-collapse>
                     </div>
@@ -760,21 +664,12 @@
                     </van-row>
                     <van-row type="flex">
                         <van-col span="6">
-                            <div style="
-                  margin-top: 2vh;
-                  margin-left: 3vh;
-                  font-size: 15px;
-                  color: rgb(150, 151, 153);
-                ">
+                            <div style="margin-top: 2vh;margin-left: 3vh;font-size: 15px;color: rgb(150, 151, 153);">
                                 职业倾向:
                             </div>
                         </van-col>
                         <van-col span="18">
-                            <div style="
-                  padding-top: 2vh;
-                  font-size: 15px;
-                  color: rgb(150, 151, 153);
-                ">
+                            <div style="padding-top: 2vh;font-size: 15px;color: rgb(150, 151, 153);">
                                 <div v-html="professionalTendency"></div>
                             </div>
                         </van-col>
@@ -871,6 +766,7 @@
                 lastavgAbility: [],
                 avgAbility: [],
                 noPhotoFlag: false,
+                ddJobNum: localStorage.getItem("jobNum"),
             };
         },
         created() {
@@ -1222,7 +1118,8 @@
             },
             queryfindCadreAbility() {
                 findCadreAbility({
-                    jobnumber: this.itemjobnumber
+                    jobnumber: this.itemjobnumber,
+                    jobnumber1: this.ddJobNum
                 }).then((res) => {
                     // debugger;
                     this.listAbility = res.obj.abilityList;
@@ -1513,10 +1410,10 @@
                 return (string = year + "-" + mouth + "-" + day);
             },
             strClampClick(e) {
-                if (e.target.className == "floatRight strClampAll") {
-                    e.target.className = "floatRight strClamp";
+                if (e.target.className == "info-right strClampAll") {
+                    e.target.className = "info-right strClamp";
                 } else {
-                    e.target.className = "floatRight strClampAll";
+                    e.target.className = "info-right strClampAll";
                 }
             },
             docClick(e) {
@@ -1656,7 +1553,8 @@
     }
 
     .floatRight {
-        float: right;
+        display: flex;
+        justify-content: space-between;
         margin-top: 3px;
     }
 
@@ -1714,7 +1612,7 @@
 
     .successorFull {
         display: flex;
-        justify-content: space-between;
+        justify-content: space-around;
         border: 1px solid #ccc;
     }
 
@@ -1739,5 +1637,9 @@
         border-right: 0.5px solid #ccc;
         text-align: center;
         // width: 10vh;
+    }
+    .info-right{
+      max-width:30vh;
+      text-align center
     }
 </style>

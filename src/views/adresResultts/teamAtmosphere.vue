@@ -1,7 +1,7 @@
 <!--  -->
 <template>
     <div class=''>
-      <adresNavbar></adresNavbar>
+        <adresNavbar></adresNavbar>
         <adresResultsTanbber ref="adresResultsTanbber" />
         <selctYearcurrent @yearChangeItem='yearChange' :startYear='2017' :allPage='0'></selctYearcurrent>
         <div>
@@ -45,7 +45,12 @@
 
     export default {
         //import引入的组件需要注入到对象中才能使用
-        components: {noData,adresNavbar,adresResultsTanbber,selctYearcurrent},
+        components: {
+            noData,
+            adresNavbar,
+            adresResultsTanbber,
+            selctYearcurrent
+        },
         data() {
             //这里存放数据
             return {
@@ -53,8 +58,10 @@
                 readySelectDept: [],
                 findCadreTeamFwInfoData: {
                     deptList: [],
-                    year:''
+                    year: '',
+                    bzType:'Y'
                 },
+                bzType:''
             };
         },
         //监听属性 类似于data概念
@@ -63,11 +70,16 @@
         watch: {},
         //方法集合
         methods: {
+            // 数据初始化
             init() {
-              // debugger
+                // 获取本地存储的部门id
                 this.readySelectDept = [JSON.parse(localStorage.getItem("adresResultDept")).deptId];
+                this.bzType = localStorage.getItem("bzType")
+                this.findCadreTeamFwInfoData.bzType = this.bzType
+                // 查询氛围数据
                 this.queryfindCadreTeamFwInfo()
             },
+            // 查询氛围数据
             queryfindCadreTeamFwInfo() {
                 this.findCadreTeamFwInfoData.deptList = this.readySelectDept
                 findCadreTeamFwInfo(this.findCadreTeamFwInfoData).then(res => {
@@ -82,6 +94,7 @@
                     }
                 })
             },
+            // 氛围数据echarts渲染
             initteamAtmosphereEchart(obj) {
                 var myChart = this.$echarts.init(this.$refs.teamAtmosphereEchart);
                 let chartData = []
@@ -92,14 +105,14 @@
                         name: obj
                     }
                     chartData.push(objt)
-                    changeColor="#DC143C"
+                    changeColor = "#DC143C"
                 } else if (obj == '雨天') {
                     let objt = {
                         value: 30,
                         name: obj
                     }
                     chartData.push(objt)
-                    changeColor="#FF8C00"
+                    changeColor = "#FF8C00"
 
                 } else if (obj == '阴天') {
                     let objt = {
@@ -107,7 +120,7 @@
                         name: obj
                     }
                     chartData.push(objt)
-                    changeColor="#DDA0DD"
+                    changeColor = "#DDA0DD"
 
                 } else if (obj == '多云') {
                     let objt = {
@@ -115,7 +128,7 @@
                         name: obj
                     }
                     chartData.push(objt)
-                    changeColor="#87CEFA"
+                    changeColor = "#87CEFA"
 
                 } else if (obj == '晴天') {
                     let objt = {
@@ -123,7 +136,7 @@
                         name: obj
                     }
                     chartData.push(objt)
-                    changeColor="#32CD32"
+                    changeColor = "#32CD32"
                 }
                 myChart.setOption({
                     tooltip: {
@@ -175,7 +188,6 @@
                             offsetCenter: [0, '28%'], // x, y，单位px
                             label: {
                                 formatter: function(v) {
-                                    debugger
                                 }
                             }
 
@@ -194,17 +206,15 @@
                 })
 
             },
-            yearChange(item){
-              // yearChange(item) {
+            // 年份改变事件
+            yearChange(item) {
                 this.findCadreTeamFwInfoData.year = item
                 this.queryfindCadreTeamFwInfo()
-                // this.queryfindCadreChartInfo()
-            // },
             }
         },
         //生命周期 - 创建完成（可以访问当前this实例）
         created() {
-          this.init()
+            this.init()
         },
         //生命周期 - 挂载完成（可以访问DOM元素）
         mounted() {
@@ -241,5 +251,4 @@
         color: #ffffff;
         font-size 12px;
     }
-
 </style>

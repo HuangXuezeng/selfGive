@@ -243,11 +243,11 @@
                     //   title: "奖励进度",
                     //   img: "http://ehrfile.kukahome.com:7020/menuImage/jljd.png",
                     // },
-                    // {
-                    //     sortNum: 12,
-                    //     title: "干部简报",
-                    //     img: "http://ehrfile.kukahome.com:7020/menuImage/rgfy.png",
-                    // },
+                    {
+                        sortNum: 12,
+                        title: "干部简报",
+                        img: "http://ehrfile.kukahome.com:7020/menuImage/rgfy.png",
+                    },
                 ],
                 colors: [{
                         text: "Aquamarine",
@@ -282,14 +282,14 @@
             };
         },
         created() {
+            localStorage.clear();
             // debugger
-            // localStorage.setItem("jobNum", 6006212); //liu
+            localStorage.setItem("jobNum", 6006212); //liu
             // localStorage.setItem("jobNum", 6005506); //li
             // localStorage.setItem('jobNum',9085360)
             // localStorage.setItem('jobNum',9107021)
             // localStorage.setItem('jobNum',9078825)
-            // localStorage.setItem('jobNum',9050104)
-            // localStorage.setItem('jobNum',9136081)
+            // localStorage.setItem('jobNum',9025434)
             if (
                 localStorage.getItem("jobNum") == "" ||
                 localStorage.getItem("jobNum") == null ||
@@ -735,7 +735,7 @@
                     }
                 } else {
                     // 正式环境需解开
-                    this.splitLeader("干部档案")
+                    // this.splitLeader("干部档案")
                 }
                 // 判断薪资库
                 if (userinfo != null &&
@@ -745,14 +745,14 @@
                     }
                 } else {
                     // 正式环境需解开
-                    this.splitLeader("薪资库")
+                    // this.splitLeader("薪资库")
                 }
                 if (userinfo != null) {
                     this.judgeLeadList = this.leadList;
 
                 }
                 // 正式环境需注释
-                // this.judgeLeadList = this.leadList;
+                this.judgeLeadList = this.leadList;
             },
 
             //确认排序
@@ -839,7 +839,7 @@
                     case "干部简报":
                         this.save_type(sortNum);
                         this.$router.push({
-                            name: "departselect"
+                            name: "dataBoard"
                         });
                         break;
                 }
