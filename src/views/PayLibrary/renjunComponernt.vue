@@ -11,6 +11,7 @@
                 </van-col>
             </van-row>
             <chooseDepartment @confirmNode="selctdept" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData"></chooseDepartment>
+            <van-field v-model="monthVal" label="月份" placeholder="请选择月份" @click-input="showMonth = true" readonly/>
         </div>
         <div class="resetVant">
             <v-table is-horizontal-resize style="width: 100%" :columns="columnsAnnualSalary" :table-data="tableDataAnnualSalary" row-hover-color="#eee" row-click-color="#edf7ff" :cell-merge="cellMergeAnnualSalary" :is-loading="lodingFlagAnnualSalary" :column-cell-class-name="columnCellClassAnnualSalary" :row-click="lineChart"></v-table>
@@ -22,6 +23,16 @@
                 </div>
             </div>
         </van-overlay>
+        <!-- 选择月份 -->
+        <van-popup v-model="showMonth" round position="bottom" get-container="body">
+            <van-picker
+                show-toolbar
+                :columns="monthColumns"
+                value-key="text"
+                @cancel="showMonth = false"
+                @confirm="confirmMonthClick"
+            />
+        </van-popup>
     </div>
 </template>
 
@@ -58,23 +69,41 @@
         data() {
             //这里存放数据
             return {
+                monthVal: '', //月份
+                showMonth: false,
+                monthColumns: [
+                    {'keyId':'1','text':"1月"},
+                    {'keyId':'2','text':"2月"},
+                    {'keyId':'3','text':"3月"},
+                    {'keyId':'4','text':"4月"},
+                    {'keyId':'5','text':"5月"},
+                    {'keyId':'6','text':"6月"},
+                    {'keyId':'7','text':"7月"},
+                    {'keyId':'8','text':"8月"},
+                    {'keyId':'9','text':"9月"},
+                    {'keyId':'10','text':"10月"},
+                    {'keyId':'11','text':"11月"},
+                    {'keyId':'12','text':"12月"},
+                ],
                 deptData: [],
                 columnsAnnualSalary: [{
                         field: "zl",
                         title: "职类",
-                        width: 80,
+                        width: 60,
                         titleAlign: "center",
                         columnAlign: "center",
                         isResize: true,
+                        isFrozen: true,
                         titleCellClassName: "titleclass",
                     },
                     {
                         field: "zj",
                         title: "职级",
-                        width: 80,
+                        width: 60,
                         titleAlign: "center",
                         columnAlign: "center",
                         isResize: true,
+                        isFrozen: true,
                         titleCellClassName: "titleclass",
                         formatter: function(rowData, rowIndex, pagingIndex, field) {
                             return `<span class='bluejunpColor'>${rowData[field]}</span>`;
@@ -90,114 +119,114 @@
                         isResize: true,
                         titleCellClassName: "titleclass",
                     },
-                    {
-                        field: "one",
-                        title: "1月",
-                        width: 120,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        titleCellClassName: "titleclass",
-                    },
-                    {
-                        field: "two",
-                        title: "2月",
-                        width: 120,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        titleCellClassName: "titleclass",
-                    },
-                    {
-                        field: "three",
-                        title: "3月",
-                        width: 120,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        titleCellClassName: "titleclass",
-                    },
-                    {
-                        field: "four",
-                        title: "4月",
-                        width: 120,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        titleCellClassName: "titleclass",
-                    },
-                    {
-                        field: "five",
-                        title: "5月",
-                        width: 120,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        titleCellClassName: "titleclass",
-                    },
-                    {
-                        field: "six",
-                        title: "6月",
-                        width: 120,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        titleCellClassName: "titleclass",
-                    },
-                    {
-                        field: "seven",
-                        title: "7月",
-                        width: 120,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        titleCellClassName: "titleclass",
-                    },
-                    {
-                        field: "eight",
-                        title: "8月",
-                        width: 120,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        titleCellClassName: "titleclass",
-                    },
-                    {
-                        field: "nine",
-                        title: "9月",
-                        width: 120,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        titleCellClassName: "titleclass",
-                    },
-                    {
-                        field: "ten",
-                        title: "10月",
-                        width: 120,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        titleCellClassName: "titleclass",
-                    },
-                    {
-                        field: "eleven",
-                        title: "11月",
-                        width: 120,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        titleCellClassName: "titleclass",
-                    },
-                    {
-                        field: "twelve",
-                        title: "12月",
-                        width: 120,
-                        titleAlign: "center",
-                        columnAlign: "center",
-                        isResize: true,
-                        titleCellClassName: "titleclass",
-                    },
+                    // {
+                    //     field: "one",
+                    //     title: "1月",
+                    //     width: 120,
+                    //     titleAlign: "center",
+                    //     columnAlign: "center",
+                    //     isResize: true,
+                    //     titleCellClassName: "titleclass",
+                    // },
+                    // {
+                    //     field: "two",
+                    //     title: "2月",
+                    //     width: 120,
+                    //     titleAlign: "center",
+                    //     columnAlign: "center",
+                    //     isResize: true,
+                    //     titleCellClassName: "titleclass",
+                    // },
+                    // {
+                    //     field: "three",
+                    //     title: "3月",
+                    //     width: 120,
+                    //     titleAlign: "center",
+                    //     columnAlign: "center",
+                    //     isResize: true,
+                    //     titleCellClassName: "titleclass",
+                    // },
+                    // {
+                    //     field: "four",
+                    //     title: "4月",
+                    //     width: 120,
+                    //     titleAlign: "center",
+                    //     columnAlign: "center",
+                    //     isResize: true,
+                    //     titleCellClassName: "titleclass",
+                    // },
+                    // {
+                    //     field: "five",
+                    //     title: "5月",
+                    //     width: 120,
+                    //     titleAlign: "center",
+                    //     columnAlign: "center",
+                    //     isResize: true,
+                    //     titleCellClassName: "titleclass",
+                    // },
+                    // {
+                    //     field: "six",
+                    //     title: "6月",
+                    //     width: 120,
+                    //     titleAlign: "center",
+                    //     columnAlign: "center",
+                    //     isResize: true,
+                    //     titleCellClassName: "titleclass",
+                    // },
+                    // {
+                    //     field: "seven",
+                    //     title: "7月",
+                    //     width: 120,
+                    //     titleAlign: "center",
+                    //     columnAlign: "center",
+                    //     isResize: true,
+                    //     titleCellClassName: "titleclass",
+                    // },
+                    // {
+                    //     field: "eight",
+                    //     title: "8月",
+                    //     width: 120,
+                    //     titleAlign: "center",
+                    //     columnAlign: "center",
+                    //     isResize: true,
+                    //     titleCellClassName: "titleclass",
+                    // },
+                    // {
+                    //     field: "nine",
+                    //     title: "9月",
+                    //     width: 120,
+                    //     titleAlign: "center",
+                    //     columnAlign: "center",
+                    //     isResize: true,
+                    //     titleCellClassName: "titleclass",
+                    // },
+                    // {
+                    //     field: "ten",
+                    //     title: "10月",
+                    //     width: 120,
+                    //     titleAlign: "center",
+                    //     columnAlign: "center",
+                    //     isResize: true,
+                    //     titleCellClassName: "titleclass",
+                    // },
+                    // {
+                    //     field: "eleven",
+                    //     title: "11月",
+                    //     width: 120,
+                    //     titleAlign: "center",
+                    //     columnAlign: "center",
+                    //     isResize: true,
+                    //     titleCellClassName: "titleclass",
+                    // },
+                    // {
+                    //     field: "twelve",
+                    //     title: "12月",
+                    //     width: 120,
+                    //     titleAlign: "center",
+                    //     columnAlign: "center",
+                    //     isResize: true,
+                    //     titleCellClassName: "titleclass",
+                    // },
                     {
                         field: "zf",
                         title: "较上年12月增幅",
@@ -255,12 +284,14 @@
             },
             queryfindPerYearInfo(queryObj) {
                 let queryData = {};
+                let mon = this.formatDate(new Date()).toString()
                 if (queryObj) {
                     queryData = queryObj;
                 } else {
                     queryData = {
                         jobnumber: this.ddJobNum,
                         deptList: [],
+                        month: mon
                     };
                 }
                 findPerYearInfo(queryData).then((res) => {
@@ -271,6 +302,151 @@
                         let plist = [];
                         let slist = [];
                         let olist = [];
+                        if(queryData.month == '1'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "one",
+                                    title: "1月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '2'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "two",
+                                    title: "2月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '3'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "three",
+                                    title: "3月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '4'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "four",
+                                    title: "4月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '5'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "five",
+                                    title: "5月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '6'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "six",
+                                    title: "6月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '7'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "seven",
+                                    title: "7月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '8'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "eight",
+                                    title: "8月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '9'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "nine",
+                                    title: "9月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '10'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "ten",
+                                    title: "10月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '11'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "eleven",
+                                    title: "11月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '12'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "twelve",
+                                    title: "12月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }
                         for (let k in res.obj) {
                             if (res.obj[k].zl == "M类") {
                                 mlist.push(res.obj[k]);
@@ -468,6 +644,255 @@
                     }, ],
                 });
             },
+             //转换时间戳
+            formatDate(date) {    
+                var y = date.getFullYear();    
+                var m = date.getMonth() + 1;    m = m < 10 ? '0' + m : m;    
+                var d = date.getDate();    d = d < 10 ? ('0' + d) : d;       
+                return m
+            },
+            confirmMonthClick(val){
+                // console.log(val)
+                this. columnsAnnualSalary = [{
+                    field: "zl",
+                    title: "职类",
+                    width: 60,
+                    titleAlign: "center",
+                    columnAlign: "center",
+                    isResize: true,
+                    isFrozen: true,
+                    titleCellClassName: "titleclass",
+                },
+                {
+                    field: "zj",
+                    title: "职级",
+                    width: 60,
+                    titleAlign: "center",
+                    columnAlign: "center",
+                    isResize: true,
+                    isFrozen: true,
+                    titleCellClassName: "titleclass",
+                    formatter: function(rowData, rowIndex, pagingIndex, field) {
+                        return `<span class='bluejunpColor'>${rowData[field]}</span>`;
+                        //  '<span  onclick=test("' + rowData +');>'+rowData[field]+'</span>'
+                    },
+                },
+                {
+                    field: "lastTwelve",
+                    title: "上年12月",
+                    width: 120,
+                    titleAlign: "center",
+                    columnAlign: "center",
+                    isResize: true,
+                    titleCellClassName: "titleclass",
+                },
+                 {
+                    field: "zf",
+                    title: "较上年12月增幅",
+                    width: 120,
+                    titleAlign: "center",
+                    columnAlign: "center",
+                    isResize: true,
+                    titleCellClassName: "titleclass",
+                },]
+                this.monthVal = val.text
+                this.showMonth = false
+                let queryData = {};
+                let mon = val.keyId
+                queryData = {
+                    jobnumber: this.ddJobNum,
+                    deptList: [],
+                    month: mon
+                };
+                findPerYearInfo(queryData).then((res) => {
+                    if (res.code == 1000) {
+                        //先初始化
+                        this.tableDataAnnualSalary = [];
+                        let mlist = [];
+                        let plist = [];
+                        let slist = [];
+                        let olist = [];
+                        if(queryData.month == '1'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "one",
+                                    title: "1月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '2'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "two",
+                                    title: "2月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '3'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "three",
+                                    title: "3月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '4'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "four",
+                                    title: "4月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '5'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "five",
+                                    title: "5月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '6'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "six",
+                                    title: "6月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '7'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "seven",
+                                    title: "7月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '8'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "eight",
+                                    title: "8月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '9'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "nine",
+                                    title: "9月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '10'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "ten",
+                                    title: "10月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '11'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "eleven",
+                                    title: "11月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }else if(queryData.month == '12'){
+                            this.columnsAnnualSalary.splice(3, 0,
+                                {
+                                    field: "twelve",
+                                    title: "12月",
+                                    width: 120,
+                                    titleAlign: "center",
+                                    columnAlign: "center",
+                                    isResize: true,
+                                    titleCellClassName: "titleclass",
+                                },
+                            )
+                        }
+                        for (let k in res.obj) {
+                            if (res.obj[k].zl == "M类") {
+                                mlist.push(res.obj[k]);
+                            } else if (res.obj[k].zl == "P类") {
+                                plist.push(res.obj[k]);
+                            } else if (res.obj[k].zl == "S类") {
+                                slist.push(res.obj[k]);
+                            } else if (res.obj[k].zl == "O类") {
+                                olist.push(res.obj[k]);
+                            }
+                        }
+                        this.mAnnualSalary = mlist.length;
+                        this.pAnnualSalary = plist.length;
+                        this.sAnnualSalary = slist.length;
+                        this.oAnnualSalary = olist.length;
+                        this.orderPush(mlist);
+                        this.orderPush(plist);
+                        this.orderPush(slist);
+                        this.orderPush(olist);
+                        for (let t in res.obj) {
+                            if (res.obj[t].zl == "合计") {
+                                this.tableDataAnnualSalary.push(res.obj[t]);
+                            }
+                        }
+                        //第一次请求不需要重置位置
+                        // if (queryObj) {
+                        //   this.$nextTick(() => {
+                        //     this.$refs.vanTabs.scrollTo("人均年薪");
+                        //   });
+                        // }
+                    } else {
+                        Toast.fail(res.msg);
+                    }
+                    this.lodingFlagAnnualSalary = false;
+                });
+            }
         },
         //生命周期 - 创建完成（可以访问当前this实例）
         created() {
@@ -537,5 +962,10 @@
         height: 15px;
         display: inline-block;
         background-color: red;
+    }
+</style>
+<style>
+    .van-field__label{
+        color:red
     }
 </style>
