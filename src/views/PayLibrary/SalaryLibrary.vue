@@ -2,7 +2,7 @@
     <div style="padding-bottom: 10%;">
         <payTab ref="payTab"></payTab>
         <div>
-            <van-search v-model="searchObj.name" placeholder="请输入工号或姓名，多个用逗号分隔" show-action :clearable="false" @search="onSearch(1)" background="Chocolate" shape="round">
+            <van-search v-model="searchObj.name" placeholder="请输入工号或姓名" show-action :clearable="false" @search="onSearch(1)" background="Chocolate" shape="round">
                 <template #action>
                     <span @click="onSearch(1)" style="display: inline-block;color:#fff" v-show="!seachFlag">搜索</span>
                     <span @click="clearSearchName" style="display: inline-block;color:#fff" v-show="seachFlag">取消</span>
@@ -17,7 +17,7 @@
                     <van-col>
                         <div class="titleSalary">
                             <span class="honghe"></span>
-                            人力成本分析
+                            薪资库
                         </div>
                     </van-col>
                 </van-row>

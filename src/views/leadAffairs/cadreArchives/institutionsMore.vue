@@ -25,12 +25,12 @@
       @click-nav="leftClick"
     >
       <template slot="content">
-        <manageInfoCompon
+        <zuzhiInfo
           :Fachlist="achlist"
           :manInfoFlag="2"
           @institutionsChild="instituMore"
           ref="manageInfo"
-        ></manageInfoCompon>
+        ></zuzhiInfo>
       </template>
     </van-tree-select>
     <cadArcTanbber></cadArcTanbber>
@@ -49,12 +49,12 @@ import {
 } from "@/views/leadAffairs/cadreArchives/cadreArchivesApi.js";
 import { TreeSelect, Toast } from "vant";
 import loadingSpin from "@/components/loadingSpin.vue";
-import manageInfoCompon from "@/components/cadArcComponents/manageInfoCompon.vue";
+import zuzhiInfo from "@/components/cadArcComponents/zuzhiInfo.vue";
 export default {
   components: {
     cadArcTanbber,
     loadingSpin,
-    manageInfoCompon
+    zuzhiInfo
   },
   data() {
     return {

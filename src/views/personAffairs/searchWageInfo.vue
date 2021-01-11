@@ -183,7 +183,7 @@
     </div>
 </template>
 <script>
-import { DatetimePicker,Popup,Icon,Dialog, Notify } from 'vant'
+import { DatetimePicker,Popup,Icon,Dialog } from 'vant'
 import { querySalary } from './api'
 import '../../components/comstyle/style.css'
 export default {
@@ -220,20 +220,16 @@ export default {
     },
     //确认选择好的时间
     confirm(val){
-      // console.log(this.formatDate(val))
+      console.log(this.formatDate(val))
       this.timeMsg = this.formatDate(val)+'工资'
       let queryData = {
         jobnumber:localStorage.getItem('jobNum'),
         time:this.timeMsg
       }
       querySalary(queryData).then(res=>{
-        // if(res.obj == null){
-          
-        //   // this.timeMsg = 0
-        // }else 
-        if(res.code == 1001){
+        if(res.obj == null){
           this.salaryList = {}
-          Notify({ type: 'warning', message: res.msg })
+          // this.timeMsg = 0
         }else{
           // console.log(res.obj.bthjList)
           this.salaryList = res.obj

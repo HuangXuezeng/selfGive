@@ -5,9 +5,8 @@
                 <van-tab title="基本信息">
                     <van-card :desc="basicInfo.deptName ? basicInfo.deptName : ''" :thumb="basicInfo.photo">
                         <template #tags>
-                            <van-tag plain type="danger" v-if="basicInfo.a01136">{{
-                basicInfo.a01136
-              }}</van-tag>
+                            <van-tag plain type="danger" v-if="basicInfo.a01136">
+                              {{basicInfo.a01136}}</van-tag>
                             <van-tag plain type="danger" v-if="basicInfo.a01504">{{
                 basicInfo.a01504
               }}</van-tag>
@@ -26,12 +25,8 @@
                         </template>
                         <template #title>
                             <!-- <van-tag plain type="danger">青苗</van-tag> -->
-                            <div style="
-                  font-size: 25px;
-                  font-weight: 700;
-                  display: flex;
-                  align-items: center;
-                ">
+                            <div style="font-size: 25px;font-weight: 700;display: flex;align-items: center;
+                                    ">
                                 {{ basicInfo.a0101 }}
                                 <div @click="imageClick">
                                     <van-image v-if="seedlings" round width="1.4rem" height="1.4rem" :src="seedlings" />
@@ -85,7 +80,7 @@
                             <van-cell title="入司日期:" :value="basicInfo.a0144 ? basicInfo.a0144 : '无'" center />
                         </van-col>
                         <van-col span="12">
-                            <van-cell title="司龄:" :value="basicInfo.a0122 ? basicInfo.a0122 + '年' : '无'" center />
+                            <van-cell title="籍贯:" :value="basicInfo.a01740? basicInfo.a01740 : '无'" center />
                         </van-col>
                     </van-row>
                     <van-row type="flex" class="resetVant">
@@ -168,23 +163,23 @@
                                         </div>
                                     </template>
                                     <p class="floatRight">
-                                        <span >组织机构：</span>
+                                        <span>组织机构：</span>
                                         <span class="info-right">{{ item.organ }}</span>
                                     </p>
                                     <p class="floatRight">
-                                        <span >岗位：</span>
+                                        <span>岗位：</span>
                                         <span class="info-right">{{ item.station }}</span>
                                     </p>
                                     <p class="floatRight">
-                                        <span >异动类型：</span>
+                                        <span>异动类型：</span>
                                         <span class="info-right">{{ item.type }}</span>
                                     </p>
                                     <p class="floatRight">
-                                        <span >起止年月：</span>
+                                        <span>起止年月：</span>
                                         <span class="info-right">{{ item.startTime }}</span>
                                     </p>
                                     <p class="floatRight">
-                                        <span >主要职责：</span>
+                                        <span>主要职责：</span>
                                         <span class=" strClamp info-right" @click="strClampClick">{{item.mainWork}}</span>
                                     </p>
                                 </van-collapse-item>
@@ -334,7 +329,7 @@
                                 </p>
                                 <p class="floatRight">
                                     <span>PBC链接</span>
-                                    <a  :href="item.a832htmURL" style="color: blue">{{
+                                    <a :href="item.a832htmURL" style="color: blue">{{
                       item.a832005 + " " + item.contentone == "无 无"
                         ? "无"
                         : item.a832005 + " " + item.contentone
@@ -713,8 +708,8 @@
     } from "@/views/leadAffairs/cadreArchives/cadreArchivesApi.js";
     //src/components/noData.vue
     import {
-        findTeamBuildingInfo
-    } from "@/views/personAffairs/teamFoster/teamFosterApi.js";
+        findTeamBuildingJGLJInfo
+    } from "@/views/adresResultts/adresResults.js";
     import noData from "@/components/noData.vue";
     import loadingSpin from "@/components/loadingSpin.vue";
     export default {
@@ -1113,6 +1108,8 @@
                                 }
                             }
                         }
+                        // debugger
+                        // that.basicInfo
                     }
                 });
             },
@@ -1638,8 +1635,9 @@
         text-align: center;
         // width: 10vh;
     }
-    .info-right{
-      max-width:30vh;
-      text-align center
+
+    .info-right {
+        max-width: 30vh;
+        text-align center
     }
 </style>

@@ -36,7 +36,7 @@
                     <van-col>
                         <div class="titleRewards">
                             <span class="honghe"></span>
-                            奖励项目发放进度
+                            各单位奖励发放进度
                         </div>
                     </van-col>
                 </van-row>
@@ -121,7 +121,7 @@
         },
         methods: {
             onConfirm(value, index, type) {
-                // debugger
+                debugger
                 let queryobj = {};
                 this.showPicker1 = false;
                 this.showPicker2 = false;
@@ -348,7 +348,7 @@
                 return depts
             },
             echatsMethod(res) {
-                // debugger
+                debugger
                 var myChart = this.$echarts.init(this.$refs.ppt);
                 let data = res.obj.send;
                 let mouth = [];

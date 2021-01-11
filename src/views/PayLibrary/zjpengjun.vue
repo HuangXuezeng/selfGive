@@ -12,9 +12,7 @@
             </van-row>
             <van-row type="flex">
                 <van-col span="24">
-                    <div class="resetVantArewards">
-                        <van-field readonly clickable label="年/月:" label-class="labelStyle" v-model="selectedyear" placeholder="请选择年月" @click="vanDateShow = true" />
-                    </div>
+                    <van-field readonly clickable label="年/月:" label-class="labelStyle" v-model="selectedyear" placeholder="请选择年月" @click="vanDateShow = true" />
                     <van-action-sheet v-model="vanDateShow">
                         <van-datetime-picker v-model="currentDate" type="year-month" title="选择年月" :min-date="minDate" :max-date="maxDate" :formatter="formatter" @confirm="confirmYear" />
                     </van-action-sheet>
@@ -72,22 +70,20 @@
                 columns: [{
                         field: "zl",
                         title: "职类",
-                        width: 60,
+                        width: 80,
                         titleAlign: "center",
                         columnAlign: "center",
                         isResize: true,
-                        titleCellClassName: "titleclass",
-                        isFrozen: true
+                        titleCellClassName: "titleclass"
                     },
                     {
                         field: "zj",
                         title: "职级",
-                        width: 60,
+                        width: 80,
                         titleAlign: "center",
                         columnAlign: "center",
                         isResize: true,
-                        titleCellClassName: "titleclass",
-                        isFrozen: true
+                        titleCellClassName: "titleclass"
                     },
                     {
                         field: "month",
