@@ -243,11 +243,11 @@
                     //   title: "奖励进度",
                     //   img: "http://ehrfile.kukahome.com:7020/menuImage/jljd.png",
                     // },
-                    {
-                        sortNum: 12,
-                        title: "干部简报",
-                        img: "http://ehrfile.kukahome.com:7020/menuImage/rgfy.png",
-                    },
+                    // {
+                    //     sortNum: 12,
+                    //     title: "干部简报",
+                    //     img: "http://ehrfile.kukahome.com:7020/menuImage/rgfy.png",
+                    // },
                 ],
                 colors: [{
                         text: "Aquamarine",
@@ -285,9 +285,9 @@
             localStorage.clear();
             // debugger
             // localStorage.setItem("jobNum", 9004872); //liu
-            // localStorage.setItem("jobNum", 6005506); //li
+            localStorage.setItem("jobNum", 6005506); //li
             // localStorage.setItem('jobNum',9085360)
-            localStorage.setItem('jobNum',9090602)
+            // localStorage.setItem('jobNum',9090602)
             // localStorage.setItem('jobNum',9078825)
             // localStorage.setItem('jobNum',9025434)
             if (
@@ -748,7 +748,7 @@
                     // this.splitLeader("薪资库")
                 }
                 if (userinfo != null) {
-                    this.judgeLeadList = this.leadList;
+                    // this.judgeLeadList = this.leadList;
 
                 }
                 // 正式环境需注释
