@@ -677,9 +677,9 @@ export default {
         this.echartData6 = echartArr6
         this.initCharts()
         this.initCharts1()
-        //停止转圈
-        Toast.clear()
       })
+      //停止转圈
+      Toast.clear()
     },
     //给value加字段名方法
     newArr(e){

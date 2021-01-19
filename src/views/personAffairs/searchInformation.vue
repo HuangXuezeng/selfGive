@@ -25,7 +25,7 @@
             <p><span>签证机关：</span><span>{{personList.police}}</span></p>
             <p><span>身份证有效期：</span><span>{{personList.a01157}}</span></p>
             <p><span>性别：</span><span>{{personList.a0107}}</span></p>
-            <p><span>出生日期：</span><span>{{personList.A0111}}</span></p>
+            <p><span>出生日期：</span><span>{{personList.birthDay}}</span></p>
             <p><span>年龄：</span><span>{{personList.a01101}}</span></p>
             <p><span>户籍性质：</span><span>{{personList.a01503}}</span></p>
             <p><span>民族：</span><span>{{personList.a0121}}</span></p>

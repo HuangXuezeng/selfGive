@@ -715,6 +715,7 @@
                 let avgNumbeList = [];
                 let nowYear = "";
                 let lastYear = "";
+                // debugger
                 if (echartData.year.length == 0 && echartData.lastYear.length == 0) {
                     //判断今年和去年都为空
                     myCharts.clear();
@@ -733,6 +734,29 @@
                         avgNumbeList,
                         nowYear,
                         1
+                    );
+                    YearList = nowyearobj.YearList;
+                    avgNumbeList = nowyearobj.avgNumbeList;
+                    avgNumbeList.push(echartData.jdlj);
+                    for (let u = 1; u <= 12; u++) {
+                        lastYearList.push(lastYear + "-" + u.toString().padStart(2, "0"));
+                        lastavgNumberList.push("");
+                    }
+                    YearList.push("阶段累计");
+                    lastYearList.push("阶段累计");
+                    lastavgNumberList.push("");
+                }else if(
+                    echartData.lastYear.length != 0 &&
+                    echartData.year.length == 0
+                ){
+                    //判断今年为空，去年不为空
+                    nowYear = echartData.lastYear[0].mon.substring(0, 4);
+                    lastYear = Number(nowYear) - 1;
+                    let nowyearobj = this.MonFull(
+                        echartData,
+                        YearList,
+                        avgNumbeList,
+                        nowYear,
                     );
                     YearList = nowyearobj.YearList;
                     avgNumbeList = nowyearobj.avgNumbeList;
