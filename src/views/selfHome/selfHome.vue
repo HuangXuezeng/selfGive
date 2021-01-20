@@ -61,6 +61,18 @@
                         </div>
                     </div>
                 </div>
+                <div class="other" v-if="xzjudgeLeadList.length">
+                    <div>
+                        <span class="border"></span>
+                        <span style="font-weight: 900">薪资测试</span>
+                    </div>
+                    <div class="_items">
+                        <div class="_item" ref="hiddenBox" v-for="item in xzjudgeLeadList" :key="item.title" @click="handlerTeam(item)">
+                            <img :src="item.img" alt="" />
+                            <p>{{ item.title }}</p>
+                        </div>
+                    </div>
+                </div>
                 <div class="other">
                     <div>
                         <span class="border"></span>
@@ -208,16 +220,12 @@
                         title: "人员流失",
                         img: "http://ehrfile.kukahome.com:7020/menuImage/liushi.png",
                     },
-                    {
-                        sortNum: 6,
-                        title: "干部档案",
-                        img: "http://ehrfile.kukahome.com:7020/menuImage/ganbu.png",
-                    },
-                    {
-                        sortNum: 7,
-                        title: "薪资库",
-                        img: "http://ehrfile.kukahome.com:7020/menuImage/xzk.png",
-                    },
+                    // {
+                    //     sortNum: 6,
+                    //     title: "干部档案",
+                    //     img: "http://ehrfile.kukahome.com:7020/menuImage/ganbu.png",
+                    // },
+
                     // {
                     //   sortNum: 8,
                     //   title: "年薪分位值",
@@ -277,6 +285,12 @@
                         text: "Burlywood",
                     },
                 ],
+                xzleadList: [{
+                    sortNum: 7,
+                    title: "薪资库",
+                    img: "http://ehrfile.kukahome.com:7020/menuImage/xzk.png",
+                }, ],
+                xzjudgeLeadList: [],
                 show: false,
                 drag: false,
             };
@@ -285,7 +299,7 @@
             localStorage.clear();
             // debugger
             // localStorage.setItem("jobNum", 9004872); //liu
-            localStorage.setItem("jobNum", 6005506); //li
+            // localStorage.setItem("jobNum", 6005506); //li
             // localStorage.setItem('jobNum',9085360)
             // localStorage.setItem('jobNum',9090602)
             // localStorage.setItem('jobNum',9078825)
@@ -328,7 +342,7 @@
                             localStorage.setItem("departRes", JSON.stringify(res.obj));
                             // console.log(localStorage.getItem('departRes'))
                         });
-                    }else{
+                    } else {
                         this.isLeaderFlag = false //接受是否有团队权限的标志
                     }
                     //保存编制和人效的权限
@@ -715,9 +729,9 @@
                 });
             },
             splitLeader(judgestr) {
-                for (let i in this.leadList) {
-                    if (this.leadList[i].title == judgestr) {
-                        this.leadList.splice(i, 1);
+                for (let i in this.xzleadList) {
+                    if (this.xzleadList[i].title == judgestr) {
+                        this.xzleadList.splice(i, 1);
                         break;
                     }
                 }
@@ -725,18 +739,6 @@
             //判断干部档案能否显示
             isManPowerJudge() {
                 let userinfo = JSON.parse(localStorage.getItem("userinfo"));
-                // 判断干部档案
-                if (userinfo != null &&
-                    userinfo.isManPower &&
-                    userinfo.isCadre) {
-                    if (userinfo.isManPower == "N" &&
-                        userinfo.isCadre == "N") {
-                        this.splitLeader("干部档案")
-                    }
-                } else {
-                    // 正式环境需解开
-                    // this.splitLeader("干部档案")
-                }
                 // 判断薪资库
                 if (userinfo != null &&
                     userinfo.isSalaryPower1) {
@@ -745,14 +747,14 @@
                     }
                 } else {
                     // 正式环境需解开
-                    // this.splitLeader("薪资库")
+                    this.splitLeader("薪资库")
                 }
                 if (userinfo != null) {
-                    // this.judgeLeadList = this.leadList;
+                    this.xzjudgeLeadList = this.xzleadList;
 
                 }
                 // 正式环境需注释
-                this.judgeLeadList = this.leadList;
+                // this.xzjudgeLeadList = this.xzleadList;
             },
 
             //确认排序
@@ -891,6 +893,7 @@
             border-radius: 6px;
             padding: 10px;
             background-color: #fff;
+
             ._items {
                 padding: 20px 10px 10px 0;
                 display: flex;
@@ -912,8 +915,8 @@
                     }
 
                     p {
-                        padding: 0 7px 0 7px
-                        font-size: 14px;
+                        padding: 0 7px 0 7px;
+                         font-size: 14px;
                     }
                 }
 
@@ -976,8 +979,8 @@
                     }
 
                     p {
-                        padding: 0 7px 0 7px
-                        font-size: 14px;
+                        padding: 0 7px 0 7px;
+                         font-size: 14px;
                     }
                 }
 
@@ -1082,8 +1085,8 @@
             }
 
             p {
-                padding: 0 7px 0 7px
-                font-size: 14px;
+                padding: 0 7px 0 7px;
+                 font-size: 14px;
             }
         }
     }

@@ -9,8 +9,8 @@ module.exports = {
 
     // Paths
     assetsSubDirectory: 'static',
-    // assetsPublicPath: '/kukacmsIndex/',
-    assetsPublicPath: '/',
+    assetsPublicPath: '/kukacmsIndex/',
+    // assetsPublicPath: '/',
     proxyTable: {
 			'/kukacms': {
         // target: 'http://172.16.28.85:7080/kukacms',
