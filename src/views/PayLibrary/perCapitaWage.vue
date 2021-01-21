@@ -10,6 +10,7 @@
                     </div>
                 </van-col>
             </van-row>
+            <choosedepartment @confirmNode="selctdept" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData"></choosedepartment>
             <chooseZJlist ref="chooseZJlistRef" :checkboxlist="checkboxlist" :selectZjNameMap="selectZjNameMap" @confirmZj="selctzjquery"></chooseZJlist>
 
         </div>
@@ -1136,14 +1137,33 @@
                 }
             },
             selctdept(data, isDown) {
-                this.lodingFlagAnnualSalary = true;
-                if (data.length != 0) {
-                    this.queryfindPerYearInfo({
-                        jobnumber: this.ddJobNum,
-                        deptList: data,
-                        isDown: isDown,
-                    });
-                }
+                // this.lodingFlagAnnualSalary = true;
+                // if (data.length != 0) {
+                //     this.queryfindPerYearInfo({
+                //         jobnumber: this.ddJobNum,
+                //         deptList: data,
+                //         isDown: isDown,
+                //     });
+                // }
+                this.echartsLoding()
+                findPerGetDetailsInfo({
+                    jobnumber: this.ddJobNum,
+                    flag: "2",
+                    deptList: data
+                    // zjList: data,
+                }).then((res) => {
+                    if (res.code == 1000) {
+                        this.showNodata = false;
+                        // this.$nextTick(() => {
+                        this.payEachrts(res);
+                        // });
+                        this.rightPop = false;
+                    } else {
+                        Toast.fail(res.msg);
+                    }
+                    // this.selctzjqueryLoading = false;
+                    this.$refs.chooseZJlistRef.shutDownLading();
+                });
             },
         },
     };

@@ -13,6 +13,7 @@
             <van-row type="flex">
                 <van-col span="24">
                     <div class="resetVantArewards">
+                        <choosedepartment @confirmNode="selctdept" :Farequired="true" labelTitle="部门:" :workingNum="true" :isSelctall="true" :faDeptData="deptData"></choosedepartment>
                         <van-field readonly clickable label="年/月:" label-class="labelStyle" v-model="selectedyear" placeholder="请选择年月" @click="vanDateShow = true" />
                     </div>
                     <van-action-sheet v-model="vanDateShow">
@@ -58,13 +59,17 @@
         findZjListInfo,
         findFwDeatilsInfo
     } from "@/views/PayLibrary/PayLibrary.js";
+    import chooseDepartment from "@/components/chooseDepartment.vue";
     export default {
         name:'zjpengjun',
         //import引入的组件需要注入到对象中才能使用
-        components: {},
+        components: {
+            choosedepartment: chooseDepartment,
+        },
         data() {
             //这里存放数据
             return {
+                deptData: [], //部门数据
                 selectedyear: "",
                 vanDateShow: false,
                 currentDate: "",
@@ -143,6 +148,9 @@
                 slength: 0,
                 olength: 0,
                 maxDate: null,
+                yearVal: '', //月+年
+                lastYearVal: '', //月+年
+                deptIds: [],//选择的部门值
 
             };
         },
@@ -170,8 +178,11 @@
                 let queryObj = {
                     jobnumber: this.ddJobNum,
                     year: y + m,
-                    lastYear: lasty + lastm
+                    lastYear: lasty + lastm,
+                    deptList: this.deptIds
                 };
+                this.yearVal = queryObj.year
+                this.lastYearVal = queryObj.lastYear
                 this.queryfindPerGetInfo(queryObj);
                 this.lodingFlag = true;
                 this.vanDateShow = false;
@@ -308,6 +319,37 @@
                     return "heClass";
                 }
             },
+            // 部门选择
+            selctdept(data){
+                // console.log(data)
+                this.deptIds = data
+                let queryObj = {
+                    jobnumber: this.ddJobNum,
+                    year: this.yearVal,
+                    lastYear: this.lastYearVal,
+                    deptList: data
+                };
+                this.queryfindPerGetInfo(queryObj);
+            },
+            queryfindPayrollDept() {
+                if (
+                    localStorage.getItem("SalaryDeptRes") == "" ||
+                    localStorage.getItem("SalaryDeptRes") == null ||
+                    localStorage.getItem("SalaryDeptRes") == "underfined" ||
+                    JSON.parse(localStorage.getItem("SalaryDeptRes")).code != "1000"
+                ) {
+                    findPayrollDept({
+                        jobnumber: localStorage.getItem("jobNum")
+                    }).then(
+                        (res) => {
+                            this.deptData = res.obj.depts;
+                        }
+                    );
+                } else {
+                    const SalaryDeptRes = JSON.parse(localStorage.getItem("SalaryDeptRes"));
+                    this.deptData = SalaryDeptRes.obj.depts;
+                }
+            },
         },
         //生命周期 - 创建完成（可以访问当前this实例）
         created() {
@@ -316,6 +358,7 @@
             let m = nowData.getMonth() - 1;
             this.maxDate = new Date(y, m, 1);
             this.queryfindPerGetInfo()
+            this.queryfindPayrollDept()
         },
         //生命周期 - 挂载完成（可以访问DOM元素）
         mounted() {

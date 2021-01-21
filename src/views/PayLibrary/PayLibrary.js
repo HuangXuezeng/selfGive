@@ -25,8 +25,12 @@ export function findRewardDetailsInfo(queryData) {
 export function findPerGetInfo(queryData) {
     return fetch({
         url: `/kukacms/self/findPerGetInfo`,
+        headers: {
+            "content-type": "application/json"
+        },
+        dataType: 'json',
         method: 'post',
-        data: qs.stringify(queryData)
+        data: JSON.stringify(queryData)
     })
 }
 //职级工资折线图

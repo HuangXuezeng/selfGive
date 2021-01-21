@@ -6,7 +6,7 @@
                 <van-col>
                     <div class="titleRewards">
                         <span class="honghe"></span>
-                        人均工资
+                        人均年薪
                     </div>
                 </van-col>
             </van-row>
@@ -285,6 +285,7 @@
             queryfindPerYearInfo(queryObj) {
                 let queryData = {};
                 let mon = this.formatDate(new Date()).toString()
+                mon = mon.replace(/^0/, '')
                 if (queryObj) {
                     queryData = queryObj;
                 } else {
@@ -897,6 +898,7 @@
         //生命周期 - 创建完成（可以访问当前this实例）
         created() {
           this.queryfindPerYearInfo()
+          this.queryfindPayrollDept()
         },
         //生命周期 - 挂载完成（可以访问DOM元素）
         mounted() {
