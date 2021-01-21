@@ -336,9 +336,8 @@
                             isResize: true,
                             titleCellClassName: "titleclass"
                         },
-
                         {
-                            field: "gwmc",
+                            field: "post",
                             title: "岗位名称",
                             width: 120,
                             titleAlign: "center",
@@ -346,6 +345,15 @@
                             isResize: true,
                             titleCellClassName: "titleclass"
                         },
+                        // {
+                        //     field: "gwmc",
+                        //     title: "岗位名称",
+                        //     width: 120,
+                        //     titleAlign: "center",
+                        //     columnAlign: "center",
+                        //     isResize: true,
+                        //     titleCellClassName: "titleclass"
+                        // },
                         {
                             field: "a8602005",
                             title: "月固薪",
@@ -391,15 +399,15 @@
                             isResize: true,
                             titleCellClassName: "titleclass"
                         },
-                        {
-                            field: "zzgwmc",
-                            title: "岗位名称",
-                            width: 120,
-                            titleAlign: "center",
-                            columnAlign: "center",
-                            isResize: true,
-                            titleCellClassName: "titleclass"
-                        },
+                        // {
+                        //     field: "zzgwmc",
+                        //     title: "岗位名称",
+                        //     width: 120,
+                        //     titleAlign: "center",
+                        //     columnAlign: "center",
+                        //     isResize: true,
+                        //     titleCellClassName: "titleclass"
+                        // },
                         {
                             field: "a8602010",
                             title: "月固薪",
@@ -513,6 +521,7 @@
                                 rowspan: 2,
                                 titleCellClassName: "normalLabelStyle"
                             },
+
                             {
                                 fields: ["xl"],
                                 title: "学历",
@@ -528,8 +537,14 @@
                                 titleCellClassName: "normalLabelStyle"
                             },
                             {
+                                fields: ["post"],
+                                title: "岗位名称",
+                                titleAlign: "center",
+                                rowspan: 2,
+                                titleCellClassName: "normalLabelStyle"
+                            },
+                            {
                                 fields: [
-                                    "gwmc",
                                     "a8602005",
                                     "a8602006",
                                     "a8602007",
@@ -538,12 +553,11 @@
                                 ],
                                 title: "试用期/调整前薪资标准",
                                 titleAlign: "center",
-                                colspan: 6,
+                                colspan: 5,
                                 titleCellClassName: "BeforeConfirmationSty"
                             },
                             {
                                 fields: [
-                                    "zzgwmc",
                                     "a8602010",
                                     "a8602021",
                                     "a8602011",
@@ -552,7 +566,7 @@
                                 ],
                                 title: "转正后/调整后薪资标准",
                                 titleAlign: "center",
-                                colspan: 6,
+                                colspan: 5,
                                 titleCellClassName: "afterConfirmationSty"
                             },
                             {
@@ -570,12 +584,13 @@
                                 titleCellClassName: "normalLabelStyle"
                             }
                         ],
-                        [{
-                                fields: ["gwmc"],
-                                title: "岗位名称",
-                                titleAlign: "center",
-                                titleCellClassName: "BeforeConfirmationSty"
-                            },
+                        [
+                          // {
+                          //       fields: ["gwmc"],
+                          //       title: "岗位名称",
+                          //       titleAlign: "center",
+                          //       titleCellClassName: "BeforeConfirmationSty"
+                          //   },
                             {
                                 fields: ["a8602005"],
                                 title: "月固薪",
@@ -606,12 +621,12 @@
                                 titleAlign: "center",
                                 titleCellClassName: "BeforeConfirmationSty"
                             },
-                            {
-                                fields: ["zzgwmc"],
-                                title: "岗位名称",
-                                titleAlign: "center",
-                                titleCellClassName: "afterConfirmationSty"
-                            },
+                            // {
+                            //     fields: ["zzgwmc"],
+                            //     title: "岗位名称",
+                            //     titleAlign: "center",
+                            //     titleCellClassName: "afterConfirmationSty"
+                            // },
                             {
                                 fields: ["a8602010"],
                                 title: "月固薪",
@@ -828,6 +843,7 @@
             };
         },
         created() {
+          debugger
             this.initMethods();
         },
         mounted() {

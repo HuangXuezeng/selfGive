@@ -13,11 +13,11 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
 			'/kukacms': {
-        // target: 'http://172.16.28.85:7080/kukacms',
+        target: 'http://172.16.28.118:7080/kukacms',
         // target: 'http://192.168.249.18:7020/kukacms', //测试库
         // target: 'http://family.kukahome.com:5080/kukacms/',
         // target: 'http://kukacms.kukahome.com:8084/kukacms', //事业伙伴
-        target: 'http://kukacms.kukahome.com:8082/kukacms', //正式库
+        // target: 'http://kukacms.kukahome.com:8082/kukacms', //正式库
         //target: 'http://172.16.26.125:9090'
         changeOrigin: true,
         pathRewrite: {
