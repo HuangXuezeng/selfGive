@@ -225,7 +225,7 @@ export default {
         checkPwd(queryData).then(res=>{
             if(res.code == 1000){
                 return
-            }else{
+            }else if(res.code == 1001){
                 Dialog.confirm({
                     title: '提示',
                     message: '您需要设置登陆密码哦！'

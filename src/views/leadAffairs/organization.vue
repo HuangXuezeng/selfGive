@@ -629,7 +629,8 @@ export default {
         deptCode: this.bianzhiCodeRes,
         year: '',
         postOne: [],
-        ids: []
+        ids: [],
+        jobnumber:localStorage.getItem('jobNum'),
       }
       selectBianzhi(queryData).then(res=>{
         this.tableData1 = res.obj
@@ -718,7 +719,8 @@ export default {
         year: this.selectTime,
         postOne: this.selectPostId,
         ids: this.deptId,
-        isDown: this.isDownYn
+        isDown: this.isDownYn,
+        jobnumber:localStorage.getItem('jobNum'),
       }
       selectBianzhi(queryData).then(res=>{
         if(res.code == 1000){
