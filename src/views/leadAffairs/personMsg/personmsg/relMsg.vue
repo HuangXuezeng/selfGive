@@ -36,7 +36,9 @@ export default {
   methods:{
     getRelatives(){
         let queryData = {
-            jobnumber:this.$store.state.jobNumber
+            jobnumber:this.$store.state.jobNumber,
+            module:this.$store.state.moduleName,
+            loginJobnumber:localStorage.getItem("jobNum")
         }
         queryRelatives(queryData).then(res=>{
             this.relativesList = res.obj

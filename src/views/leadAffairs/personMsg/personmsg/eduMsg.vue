@@ -71,7 +71,9 @@ export default {
   methods:{
     getEducation(){
         let queryData = {
-            jobnumber:this.$store.state.jobNumber
+            jobnumber:this.$store.state.jobNumber,
+            module:this.$store.state.moduleName,
+            loginJobnumber:localStorage.getItem("jobNum")
         }
         queryEducation(queryData).then(res=>{
             if(res.obj !== null){

@@ -214,7 +214,7 @@ export default {
     this.getSalary()
   },
   methods:{
-    //显示弹窗时间组件
+    //显示弹窗时间组件 
     showTime(){
       this.show = true
     },
@@ -237,12 +237,13 @@ export default {
         }else{
           // console.log(res.obj.bthjList)
           this.salaryList = res.obj
-          let obj1 = {}
-          let obj2 = {}
-          obj1 = this.salaryList.years.substring(0,4)
-          obj2 = this.salaryList.years.substring(4,6)
+          // let obj1 = {}
+          // let obj2 = {}
+          // obj1 = this.salaryList.years.substring(0,4)
+          // obj2 = this.salaryList.years.substring(4,6)
           // console.log()
-          this.timeMsg = obj1+'年'+obj2+'月工资' 
+          // this.timeMsg = obj1+'年'+obj2+'月工资' 
+          this.timeMsg = res.obj.years
         }
       })
       this.show = false
@@ -263,12 +264,12 @@ export default {
       }
       querySalary(queryData).then(res=>{
         this.salaryList = res.obj
-        let obj1 = {}
-        let obj2 = {}
-        obj1 = this.salaryList.years.substring(0,4)
-        obj2 = this.salaryList.years.substring(4,6)
-        // console.log()
-        this.timeMsg = obj1+'年'+obj2+'月工资'
+        // let obj1 = {}
+        // let obj2 = {}
+        // obj1 = this.salaryList.years.substring(0,4)
+        // obj2 = this.salaryList.years.substring(4,6)
+        // this.timeMsg = obj1+'年'+obj2+'月工资'
+        this.timeMsg = res.obj.years
       })
     },
     // 打开固薪其他弹窗

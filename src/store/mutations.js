@@ -17,6 +17,9 @@ const mutations = {
   from_page (state,fromPage) {
     state.fromPage = fromPage
   },
+  moduleName (state,moduleName) {
+    state.moduleName = moduleName
+  },
 }
 
 export default mutations

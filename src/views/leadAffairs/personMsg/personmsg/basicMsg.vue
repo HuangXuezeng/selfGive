@@ -64,7 +64,9 @@ export default {
     //获取个人基本信息
     getPerson(){
         let queryData = {
-            jobnumber:this.$store.state.jobNumber
+            jobnumber:this.$store.state.jobNumber,
+            module:this.$store.state.moduleName,
+            loginJobnumber:localStorage.getItem("jobNum")
         }
         queryPerson(queryData).then(res=>{
             this.personList = res.obj

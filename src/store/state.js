@@ -8,6 +8,7 @@ const state = {
   arrflag: '', //隐藏显示侧边栏
   scrollTop:'', //记录花名册表格中离开爷面前的滑动高度
   fromPage: '', //记录从哪个页面进来的
+  moduleName: '', //记录从哪个模块进来的，保存的模块名
 }
 
 export default state

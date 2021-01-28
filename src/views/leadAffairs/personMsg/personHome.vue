@@ -101,9 +101,10 @@ export default {
   },
   computed: {},
   created(){
-    this.getSome()
     this.seeFlag = this.$store.state.fromPage
-    console.log(this.seeFlag)
+    this.checkModule() //保存进来的模块名
+    this.getSome()
+    // console.log(this.seeFlag)
   },
   methods:{
     //隐藏导航栏
@@ -162,8 +163,21 @@ export default {
       this.$router.push({name:'retention'})
       this.scroll_top(0)
     },
+    // 判断是哪个模块进来的，做日志
+    checkModule(){
+      if(this.seeFlag == 0){
+        this.moduleName('花名册')
+      }else if(this.seeFlag == 1){
+        this.moduleName('人员异动')
+      }else if(this.seeFlag == 2){
+        this.moduleName('人员结构')
+      }else if(this.seeFlag == 3){
+        this.moduleName('人员流失')
+      }
+    },
     ...mapMutations({
-      scroll_top:'scroll_top'
+      scroll_top:'scroll_top',
+      moduleName: 'moduleName'
     })
   },
   mounted() {
