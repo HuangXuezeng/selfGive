@@ -2,34 +2,16 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <!-- 图片盗链 -->
-    <meta name="referrer" content="never"> 
-    <!-- <META HTTP-EQUIV="pragma" CONTENT="no-cache"> 
-    <META HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate"> 
-    <META HTTP-EQUIV="expires" CONTENT="0"> -->
-    <!-- <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" viewport-fit="cover"> -->
-    <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1,maximum-scale=1, user-scalable=0,viewport-fit=cover">
-    <title>员工自助</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>vue-xuAdmin权限管理后台模板</title>
   </head>
   <body>
-    <!-- 按设备引入js -->
-    <script type="text/javascript" >
-      function loadConfig () {
-        var is_mobi = navigator.userAgent.toLowerCase().match(/(ipod|iphone|android|coolpad|mmp|smartphone|midp|wap|xoom|symbian|j2me|blackberry|wince)/i) != null;
-        var head = document.getElementsByTagName('head')[0]; 
-        var script= document.createElement("script"); 
-        script.type = "text/javascript";
-        if (!is_mobi) {
-          script.src="https://g.alicdn.com/dingding/dingtalk-pc-api/2.7.0/index.js"; 
-          head.appendChild(script); 
-        } else {
-          script.src="http://g.alicdn.com/ilw/ding/0.7.3/scripts/dingtalk.js"; 
-          head.appendChild(script); 
-        }
-      }
-      loadConfig()
-    </script>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <% for (let i of htmlWebpackPlugin.options.dll) { %>
+    <script src="<%= i %>"></script>
+    <script src="./static/js/three.min.js"></script>
+    <% } %>
   </body>
+
 </html>

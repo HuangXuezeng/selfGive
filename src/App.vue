@@ -1,113 +1,62 @@
 <template>
-  <div id="app">
-    <div class="container">
-      <keep-alive>
-        <router-view v-if="$route.meta.keepAlive" />
-      </keep-alive>
-      <router-view v-if="!$route.meta.keepAlive" />
+    <div id="app">
+        <transition name="fade" mode="out-in">
+            <router-view></router-view>
+        </transition>
     </div>
-    <!-- <m-tab></m-tab> -->
-  </div>
 </template>
 
 <script>
-import MTab from '@/components/m-tab'
-import { setDDConfig } from '@/api/dd'
-import { mapMutations } from 'vuex'
-import fetch from '@/api/fetch'
-export default {
-  name: 'app',
-  created () {
-    // 获取用户 id
-    setDDConfig().then(res => {
-      var that = this
-      let data = res
-      var is_mobi = navigator.userAgent.toLowerCase().match(/(ipod|iphone|android|coolpad|mmp|smartphone|midp|wap|xoom|symbian|j2me|blackberry|wince)/i) != null;
-      if (!is_mobi) {
-        // PC
-        console.log('pc')
-        DingTalkPC.ready(() => {
-          DingTalkPC.runtime.permission.requestAuthCode({
-              corpId: data.corpId, //企业ID
-              onSuccess: function(result) {
-                // let url = '/kukacms/visitor/getDingUserInfo.htm?accessToken=' + data.token + '&code=' + result.code
-                let url = '/kukacms/self/login/getDingUserInfo?code=' + result.code
-                fetch({
-                  url: url,
-                  method: 'get'
-                }).then(res => {
-                  console.log(res)
-                  // that.save_userId(res.userId)
-                  localStorage.setItem('jobNum',res.jobNumber)
-                  localStorage.setItem('telNum',res.mobile) //手机号
-                   localStorage.setItem('userinfo',JSON.stringify(res)) //个人信息
-                })
-              },
-              onFail: function(err) {
-                // window.location.reload()
-              }
-          })
-        })
-      } else {
-        // 移动
-        console.log('mobile')
-        dd.ready(() => {
-          dd.ui.webViewBounce.disable()
-          dd.runtime.permission.requestAuthCode({
-            corpId: data.corpId,
-            onSuccess: function(result) {
-              let url = '/kukacms/self/login/getDingUserInfo?code=' + result.code
-              fetch({
-                url: url,
-                method: 'get'
-              }).then(res => {
-                console.log('App.vue中的登录')
-                // console.log(res)
-                // that.save_userId(res.userId)
-                localStorage.setItem('jobNum',res.jobNumber)
-                localStorage.setItem('telNum',res.mobile) //手机号
-                localStorage.setItem('userinfo',JSON.stringify(res)) //个人信息
-              })
-            },
-            onFail : function(err) {
-              // window.location.reload()
-              console.log('App.vue中的登录err')
-              console.log(err)
-            }
-          })
-        })
-      }
+    export default {
+        name: "app",
+        created() {
+            //在页面加载时读取sessionStorage里的状态信息
+            // debugger
+            // if (sessionStorage.getItem("store")) {
+            //     this.$store.replaceState(Object.assign({}, this.$store.state, JSON.parse(sessionStorage.getItem("store"))))
+            // }
 
-    })
-  },
-  methods: {
-    ...mapMutations({
-      save_userId: 'save_userId'
-    })
-  },
-  components: {
-    MTab,
-  }
-}
+            // //在页面刷新时将vuex里的信息保存到sessionStorage里
+            // window.addEventListener("beforeunload", () => {
+            //   debugger
+            //     sessionStorage.setItem("store", JSON.stringify(this.$store.state))
+            // })
+        }
+    }
 </script>
 
-<style>
-#app {
-  width: 100%;
-  height: 100vh;
-  /* max-width: 400px; */
-  margin: 0 auto;
-  box-sizing: border-box;
-  /* overflow-y: auto;
-  overflow-x: hidden; */
-}
-.container {
-  width: 100%;
-  height: 100%;
-  /* overflow-y: auto;
-  overflow: hidden; */
-}
-*{
-  -webkit-overflow-scrolling: touch;
-}
+<style lang="scss">
+    body {
+        margin: 0px;
+        padding: 0px;
+        font-family: Microsoft YaHei, Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, SimSun, sans-serif;
+        font-size: 14px;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    #app {
+        position: absolute;
+        top: 0px;
+        bottom: 0px;
+        width: 100%;
+    }
+
+    a {
+        color: #56a9ff;
+    }
+
+    .fade-enter-active,
+    .fade-leave-active {
+        transition: all .2s ease;
+    }
+
+    .fade-enter,
+    .fade-leave-active {
+        opacity: 0;
+    }
+
+    #nprogress .bar {
+        height: 3px !important;
+        background: #56a9ff !important; //自定义颜色
+    }
 </style>

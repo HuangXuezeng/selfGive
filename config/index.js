@@ -1,41 +1,54 @@
-'use strict'
+// 'use strict'
 // Template version: 1.3.1
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
+const devEnv = require('./dev.env')
+const prodEnv = require('./prod.env')
+var version = ''
+
+if(process.env.NODE_ENV === 'production' && prodEnv.VERSION_CONTROL){
+  var d = new Date();
+  var yy = d.getFullYear().toString().slice(2);
+  var MM = d.getMonth() + 1 >= 10 ? (d.getMonth() + 1) : '0' + (d.getMonth() + 1);
+  var DD = d.getDate() >= 10 ? d.getDate() : '0' + d.getDate();
+  var h  = d.getHours() >= 10 ? d.getHours() : '0' + d.getHours();
+  var mm = d.getMinutes() >= 10 ? d.getMinutes() : '0' + d.getMinutes();
+  version =  yy + MM + DD + h + mm;
+}
 
 module.exports = {
   dev: {
-
-    // Paths
     assetsSubDirectory: 'static',
-    // assetsPublicPath: '/kukacmsIndex/',
     assetsPublicPath: '/',
     proxyTable: {
-			'/kukacms': {
-        target: 'http://172.16.28.118:7080/kukacms',
-        // target: 'http://192.168.249.18:7020/kukacms', //测试库
-        // target: 'http://family.kukahome.com:5080/kukacms/',
-        // target: 'http://kukacms.kukahome.com:8084/kukacms', //事业伙伴
-        // target: 'http://kukacms.kukahome.com:8082/kukacms', //正式库
-        //target: 'http://172.16.26.125:9090'
+      '/kukacms': {
+        target: 'http://kukacms.kukahome.com:8082/kukacms',
+        // target: 'http://172.16.28.17:7080/kukacms',
         changeOrigin: true,
         pathRewrite: {
           '^/kukacms': ''
         }
-      },
+      }
     },
 
     // Various Dev Server settings
-    host: 'localhost', // can be overwritten by process.env.HOST
-    // host: '172.16.28.123',
-    // host: 'localhost'≥
-    port: 8082, // can be 表v'fdsavcv overwritten by process.env.PORT, if port is in use, a free one will be determined
+    host: '172.16.28.138', // can be overwritten by process.env.HOST
+    // host: 'localhost', // can be overwritten by process.env.HOST
+
+    port: 8081, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: true,
     errorOverlay: true,
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
 
+    // Use Eslint Loader?
+    // If true, your code will be linted during bundling and
+    // linting errors and warnings will be shown in the console.
+    useEslint: true,
+    // If true, eslint errors and warnings will also be shown in the error overlay
+    // in the browser.
+    showEslintErrorsInOverlay: false,
 
     /**
      * Source Maps
@@ -54,10 +67,10 @@ module.exports = {
 
   build: {
     // Template for index.html
-    index: path.resolve(__dirname, '../kukacmsIndex/index.html'),
+    index: path.resolve(__dirname, `../dist/${version}/index.html`),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../kukacmsIndex'),
+    assetsRoot: path.resolve(__dirname, `../dist/${version}`),
     assetsSubDirectory: 'static',
     assetsPublicPath: './',
 
@@ -67,7 +80,7 @@ module.exports = {
 
     productionSourceMap: true,
     // https://webpack.js.org/configuration/devtool/#production
-    devtool: '#source-map',
+    devtool: 'cheap-module-source-map',
 
     // Gzip off by default as many popular static hosts such as
     // Surge or Netlify already gzip all static assets for you.
